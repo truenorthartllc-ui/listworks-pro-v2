@@ -3,10 +3,10 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import LandingPage from "@/pages/LandingPage";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 
 function App() {
   useEffect(() => {
-    // Ensure session id
     if (!localStorage.getItem("lw_session_id")) {
       localStorage.setItem(
         "lw_session_id",
@@ -21,6 +21,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { startCheckout } from "@/lib/checkout";
 
 const tiers = [
   {
@@ -8,32 +9,50 @@ const tiers = [
     blurb: "For agents trying it on their next listing.",
     features: ["3 listings / month", "All 5 output formats", "5 tone modes", "Listing history (30 days)"],
     cta: "Start Free",
-    href: "#playground",
+    action: { kind: "scroll", href: "#playground" },
     highlight: false,
   },
   {
     name: "Pro",
-    price: "$29",
+    price: "$49",
     period: "/ month",
     blurb: "For full-time agents shipping listings weekly.",
-    features: ["Unlimited rewrites", "Photo recognition", "Custom voice training", "Priority generation", "Listing history (forever)", "Email support"],
-    cta: "Go Pro",
-    href: "#playground",
+    features: [
+      "Unlimited rewrites",
+      "Watermark-free videos",
+      "9:16 Reels format unlocked",
+      "Make-it-10/10 rewrite engine",
+      "Auto-post to FB & Instagram",
+      "AI Advisor priority access",
+      "Listing history (forever)",
+    ],
+    cta: "Go Pro — $49/mo",
+    action: { kind: "checkout", package_id: "pro_month" },
     highlight: true,
   },
   {
     name: "Team",
-    price: "$99",
+    price: "$499",
     period: "/ month",
     blurb: "For brokerages standardizing their voice.",
-    features: ["Everything in Pro", "5 seats included", "Brokerage voice presets", "Shared listing library", "Onboarding call", "White-glove support"],
+    features: ["Everything in Pro", "10 seats included", "Brokerage voice presets", "Shared listing library", "Admin analytics", "Onboarding call", "White-glove support"],
     cta: "Talk to Sales",
-    href: "mailto:hello@listworks.pro",
+    action: { kind: "mailto", href: "mailto:hello@listworks.pro?subject=Brokerage%20Plan%20—%20ListWorks%20PRO" },
     highlight: false,
   },
 ];
 
 export default function Pricing() {
+  const onCta = async (action) => {
+    if (action.kind === "scroll") {
+      document.querySelector(action.href)?.scrollIntoView({ behavior: "smooth" });
+    } else if (action.kind === "checkout") {
+      await startCheckout(action.package_id);
+    } else if (action.kind === "mailto") {
+      window.location.href = action.href;
+    }
+  };
+
   return (
     <section id="pricing" data-testid="pricing-section" className="border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
@@ -80,18 +99,22 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <a
-                href={t.href}
+              <button
+                onClick={() => onCta(t.action)}
                 data-testid={`pricing-cta-${t.name.toLowerCase()}`}
                 className={`mt-9 inline-flex items-center justify-center px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition-all hover:-translate-y-1 ${
                   t.highlight ? "bg-vermillion text-oat hover:bg-[#ff2a0e]" : "btn-ghost-ink"
                 }`}
               >
                 {t.cta} →
-              </a>
+              </button>
             </div>
           ))}
         </div>
+
+        <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50 text-center">
+          Pro paid monthly · cancel any time · 30-day money-back · billed in USD
+        </p>
       </div>
     </section>
   );

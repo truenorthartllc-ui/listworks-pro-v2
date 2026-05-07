@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
-import { ArrowUpRight, X, FileText } from "lucide-react";
+import { ArrowUpRight, X, FileText, Loader2 } from "lucide-react";
+import { startCheckout } from "@/lib/checkout";
 
 export default function GuideUpsell() {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [buying, setBuying] = useState(false);
+
+  const buyGuide = async () => {
+    setBuying(true);
+    await startCheckout("guide_pdf");
+    setBuying(false);
+  };
 
   useEffect(() => {
     const handler = (e) => e.key === "Escape" && setPreviewOpen(false);
@@ -44,15 +52,14 @@ export default function GuideUpsell() {
           </ul>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <a
+            <button
               data-testid="guide-buy-btn"
-              href="https://listworks.gumroad.com/l/listworks-guide"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2 transition-all hover:-translate-y-1"
+              onClick={buyGuide}
+              disabled={buying}
+              className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2 transition-all hover:-translate-y-1 disabled:opacity-60"
             >
-              Buy the Guide — $20 <ArrowUpRight className="w-4 h-4" />
-            </a>
+              {buying ? (<><Loader2 className="w-4 h-4 animate-spin" /> Loading…</>) : (<>Buy the Guide — $20 <ArrowUpRight className="w-4 h-4" /></>)}
+            </button>
             <button
               data-testid="guide-preview-btn"
               onClick={() => setPreviewOpen(true)}
@@ -114,9 +121,8 @@ export default function GuideUpsell() {
             <div className="flex items-center gap-3">
               <a
                 data-testid="modal-buy-btn"
-                href="https://listworks.gumroad.com/l/listworks-guide"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={async (e) => { e.preventDefault(); await startCheckout("guide_pdf"); }}
                 className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-5 py-2.5 font-heading text-[12px] uppercase tracking-[0.15em] flex items-center gap-2 transition"
               >
                 Buy — $20 <ArrowUpRight className="w-3.5 h-3.5" />

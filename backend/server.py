@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -14,6 +14,12 @@ import uuid
 from datetime import datetime, timezone
 
 from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+from emergentintegrations.payments.stripe.checkout import (
+    StripeCheckout,
+    CheckoutSessionResponse,
+    CheckoutStatusResponse,
+    CheckoutSessionRequest,
+)
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
 
@@ -25,8 +31,17 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
+MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
 DEFAULT_PROVIDER = "anthropic"
 DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
+
+# Server-side fixed pricing — NEVER accept amounts from frontend
+PACKAGES = {
+    "guide_pdf": {"amount": 20.00, "currency": "usd", "name": "ListWorks Guide PDF",        "kind": "guide"},
+    "pro_month": {"amount": 49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",   "kind": "pro"},
+    "pro_annual": {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",  "kind": "pro"},
+}
 
 VIDEO_DIR = (ROOT_DIR / "static" / "videos").resolve()
 VIDEO_DIR.mkdir(parents=True, exist_ok=True)
@@ -481,6 +496,228 @@ async def feedback(req: FeedbackRequest):
     }
     await db.feedback.insert_one(doc)
     return {"ok": True}
+
+
+# ===== STRIPE PAYMENTS =====
+class CheckoutCreateRequest(BaseModel):
+    package_id: str
+    origin_url: str
+    session_id: Optional[str] = None  # listworks session id (anon)
+    email: Optional[str] = None
+
+
+@api_router.post("/checkout/session")
+async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
+    if not STRIPE_API_KEY:
+        raise HTTPException(500, "Stripe not configured")
+    if req.package_id not in PACKAGES:
+        raise HTTPException(400, "Invalid package")
+    pkg = PACKAGES[req.package_id]
+
+    origin = req.origin_url.rstrip("/")
+    success_url = f"{origin}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{origin}/?cancel=1#pricing"
+
+    host_url = str(request.base_url)
+    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+
+    metadata = {
+        "package_id": req.package_id,
+        "package_kind": pkg["kind"],
+        "package_name": pkg["name"],
+        "lw_session_id": req.session_id or "",
+        "email": req.email or "",
+    }
+
+    cs_req = CheckoutSessionRequest(
+        amount=float(pkg["amount"]),
+        currency=pkg["currency"],
+        success_url=success_url,
+        cancel_url=cancel_url,
+        metadata=metadata,
+    )
+    session: CheckoutSessionResponse = await sc.create_checkout_session(cs_req)
+
+    # Persist transaction with PENDING status BEFORE redirect
+    await db.payment_transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "stripe_session_id": session.session_id,
+        "package_id": req.package_id,
+        "package_kind": pkg["kind"],
+        "amount": pkg["amount"],
+        "currency": pkg["currency"],
+        "lw_session_id": req.session_id or "",
+        "email": req.email or "",
+        "status": "initiated",
+        "payment_status": "pending",
+        "metadata": metadata,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+
+    return {"url": session.url, "session_id": session.session_id}
+
+
+@api_router.get("/checkout/status/{stripe_session_id}")
+async def checkout_status(stripe_session_id: str, request: Request):
+    if not STRIPE_API_KEY:
+        raise HTTPException(500, "Stripe not configured")
+    host_url = str(request.base_url)
+    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+    cs: CheckoutStatusResponse = await sc.get_checkout_status(stripe_session_id)
+
+    txn = await db.payment_transactions.find_one(
+        {"stripe_session_id": stripe_session_id}, {"_id": 0}
+    )
+
+    # Idempotent grant of entitlements
+    if cs.payment_status == "paid" and txn and txn.get("payment_status") != "paid":
+        await db.payment_transactions.update_one(
+            {"stripe_session_id": stripe_session_id},
+            {"$set": {
+                "status": cs.status,
+                "payment_status": "paid",
+                "paid_at": datetime.now(timezone.utc).isoformat(),
+            }},
+        )
+        # Grant entitlement to the listworks session
+        if txn.get("lw_session_id"):
+            kind = txn.get("package_kind")
+            ent = {
+                "lw_session_id": txn["lw_session_id"],
+                "kind": kind,
+                "package_id": txn.get("package_id"),
+                "stripe_session_id": stripe_session_id,
+                "granted_at": datetime.now(timezone.utc).isoformat(),
+            }
+            await db.entitlements.update_one(
+                {"lw_session_id": txn["lw_session_id"], "kind": kind},
+                {"$set": ent},
+                upsert=True,
+            )
+
+    return {
+        "status": cs.status,
+        "payment_status": cs.payment_status,
+        "amount_total": cs.amount_total,
+        "currency": cs.currency,
+        "metadata": cs.metadata,
+        "package_kind": (txn or {}).get("package_kind"),
+    }
+
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    if not STRIPE_API_KEY:
+        raise HTTPException(500, "Stripe not configured")
+    body = await request.body()
+    sig = request.headers.get("Stripe-Signature", "")
+    host_url = str(request.base_url)
+    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+    try:
+        evt = await sc.handle_webhook(body, sig)
+    except Exception as e:
+        logger.exception("Stripe webhook failed: %s", e)
+        raise HTTPException(400, "Invalid webhook")
+
+    if evt and evt.session_id:
+        await db.payment_transactions.update_one(
+            {"stripe_session_id": evt.session_id},
+            {"$set": {
+                "payment_status": evt.payment_status,
+                "webhook_event": evt.event_type,
+                "webhook_at": datetime.now(timezone.utc).isoformat(),
+            }},
+        )
+        # Grant entitlement on paid
+        if evt.payment_status == "paid":
+            txn = await db.payment_transactions.find_one(
+                {"stripe_session_id": evt.session_id}, {"_id": 0}
+            )
+            if txn and txn.get("lw_session_id"):
+                await db.entitlements.update_one(
+                    {"lw_session_id": txn["lw_session_id"], "kind": txn.get("package_kind")},
+                    {"$set": {
+                        "lw_session_id": txn["lw_session_id"],
+                        "kind": txn.get("package_kind"),
+                        "package_id": txn.get("package_id"),
+                        "stripe_session_id": evt.session_id,
+                        "granted_at": datetime.now(timezone.utc).isoformat(),
+                    }},
+                    upsert=True,
+                )
+    return {"received": True}
+
+
+@api_router.get("/entitlements/{session_id}")
+async def get_entitlements(session_id: str):
+    rows = await db.entitlements.find(
+        {"lw_session_id": session_id}, {"_id": 0}
+    ).to_list(20)
+    return {"entitlements": rows, "is_pro": any(r.get("kind") == "pro" for r in rows),
+            "has_guide": any(r.get("kind") == "guide" for r in rows)}
+
+
+# ===== MAKE.COM SOCIAL AUTO-POST =====
+class SocialPostRequest(BaseModel):
+    listing_id: str
+    platforms: List[str] = Field(default_factory=lambda: ["facebook"])  # ["facebook", "instagram"]
+    photo_urls: List[str] = Field(default_factory=list)
+
+
+@api_router.post("/social/post")
+async def social_post(req: SocialPostRequest):
+    if not MAKE_WEBHOOK_URL:
+        raise HTTPException(503, "Social auto-post not configured. Add MAKE_WEBHOOK_URL.")
+
+    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+    if not listing:
+        raise HTTPException(404, "Listing not found")
+
+    payload = {
+        "platforms": req.platforms,
+        "photo_urls": req.photo_urls,
+        "address": listing.get("address"),
+        "price": listing.get("price"),
+        "tone": listing.get("tone"),
+        "mls": listing.get("mls"),
+        "instagram_caption": listing.get("instagram"),
+        "facebook_post": listing.get("facebook"),
+        "headlines": listing.get("headlines", []),
+        "email": listing.get("email"),
+        "listing_strength": listing.get("listing_strength"),
+        "source": "listworks.pro",
+        "generated_at": listing.get("created_at"),
+    }
+
+    import httpx
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as http:
+            r = await http.post(MAKE_WEBHOOK_URL, json=payload)
+            r.raise_for_status()
+    except Exception as e:
+        logger.exception("Make.com webhook failed: %s", e)
+        raise HTTPException(502, f"Auto-post failed: {str(e)[:160]}")
+
+    await db.social_posts.insert_one({
+        "id": str(uuid.uuid4()),
+        "listing_id": req.listing_id,
+        "platforms": req.platforms,
+        "status": "queued",
+        "queued_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"queued": True, "platforms": req.platforms, "listing_id": req.listing_id}
+
+
+# ===== PRICING (frontend reads this) =====
+@api_router.get("/pricing")
+async def pricing():
+    return {
+        pid: {"name": p["name"], "amount": p["amount"], "currency": p["currency"], "kind": p["kind"]}
+        for pid, p in PACKAGES.items()
+    }
 
 
 app.include_router(api_router)

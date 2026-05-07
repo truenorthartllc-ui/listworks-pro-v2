@@ -1,0 +1,47 @@
+{
+  "summary": "Iteration 3 e2e testing — Stripe checkout (guide_pdf $20, pro_month $49, pro_annual $470), Make.com social auto-post (intentionally unconfigured -> 503), entitlements, /payment-success polling. Backend: 17/17 pytest passed. Frontend: all critical flows verified (Buy Guide, Go Pro, Make-10/10, Auto-Post FB, Free scroll, /payment-success polling). 1 backend reliability bug found in /api/checkout/status/{id} returning 500 on retrieve failure.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/checkout/status/{stripe_session_id}",
+        "issue": "Throws bare 500 (CheckoutError -> uncaught) when Stripe cannot retrieve the session (unknown id, session not found in proxy, or recently-created session not yet fetchable via the emergent stripe proxy). Should be wrapped in try/except -> 404 or 502. The PaymentSuccess.jsx polling page recovers fine because it counts errors and falls into 'failed' after MAX_POLLS, but the noisy 500 bleeds into logs and is fragile. Repro: GET /api/checkout/status/cs_test_invalid -> 500. Even GET /api/checkout/status/{just_created_id} sometimes 500's because the emergent proxy session is not retrievable via the same key route."
+      },
+      {
+        "endpoint": "POST /api/webhook/stripe",
+        "issue": "'Bad signature' returns 400 for the right reason (KeyError on 'data' field) but the underlying emergent integrations handle_webhook does NOT actually verify the Stripe-Signature HMAC. Anyone posting a well-formed event body would be accepted. Status code is correct for the test's body (no data) but signature verification is effectively absent in the wrapper. Worth verifying with the integration."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_stripe_social.py",
+    "/app/test_reports/pytest/iter3_results.xml"
+  ],
+  "action_items": [
+    "(LOW) Wrap /api/checkout/status/{id} in try/except CheckoutError -> raise HTTPException(404, 'Session not found') or 502. Currently surfaces as 500 in browser console + backend stack trace.",
+    "(LOW) Confirm whether emergentintegrations handle_webhook verifies Stripe-Signature HMAC; if not, document this so production deploys do not silently accept forged webhook events."
+  ],
+  "critical_code_review_comments": [
+    "server.py:561 checkout_status — no try/except around sc.get_checkout_status; any Stripe-side failure becomes a 500. Should be 404 for invalid id and 502 for transient.",
+    "server.py:610 stripe_webhook — relies on integrations layer for signature verification; current behavior on bad/missing signature is to fail at 'data' key access rather than at signature check. Add explicit signature header presence check and maybe own HMAC verification.",
+    "server.py:670 social_post — 503 short-circuits BEFORE listing existence check, so callers can't distinguish 'bad listing_id' from 'webhook unconfigured' until MAKE_WEBHOOK_URL is set. Acceptable trade-off for now but worth flipping the order so 404 takes precedence when listing_id is bogus.",
+    "server.py:521-522 webhook_url construction — `f\"{host_url}api/webhook/stripe\".replace(\"//api\",\"/api\")` is a fragile string hack. base_url already has trailing slash; just do f\"{host_url.rstrip('/')}/api/webhook/stripe\".",
+    "server.py:35 MAKE_WEBHOOK_URL is read once at module import; if env changes the process must be restarted. Documented but worth noting.",
+    "PaymentSuccess.jsx — polling counts error responses toward MAX_POLLS, which means a perma-500 endpoint converges to 'failed' state after ~12s. UX is OK but if status endpoint returns 404 cleanly (per fix above), the page can short-circuit to 'failed' on first poll and skip the wait."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_stripe_social.py (NEW — 17 tests covering pricing, checkout/session for all 3 packages, invalid package -> 400, status invalid id, webhook bad signature -> 400, entitlements, social/post 503 path + 404 path, full regression on rewrite/advisor/examples/listings/feedback/root)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "Not applicable (no auth in app). STRIPE_API_KEY=sk_test_emergent works against emergent stripe proxy and creates real test-mode checkout sessions.",
+  "seed_data_creation": "TEST_-prefixed listworks sessions (TEST_social_sess, TEST_tx_*, TEST_ent_*, TEST_sess_*) and 4 stripe checkout sessions in payment_transactions (status=initiated, payment_status=pending) — all created against test mode, never charged. Listings persisted under TEST_social_sess in db.listings. 1 feedback row (TEST_qa@example.com).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Stripe live: clicking Buy Guide / Go Pro / Make-10/10 redirects to https://checkout.stripe.com/c/pay/cs_test_... — payment page renders correct amount ($20 / $49). Cannot complete actual payment in headless tests (requires card+browser interaction). /payment-success polling works: cs_test_invalid -> 500 from /api/checkout/status -> attempts counter increments -> 'payment-failed' state after ~6s. Auto-Post FB button correctly hits /api/social/post which 503s with toast 'Social auto-post not configured. Add MAKE_WEBHOOK_URL.' — this is the intended path. Make-10/10 button now starts pro_month checkout (was a toast stub before). pricing-cta-free scrolls to playground (smooth, may take >1s). pricing-cta-team opens mailto. All previously green endpoints (rewrite, advisor, video, examples, listings, feedback) regression-clean.",
+  "rca of the issue": "/api/checkout/status 500 bug RCA: server.py line 568 calls `await sc.get_checkout_status(stripe_session_id)` with no exception handling. emergentintegrations.payments.stripe.checkout.get_checkout_status raises CheckoutError on any Stripe error (e.g. invalid_request_error 'No such checkout.session'), which propagates as unhandled 500. Mitigation: wrap in try/except CheckoutError -> raise HTTPException(404, 'Session not found'). Reproduction: curl ${BACKEND}/api/checkout/status/cs_test_invalid -> 500 + stacktrace in /var/log/supervisor/backend.err.log."
+}

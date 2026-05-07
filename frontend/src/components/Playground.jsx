@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
+import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Family", "Investor"];
@@ -282,8 +283,26 @@ export default function Playground() {
                     <RefreshCcw className="w-3.5 h-3.5" /> Try a Different Tone
                   </button>
                   <button
+                    data-testid="auto-post-btn"
+                    onClick={async () => {
+                      try {
+                        const session_id = localStorage.getItem("lw_session_id");
+                        await axios.post(`${API}/social/post`, {
+                          listing_id: result.id,
+                          platforms: ["facebook"],
+                        });
+                        toast.success("Sent to Facebook auto-poster ✓");
+                      } catch (e) {
+                        toast.error(e?.response?.data?.detail || "Auto-post not configured. Add MAKE_WEBHOOK_URL.");
+                      }
+                    }}
+                    className="border border-ink/30 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                  >
+                    <Share2 className="w-3.5 h-3.5" /> Auto-Post to FB
+                  </button>
+                  <button
                     data-testid="make-10-btn"
-                    onClick={() => toast("🔥 Make it 10/10 is a Pro feature. Upgrade to unlock.", { duration: 3500 })}
+                    onClick={() => startCheckout("pro_month")}
                     className="border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
                   >
                     <Flame className="w-3.5 h-3.5" /> Make It 10/10 — Pro
@@ -309,13 +328,13 @@ export default function Playground() {
               </p>
             </div>
             <div className="flex md:justify-end">
-              <a
+              <button
                 data-testid="pro-upgrade-btn"
-                href="#pricing"
+                onClick={async () => { await import("@/lib/checkout").then(m => m.startCheckout("pro_month")); }}
                 className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition hover:-translate-y-1 inline-flex items-center gap-2"
               >
                 Get ListGenius Pro — $49/mo →
-              </a>
+              </button>
             </div>
           </div>
         )}
