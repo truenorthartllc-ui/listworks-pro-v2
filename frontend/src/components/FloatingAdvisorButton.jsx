@@ -11,7 +11,7 @@ export default function FloatingAdvisorButton() {
         <button
           data-testid="floating-advisor-btn"
           onClick={() => setOpen(true)}
-          className="fixed bottom-[72px] right-5 z-[60] group flex items-center gap-3 pl-4 pr-5 py-3.5 bg-vermillion text-oat font-heading text-[12px] uppercase tracking-[0.14em] shadow-[6px_6px_0_0_#0A0A0A] hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 transition-all"
+          className="fixed bottom-5 right-5 z-[60] group flex items-center gap-3 pl-4 pr-5 py-3.5 bg-vermillion text-oat font-heading text-[12px] uppercase tracking-[0.14em] shadow-[6px_6px_0_0_#0A0A0A] hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 transition-all"
           aria-label="Open AI Advisor"
         >
           <span className="relative flex h-7 w-7 items-center justify-center bg-coal">
