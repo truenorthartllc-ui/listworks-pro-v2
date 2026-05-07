@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import AIVideoShowcase from "@/components/AIVideoShowcase";
 import Playground from "@/components/Playground";
 import Marquee from "@/components/Marquee";
 import BeforeAfter from "@/components/BeforeAfter";
@@ -17,6 +18,7 @@ export default function LandingPage() {
       <Header />
       <main>
         <Hero />
+        <AIVideoShowcase />
         <Marquee />
         <Playground />
         <BeforeAfter />
