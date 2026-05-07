@@ -52,10 +52,10 @@ PHOTO_URLS = [
 
 
 SLIDE_TEXTS = [
-    "This isn't a house. It's the address you stop searching at.",
-    "Marble that argues with light. Counters built for real life.",
-    "The pool is a mood. The view is the receipt.",
-    "Welcome home — the rest is just paperwork.",
+    "Some homes you walk through. This one — you arrive at.",
+    "The kitchen wasn't designed. It was earned.",
+    "A pool that turns Saturdays into memories.",
+    "The address you stop searching at.",
 ]
 
 

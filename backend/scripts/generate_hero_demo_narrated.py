@@ -33,24 +33,22 @@ PHOTO_URLS = [
     "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=1920&q=85&auto=format&fit=crop",
 ]
 
-# Slide texts stay minimal — voice carries the emotion
+# Slide texts — they appear ON the photos, in sync with what the voice says
 SLIDE_TEXTS = [
-    "This isn't a house. It's the address you stop searching at.",
-    "The kitchen everyone gathers in.",
-    "The pool that ends every Saturday.",
-    "Welcome home.",
+    "Some homes you walk through. This one — you arrive at.",
+    "The kitchen wasn't designed. It was earned.",
+    "A pool that turns Saturdays into memories.",
+    "The address you stop searching at.",
 ]
 
 # 28-second narration — confident, warm, human. Sells without overselling.
-# Tested at ~155 wpm with TTS-1-HD nova at speed 0.95.
+# Each sentence is timed to land on its matching slide (~7s per slide).
 VOICEOVER_SCRIPT = (
     "Some homes you walk through. This one... you arrive at. "
-    "The vaulted ceilings catch the morning light just right. "
-    "The kitchen wasn't designed — it was earned. Marble that argues with the sun. "
+    "The kitchen wasn't designed — it was earned. "
     "A pool that turns every Saturday into a memory. "
-    "Four bedrooms. Spa-level baths. A patio built for the kind of nights people drive home to. "
     "This isn't another listing. This is the address you stop searching at. "
-    "Schedule your private tour today — before someone else does."
+    "Schedule your private tour today."
 )
 
 
