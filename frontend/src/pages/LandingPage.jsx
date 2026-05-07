@@ -9,6 +9,7 @@ import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import FloatingAdvisorButton from "@/components/FloatingAdvisorButton";
 
 export default function LandingPage() {
   return (
@@ -26,6 +27,7 @@ export default function LandingPage() {
         <FAQ />
       </main>
       <Footer />
+      <FloatingAdvisorButton />
     </div>
   );
 }
