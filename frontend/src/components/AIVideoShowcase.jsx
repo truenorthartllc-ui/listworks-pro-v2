@@ -15,9 +15,13 @@ export default function AIVideoShowcase() {
   // "music" = instrumental only · "narrated" = female voice + music duck
   const [mode, setMode] = useState("music");
 
+  // Cache-buster: bump this when re-rendering the demo videos so browsers
+  // pick up the new files instead of serving stale cached copies.
+  const VIDEO_VERSION = "v3-piano";
+
   const VIDEO_SRC = {
-    music: "/hero-demo.mp4",
-    narrated: "/hero-demo-narrated.mp4",
+    music: `/hero-demo.mp4?${VIDEO_VERSION}`,
+    narrated: `/hero-demo-narrated.mp4?${VIDEO_VERSION}`,
   };
 
   // Source photos (small thumbs strip — same Unsplash set the video was built from)
