@@ -7,6 +7,7 @@ import os
 import json
 import logging
 import re
+import asyncio
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -22,6 +23,8 @@ from emergentintegrations.payments.stripe.checkout import (
 )
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
+from email_engine import send_guide_drip, send_pro_welcome
+import stripe as stripe_sdk
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -33,8 +36,12 @@ db = client[os.environ['DB_NAME']]
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 DEFAULT_PROVIDER = "anthropic"
 DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
+
+if STRIPE_API_KEY:
+    stripe_sdk.api_key = STRIPE_API_KEY
 
 # Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
@@ -601,6 +608,9 @@ async def checkout_status(stripe_session_id: str, request: Request):
                 upsert=True,
             )
 
+        # Fire drip emails (idempotent — only first time payment_status flips to paid)
+        await _trigger_drip_for_txn(stripe_session_id, txn)
+
     return {
         "status": cs.status,
         "payment_status": cs.payment_status,
@@ -652,7 +662,58 @@ async def stripe_webhook(request: Request):
                     }},
                     upsert=True,
                 )
+            # Fire drip emails — idempotent via drip_sent flag
+            if txn:
+                await _trigger_drip_for_txn(evt.session_id, txn)
     return {"received": True}
+
+
+async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
+    """Resolve buyer email and fire the appropriate Resend drip. Idempotent."""
+    if not os.environ.get("RESEND_API_KEY"):
+        logger.info("Skipping drip — RESEND_API_KEY not set")
+        return
+    if txn.get("drip_sent"):
+        return  # already fired
+
+    # Try transaction record, then fetch email from Stripe session if missing
+    email = (txn.get("email") or "").strip()
+    if not email and STRIPE_API_KEY:
+        try:
+            sess = await asyncio.to_thread(
+                stripe_sdk.checkout.Session.retrieve,
+                stripe_session_id,
+                expand=["customer_details"],
+            )
+            details = sess.get("customer_details") or {}
+            email = (details.get("email") or sess.get("customer_email") or "").strip()
+        except Exception as e:
+            logger.warning("Could not fetch Stripe email for %s: %s", stripe_session_id, e)
+
+    if not email:
+        logger.info("No buyer email found for %s — skipping drip", stripe_session_id)
+        return
+
+    kind = txn.get("package_kind")
+    try:
+        if kind == "guide":
+            ids = await send_guide_drip(email)
+        elif kind == "pro":
+            ids = await send_pro_welcome(email)
+        else:
+            ids = {}
+        await db.payment_transactions.update_one(
+            {"stripe_session_id": stripe_session_id},
+            {"$set": {
+                "drip_sent": True,
+                "drip_email": email,
+                "drip_ids": ids,
+                "drip_sent_at": datetime.now(timezone.utc).isoformat(),
+            }},
+        )
+        logger.info("Drip fired for %s -> %s (%s) ids=%s", stripe_session_id, email, kind, ids)
+    except Exception as e:
+        logger.exception("Drip send failed for %s: %s", stripe_session_id, e)
 
 
 @api_router.get("/entitlements/{session_id}")
@@ -726,6 +787,32 @@ async def pricing():
         pid: {"name": p["name"], "amount": p["amount"], "currency": p["currency"], "kind": p["kind"]}
         for pid, p in PACKAGES.items()
     }
+
+
+# ===== EMAIL TEST ENDPOINT (admin-style smoke test) =====
+class EmailTestRequest(BaseModel):
+    email: str
+    flow: str = "guide"  # "guide" | "pro"
+    first_name: Optional[str] = None
+
+
+@api_router.post("/email/test")
+async def email_test(req: EmailTestRequest):
+    """Send the welcome email immediately to verify Resend is wired correctly.
+    Drip emails are NOT scheduled here — this is for smoke-testing only."""
+    if not os.environ.get("RESEND_API_KEY"):
+        raise HTTPException(503, "RESEND_API_KEY not configured")
+    from email_engine import _send, tpl_guide_welcome, tpl_pro_welcome
+    if req.flow == "pro":
+        s, h, _ = tpl_pro_welcome(req.first_name)
+        tag = "test_pro_welcome"
+    else:
+        s, h, _ = tpl_guide_welcome(req.first_name)
+        tag = "test_guide_welcome"
+    eid = await _send(to=req.email, subject=s, html=h, tag=tag)
+    if not eid:
+        raise HTTPException(502, "Resend send failed — check backend logs")
+    return {"sent": True, "email_id": eid, "to": req.email, "flow": req.flow}
 
 
 app.include_router(api_router)

@@ -86,10 +86,23 @@ Plus an 85-page $20 PDF guide (Gumroad) teaching the underlying framework.
 - ✅ Frontend: GuideUpsell + Pricing + Pro upsell banner all use Stripe; "Auto-Post to FB" button after rewrite; "Make It 10/10" now opens Pro checkout
 - ✅ Tested: backend 17/17 + frontend 100%
 
+## v5 (current — Resend Email Drips + Custom Domain Live)
+- ✅ **listworks.pro custom domain LIVE** on Railway (TXT verify fixed — was truncated in DNS)
+- ✅ **REACT_APP_BACKEND_URL** wired between frontend (`resourceful-passion`) and backend (`listworks-pro-v2-production.up.railway.app`) Railway services
+- ✅ Resend integration (Python SDK 2.30.0) — sending domain `listworks.pro` verified (DKIM + SPF)
+- ✅ `email_engine.py` — 5 inline-styled HTML templates (guide welcome, day 2 playground, day 5 video, day 14 winback, pro welcome)
+- ✅ Drip scheduling via Resend's native `scheduled_at` (no worker/cron needed — stateless on Railway)
+- ✅ Auto-fires on payment confirmation in BOTH the polling endpoint AND the Stripe webhook (idempotent via `drip_sent` flag in `payment_transactions`)
+- ✅ Falls back to Stripe `customer_details.email` if buyer email not collected pre-checkout
+- ✅ `/api/email/test` endpoint for smoke testing
+- ✅ Verified: full drip (5 emails) returns valid Resend email_ids
+
 ## Next session priorities
-- [ ] Email drip via Resend (welcome / day-1 framework / day-3 upgrade / day-7 winback)
-- [ ] Real Stripe live key + live products (when user goes to production)
+- [ ] **Add `RESEND_API_KEY`, `EMAIL_FROM`, `SITE_URL` to Railway BACKEND service vars** (user action)
+- [ ] Real Stripe live keys + live products (when user goes to production)
 - [ ] Telegram bot for buyer DMs / agent notifications
 - [ ] Affiliate program (30% recurring per agent referral)
 - [ ] Login (email magic link) for cross-device entitlement persistence
 - [ ] Brokerage admin panel for $499 tier
+- [ ] Resend webhook handler for delivery/bounce/complaint events
+- [ ] Coupon code support in Stripe (for COMEBACK29 from day-14 winback)

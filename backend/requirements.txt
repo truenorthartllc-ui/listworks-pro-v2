@@ -7,3 +7,5 @@ pydantic>=2.6.4
 email-validator>=2.2.0
 python-multipart>=0.0.9
 Pillow>=10.3.0
+resend>=2.0.0
+stripe>=8.0.0
