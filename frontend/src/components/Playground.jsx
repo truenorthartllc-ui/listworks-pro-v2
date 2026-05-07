@@ -52,11 +52,27 @@ export default function Playground() {
     }
   };
 
-  const copyText = (key, text) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    toast.success("Copied to clipboard.");
-    setTimeout(() => setCopiedKey(null), 1600);
+  const copyText = async (key, text) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopiedKey(key);
+      toast.success("Copied to clipboard.");
+      setTimeout(() => setCopiedKey(null), 1600);
+    } catch (e) {
+      console.warn("Clipboard write failed", e);
+      toast.error("Couldn't access clipboard. Select & copy manually.");
+    }
   };
 
   const getTabContent = () => {
