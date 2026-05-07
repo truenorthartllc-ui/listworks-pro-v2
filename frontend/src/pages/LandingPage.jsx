@@ -1,0 +1,31 @@
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import Playground from "@/components/Playground";
+import Marquee from "@/components/Marquee";
+import BeforeAfter from "@/components/BeforeAfter";
+import Features from "@/components/Features";
+import GuideUpsell from "@/components/GuideUpsell";
+import Testimonials from "@/components/Testimonials";
+import Pricing from "@/components/Pricing";
+import FAQ from "@/components/FAQ";
+import Footer from "@/components/Footer";
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-oat text-ink font-body">
+      <Header />
+      <main>
+        <Hero />
+        <Marquee />
+        <Playground />
+        <BeforeAfter />
+        <Features />
+        <GuideUpsell />
+        <Testimonials />
+        <Pricing />
+        <FAQ />
+      </main>
+      <Footer />
+    </div>
+  );
+}
