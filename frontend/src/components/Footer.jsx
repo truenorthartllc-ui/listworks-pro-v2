@@ -53,7 +53,7 @@ export default function Footer() {
 
         <div className="col-span-12 mt-10 pt-8 border-t border-oat/15 flex flex-wrap justify-between items-center gap-4 font-mono text-[10px] tracking-[0.2em] uppercase text-oat/45">
           <span>© 2026 ListWorks PRO · Made for agents</span>
-          <span>Powered by GPT-5.2</span>
+          <span>Powered by Claude AI by Anthropic</span>
         </div>
       </div>
     </footer>

@@ -79,7 +79,7 @@ export default function GuideUpsell() {
             </h3>
             <div className="mt-8 grid grid-cols-2 gap-6 pt-8 border-t border-oat/15">
               <div>
-                <div className="font-display text-4xl">30</div>
+                <div className="font-display text-4xl">85</div>
                 <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-oat/50 mt-1">Pages</div>
               </div>
               <div>

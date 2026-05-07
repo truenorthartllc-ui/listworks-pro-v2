@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -14,6 +15,8 @@ from datetime import datetime, timezone
 
 from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
 
+from video_engine import generate_listing_video, MUSIC_TRACKS
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -22,6 +25,11 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+DEFAULT_PROVIDER = "anthropic"
+DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
+
+VIDEO_DIR = (ROOT_DIR / "static" / "videos").resolve()
+VIDEO_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="ListWorks PRO API")
 api_router = APIRouter(prefix="/api")
@@ -30,7 +38,7 @@ api_router = APIRouter(prefix="/api")
 # ============== MODELS ==============
 class RewriteRequest(BaseModel):
     raw_listing: str
-    tone: str = "Modern"  # Luxury, Cozy, Modern, Family, Investor
+    tone: str = "Modern"
     address: Optional[str] = None
     price: Optional[str] = None
     beds: Optional[str] = None
@@ -46,6 +54,8 @@ class RewriteOutput(BaseModel):
     facebook: str
     headlines: List[str]
     email: str
+    listing_strength: float
+    strength_reasons: List[str]
     tone: str
     raw_listing: str
     created_at: str
@@ -67,13 +77,48 @@ class FeedbackRequest(BaseModel):
     message: str
 
 
+class AdvisorMessage(BaseModel):
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class AdvisorRequest(BaseModel):
+    listing_id: Optional[str] = None
+    question: str
+    history: List[AdvisorMessage] = []
+
+
+class AdvisorResponse(BaseModel):
+    reply: str
+
+
+class VideoGenerateRequest(BaseModel):
+    listing_id: Optional[str] = None
+    photos: List[str]  # base64 or data: URLs
+    slides: List[str]
+    music_id: str = "cinematic"
+    voiceover_audio: Optional[str] = None  # base64 (recorded by agent)
+    voiceover_text: Optional[str] = None   # if no audio, generate via TTS
+    use_ai_voice: bool = True
+    agent_name: Optional[str] = None
+    agent_brokerage: Optional[str] = None
+    fmt: str = "16:9"  # "16:9" or "9:16"
+
+
+class VideoGenerateResponse(BaseModel):
+    id: str
+    url: str
+    duration: float
+    format: str
+
+
 # ============== AI HELPERS ==============
 TONE_GUIDE = {
-    "Luxury": "Refined, aspirational, evocative. Use cinematic adjectives. Speak to status, exclusivity, and timelessness.",
-    "Cozy": "Warm, inviting, family-forward. Emphasize comfort, quiet mornings, gathering, and home-feel.",
-    "Modern": "Clean, confident, design-aware. Highlight architecture, light, lines, and lifestyle.",
-    "Family": "Friendly, practical, neighborhood-aware. Emphasize schools, yard, room to grow, safety.",
-    "Investor": "Data-forward, ROI-aware. Emphasize cap rate potential, rental comps, location upside, low maintenance.",
+    "Luxury": "Refined, aspirational, evocative. Cinematic adjectives. Status, exclusivity, timelessness.",
+    "Cozy": "Warm, inviting, family-forward. Comfort, quiet mornings, gathering, home-feel.",
+    "Modern": "Clean, confident, design-aware. Architecture, light, lines, lifestyle.",
+    "Family": "Friendly, practical, neighborhood-aware. Schools, yard, room to grow, safety.",
+    "Investor": "Data-forward, ROI-aware. Cap rate potential, rental comps, location upside, low maintenance.",
 }
 
 REWRITE_SYSTEM = """You are ListWorks PRO — a professional real estate copywriter trained
@@ -84,88 +129,57 @@ to justify that feeling.
 ═══════════════════════════════════════════════════════════════
 THE LISTWORKS 5-PART STRUCTURE (use for MLS, Facebook, Email)
 ═══════════════════════════════════════════════════════════════
-1. THE OPENING HOOK — stops the scroll, earns the read. First sentence makes
-   the buyer feel something that compels them to keep reading.
-2. THE LIFESTYLE PARAGRAPH — sells the LIFE, not the specs. Paint the experience
-   of living in this home.
+1. THE OPENING HOOK — stops the scroll, earns the read.
+2. THE LIFESTYLE PARAGRAPH — sells the LIFE, not the specs.
 3. THE FEATURE TRANSLATION LAYER — convert specs into desire using FBF.
 4. THE NEIGHBORHOOD & CONTEXT — place the buyer in the world of this home.
-   Specific details (coffee, schools, commute), never vague claims.
-5. THE CALL TO ACTION — confidence without begging. Soft, credible, direct.
+5. THE CALL TO ACTION — confidence without begging.
 
 ═══════════════════════════════════════════════════════════════
-FEATURE → BENEFIT → FEELING (FBF) FRAMEWORK
+FEATURE → BENEFIT → FEELING (FBF)
 ═══════════════════════════════════════════════════════════════
-For every property feature you mention:
-- FEATURE: what the property has
-- BENEFIT: what it does for the buyer
-- FEELING: how that benefit makes them feel ← THIS is what you write
-Example:
-  Feature: 2-car garage with extra storage
-  Benefit: Room for cars + bikes + tools — nothing living in the living room
-  Feeling: The version of your life where everything has a place
+Feature: what it has → Benefit: what it does → Feeling: how it feels.
+Always write the FEELING.
 
 ═══════════════════════════════════════════════════════════════
-BUYER PSYCHOLOGY TRIGGERS (activate at least one per asset)
+BUYER TRIGGERS (activate at least one per asset)
 ═══════════════════════════════════════════════════════════════
-- BELONGING ("I can see my life here") — community + concrete details
-- STATUS ("This is who I want to be") — identity upgrade, the elevated life
-- SAFETY ("This is a smart decision") — substance, durability, value, demand
-- URGENCY ("I could lose this") — credible scarcity grounded in real data
+Belonging · Status · Safety · Urgency
 
 ═══════════════════════════════════════════════════════════════
 HARD RULES — DO NOT VIOLATE
 ═══════════════════════════════════════════════════════════════
-BANNED words/phrases (NEVER use):
-  "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (the cliché kind),
-  "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell",
-  "Call for details", "A must-see"
-DO NOT:
-- Open with the address or property type
-- Use more than 2 adjectives in a row
-- Write any sentence longer than 25 words
-- Use more than ONE exclamation point in any asset
-- List features in random order — go interior → exterior → lifestyle → logistics
-- Bury price reductions or caveats
-- Overstate or invent details (no hallucination — only use what you're given)
-DO:
-- Lead with feeling, then give facts
-- Use specific, concrete, sensory detail
-- Write in flowing paragraphs (not bullet points) for MLS, FB, Email
-- Vary sentence length — short, then medium, then short again
-- Make every sentence pass the 3-second scroll test
-
-═══════════════════════════════════════════════════════════════
-TONE GUIDANCE
-═══════════════════════════════════════════════════════════════
-Overall: confident, direct, zero fluff. The user-selected tone modifies the
-voice but the framework above is non-negotiable.
+BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliché),
+"Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell",
+"Call for details".
+DO NOT open with the address or property type. No more than 2 adjectives in a row.
+No sentence longer than 25 words. Max one exclamation per asset. No bullet points.
 
 ═══════════════════════════════════════════════════════════════
 OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
 ═══════════════════════════════════════════════════════════════
 {
-  "mls": "200-250 words. Full 5-part structure. Flowing paragraphs only.
-          Soft confident CTA at the end. No banned words.",
-  "instagram": "100-130 words. Hook line that works without the image.
-                Conversational and warm. Ends with a question or low-pressure CTA.
-                Add a separate final line with exactly 12-15 targeted hashtags.",
-  "facebook": "150-180 words. Story-driven, lifestyle-led. Ends with a clear
-               low-pressure CTA (schedule tour, DM for info).",
+  "mls": "200-250 words. Full 5-part structure. Flowing paragraphs. Soft confident CTA.",
+  "instagram": "100-130 words. Hook line works without image. Conversational. Ends with question or CTA. Final line: 12-15 targeted hashtags separated by spaces.",
+  "facebook": "150-180 words. Story-driven, lifestyle-led. Ends with low-pressure CTA.",
   "headlines": [
-    "5 scroll-stopping headlines, each under 10 words.",
+    "3 scroll-stopping headlines, under 10 words each.",
     "Variation 1 leads with EMOTION.",
     "Variation 2 leads with SPECIFICITY.",
-    "Variation 3 leads with URGENCY.",
-    "Variations 4 and 5 mix triggers — make them distinct."
+    "Variation 3 leads with URGENCY."
   ],
-  "email": "120-160 words. First line: 'Subject: [scroll-stopping subject]'.
-            Then a blank line. Then the body — personal, warm, confident, ending
-            with one clear next step."
+  "email": "120-160 words. First line: 'Subject: …'. Blank line. Then body. Personal, warm, confident.",
+  "listing_strength": 7.4,
+  "strength_reasons": [
+    "3-4 short reasons explaining the score, citing real elements (e.g. 'Specific neighborhood detail used', 'Clear FBF translation in lifestyle paragraph').",
+    "If score is below 9, include 1-2 concrete suggestions to improve it."
+  ]
 }
 
-Trained on the ListWorks Guide v1 — the same framework top-1% agents use to
-close listings 2-3 weeks faster."""
+The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
+input + your output expresses the framework. Be honest — most rewrites land between
+6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
+"""
 
 
 def _strip_json(text: str) -> str:
@@ -174,7 +188,6 @@ def _strip_json(text: str) -> str:
         text = re.sub(r"^```(?:json)?", "", text).strip()
         if text.endswith("```"):
             text = text[:-3].strip()
-    # extract first {...} block
     start = text.find("{")
     end = text.rfind("}")
     if start != -1 and end != -1:
@@ -182,10 +195,7 @@ def _strip_json(text: str) -> str:
     return text
 
 
-async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
-
+def _build_user_prompt(req: RewriteRequest) -> str:
     tone_desc = TONE_GUIDE.get(req.tone, TONE_GUIDE["Modern"])
     meta = []
     if req.address: meta.append(f"Address: {req.address}")
@@ -194,8 +204,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     if req.baths: meta.append(f"Baths: {req.baths}")
     if req.sqft: meta.append(f"Sqft: {req.sqft}")
     meta_str = "\n".join(meta) if meta else "No metadata provided."
-
-    prompt = f"""TONE: {req.tone}
+    return f"""TONE: {req.tone}
 TONE GUIDE: {tone_desc}
 
 PROPERTY METADATA:
@@ -206,13 +215,18 @@ RAW / BORING LISTING:
 
 Now produce the JSON object. JSON only."""
 
+
+async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(500, "LLM key missing")
+
     chat = LlmChat(
         api_key=EMERGENT_LLM_KEY,
         session_id=req.session_id or str(uuid.uuid4()),
         system_message=REWRITE_SYSTEM,
-    ).with_model("openai", "gpt-5.2")
+    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
 
-    response = await chat.send_message(UserMessage(text=prompt))
+    response = await chat.send_message(UserMessage(text=_build_user_prompt(req)))
     cleaned = _strip_json(response)
     try:
         data = json.loads(cleaned)
@@ -220,23 +234,36 @@ Now produce the JSON object. JSON only."""
         logging.exception("JSON parse failed")
         raise HTTPException(500, f"AI returned invalid JSON: {str(e)[:120]}")
 
-    # normalize
     headlines = data.get("headlines", [])
     if isinstance(headlines, str):
         headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
+    headlines = [h.strip() for h in headlines if h.strip()][:3]
+
+    reasons = data.get("strength_reasons", [])
+    if isinstance(reasons, str):
+        reasons = [r.strip() for r in reasons.split("\n") if r.strip()]
+
+    try:
+        strength = float(data.get("listing_strength", 7.0))
+    except (TypeError, ValueError):
+        strength = 7.0
+    strength = max(0.0, min(10.0, round(strength, 1)))
+
     return {
         "mls": data.get("mls", "").strip(),
         "instagram": data.get("instagram", "").strip(),
         "facebook": data.get("facebook", "").strip(),
-        "headlines": [h.strip() for h in headlines if h.strip()][:6],
+        "headlines": headlines,
         "email": data.get("email", "").strip(),
+        "listing_strength": strength,
+        "strength_reasons": [r for r in reasons if isinstance(r, str)][:5],
     }
 
 
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():
-    return {"app": "ListWorks PRO", "status": "live"}
+    return {"app": "ListWorks PRO", "status": "live", "engine": "Claude Sonnet 4.5"}
 
 
 @api_router.post("/rewrite", response_model=RewriteOutput)
@@ -305,6 +332,107 @@ async def analyze_photo(req: PhotoAnalyzeRequest):
         style=str(data.get("style", "")).strip(),
         suggested_headline=str(data.get("suggested_headline", "")).strip(),
     )
+
+
+# ===== AI Advisor (chat) =====
+ADVISOR_SYSTEM = """You are the ListWorks AI Advisor — a senior real estate marketing
+strategist trained on the ListWorks framework (5-part structure, Feature → Benefit → Feeling,
+4 buyer triggers). You give concise, opinionated, actionable advice on listing copy,
+photos, video strategy, and buyer psychology.
+
+Keep responses under 180 words. Use plain text, short paragraphs, no markdown headers.
+When the user shares listing copy, critique it against the framework: point to specific
+banned-word offenders, missing FBF translations, weak hooks, and dead CTAs. Suggest
+exact rewrites — don't just describe."""
+
+
+@api_router.post("/advisor", response_model=AdvisorResponse)
+async def advisor(req: AdvisorRequest):
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(500, "LLM key missing")
+
+    context_msg = ""
+    if req.listing_id:
+        listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+        if listing:
+            context_msg = (
+                "\n\n[CURRENT LISTING CONTEXT]\n"
+                f"Tone: {listing.get('tone')}\n"
+                f"MLS: {listing.get('mls', '')[:600]}\n"
+                f"Headlines: {listing.get('headlines', [])}\n"
+            )
+
+    history_text = ""
+    for h in req.history[-6:]:
+        history_text += f"\n{h.role.upper()}: {h.content[:600]}"
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"advisor-{req.listing_id or 'anon'}",
+        system_message=ADVISOR_SYSTEM,
+    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
+
+    user_text = f"{history_text}\n\nUSER: {req.question}{context_msg}".strip()
+    reply = await chat.send_message(UserMessage(text=user_text))
+    return AdvisorResponse(reply=reply.strip())
+
+
+# ===== Video Generation =====
+@api_router.post("/video/generate", response_model=VideoGenerateResponse)
+async def video_generate(req: VideoGenerateRequest):
+    if not req.photos:
+        raise HTTPException(400, "Upload at least one photo")
+    if req.fmt not in ("16:9", "9:16"):
+        raise HTTPException(400, "fmt must be 16:9 or 9:16")
+    if req.music_id not in MUSIC_TRACKS:
+        raise HTTPException(400, f"Invalid music_id. Use one of {sorted(MUSIC_TRACKS)}")
+
+    # voiceover text fallback
+    vo_text = None
+    if not req.voiceover_audio and req.use_ai_voice:
+        vo_text = req.voiceover_text or " ".join(req.slides) or ""
+        vo_text = vo_text.strip()
+
+    try:
+        result = await generate_listing_video(
+            photos_b64=req.photos,
+            slides=req.slides,
+            music_id=req.music_id,
+            voiceover_b64=req.voiceover_audio,
+            voiceover_text=vo_text,
+            agent_name=req.agent_name,
+            agent_brokerage=req.agent_brokerage,
+            fmt=req.fmt,
+            api_key=EMERGENT_LLM_KEY,
+        )
+    except ValueError as ve:
+        raise HTTPException(400, str(ve))
+    except Exception as e:
+        logging.exception("Video generation failed")
+        raise HTTPException(500, f"Video generation failed: {str(e)[:200]}")
+
+    # persist
+    await db.videos.insert_one({
+        "id": result["id"],
+        "listing_id": req.listing_id,
+        "url": result["url"],
+        "duration": result["duration"],
+        "format": result["format"],
+        "music_id": req.music_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return VideoGenerateResponse(**result)
+
+
+@api_router.get("/videos/{filename}")
+async def serve_video(filename: str):
+    # safe filename
+    if not re.fullmatch(r"[a-f0-9]{6,32}\.mp4", filename):
+        raise HTTPException(404, "Not found")
+    path = VIDEO_DIR / filename
+    if not path.exists():
+        raise HTTPException(404, "Video not found")
+    return FileResponse(str(path), media_type="video/mp4", filename=filename)
 
 
 @api_router.get("/listings/{session_id}")

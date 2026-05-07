@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Copy, Check, Sparkles, Loader2 } from "lucide-react";
+import {
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film,
+} from "lucide-react";
+import VideoBuilder from "@/components/VideoBuilder";
+import AdvisorPanel from "@/components/AdvisorPanel";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Family", "Investor"];
 const TABS = [
-  { key: "mls", label: "MLS" },
-  { key: "instagram", label: "Instagram" },
-  { key: "facebook", label: "Facebook" },
-  { key: "headlines", label: "Headlines" },
-  { key: "email", label: "Email" },
+  { key: "mls", label: "MLS Description", icon: "🏡" },
+  { key: "instagram", label: "Instagram Caption", icon: "📸" },
+  { key: "facebook", label: "Facebook Post", icon: "📘" },
+  { key: "headlines", label: "Scroll-Stopping Headlines", icon: "✏️" },
+  { key: "email", label: "Email", icon: "✉️" },
 ];
 
 const SAMPLE = `3 bed 2 bath ranch home. 1,840 sqft. Updated kitchen with granite counters and stainless appliances. Hardwood floors throughout. Fenced backyard. Two-car garage. Walking distance to top-rated schools. Move-in ready.`;
@@ -23,27 +27,37 @@ export default function Playground() {
   const [result, setResult] = useState(null);
   const [activeTab, setActiveTab] = useState("mls");
   const [copiedKey, setCopiedKey] = useState(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showAdvisor, setShowAdvisor] = useState(false);
+  const [strengthOpen, setStrengthOpen] = useState(false);
+  const outputRef = useRef(null);
+
+  useEffect(() => {
+    if (result && outputRef.current) {
+      outputRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [result]);
 
   const handleSample = () => setRaw(SAMPLE);
 
-  const handleGenerate = async () => {
+  const generate = async (forcedTone = null) => {
     if (raw.trim().length < 10) {
       toast.error("Add at least a sentence — give the AI something to work with.");
       return;
     }
     setLoading(true);
-    setResult(null);
+    if (!forcedTone) setResult(null);
     try {
       const session_id = localStorage.getItem("lw_session_id");
       const { data } = await axios.post(`${API}/rewrite`, {
         raw_listing: raw,
-        tone,
+        tone: forcedTone || tone,
         ...meta,
         session_id,
       });
       setResult(data);
       setActiveTab("mls");
-      toast.success("Rewritten — ready to publish.");
+      toast.success(forcedTone ? `Rewritten in ${forcedTone} tone.` : "Listing rewritten — copy & crush it.");
     } catch (e) {
       console.error(e);
       toast.error(e?.response?.data?.detail || "Generation failed. Try again.");
@@ -52,60 +66,40 @@ export default function Playground() {
     }
   };
 
+  const tryDifferentTone = () => {
+    const idx = TONES.indexOf(tone);
+    const next = TONES[(idx + 1) % TONES.length];
+    setTone(next);
+    generate(next);
+  };
+
   const copyText = async (key, text) => {
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+      else {
         const ta = document.createElement("textarea");
         ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
       }
       setCopiedKey(key);
-      toast.success("Copied to clipboard.");
+      toast.success("Copied. Now go crush it.");
       setTimeout(() => setCopiedKey(null), 1600);
     } catch (e) {
-      console.warn("Clipboard write failed", e);
       toast.error("Couldn't access clipboard. Select & copy manually.");
     }
   };
 
-  const getTabContent = () => {
-    if (!result) return null;
-    if (activeTab === "headlines") {
-      return (
-        <ol data-testid="output-headlines" className="space-y-3 font-display text-xl md:text-2xl leading-tight">
-          {(result.headlines || []).map((h, i) => (
-            <li key={i} className="flex gap-4 group">
-              <span className="font-mono text-[11px] tracking-widest text-vermillion mt-2 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-              <span className="italic">{h}</span>
-            </li>
-          ))}
-        </ol>
-      );
-    }
-    return (
-      <pre data-testid={`output-${activeTab}`} className="whitespace-pre-wrap font-mono text-[13px] leading-[1.7] text-ink">
-        {result[activeTab]}
-      </pre>
-    );
-  };
-
+  const headlinesAsText = (h) => (h || []).map((x, i) => `${i + 1}. ${x}`).join("\n");
   const currentText = result
-    ? activeTab === "headlines"
-      ? (result.headlines || []).map((h, i) => `${i + 1}. ${h}`).join("\n")
-      : result[activeTab]
+    ? activeTab === "headlines" ? headlinesAsText(result.headlines) : result[activeTab]
     : "";
+
+  const strengthColor = (s) => s >= 8.5 ? "text-emerald-700" : s >= 7 ? "text-vermillion" : "text-amber-600";
 
   return (
     <section id="playground" data-testid="playground-section" className="border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
-        {/* Section header */}
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-3">
             <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ The Tool</span>
@@ -124,11 +118,7 @@ export default function Playground() {
           <div className="col-span-12 lg:col-span-5 bg-oat p-6 md:p-8">
             <div className="flex items-center justify-between mb-4">
               <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60">Input · Raw Listing</span>
-              <button
-                data-testid="sample-btn"
-                onClick={handleSample}
-                className="font-mono text-[11px] tracking-[0.15em] uppercase text-vermillion hover:underline"
-              >
+              <button data-testid="sample-btn" onClick={handleSample} className="font-mono text-[11px] tracking-[0.15em] uppercase text-vermillion hover:underline">
                 Use sample →
               </button>
             </div>
@@ -137,7 +127,7 @@ export default function Playground() {
               value={raw}
               onChange={(e) => setRaw(e.target.value)}
               placeholder="Paste your boring MLS draft here. The more detail, the sharper the output."
-              rows={9}
+              rows={8}
               className="editorial-input mb-5"
             />
 
@@ -153,13 +143,7 @@ export default function Playground() {
               <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">Tone</span>
               <div className="flex flex-wrap gap-2">
                 {TONES.map((t) => (
-                  <button
-                    key={t}
-                    data-testid={`tone-${t.toLowerCase()}-btn`}
-                    onClick={() => setTone(t)}
-                    data-active={tone === t}
-                    className="tone-pill"
-                  >
+                  <button key={t} data-testid={`tone-${t.toLowerCase()}-btn`} onClick={() => setTone(t)} data-active={tone === t} className="tone-pill">
                     {t}
                   </button>
                 ))}
@@ -168,54 +152,61 @@ export default function Playground() {
 
             <button
               data-testid="generate-btn"
-              onClick={handleGenerate}
+              onClick={() => generate()}
               disabled={loading}
               className="btn-vermillion w-full px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Rewriting…
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  Rewrite My Listing
-                </>
-              )}
+              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
             </button>
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
-              Powered by GPT-5.2 · Free for first 3 listings
+              Powered by Claude AI by Anthropic · Free for first 3 listings
             </p>
           </div>
 
           {/* Output column */}
-          <div className="col-span-12 lg:col-span-7 bg-white p-6 md:p-8 min-h-[520px] flex flex-col">
+          <div className="col-span-12 lg:col-span-7 bg-white p-6 md:p-8 min-h-[560px] flex flex-col" ref={outputRef}>
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
               <div className="flex flex-wrap gap-2">
                 {TABS.map((t) => (
-                  <button
-                    key={t.key}
-                    data-testid={`tab-${t.key}-btn`}
-                    onClick={() => setActiveTab(t.key)}
-                    data-active={activeTab === t.key}
-                    className="tab-pill px-4 py-2 font-heading text-[12px] uppercase tracking-[0.12em]"
-                  >
-                    {t.label}
+                  <button key={t.key} data-testid={`tab-${t.key}-btn`} onClick={() => setActiveTab(t.key)} data-active={activeTab === t.key} className="tab-pill px-3.5 py-2 font-heading text-[12px] uppercase tracking-[0.1em]">
+                    <span className="mr-1.5">{t.icon}</span>{t.label.split(" ")[0]}
                   </button>
                 ))}
               </div>
               {result && (
-                <button
-                  data-testid="copy-output-btn"
-                  onClick={() => copyText(activeTab, currentText)}
-                  className="flex items-center gap-2 font-mono text-[11px] tracking-[0.15em] uppercase text-ink/70 hover:text-vermillion transition"
-                >
-                  {copiedKey === activeTab ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedKey === activeTab ? "Copied" : "Copy"}
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    data-testid="strength-badge"
+                    onClick={() => setStrengthOpen((o) => !o)}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-ink/20 hover:border-ink transition font-mono text-[11px] tracking-[0.12em] uppercase"
+                  >
+                    <Star className={`w-3.5 h-3.5 ${strengthColor(result.listing_strength)} fill-current`} />
+                    Strength {result.listing_strength?.toFixed(1)}/10
+                  </button>
+                  <button
+                    data-testid="copy-output-btn"
+                    onClick={() => copyText(activeTab, currentText)}
+                    className="bg-ink text-oat hover:bg-vermillion px-3.5 py-2 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition"
+                  >
+                    {copiedKey === activeTab ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedKey === activeTab ? "Copied" : "Copy & Crush It"}
+                  </button>
+                </div>
               )}
             </div>
+
+            {result && strengthOpen && (
+              <div data-testid="strength-explainer" className="mb-4 border border-ink/15 bg-oat p-4 animate-rise">
+                <div className="flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/60 mb-2">
+                  <Star className="w-3.5 h-3.5" /> Why {result.listing_strength?.toFixed(1)} / 10
+                </div>
+                <ul className="space-y-1.5 font-body text-sm text-ink/80">
+                  {(result.strength_reasons || []).map((r, i) => (
+                    <li key={i} className="flex gap-2"><span className="text-vermillion">·</span> {r}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="flex-1 border-t border-ink/15 pt-6">
               {!result && !loading && (
@@ -225,7 +216,7 @@ export default function Playground() {
                     Your rewritten listing will materialize here.
                   </p>
                   <p className="mt-4 font-body text-ink/60">
-                    Paste a draft, pick a tone, hit rewrite. We'll generate five publish-ready assets in about ten seconds.
+                    Paste a draft, pick a tone, hit rewrite. Five publish-ready assets in about ten seconds.
                   </p>
                 </div>
               )}
@@ -233,26 +224,115 @@ export default function Playground() {
                 <div className="h-full flex flex-col items-start justify-center">
                   <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-vermillion mb-3 streaming-cursor">Generating</span>
                   <div className="space-y-3 w-full max-w-2xl">
-                    <div className="h-3 bg-ink/10 w-11/12 animate-pulse" />
-                    <div className="h-3 bg-ink/10 w-10/12 animate-pulse" />
-                    <div className="h-3 bg-ink/10 w-8/12 animate-pulse" />
-                    <div className="h-3 bg-ink/10 w-11/12 animate-pulse" />
-                    <div className="h-3 bg-ink/10 w-9/12 animate-pulse" />
+                    {[11,10,8,11,9].map((w,i)=>(<div key={i} className={`h-3 bg-ink/10 w-${w}/12 animate-pulse`} />))}
                   </div>
                 </div>
               )}
-              {result && getTabContent()}
+              {result && (
+                activeTab === "headlines" ? (
+                  <ol data-testid="output-headlines" className="space-y-4 font-display text-2xl md:text-3xl leading-tight">
+                    {(result.headlines || []).map((h, i) => (
+                      <li key={i} className="flex gap-4 group">
+                        <span className="font-mono text-[11px] tracking-widest text-vermillion mt-2 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                        <div className="flex-1">
+                          <span className="italic">{h}</span>
+                          <button
+                            data-testid={`copy-headline-${i}`}
+                            onClick={() => copyText(`headline-${i}`, h)}
+                            className="ml-3 inline-flex items-center gap-1 font-body text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-vermillion transition"
+                          >
+                            {copiedKey === `headline-${i}` ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                            {copiedKey === `headline-${i}` ? "Copied" : "Copy"}
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <pre data-testid={`output-${activeTab}`} className="whitespace-pre-wrap font-mono text-[13px] leading-[1.7] text-ink">
+                    {result[activeTab]}
+                  </pre>
+                )
+              )}
             </div>
 
             {result && (
-              <div className="mt-6 pt-5 border-t border-ink/10 flex items-center justify-between font-mono text-[11px] tracking-[0.12em] uppercase text-ink/50">
-                <span>Tone · {result.tone}</span>
-                <span>ID · {result.id?.slice(0, 8)}</span>
+              <div className="mt-6 pt-5 border-t border-ink/10">
+                <div className="flex flex-wrap gap-2.5 mb-5">
+                  <button
+                    data-testid="open-video-btn"
+                    onClick={() => setShowVideo(true)}
+                    className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                  >
+                    <Film className="w-3.5 h-3.5" /> Turn This Into a Video
+                  </button>
+                  <button
+                    data-testid="advisor-btn"
+                    onClick={() => setShowAdvisor(true)}
+                    className="border border-ink/30 hover:bg-ink hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                  >
+                    <Bot className="w-3.5 h-3.5" /> AI Advisor
+                  </button>
+                  <button
+                    data-testid="try-different-tone-btn"
+                    onClick={tryDifferentTone}
+                    disabled={loading}
+                    className="border border-ink/30 hover:bg-ink hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5 disabled:opacity-50"
+                  >
+                    <RefreshCcw className="w-3.5 h-3.5" /> Try a Different Tone
+                  </button>
+                  <button
+                    data-testid="make-10-btn"
+                    onClick={() => toast("🔥 Make it 10/10 is a Pro feature. Upgrade to unlock.", { duration: 3500 })}
+                    className="border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                  >
+                    <Flame className="w-3.5 h-3.5" /> Make It 10/10 — Pro
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.12em] uppercase text-ink/50">
+                  <span>Tone · {result.tone}</span>
+                  <span>ID · {result.id?.slice(0, 8)}</span>
+                </div>
               </div>
             )}
           </div>
         </div>
+
+        {/* Pro upsell banner under playground */}
+        {result && (
+          <div data-testid="pro-upsell-banner" className="mt-px bg-coal text-oat p-7 md:p-9 border border-ink/15 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="md:col-span-2">
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">ListGenius Pro</span>
+              <p className="mt-2 font-display italic text-2xl md:text-3xl leading-tight">
+                Unlimited rewrites · cinematic videos without watermarks · the AI Advisor in your pocket.
+              </p>
+            </div>
+            <div className="flex md:justify-end">
+              <a
+                data-testid="pro-upgrade-btn"
+                href="#pricing"
+                className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition hover:-translate-y-1 inline-flex items-center gap-2"
+              >
+                Get ListGenius Pro — $49/mo →
+              </a>
+            </div>
+          </div>
+        )}
       </div>
+
+      {showVideo && result && (
+        <VideoBuilder
+          listing={result}
+          onClose={() => setShowVideo(false)}
+        />
+      )}
+      {showAdvisor && (
+        <AdvisorPanel
+          listingId={result?.id}
+          onClose={() => setShowAdvisor(false)}
+        />
+      )}
     </section>
   );
 }

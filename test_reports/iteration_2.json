@@ -1,0 +1,41 @@
+{
+  "summary": "Iteration 2 full e2e testing of ListWorks PRO (Claude Sonnet 4.5 + Video Builder + AI Advisor). Backend pytest: 20/20 passed in 175s. Frontend: all critical UI flows verified end-to-end on the public REACT_APP_BACKEND_URL.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Playground (during regenerate / try-different-tone)", "issues": ["While regenerating, the action buttons row (Turn This Into a Video, AI Advisor, Try a Different Tone, Make it 10/10 Pro) appears to overlap visually with the loading skeleton / re-rendered text in the output column. Looks like absolute-positioned action row sits over the GENERATING placeholder. Transient and self-resolves once generation completes, but can feel jarring. Consider moving action buttons below the output card or hiding/dimming them while loading=true."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_listworks.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(LOW) Hide or disable the [open-video-btn / advisor-btn / try-different-tone-btn / make-10-btn] action row while the rewrite is in-flight (loading state) so they don't overlap the GENERATING skeleton.",
+    "(LOW – carryover from iter 1) Wrap navigator.clipboard.writeText() in try/catch in /app/frontend/src/components/Playground.jsx copyText() to avoid Uncaught NotAllowedError in sandboxed/iframe contexts."
+  ],
+  "critical_code_review_comments": [
+    "server.py:317 — /api/analyze-photo still hardcoded to openai/gpt-5.2 even though the rest of the app moved to Claude. Inconsistent provider; if EMERGENT_LLM_KEY ever rotates differently per provider this breaks silently. Consider unifying.",
+    "server.py:382 — /api/video/generate has no upper-bound check on slides[] length (video_engine.py truncates to 4 silently) — main agent should explicitly validate / surface a 422 for >4 slides instead of silent drop.",
+    "server.py:382 — /api/video/generate accepts unbounded photos[] payload (each base64 photo can be MBs). With 12 photos × ~2MB this is a 24MB JSON request — no FastAPI body-size guard. Add a size check or use multipart upload.",
+    "video_engine.py:188 — slides truncated at 80 chars but UI says 50-char max; backend should match the spec (50) or both should agree.",
+    "video_engine.py:264 — if MUSIC file is missing on disk we silently fall through to no-music. Should raise so missing assets are visible.",
+    "Playground.jsx — strength-explainer relies on toggling state from strength-badge; not directly clickable. That's fine, but a tester reading the spec ('Why this score? opens explainer') may expect a separate clickable trigger. Either rename testid or add the explicit 'Why this score?' anchor.",
+    "VideoBuilder backend payload — voiceover_audio (raw recorded) is sent as base64 on the same JSON body as photos; pile-up of 12 photos + WAV blob can exceed default uvicorn limits. Same as photos point above."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_listworks.py (added 11 new tests: listing_strength fields, strength_reasons, exactly-3 headlines, /api/advisor basic + with history, /api/video/generate happy path with 16:9 + cinematic music + AI voice, /api/videos/{id}.mp4 success serve, 404 cases, validation: empty photos / bad music_id / bad fmt)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "Not applicable (no auth in app).",
+  "seed_data_creation": "Created TEST_ session listings via /api/rewrite (5 tones), 1 feedback row, ~2 video docs in mongo (videos collection) + 1 MP4 file in /app/backend/static/videos/. Cleanup not strictly needed — they're scoped to TEST_ session.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 20 pytest cases green: /api/{rewrite (5 tones, validation), examples, feedback, listings/{session}, analyze-photo, advisor (basic + history), video/generate (success + 3 validation 400s), videos/{id}.mp4 (success + 2 404s)}. Real Unsplash JPEG re-encoded for analyze-photo & video tests per /app/image_testing.md. Video gen took ~35-45s per call with 2 photos + cinematic + AI voice + 4 slides. Frontend: all required data-testids exist and are wired correctly. The 'Make it 10/10 Pro' & 9:16 Reels are intentional toast-only stubs (correct). VideoBuilder modal opens correctly after first successful /api/rewrite (slide inputs prefilled from headlines, slide-3 empty when only 3 headlines — that's correct/expected). AI Advisor right-drawer opens, sends starters, gets Claude reply (~10s), ESC closes. ListGenius Pro $49 banner + Footer 'Powered by Claude AI by Anthropic' both present. Page count 85 confirmed (no '30 pages' anywhere). Only outstanding nit is action-button-row overlapping the loading skeleton during regenerate — minor visual polish.",
+  "rca of the issue": "N/A — all targeted features pass. The single design nit (action row overlapping skeleton during regenerate) is caused by the action row being rendered unconditionally while the result column re-renders the GENERATING skeleton on top of the previous result; mitigation is to gate visibility on !loading."
+}
