@@ -19,13 +19,20 @@ from PIL import Image, ImageDraw, ImageFont
 logger = logging.getLogger(__name__)
 
 ROOT_DIR = Path(__file__).parent
-MUSIC_DIR = (ROOT_DIR.parent / "frontend" / "public" / "assets" / "music").resolve()
+# Music tracks live alongside the backend so they survive containerized deploys (Railway, Fly, etc.)
+# Fall back to the frontend public folder for local dev if not yet copied.
+_BACKEND_MUSIC = (ROOT_DIR / "static" / "music").resolve()
+_FRONTEND_MUSIC = (ROOT_DIR.parent / "frontend" / "public" / "assets" / "music").resolve()
+MUSIC_DIR = _BACKEND_MUSIC if _BACKEND_MUSIC.exists() else _FRONTEND_MUSIC
 STATIC_VIDEOS = (ROOT_DIR / "static" / "videos").resolve()
 STATIC_VIDEOS.mkdir(parents=True, exist_ok=True)
 
 FONT_CANDIDATES = [
+    str(ROOT_DIR / "static" / "fonts" / "DejaVuSerif-Bold.ttf"),
     "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSerif-Bold.ttf",
 ]
 FONT_PATH = next((f for f in FONT_CANDIDATES if os.path.exists(f)), None)
 
@@ -129,12 +136,19 @@ def _render_slide(
 
 
 async def _run(cmd: List[str], cwd: Optional[str] = None) -> str:
-    proc = await asyncio.create_subprocess_exec(
-        *cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-        cwd=cwd,
-    )
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=cwd,
+        )
+    except FileNotFoundError as e:
+        # Most common cause on Railway: ffmpeg binary missing from the container.
+        raise RuntimeError(
+            f"Required binary not found: {e.filename or cmd[0]}. "
+            f"On Railway add ffmpeg via nixpacks.toml (already included) and redeploy."
+        )
     stdout, stderr = await proc.communicate()
     if proc.returncode != 0:
         err = stderr.decode("utf-8", "ignore")[-2000:]
@@ -273,6 +287,8 @@ async def generate_listing_video(
                     str(m_out),
                 ])
                 audio_inputs.append(m_out)
+            else:
+                logger.warning("Music file not found at %s — falling back to silent.", music_src)
 
         # voiceover: prefer uploaded base64 audio, else generate from voiceover_text via TTS
         vo_path: Optional[Path] = None
