@@ -256,7 +256,7 @@ export default function Playground() {
               )}
             </div>
 
-            {result && (
+            {result && !loading && (
               <div className="mt-6 pt-5 border-t border-ink/10">
                 <div className="flex flex-wrap gap-2.5 mb-5">
                   <button
