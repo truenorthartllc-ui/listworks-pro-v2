@@ -1,0 +1,13 @@
+# Don't ship dev cruft into the Docker image
+__pycache__/
+*.pyc
+*.pyo
+.env.local
+.env.development
+tests/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
