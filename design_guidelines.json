@@ -1,0 +1,115 @@
+{
+  "theme": "LIGHT",
+  "archetype": "Archetype 4 (Swiss & High-Contrast) + Editorial Luxury",
+  "mood": "Authoritative, Magazine-like, High-end Real Estate, Magical AI",
+  "design_philosophy": "A complete rejection of standard SaaS look. This is an 'Architectural Digest' magazine cover mixed with brutalist engineering. Bold, asymmetric, and incredibly premium.",
+  "typography": {
+    "fonts": {
+      "display": "Playfair Display",
+      "heading": "Outfit",
+      "body": "DM Sans",
+      "mono": "JetBrains Mono"
+    },
+    "rules": [
+      "Use Playfair Display (Italicized heavily) for massive, high-contrast H1s and statement quotes.",
+      "Use Outfit for section headings, structural labels, and UI numbers.",
+      "Use DM Sans for body text.",
+      "Use JetBrains Mono inside the AI output box to give that raw, 'generation in progress' terminal feel.",
+      "BANNED: Inter, Roboto, Lato, Space Grotesk."
+    ],
+    "scale": {
+      "h1": "text-5xl md:text-7xl font-light tracking-tighter leading-none",
+      "h2": "text-3xl md:text-5xl tracking-tight leading-tight",
+      "h3": "text-xl md:text-2xl font-medium",
+      "body": "text-base leading-relaxed text-opacity-80"
+    }
+  },
+  "colors": {
+    "background": {
+      "primary": "#F4F3EF",
+      "secondary": "#FFFFFF",
+      "dark_section": "#0A0A0A"
+    },
+    "text": {
+      "primary": "#121212",
+      "secondary": "#5C5C5C",
+      "inverse": "#F4F3EF"
+    },
+    "brand": {
+      "primary": "#FF3B22",
+      "secondary": "#002FA7",
+      "accent": "#D1CFC7"
+    },
+    "rules": [
+      "Base background is a warm architectural white/oat (#F4F3EF).",
+      "Primary CTA and 'exploding' UI elements use pure vermillion red (#FF3B22).",
+      "No purple gradients. No soft shadows. Use sharp 1px borders (#121212 at 15% opacity)."
+    ]
+  },
+  "layout": {
+    "spacing": "Generous spacing. Use py-24 or py-32 for sections. Padding within containers should be massive (p-8 or p-12).",
+    "grid": "Bento Grid Mode A (Tetris Grid) for features. Never fill 100% perfectly, leave some cells completely empty for negative space.",
+    "alignment": "Strict left-alignment. Never center-align paragraphs.",
+    "surface": "Grid Borders (The 'Technical' Look). Expose the skeleton. Containers should have border-collapse style layouts with sharp 1px borders."
+  },
+  "components": {
+    "buttons": "Sharp corners (rounded-none or rounded-sm). Solid #FF3B22 for primary with high-contrast text. Add group-hover translate effects.",
+    "cards": "Cardless or sharp 1px border. Background matches parent (no white cards on gray bg unless structurally separated).",
+    "ai_playground": "Bento-style layout. Tabbed output for platforms (MLS, Instagram, Facebook, Email). Tone selector pills (Luxury, Cozy, Modern) should be stark outlined badges. Live copy generation feel.",
+    "nav": "Sticky header. Glassmorphism: backdrop-blur-2xl bg-[#F4F3EF]/70 border-b border-black/10.",
+    "upsell_card": "$20 PDF guide upsell must look like a physical blueprint or premium editorial card, dark-themed (#0A0A0A) to stand out from the light theme."
+  },
+  "interactions": {
+    "hover": "Text color explicitly set on hover. Interactive elements shift -translate-y-1.",
+    "animations": "Framer motion for staggered entrances. AI generation should look like text is streaming/typing out."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "hero_background",
+        "url": "https://images.unsplash.com/photo-1758448756880-01dbaf85597d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBtb2Rlcm4lMjByZWFsJTIwZXN0YXRlJTIwZXh0ZXJpb3IlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTEyOTQzfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Modern building with a green lawn. Use as the hero section background with a bg-black/30 or bg-[#F4F3EF]/80 gradient overlay."
+      },
+      {
+        "category": "before_after_1",
+        "url": "https://images.unsplash.com/photo-1776500588108-1e059459f14c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBtb2Rlcm4lMjByZWFsJTIwZXN0YXRlJTIwZXh0ZXJpb3IlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTEyOTQ0fDA&ixlib=rb-4.1.0&q=85",
+        "description": "White luxury car parked in front of modern white house."
+      },
+      {
+        "category": "before_after_2",
+        "url": "https://images.unsplash.com/photo-1777245398213-e95bb34c442a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwzfHxsdXh1cnklMjBtb2Rlcm4lMjByZWFsJTIwZXN0YXRlJTIwZXh0ZXJpb3IlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTEyOTQ0fDA&ixlib=rb-4.1.0&q=85",
+        "description": "White modern building with mountains in the background."
+      },
+      {
+        "category": "texture_overlay",
+        "url": "https://images.unsplash.com/photo-1648536145010-3edd19636856?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDR8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGFyY2hpdGVjdHVyYWwlMjBsaW5lcyUyMHRleHR1cmV8ZW58MHx8fHwxNzc4MTEyOTQzfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract architectural lines. Use as a low-opacity background texture in the AI playground section."
+      },
+      {
+        "category": "agent_testimonial_1",
+        "url": "https://images.unsplash.com/photo-1633625510483-c177f4308f33?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwzfHxyZWFsJTIwZXN0YXRlJTIwYWdlbnQlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3ODExMjkxOHww&ixlib=rb-4.1.0&q=85",
+        "description": "Smiling man headshot."
+      },
+      {
+        "category": "agent_testimonial_2",
+        "url": "https://images.unsplash.com/photo-1624435707004-1e84d9ecbfcf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwyfHxyZWFsJTIwZXN0YXRlJTIwYWdlbnQlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3ODExMjkxOHww&ixlib=rb-4.1.0&q=85",
+        "description": "Woman headshot."
+      },
+      {
+        "category": "agent_testimonial_3",
+        "url": "https://images.unsplash.com/photo-1609371497456-3a55a205d5eb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwxfHxyZWFsJTIwZXN0YXRlJTIwYWdlbnQlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3ODExMjkxOHww&ixlib=rb-4.1.0&q=85",
+        "description": "Woman headshot."
+      }
+    ],
+    "logos": "Use pure text components stylized for eXp, KW, RE/MAX using typography. NO placeholders like via.placeholder.com."
+  },
+  "instructions_to_main_agent": [
+    "Load fonts from Google Fonts: Playfair Display, Outfit, DM Sans, JetBrains Mono.",
+    "Build a custom HTML/Tailwind hero section. Do not use generic Shadcn cards for the main layout. Build an asymmetrical bento grid.",
+    "Implement the AI Listing Rewriter as the core interactive element on the homepage. Use Shadcn Tabs for the output types (MLS, Instagram, FB, Email).",
+    "Tone Selector Pills should be highly visible and clickable, styled as rounded badges with a 1px border and hover effect.",
+    "Add purely decorative ASCII art or SVG lines referencing architectural blueprints in the background of the pricing or AI playground section.",
+    "For logos (eXp, KW, RE/MAX), create sharp typography-based logos if SVGs are missing. Do not use placeholder images.",
+    "Ensure all interactive elements have data-testid attributes for testing."
+  ]
+}
