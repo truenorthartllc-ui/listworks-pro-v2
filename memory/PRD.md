@@ -61,3 +61,14 @@ Plus a $20 PDF guide (Gumroad) teaching the underlying framework.
 - Backend: FastAPI · Motor (MongoDB) · emergentintegrations (GPT-5.2)
 - Frontend: React 19 · Tailwind · Lucide · Sonner toasts
 - Storage: MongoDB (collections: listings, feedback)
+
+## Update — 2026-01 (PDF Integration)
+- ✅ Loaded actual ListWorks Guide v1 PDF (~217KB) into `/app/frontend/public/assets/listworks-guide.pdf`
+- ✅ Replaced AI system prompt with the EXACT framework from the guide:
+  - 5-Part Structure (Hook → Lifestyle → FBF → Neighborhood → CTA)
+  - Feature → Benefit → Feeling translation
+  - 4 Buyer Psychology Triggers (Belonging / Status / Safety / Urgency)
+  - Hard rules: banned words ("Welcome to", "Must see", "Cozy"-cliché, etc.), 25-word sentence cap, no >2 adjectives
+  - Output specs per asset matching the master prompt (MLS 200-250w, IG 100-130w + hashtags, FB 150-180w, 5 headlines, Email)
+- ✅ Added "Preview Inside" CTA on the dark guide upsell — opens fullscreen modal with embedded PDF iframe + "Buy $20" header
+- ✅ AI verified post-update: outputs now lead with feeling, no banned words, proper structure
