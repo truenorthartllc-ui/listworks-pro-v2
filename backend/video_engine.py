@@ -274,16 +274,29 @@ async def generate_listing_video(
 
         # 5) audio: music + voiceover
         audio_inputs: List[Path] = []
+        # If no voiceover is being added, music can sit at full volume.
+        # Otherwise duck it to ~55% so VO sits clearly on top.
+        has_vo = bool(voiceover_b64) or bool(voiceover_text)
+        music_volume = 0.55 if has_vo else 1.0
+
         if music_id != "none":
             music_src = MUSIC_DIR / f"{music_id}.mp3"
             if music_src.exists():
                 m_out = tmp / "music.mp3"
-                # loop/trim to total length, fade
+                # loop/trim to total length, fade, normalize to broadcast loudness
                 await _run([
                     "ffmpeg", "-y", "-loglevel", "error",
                     "-stream_loop", "-1", "-i", str(music_src),
                     "-t", f"{total}",
-                    "-af", f"volume=0.55,afade=t=in:st=0:d=1.5,afade=t=out:st={total-1.5}:d=1.5",
+                    "-af", (
+                        f"volume={music_volume},"
+                        f"afade=t=in:st=0:d=1.5,"
+                        f"afade=t=out:st={total-1.5}:d=1.5,"
+                        # EBU R128 normalize so output is consistently audible (~ -14 LUFS)
+                        f"loudnorm=I=-14:TP=-1.5:LRA=11,"
+                        f"aformat=channel_layouts=stereo"
+                    ),
+                    "-ar", "44100", "-ac", "2", "-b:a", "192k",
                     str(m_out),
                 ])
                 audio_inputs.append(m_out)
