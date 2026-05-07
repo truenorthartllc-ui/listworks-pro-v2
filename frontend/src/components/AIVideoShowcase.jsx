@@ -1,18 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX, Play, Pause, Sparkles } from "lucide-react";
+import { Volume2, VolumeX, Play, Pause, Sparkles, Music, Mic } from "lucide-react";
 
 /**
  * AIVideoShowcase — the hypnotic homepage demo.
  *
  * 10 plain photos → one cinematic listing reel, generated in seconds.
- * Auto-plays muted (browser policy), with a tasteful sound toggle and a
- * left-side caption strip showing the source photos to drive the
- * "10 photos → THIS" emotional payoff.
+ * Two modes: "Music" (instrumental cinematic) and "Narrated" (a confident
+ * female agent voiceover that sells the listing). Visitors can toggle.
  */
 export default function AIVideoShowcase() {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(true);
+  // "music" = instrumental only · "narrated" = female voice + music duck
+  const [mode, setMode] = useState("music");
+
+  const VIDEO_SRC = {
+    music: "/hero-demo.mp4",
+    narrated: "/hero-demo-narrated.mp4",
+  };
 
   // Source photos (small thumbs strip — same Unsplash set the video was built from)
   const sourcePhotos = [
@@ -139,17 +145,50 @@ export default function AIVideoShowcase() {
 
           {/* Video — right (dominant) */}
           <div className="col-span-12 lg:col-span-7">
+            {/* Mode toggle — Music only / Narrated */}
+            <div className="mb-4 flex items-center gap-1 bg-ink/40 border border-oat/15 p-1 w-fit">
+              <button
+                type="button"
+                onClick={() => setMode("music")}
+                data-testid="showcase-mode-music"
+                aria-pressed={mode === "music"}
+                className={`flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] transition-all ${
+                  mode === "music"
+                    ? "bg-vermillion text-oat"
+                    : "text-oat/60 hover:text-oat"
+                }`}
+              >
+                <Music className="w-3 h-3" strokeWidth={2} />
+                Music
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("narrated")}
+                data-testid="showcase-mode-narrated"
+                aria-pressed={mode === "narrated"}
+                className={`flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] transition-all ${
+                  mode === "narrated"
+                    ? "bg-vermillion text-oat"
+                    : "text-oat/60 hover:text-oat"
+                }`}
+              >
+                <Mic className="w-3 h-3" strokeWidth={2} />
+                Narrated
+              </button>
+            </div>
+
             <div
               data-testid="showcase-video-frame"
               className="relative group aspect-video bg-black border border-oat/15 shadow-[0_30px_120px_-30px_rgba(255,59,34,0.4)] overflow-hidden"
             >
               <video
                 ref={videoRef}
+                key={mode}
                 data-testid="showcase-video"
-                src="/hero-demo.mp4"
+                src={VIDEO_SRC[mode]}
                 poster="/hero-demo-poster.jpg"
                 autoPlay
-                muted
+                muted={muted}
                 loop
                 playsInline
                 preload="metadata"
@@ -161,7 +200,7 @@ export default function AIVideoShowcase() {
               <div className="absolute top-4 left-4 flex items-center gap-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 border border-oat/15">
                 <span className="w-1.5 h-1.5 rounded-full bg-vermillion animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-oat">
-                  AI-Generated · 0:28
+                  {mode === "narrated" ? "AI-Voice + Music" : "AI-Generated · 0:28"}
                 </span>
               </div>
 
@@ -169,6 +208,28 @@ export default function AIVideoShowcase() {
               <div className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-[0.22em] text-oat/70">
                 listworks<span className="text-vermillion">.pro</span>
               </div>
+
+              {/* Center "tap to hear" pulse — only when muted (always-visible CTA) */}
+              {muted && (
+                <button
+                  type="button"
+                  onClick={toggleSound}
+                  data-testid="showcase-unmute-cta"
+                  aria-label="Unmute video"
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer group/unmute"
+                >
+                  <span className="flex items-center gap-3 bg-ink/80 backdrop-blur-md text-oat px-5 py-3 border border-oat/30 shadow-2xl group-hover/unmute:bg-vermillion group-hover/unmute:border-vermillion transition-all">
+                    <span className="relative flex w-2.5 h-2.5">
+                      <span className="absolute inset-0 rounded-full bg-vermillion opacity-75 animate-ping" />
+                      <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-vermillion" />
+                    </span>
+                    <Volume2 className="w-4 h-4" strokeWidth={2} />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
+                      {mode === "narrated" ? "Tap · hear me sell this" : "Tap · turn sound on"}
+                    </span>
+                  </span>
+                </button>
+              )}
 
               {/* Bottom controls — only visible on hover/focus */}
               <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3 bg-gradient-to-t from-ink/90 to-transparent opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
@@ -199,7 +260,9 @@ export default function AIVideoShowcase() {
                   )}
                 </button>
                 <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-oat/70">
-                  {muted ? "Tap for sound" : "Sound on"}
+                  {muted
+                    ? mode === "narrated" ? "Tap for voiceover" : "Tap for sound"
+                    : "Sound on"}
                 </span>
               </div>
             </div>
