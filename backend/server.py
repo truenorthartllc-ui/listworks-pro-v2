@@ -562,10 +562,14 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
 async def checkout_status(stripe_session_id: str, request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
-    host_url = str(request.base_url)
-    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+    host_url = str(request.base_url).rstrip("/")
+    webhook_url = f"{host_url}/api/webhook/stripe"
     sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-    cs: CheckoutStatusResponse = await sc.get_checkout_status(stripe_session_id)
+    try:
+        cs: CheckoutStatusResponse = await sc.get_checkout_status(stripe_session_id)
+    except Exception as e:
+        logger.warning("Stripe checkout status failed for %s: %s", stripe_session_id, e)
+        raise HTTPException(404, "Session not found or unavailable")
 
     txn = await db.payment_transactions.find_one(
         {"stripe_session_id": stripe_session_id}, {"_id": 0}
@@ -670,6 +674,10 @@ class SocialPostRequest(BaseModel):
 @api_router.post("/social/post")
 async def social_post(req: SocialPostRequest):
     if not MAKE_WEBHOOK_URL:
+        # Check listing existence first so callers get useful 404 even before webhook is configured
+        listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+        if not listing:
+            raise HTTPException(404, "Listing not found")
         raise HTTPException(503, "Social auto-post not configured. Add MAKE_WEBHOOK_URL.")
 
     listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})

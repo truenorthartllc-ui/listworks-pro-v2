@@ -71,3 +71,25 @@ Plus an 85-page $20 PDF guide (Gumroad) teaching the underlying framework.
 - GET /api/listings/{session_id}
 - GET /api/examples
 - POST /api/feedback
+
+## v4 (current — Stripe + Make.com auto-post)
+- ✅ Stripe Checkout wired (test key `sk_test_emergent`):
+  - `guide_pdf` $20 (one-time PDF unlock — replaces Gumroad)
+  - `pro_month` $49 (1 month Pro access)
+  - `pro_annual` $470 (annual save $118)
+- ✅ `/api/checkout/session` (creates session + persists payment_transactions row)
+- ✅ `/api/checkout/status/{id}` polling (with safe 404 fallback)
+- ✅ `/api/webhook/stripe` (idempotent — grants entitlement to lw_session_id)
+- ✅ `/api/entitlements/{session_id}` (returns is_pro, has_guide)
+- ✅ `/payment-success` page polls Stripe → if guide → instant download; if pro → pro welcome
+- ✅ Make.com FB auto-post — `/api/social/post` POSTs full listing JSON to MAKE_WEBHOOK_URL
+- ✅ Frontend: GuideUpsell + Pricing + Pro upsell banner all use Stripe; "Auto-Post to FB" button after rewrite; "Make It 10/10" now opens Pro checkout
+- ✅ Tested: backend 17/17 + frontend 100%
+
+## Next session priorities
+- [ ] Email drip via Resend (welcome / day-1 framework / day-3 upgrade / day-7 winback)
+- [ ] Real Stripe live key + live products (when user goes to production)
+- [ ] Telegram bot for buyer DMs / agent notifications
+- [ ] Affiliate program (30% recurring per agent referral)
+- [ ] Login (email magic link) for cross-device entitlement persistence
+- [ ] Brokerage admin panel for $499 tier
