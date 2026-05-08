@@ -16,18 +16,18 @@ export default function AIVideoShowcase() {
   const VIDEO_VERSION = "v11-music";
   const VIDEO_SRC = `/hero-demo.mp4?${VIDEO_VERSION}`;
 
-  // Source photos (small thumbs strip — same Unsplash set the video was built from)
+  // Source photos — same 10 the video was built from (your uploaded family-home set)
   const sourcePhotos = [
-    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600210491369-e753d80a41f3?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=320&q=70&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=320&q=70&auto=format&fit=crop",
+    "/demo-photos/photo_01.jpg",
+    "/demo-photos/photo_02.jpg",
+    "/demo-photos/photo_03.jpg",
+    "/demo-photos/photo_04.jpg",
+    "/demo-photos/photo_05.jpg",
+    "/demo-photos/photo_06.jpg",
+    "/demo-photos/photo_07.jpg",
+    "/demo-photos/photo_08.jpg",
+    "/demo-photos/photo_09.jpg",
+    "/demo-photos/photo_10.jpg",
   ];
 
   // Pause when off-screen, resume when visible (saves bandwidth, keeps it feeling alive)
@@ -163,7 +163,7 @@ export default function AIVideoShowcase() {
               <div className="absolute top-4 left-4 flex items-center gap-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 border border-oat/15">
                 <span className="w-1.5 h-1.5 rounded-full bg-vermillion animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-oat">
-                  AI-Voiceover · Live Demo
+                  AI-Generated · 30-Sec Demo
                 </span>
               </div>
 
@@ -188,7 +188,7 @@ export default function AIVideoShowcase() {
                     </span>
                     <Volume2 className="w-4 h-4" strokeWidth={2} />
                     <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-                      Tap · hear me sell this
+                      Tap · turn music on
                     </span>
                   </span>
                 </button>
@@ -223,7 +223,7 @@ export default function AIVideoShowcase() {
                   )}
                 </button>
                 <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-oat/70">
-                  {muted ? "Tap for voiceover" : "Sound on"}
+                  {muted ? "Tap for music" : "Sound on"}
                 </span>
               </div>
             </div>
