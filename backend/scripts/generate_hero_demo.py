@@ -28,26 +28,17 @@ from video_engine import generate_listing_video  # noqa: E402
 # Curated luxury real estate photos (Unsplash — free commercial use)
 # Each URL uses the &w=1920&q=85 size hint for high-res, manageable file size.
 PHOTO_URLS = [
-    # 1 — Modern home exterior at golden hour
+    # Aerial drone-style middle-class to upper-class home shots
+    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1920&q=85&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=85&auto=format&fit=crop",
-    # 2 — Open kitchen with marble island
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=85&auto=format&fit=crop",
-    # 3 — Infinity pool with view
-    "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1920&q=85&auto=format&fit=crop",
-    # 4 — Grand living room with vaulted ceilings
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=85&auto=format&fit=crop",
-    # 5 — Master bedroom suite, floor-to-ceiling windows
-    "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1920&q=85&auto=format&fit=crop",
-    # 6 — Spa-like bathroom with freestanding tub
-    "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=85&auto=format&fit=crop",
-    # 7 — Outdoor patio with fire pit at dusk
-    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=85&auto=format&fit=crop",
-    # 8 — Wine cellar / built-ins
-    "https://images.unsplash.com/photo-1600210491369-e753d80a41f3?w=1920&q=85&auto=format&fit=crop",
-    # 9 — Contemporary dining room
-    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&q=85&auto=format&fit=crop",
-    # 10 — Aerial sunset exterior
     "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=1920&q=85&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1592595896616-c37162298647?w=1920&q=85&auto=format&fit=crop",
 ]
 
 

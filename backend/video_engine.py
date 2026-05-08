@@ -237,18 +237,20 @@ async def generate_listing_video(
         per = 7.0
         total = per * n
 
-        # 4) build photo video segment with crossfade (xfade)
-        # Generate one clip per slide, then concat with ffmpeg-concat.
+        # 4) build photo video segment with fade in/out per clip + ken-burns
+        # Per-clip fades give smooth transitions without shifting voice timing.
         clips = []
+        fade_dur = 0.5  # seconds — soft fade in/out per slide
         for i, sf in enumerate(slide_files):
             clip = tmp / f"clip{i}.mp4"
-            # ken-burns zoompan: subtle 1.0 -> 1.08 zoom over per seconds
             zoom_filter = (
                 f"scale={width*2}:{height*2},"
                 f"zoompan=z='min(zoom+0.0008,1.08)':d={int(per*30)}:"
                 f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
                 f"s={width}x{height}:fps=30,"
-                f"format=yuv420p"
+                f"format=yuv420p,"
+                f"fade=t=in:st=0:d={fade_dur},"
+                f"fade=t=out:st={per-fade_dur}:d={fade_dur}"
             )
             await _run([
                 "ffmpeg", "-y", "-loglevel", "error",
@@ -262,7 +264,7 @@ async def generate_listing_video(
             ])
             clips.append(clip)
 
-        # concat the clips
+        # concat the clips (timing preserved — no xfade overlap)
         concat_list = tmp / "concat.txt"
         concat_list.write_text("\n".join(f"file '{c}'" for c in clips))
         video_only = tmp / "video.mp4"

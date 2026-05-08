@@ -17,7 +17,7 @@ export default function AIVideoShowcase() {
 
   // Cache-buster: bump this when re-rendering the demo videos so browsers
   // pick up the new files instead of serving stale cached copies.
-  const VIDEO_VERSION = "v3-piano";
+  const VIDEO_VERSION = "v4-aerial";
 
   const VIDEO_SRC = {
     music: `/hero-demo.mp4?${VIDEO_VERSION}`,
