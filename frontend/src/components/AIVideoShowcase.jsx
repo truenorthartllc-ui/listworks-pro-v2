@@ -13,7 +13,7 @@ export default function AIVideoShowcase() {
   const [playing, setPlaying] = useState(true);
 
   // Cache-buster: bump this when re-rendering the demo so browsers pull fresh
-  const VIDEO_VERSION = "v8-silent";
+  const VIDEO_VERSION = "v9-realmusic";
   const VIDEO_SRC = `/hero-demo.mp4?${VIDEO_VERSION}`;
 
   // Source photos (small thumbs strip — same Unsplash set the video was built from)
