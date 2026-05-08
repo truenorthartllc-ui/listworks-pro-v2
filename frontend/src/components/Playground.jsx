@@ -204,6 +204,19 @@ export default function Playground() {
                     {copiedKey === activeTab ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     {copiedKey === activeTab ? "Copied" : "Copy & Crush It"}
                   </button>
+                  <button
+                    data-testid="share-rewrite-btn"
+                    onClick={() => {
+                      const url = `${window.location.origin}/share/${result.id}`;
+                      navigator.clipboard.writeText(url);
+                      toast.success("Share link copied — paste anywhere!");
+                    }}
+                    className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-3.5 py-2 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition"
+                    title="Copy a public share link to show this rewrite"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    Share
+                  </button>
                 </div>
               )}
             </div>

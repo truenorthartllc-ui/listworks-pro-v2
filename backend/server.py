@@ -380,6 +380,21 @@ async def rewrite_listing(req: RewriteRequest):
     )
 
 
+@api_router.get("/share/{listing_id}")
+async def get_shared_listing(listing_id: str):
+    """Public share endpoint — returns the before/after for a listing.
+    Anyone can view via /share/{id} on the frontend (no auth)."""
+    listing = await db.listings.find_one({"id": listing_id}, {"_id": 0, "session_id": 0})
+    if not listing:
+        raise HTTPException(404, "Listing not found")
+    # Track shares for analytics
+    await db.share_views.insert_one({
+        "listing_id": listing_id,
+        "viewed_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return listing
+
+
 @api_router.post("/analyze-photo", response_model=PhotoAnalyzeResponse)
 async def analyze_photo(req: PhotoAnalyzeRequest):
     if not EMERGENT_LLM_KEY:

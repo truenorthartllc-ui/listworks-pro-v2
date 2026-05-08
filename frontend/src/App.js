@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import LandingPage from "@/pages/LandingPage";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import SharedListing from "@/pages/SharedListing";
 
 function App() {
   useEffect(() => {
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/share/:id" element={<SharedListing />} />
         </Routes>
       </BrowserRouter>
     </div>
