@@ -1,28 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX, Play, Pause, Sparkles, Music, Mic } from "lucide-react";
+import { Volume2, VolumeX, Play, Pause, Sparkles } from "lucide-react";
 
 /**
  * AIVideoShowcase — the hypnotic homepage demo.
  *
- * 10 plain photos → one cinematic listing reel, generated in seconds.
- * Two modes: "Music" (instrumental cinematic) and "Narrated" (a confident
- * female agent voiceover that sells the listing). Visitors can toggle.
+ * 10 aerial photos + female voiceover → one cinematic listing reel
+ * generated in seconds. Pure voice + visuals, no music fight.
  */
 export default function AIVideoShowcase() {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(true);
-  // "music" = instrumental only · "narrated" = female voice + music duck
-  const [mode, setMode] = useState("music");
 
-  // Cache-buster: bump this when re-rendering the demo videos so browsers
-  // pick up the new files instead of serving stale cached copies.
-  const VIDEO_VERSION = "v4-aerial";
-
-  const VIDEO_SRC = {
-    music: `/hero-demo.mp4?${VIDEO_VERSION}`,
-    narrated: `/hero-demo-narrated.mp4?${VIDEO_VERSION}`,
-  };
+  // Cache-buster: bump this when re-rendering the demo so browsers pull fresh
+  const VIDEO_VERSION = "v5-flow";
+  const VIDEO_SRC = `/hero-demo-narrated.mp4?${VIDEO_VERSION}`;
 
   // Source photos (small thumbs strip — same Unsplash set the video was built from)
   const sourcePhotos = [
@@ -149,47 +141,14 @@ export default function AIVideoShowcase() {
 
           {/* Video — right (dominant) */}
           <div className="col-span-12 lg:col-span-7">
-            {/* Mode toggle — Music only / Narrated */}
-            <div className="mb-4 flex items-center gap-1 bg-ink/40 border border-oat/15 p-1 w-fit">
-              <button
-                type="button"
-                onClick={() => setMode("music")}
-                data-testid="showcase-mode-music"
-                aria-pressed={mode === "music"}
-                className={`flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] transition-all ${
-                  mode === "music"
-                    ? "bg-vermillion text-oat"
-                    : "text-oat/60 hover:text-oat"
-                }`}
-              >
-                <Music className="w-3 h-3" strokeWidth={2} />
-                Music
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("narrated")}
-                data-testid="showcase-mode-narrated"
-                aria-pressed={mode === "narrated"}
-                className={`flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] transition-all ${
-                  mode === "narrated"
-                    ? "bg-vermillion text-oat"
-                    : "text-oat/60 hover:text-oat"
-                }`}
-              >
-                <Mic className="w-3 h-3" strokeWidth={2} />
-                Narrated
-              </button>
-            </div>
-
             <div
               data-testid="showcase-video-frame"
               className="relative group aspect-video bg-black border border-oat/15 shadow-[0_30px_120px_-30px_rgba(255,59,34,0.4)] overflow-hidden"
             >
               <video
                 ref={videoRef}
-                key={mode}
                 data-testid="showcase-video"
-                src={VIDEO_SRC[mode]}
+                src={VIDEO_SRC}
                 poster="/hero-demo-poster.jpg"
                 autoPlay
                 muted={muted}
@@ -204,7 +163,7 @@ export default function AIVideoShowcase() {
               <div className="absolute top-4 left-4 flex items-center gap-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 border border-oat/15">
                 <span className="w-1.5 h-1.5 rounded-full bg-vermillion animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-oat">
-                  {mode === "narrated" ? "AI-Voice + Music" : "AI-Generated · 0:28"}
+                  AI-Voiceover · Live Demo
                 </span>
               </div>
 
@@ -229,7 +188,7 @@ export default function AIVideoShowcase() {
                     </span>
                     <Volume2 className="w-4 h-4" strokeWidth={2} />
                     <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-                      {mode === "narrated" ? "Tap · hear me sell this" : "Tap · turn sound on"}
+                      Tap · hear me sell this
                     </span>
                   </span>
                 </button>
@@ -264,9 +223,7 @@ export default function AIVideoShowcase() {
                   )}
                 </button>
                 <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-oat/70">
-                  {muted
-                    ? mode === "narrated" ? "Tap for voiceover" : "Tap for sound"
-                    : "Sound on"}
+                  {muted ? "Tap for voiceover" : "Sound on"}
                 </span>
               </div>
             </div>
