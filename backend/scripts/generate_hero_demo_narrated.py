@@ -181,8 +181,6 @@ async def main() -> None:
     await _run([
         "ffmpeg", "-y", "-loglevel", "error", "-i", str(tts_raw),
         "-af",
-        # Soft tail of room reverb so the voice has space, then loudnorm
-        "aecho=0.4:0.4:60:0.15,"
         "loudnorm=I=-14:TP=-1.5:LRA=11,"
         "aformat=channel_layouts=stereo",
         "-c:a", "libmp3lame", "-b:a", "192k", "-ar", "44100", "-ac", "2",
