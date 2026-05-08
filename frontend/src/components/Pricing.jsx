@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, Crown, Zap } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 
 const tiers = [
@@ -7,7 +7,7 @@ const tiers = [
     price: "$0",
     period: "forever",
     blurb: "For agents trying it on their next listing.",
-    features: ["3 listings / month", "All 5 output formats", "5 tone modes", "Listing history (30 days)"],
+    features: ["3 free rewrites", "All 5 output formats", "5 tone modes", "Then upgrade or buy credits"],
     cta: "Start Free",
     action: { kind: "scroll", href: "#playground" },
     highlight: false,
@@ -31,14 +31,39 @@ const tiers = [
     highlight: true,
   },
   {
-    name: "Team",
-    price: "$499",
-    period: "/ month",
-    blurb: "For brokerages standardizing their voice.",
-    features: ["Everything in Pro", "10 seats included", "Brokerage voice presets", "Shared listing library", "Admin analytics", "Onboarding call", "White-glove support"],
-    cta: "Talk to Sales",
-    action: { kind: "mailto", href: "mailto:hello@listworks.pro?subject=Brokerage%20Plan%20—%20ListWorks%20PRO" },
+    name: "Lifetime",
+    price: "$299",
+    period: "once",
+    blurb: "Founding member — pay once, never pay again.",
+    features: [
+      "Everything in Pro",
+      "Forever access (no monthly)",
+      "All future features included",
+      "Priority support",
+      "Founding member badge",
+      "Limited to first 100 buyers",
+    ],
+    cta: "Lock In Lifetime — $299",
+    action: { kind: "checkout", package_id: "lifetime" },
     highlight: false,
+    badge: "BEST VALUE",
+    icon: Crown,
+  },
+];
+
+const credits = [
+  {
+    name: "10 Credits",
+    price: "$5",
+    blurb: "10 AI rewrites — no expiry.",
+    package_id: "credits_10",
+  },
+  {
+    name: "50 Credits",
+    price: "$19",
+    blurb: "50 AI rewrites — best value pay-as-you-go.",
+    package_id: "credits_50",
+    save: "Save 24%",
   },
 ];
 
@@ -82,6 +107,12 @@ export default function Pricing() {
                 {t.highlight && (
                   <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">Most Picked</span>
                 )}
+                {t.badge && !t.highlight && (
+                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-ink text-oat px-2 py-1 flex items-center gap-1">
+                    {t.icon && <t.icon className="w-3 h-3" strokeWidth={2.5} />}
+                    {t.badge}
+                  </span>
+                )}
               </div>
               <h3 className="mt-5 font-display text-4xl md:text-5xl tracking-tight">{t.name}</h3>
               <div className="mt-3 flex items-baseline gap-2">
@@ -115,6 +146,45 @@ export default function Pricing() {
         <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50 text-center">
           Pro paid monthly · cancel any time · 30-day money-back · billed in USD
         </p>
+
+        {/* Pay-as-you-go credit packs */}
+        <div className="mt-20 md:mt-24">
+          <div className="flex items-baseline gap-3 mb-8">
+            <Zap className="w-5 h-5 text-vermillion" strokeWidth={2} />
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Credits — pay as you go</span>
+          </div>
+          <h3 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.05] mb-3 max-w-2xl">
+            <span className="font-light">Just need a few?</span>{" "}
+            <span className="italic">Buy credits, no subscription.</span>
+          </h3>
+          <p className="font-body text-ink/65 max-w-xl mb-10">
+            Each credit = one full AI rewrite (MLS + IG + FB + 5 headlines + email). Credits never expire.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15 max-w-3xl">
+            {credits.map((c) => (
+              <button
+                key={c.package_id}
+                onClick={() => startCheckout(c.package_id)}
+                data-testid={`credits-${c.package_id}`}
+                className="group bg-oat hover:bg-coal hover:text-oat transition-colors p-8 md:p-10 text-left flex items-end justify-between gap-6"
+              >
+                <div>
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/50 group-hover:text-oat/60">
+                    {c.save || "Pay-as-you-go"}
+                  </div>
+                  <div className="mt-2 font-display text-4xl md:text-5xl">{c.name}</div>
+                  <div className="mt-2 text-ink/65 group-hover:text-oat/80">{c.blurb}</div>
+                </div>
+                <div className="font-display text-5xl text-vermillion shrink-0">{c.price}</div>
+              </button>
+            ))}
+          </div>
+
+          <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50">
+            Need 10+ seats? <a href="mailto:hello@listworks.pro?subject=Brokerage%20Plan" className="text-vermillion underline">Talk to brokerage sales →</a>
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -15,16 +15,11 @@ import uuid
 from datetime import datetime, timezone
 
 from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
-from emergentintegrations.payments.stripe.checkout import (
-    StripeCheckout,
-    CheckoutSessionResponse,
-    CheckoutStatusResponse,
-    CheckoutSessionRequest,
-)
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
 from email_engine import send_guide_drip, send_pro_welcome
 import stripe as stripe_sdk
+import httpx
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -45,10 +40,18 @@ if STRIPE_API_KEY:
 
 # Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
-    "guide_pdf": {"amount": 20.00, "currency": "usd", "name": "ListWorks Guide PDF",        "kind": "guide"},
-    "pro_month": {"amount": 49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",   "kind": "pro"},
-    "pro_annual": {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",  "kind": "pro"},
+    "guide_pdf":   {"amount":  20.00, "currency": "usd", "name": "ListWorks Guide PDF",          "kind": "guide"},
+    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
+    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
+    "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
+    "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
+    "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},
 }
+
+# Free tier: how many free rewrites per anonymous session before paywall
+FREE_REWRITES_PER_SESSION = 3
+
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
 
 VIDEO_DIR = (ROOT_DIR / "static" / "videos").resolve()
 VIDEO_DIR.mkdir(parents=True, exist_ok=True)
@@ -282,6 +285,43 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     }
 
 
+async def _get_usage(session_id: Optional[str]) -> dict:
+    """Resolve a session's free quota status, paid credits, and Pro entitlement."""
+    if not session_id:
+        return {"is_pro": False, "credits": 0, "free_used": 0,
+                "free_remaining": FREE_REWRITES_PER_SESSION, "paywall": False}
+
+    # Check Pro / Lifetime entitlement (unlimited)
+    pro = await db.entitlements.find_one(
+        {"lw_session_id": session_id, "kind": {"$in": ["pro", "lifetime"]}}, {"_id": 0}
+    )
+    is_pro = bool(pro)
+
+    # Paid credits balance
+    cdoc = await db.credits.find_one({"lw_session_id": session_id}, {"_id": 0})
+    credits = int((cdoc or {}).get("balance", 0))
+
+    # Free rewrites used (counted from listings table)
+    free_used = await db.listings.count_documents({"session_id": session_id})
+    free_remaining = max(0, FREE_REWRITES_PER_SESSION - free_used)
+
+    # Allowed if Pro, has credits, or has free remaining
+    allowed = is_pro or credits > 0 or free_remaining > 0
+    return {
+        "is_pro": is_pro,
+        "credits": credits,
+        "free_used": free_used,
+        "free_remaining": free_remaining,
+        "paywall": not allowed,
+    }
+
+
+@api_router.get("/usage/{session_id}")
+async def get_usage(session_id: str):
+    """Frontend reads this to know whether to show the paywall modal."""
+    return await _get_usage(session_id)
+
+
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():
@@ -293,9 +333,28 @@ async def rewrite_listing(req: RewriteRequest):
     if len(req.raw_listing.strip()) < 10:
         raise HTTPException(400, "Listing too short. Add at least a sentence.")
 
+    # 🚧 Paywall gate — enforce free quota / credits / Pro
+    usage = await _get_usage(req.session_id)
+    if usage["paywall"]:
+        raise HTTPException(
+            status_code=402,  # Payment Required
+            detail={
+                "code": "paywall",
+                "message": f"You've used your {FREE_REWRITES_PER_SESSION} free rewrites. Upgrade to keep generating.",
+                "usage": usage,
+            },
+        )
+
     outputs = await call_rewrite_llm(req)
     listing_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
+
+    # Decrement credits if user is on the credit plan (and not Pro)
+    if not usage["is_pro"] and usage["credits"] > 0 and req.session_id:
+        await db.credits.update_one(
+            {"lw_session_id": req.session_id},
+            {"$inc": {"balance": -1}},
+        )
 
     doc = {
         "id": listing_id,
@@ -525,10 +584,6 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
     success_url = f"{origin}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
     cancel_url = f"{origin}/?cancel=1#pricing"
 
-    host_url = str(request.base_url)
-    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
-    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-
     metadata = {
         "package_id": req.package_id,
         "package_kind": pkg["kind"],
@@ -537,19 +592,79 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "email": req.email or "",
     }
 
-    cs_req = CheckoutSessionRequest(
-        amount=float(pkg["amount"]),
-        currency=pkg["currency"],
-        success_url=success_url,
-        cancel_url=cancel_url,
-        metadata=metadata,
-    )
-    session: CheckoutSessionResponse = await sc.create_checkout_session(cs_req)
+    # Subscription mode for monthly/annual Pro; one-time for everything else
+    is_subscription = req.package_id in ("pro_month", "pro_annual")
+
+    # Detect Emergent's mock test key — fall back to wrapper for sandbox testing
+    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
+
+    if is_emergent_test and not is_subscription:
+        # Use Emergent wrapper (it handles their mock test key)
+        from emergentintegrations.payments.stripe.checkout import (
+            StripeCheckout, CheckoutSessionRequest,
+        )
+        host_url = str(request.base_url)
+        webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        cs_req = CheckoutSessionRequest(
+            amount=float(pkg["amount"]),
+            currency=pkg["currency"],
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata=metadata,
+        )
+        session_obj = await sc.create_checkout_session(cs_req)
+        await db.payment_transactions.insert_one({
+            "id": str(uuid.uuid4()),
+            "stripe_session_id": session_obj.session_id,
+            "package_id": req.package_id,
+            "package_kind": pkg["kind"],
+            "amount": pkg["amount"],
+            "currency": pkg["currency"],
+            "lw_session_id": req.session_id or "",
+            "email": req.email or "",
+            "status": "initiated",
+            "payment_status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": metadata,
+        })
+        return {"url": session_obj.url, "session_id": session_obj.session_id}
+
+    line_item = {
+        "price_data": {
+            "currency": pkg["currency"],
+            "product_data": {"name": pkg["name"]},
+            "unit_amount": int(pkg["amount"] * 100),
+        },
+        "quantity": 1,
+    }
+
+    if is_subscription:
+        line_item["price_data"]["recurring"] = {
+            "interval": "month" if req.package_id == "pro_month" else "year",
+        }
+
+    cs_params = {
+        "mode": "subscription" if is_subscription else "payment",
+        "line_items": [line_item],
+        "success_url": success_url,
+        "cancel_url": cancel_url,
+        "metadata": metadata,
+        "allow_promotion_codes": True,  # 🔥 Customers can enter COMEBACK29 etc.
+    }
+    if req.email:
+        cs_params["customer_email"] = req.email
+
+    try:
+        session = await asyncio.to_thread(stripe_sdk.checkout.Session.create, **cs_params)
+    except Exception as e:
+        logger.exception("Stripe checkout creation failed")
+        raise HTTPException(502, f"Stripe error: {e}")
 
     # Persist transaction with PENDING status BEFORE redirect
     await db.payment_transactions.insert_one({
         "id": str(uuid.uuid4()),
-        "stripe_session_id": session.session_id,
+        "stripe_session_id": session.id,
         "package_id": req.package_id,
         "package_kind": pkg["kind"],
         "amount": pkg["amount"],
@@ -558,36 +673,55 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "email": req.email or "",
         "status": "initiated",
         "payment_status": "pending",
-        "metadata": metadata,
         "created_at": datetime.now(timezone.utc).isoformat(),
+        "metadata": metadata,
     })
-
-    return {"url": session.url, "session_id": session.session_id}
+    return {"url": session.url, "session_id": session.id}
 
 
 @api_router.get("/checkout/status/{stripe_session_id}")
 async def checkout_status(stripe_session_id: str, request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
-    host_url = str(request.base_url).rstrip("/")
-    webhook_url = f"{host_url}/api/webhook/stripe"
-    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-    try:
-        cs: CheckoutStatusResponse = await sc.get_checkout_status(stripe_session_id)
-    except Exception as e:
-        logger.warning("Stripe checkout status failed for %s: %s", stripe_session_id, e)
-        raise HTTPException(404, "Session not found or unavailable")
+
+    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
+    if is_emergent_test:
+        from emergentintegrations.payments.stripe.checkout import StripeCheckout
+        host_url = str(request.base_url).rstrip("/")
+        webhook_url = f"{host_url}/api/webhook/stripe"
+        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        try:
+            cs = await sc.get_checkout_status(stripe_session_id)
+        except Exception as e:
+            logger.warning("Stripe status (emergent) failed: %s", e)
+            raise HTTPException(404, "Session not found")
+        cs_status = cs.status
+        cs_payment_status = cs.payment_status
+        cs_amount_total = cs.amount_total
+        cs_currency = cs.currency
+        cs_metadata = cs.metadata
+    else:
+        try:
+            sess = await asyncio.to_thread(stripe_sdk.checkout.Session.retrieve, stripe_session_id)
+        except Exception as e:
+            logger.warning("Stripe checkout status failed for %s: %s", stripe_session_id, e)
+            raise HTTPException(404, "Session not found or unavailable")
+        cs_status = sess.get("status")
+        cs_payment_status = sess.get("payment_status")
+        cs_amount_total = sess.get("amount_total")
+        cs_currency = sess.get("currency")
+        cs_metadata = sess.get("metadata") or {}
 
     txn = await db.payment_transactions.find_one(
         {"stripe_session_id": stripe_session_id}, {"_id": 0}
     )
 
     # Idempotent grant of entitlements
-    if cs.payment_status == "paid" and txn and txn.get("payment_status") != "paid":
+    if cs_payment_status == "paid" and txn and txn.get("payment_status") != "paid":
         await db.payment_transactions.update_one(
             {"stripe_session_id": stripe_session_id},
             {"$set": {
-                "status": cs.status,
+                "status": cs_status,
                 "payment_status": "paid",
                 "paid_at": datetime.now(timezone.utc).isoformat(),
             }},
@@ -612,11 +746,11 @@ async def checkout_status(stripe_session_id: str, request: Request):
         await _trigger_drip_for_txn(stripe_session_id, txn)
 
     return {
-        "status": cs.status,
-        "payment_status": cs.payment_status,
-        "amount_total": cs.amount_total,
-        "currency": cs.currency,
-        "metadata": cs.metadata,
+        "status": cs_status,
+        "payment_status": cs_payment_status,
+        "amount_total": cs_amount_total,
+        "currency": cs_currency,
+        "metadata": cs_metadata,
         "package_kind": (txn or {}).get("package_kind"),
     }
 
@@ -627,28 +761,50 @@ async def stripe_webhook(request: Request):
         raise HTTPException(500, "Stripe not configured")
     body = await request.body()
     sig = request.headers.get("Stripe-Signature", "")
-    host_url = str(request.base_url)
-    webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
-    sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-    try:
-        evt = await sc.handle_webhook(body, sig)
-    except Exception as e:
-        logger.exception("Stripe webhook failed: %s", e)
-        raise HTTPException(400, "Invalid webhook")
 
-    if evt and evt.session_id:
+    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
+    if is_emergent_test:
+        from emergentintegrations.payments.stripe.checkout import StripeCheckout
+        host_url = str(request.base_url)
+        webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
+        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        try:
+            evt = await sc.handle_webhook(body, sig)
+        except Exception as e:
+            logger.exception("Stripe webhook (emergent) failed: %s", e)
+            raise HTTPException(400, "Invalid webhook")
+        session_id = evt.session_id if evt else None
+        payment_status = evt.payment_status if evt else None
+        event_type = evt.event_type if evt else None
+    else:
+        webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+        try:
+            if webhook_secret:
+                evt = stripe_sdk.Webhook.construct_event(body, sig, webhook_secret)
+            else:
+                import json as _json
+                evt = _json.loads(body)
+        except Exception as e:
+            logger.exception("Stripe webhook parse failed: %s", e)
+            raise HTTPException(400, "Invalid webhook")
+        event_type = evt.get("type") if isinstance(evt, dict) else getattr(evt, "type", None)
+        data_object = (evt.get("data") if isinstance(evt, dict) else evt.get("data", {})).get("object", {})
+        session_id = data_object.get("id") if event_type == "checkout.session.completed" else None
+        payment_status = data_object.get("payment_status")
+
+    if session_id:
         await db.payment_transactions.update_one(
-            {"stripe_session_id": evt.session_id},
+            {"stripe_session_id": session_id},
             {"$set": {
-                "payment_status": evt.payment_status,
-                "webhook_event": evt.event_type,
+                "payment_status": payment_status,
+                "webhook_event": event_type,
                 "webhook_at": datetime.now(timezone.utc).isoformat(),
             }},
         )
         # Grant entitlement on paid
-        if evt.payment_status == "paid":
+        if payment_status == "paid":
             txn = await db.payment_transactions.find_one(
-                {"stripe_session_id": evt.session_id}, {"_id": 0}
+                {"stripe_session_id": session_id}, {"_id": 0}
             )
             if txn and txn.get("lw_session_id"):
                 await db.entitlements.update_one(
@@ -657,22 +813,19 @@ async def stripe_webhook(request: Request):
                         "lw_session_id": txn["lw_session_id"],
                         "kind": txn.get("package_kind"),
                         "package_id": txn.get("package_id"),
-                        "stripe_session_id": evt.session_id,
+                        "stripe_session_id": session_id,
                         "granted_at": datetime.now(timezone.utc).isoformat(),
                     }},
                     upsert=True,
                 )
             # Fire drip emails — idempotent via drip_sent flag
             if txn:
-                await _trigger_drip_for_txn(evt.session_id, txn)
+                await _trigger_drip_for_txn(session_id, txn)
     return {"received": True}
 
 
 async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
-    """Resolve buyer email and fire the appropriate Resend drip. Idempotent."""
-    if not os.environ.get("RESEND_API_KEY"):
-        logger.info("Skipping drip — RESEND_API_KEY not set")
-        return
+    """Resolve buyer email and fire the appropriate Resend drip + Slack ping. Idempotent."""
     if txn.get("drip_sent"):
         return  # already fired
 
@@ -690,30 +843,63 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
         except Exception as e:
             logger.warning("Could not fetch Stripe email for %s: %s", stripe_session_id, e)
 
-    if not email:
-        logger.info("No buyer email found for %s — skipping drip", stripe_session_id)
-        return
+    # 🔔 Fire Slack notification regardless (motivation + tracking)
+    await _notify_slack_sale(txn, email)
 
-    kind = txn.get("package_kind")
+    # 📧 Email drips (only if Resend configured and we have an email)
+    ids: dict = {}
+    if os.environ.get("RESEND_API_KEY") and email:
+        kind = txn.get("package_kind")
+        try:
+            if kind == "guide":
+                ids = await send_guide_drip(email)
+            elif kind in ("pro", "lifetime"):
+                ids = await send_pro_welcome(email)
+        except Exception as e:
+            logger.exception("Drip send failed for %s: %s", stripe_session_id, e)
+
+    # 💎 Credit grant for credit packages
+    pkg = PACKAGES.get(txn.get("package_id") or "", {})
+    if pkg.get("kind") == "credits" and txn.get("lw_session_id"):
+        credit_amount = int(pkg.get("credits", 0))
+        if credit_amount > 0:
+            await db.credits.update_one(
+                {"lw_session_id": txn["lw_session_id"]},
+                {"$inc": {"balance": credit_amount},
+                 "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}},
+                upsert=True,
+            )
+            logger.info("Granted %s credits to lw_session=%s", credit_amount, txn["lw_session_id"])
+
+    await db.payment_transactions.update_one(
+        {"stripe_session_id": stripe_session_id},
+        {"$set": {
+            "drip_sent": True,
+            "drip_email": email,
+            "drip_ids": ids,
+            "drip_sent_at": datetime.now(timezone.utc).isoformat(),
+        }},
+    )
+
+
+async def _notify_slack_sale(txn: dict, email: str) -> None:
+    """Ping Slack channel when someone buys. Silently no-op if no webhook set."""
+    if not SLACK_WEBHOOK_URL:
+        return
     try:
-        if kind == "guide":
-            ids = await send_guide_drip(email)
-        elif kind == "pro":
-            ids = await send_pro_welcome(email)
-        else:
-            ids = {}
-        await db.payment_transactions.update_one(
-            {"stripe_session_id": stripe_session_id},
-            {"$set": {
-                "drip_sent": True,
-                "drip_email": email,
-                "drip_ids": ids,
-                "drip_sent_at": datetime.now(timezone.utc).isoformat(),
-            }},
-        )
-        logger.info("Drip fired for %s -> %s (%s) ids=%s", stripe_session_id, email, kind, ids)
+        amount = txn.get("amount", 0)
+        kind = txn.get("package_kind", "?")
+        name = txn.get("metadata", {}).get("package_name") or txn.get("package_id", "?")
+        emoji = {
+            "guide": ":books:", "pro": ":rocket:",
+            "lifetime": ":crown:", "credits": ":coin:",
+        }.get(kind, ":moneybag:")
+
+        text = f"{emoji} *NEW SALE — ${amount}* — {name}\n_email:_ `{email or 'unknown'}`  ·  _kind:_ `{kind}`"
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            await client.post(SLACK_WEBHOOK_URL, json={"text": text})
     except Exception as e:
-        logger.exception("Drip send failed for %s: %s", stripe_session_id, e)
+        logger.warning("Slack notification failed: %s", e)
 
 
 @api_router.get("/entitlements/{session_id}")

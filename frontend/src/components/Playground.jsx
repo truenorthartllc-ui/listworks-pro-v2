@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
+import PaywallModal from "@/components/PaywallModal";
 import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -31,6 +32,8 @@ export default function Playground() {
   const [showVideo, setShowVideo] = useState(false);
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [strengthOpen, setStrengthOpen] = useState(false);
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [freeUsed, setFreeUsed] = useState(0);
   const outputRef = useRef(null);
 
   useEffect(() => {
@@ -61,7 +64,16 @@ export default function Playground() {
       toast.success(forcedTone ? `Rewritten in ${forcedTone} tone.` : "Listing rewritten — copy & crush it.");
     } catch (e) {
       console.error(e);
-      toast.error(e?.response?.data?.detail || "Generation failed. Try again.");
+      // 402 = paywall: show modal instead of generic error
+      if (e?.response?.status === 402) {
+        const usage = e.response.data?.detail?.usage || {};
+        setFreeUsed(usage.free_used ?? 3);
+        setPaywallOpen(true);
+        return;
+      }
+      const detail = e?.response?.data?.detail;
+      const msg = typeof detail === "string" ? detail : (detail?.message || "Generation failed. Try again.");
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -352,6 +364,11 @@ export default function Playground() {
           onClose={() => setShowAdvisor(false)}
         />
       )}
+      <PaywallModal
+        open={paywallOpen}
+        onClose={() => setPaywallOpen(false)}
+        freeUsed={freeUsed}
+      />
     </section>
   );
 }
