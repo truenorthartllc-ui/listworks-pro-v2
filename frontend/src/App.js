@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import LandingPage from "@/pages/LandingPage";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import SharedListing from "@/pages/SharedListing";
+import AffiliateDashboard from "@/pages/AffiliateDashboard";
+import { captureRefFromURL } from "@/lib/checkout";
 
 function App() {
   useEffect(() => {
@@ -14,6 +16,7 @@ function App() {
         "s_" + Math.random().toString(36).slice(2) + Date.now().toString(36)
       );
     }
+    captureRefFromURL();
   }, []);
 
   return (
@@ -24,6 +27,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/share/:id" element={<SharedListing />} />
+          <Route path="/a/:ref" element={<AffiliateDashboard />} />
         </Routes>
       </BrowserRouter>
     </div>

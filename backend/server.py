@@ -322,6 +322,82 @@ async def get_usage(session_id: str):
     return await _get_usage(session_id)
 
 
+# ============== AFFILIATE TRACKING ==============
+# Commission: 30% recurring on Pro · 30% one-time on PDF/Lifetime/Credits
+COMMISSION_RATE = 0.30
+
+
+@api_router.get("/affiliate/{ref}")
+async def affiliate_stats(ref: str):
+    """Public dashboard for an affiliate. Anyone with the URL sees their stats.
+    Format: GET /api/affiliate/mike → totals + recent referred sales.
+    """
+    ref = ref.strip().lower()
+    if not ref or len(ref) > 64:
+        raise HTTPException(400, "Invalid ref")
+
+    # All paid txns attributed to this ref
+    cursor = db.payment_transactions.find(
+        {"ref": ref, "payment_status": "paid"},
+        {"_id": 0, "stripe_session_id": 1, "amount": 1,
+         "package_kind": 1, "package_id": 1, "paid_at": 1, "drip_email": 1},
+    ).sort("paid_at", -1)
+    sales = await cursor.to_list(length=500)
+
+    total_revenue = sum(s.get("amount", 0) for s in sales)
+    total_commission = round(total_revenue * COMMISSION_RATE, 2)
+
+    # Total clicks (anyone who landed with the ref param — frontend posts to /api/ref-click)
+    clicks = await db.ref_clicks.count_documents({"ref": ref})
+
+    return {
+        "ref": ref,
+        "clicks": clicks,
+        "sales_count": len(sales),
+        "total_revenue": round(total_revenue, 2),
+        "commission_rate": COMMISSION_RATE,
+        "commission_owed": total_commission,
+        "recent_sales": [
+            {
+                "amount": s.get("amount"),
+                "package": s.get("package_id"),
+                "kind": s.get("package_kind"),
+                "paid_at": s.get("paid_at"),
+                # Don't leak full email — show first letter + domain
+                "buyer": _mask_email(s.get("drip_email") or ""),
+            }
+            for s in sales[:50]
+        ],
+    }
+
+
+def _mask_email(email: str) -> str:
+    if not email or "@" not in email:
+        return ""
+    local, _, domain = email.partition("@")
+    return f"{local[0]}***@{domain}"
+
+
+class RefClickIn(BaseModel):
+    ref: str
+    path: Optional[str] = "/"
+
+
+@api_router.post("/ref-click")
+async def track_ref_click(req: RefClickIn):
+    """Frontend pings this when a visitor lands with ?ref=xyz so we know the click happened
+    even if they never buy. Used for affiliate conversion-rate analytics."""
+    ref = req.ref.strip().lower()[:64]
+    if not ref:
+        return {"ok": False}
+    await db.ref_clicks.insert_one({
+        "ref": ref,
+        "path": req.path,
+        "at": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"ok": True}
+
+
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():
@@ -585,6 +661,7 @@ class CheckoutCreateRequest(BaseModel):
     origin_url: str
     session_id: Optional[str] = None  # listworks session id (anon)
     email: Optional[str] = None
+    ref: Optional[str] = None  # affiliate referral code (e.g. ?ref=mike)
 
 
 @api_router.post("/checkout/session")
@@ -605,6 +682,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "package_name": pkg["name"],
         "lw_session_id": req.session_id or "",
         "email": req.email or "",
+        "ref": (req.ref or "").strip().lower()[:64],
     }
 
     # Subscription mode for monthly/annual Pro; one-time for everything else
@@ -638,6 +716,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
             "currency": pkg["currency"],
             "lw_session_id": req.session_id or "",
             "email": req.email or "",
+            "ref": metadata["ref"],
             "status": "initiated",
             "payment_status": "pending",
             "created_at": datetime.now(timezone.utc).isoformat(),
@@ -686,6 +765,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "currency": pkg["currency"],
         "lw_session_id": req.session_id or "",
         "email": req.email or "",
+        "ref": metadata["ref"],
         "status": "initiated",
         "payment_status": "pending",
         "created_at": datetime.now(timezone.utc).isoformat(),
