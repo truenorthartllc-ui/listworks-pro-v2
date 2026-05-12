@@ -14,7 +14,12 @@ from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+try:
+    from anthropic import AsyncAnthropic
+    HAS_ANTHROPIC = True
+except ImportError:
+    HAS_ANTHROPIC = False
+    AsyncAnthropic = None
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
 from email_engine import send_guide_drip, send_pro_welcome
@@ -393,14 +398,19 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=req.session_id or str(uuid.uuid4()),
-        system_message=REWRITE_SYSTEM,
-    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
 
-    response = await chat.send_message(UserMessage(text=_build_user_prompt(req)))
-    cleaned = _strip_json(response)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
+    user_text = _build_user_prompt(req)
+
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system=REWRITE_SYSTEM,
+        messages=[{"role": "user", "content": user_text}],
+    )
+    cleaned = _strip_json(response.content[0].text)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -690,6 +700,10 @@ async def get_expired_scripts(req: ExpiredListingRequest):
     if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
+
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     meta_parts = []
     if req.price:
         meta_parts.append(f"Original price: {req.price}")
@@ -706,7 +720,6 @@ async def get_expired_scripts(req: ExpiredListingRequest):
         meta_parts.append(f"Likely reason: {req.listing_reason}")
 
     meta_str = "\n".join(meta_parts) if meta_parts else "No additional details provided."
-
     user_prompt = f"""PROPERTY: {req.address}
 
 META:
@@ -714,14 +727,13 @@ META:
 
 Now produce the JSON object with all 4 scripts. JSON only."""
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=str(uuid.uuid4()),
-        system_message=EXPIRED_LISTING_SYSTEM,
-    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
-
-    response = await chat.send_message(UserMessage(text=user_prompt))
-    cleaned = _strip_json(response)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system=EXPIRED_LISTING_SYSTEM,
+        messages=[{"role": "user", "content": user_prompt}],
+    )
+    cleaned = _strip_json(response.content[0].text)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -744,20 +756,23 @@ async def import_redfin(req: RedfinImportRequest):
     if not req.redfin_url or "redfin.com" not in req.redfin_url.lower():
         raise HTTPException(400, "Invalid Redfin URL. Please provide a valid Redfin listing URL.")
 
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
+
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_prompt = f"""Extract property data from this Redfin listing:
 
 URL: {req.redfin_url}
 
 Return the JSON object with all available property details. JSON only."""
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=str(uuid.uuid4()),
-        system_message=REDFIN_IMPORT_SYSTEM,
-    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
-
-    response = await chat.send_message(UserMessage(text=user_prompt))
-    cleaned = _strip_json(response)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=512,
+        system=REDFIN_IMPORT_SYSTEM,
+        messages=[{"role": "user", "content": user_prompt}],
+    )
+    cleaned = _strip_json(response.content[0].text)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -798,24 +813,38 @@ async def analyze_photo(req: PhotoAnalyzeRequest):
     if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=str(uuid.uuid4()),
-        system_message=(
-            "You analyze real estate property photos. "
-            "Return STRICT JSON: {\"features\":[8 short property features detected, "
-            "e.g. 'marble counters','hardwood floors','vaulted ceilings'],"
-            "\"style\":\"one short style label like 'Modern Farmhouse'\","
-            "\"suggested_headline\":\"a single 10-word emotional headline for this property\"}"
-        ),
-    ).with_model("openai", "gpt-5.2")
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
 
-    image = ImageContent(image_base64=req.image_base64)
-    response = await chat.send_message(UserMessage(
-        text="Analyze this property photo. JSON only.",
-        file_contents=[image],
-    ))
-    cleaned = _strip_json(response)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
+    prompt = (
+        "You analyze real estate property photos. "
+        "Return STRICT JSON: {\"features\":[8 short property features detected, "
+        "e.g. 'marble counters','hardwood floors','vaulted ceilings'],"
+        "\"style\":\"one short style label like 'Modern Farmhouse'\","
+        "\"suggested_headline\":\"a single 10-word emotional headline for this property\"}"
+    )
+    # strip data: URL prefix if present
+    img_data = req.image_base64
+    if img_data.startswith("data:"):
+        img_data = img_data.split(",", 1)[1]
+
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=512,
+        system=prompt,
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Analyze this property photo. JSON only."},
+                {
+                    "type": "image",
+                    "source": {"type": "base64", "media_type": req.mime_type, "data": img_data},
+                },
+            ],
+        }],
+    )
+    cleaned = _strip_json(response.content[0].text)
     try:
         data = json.loads(cleaned)
     except Exception:
@@ -845,6 +874,9 @@ async def advisor(req: AdvisorRequest):
     if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
+
     context_msg = ""
     if req.listing_id:
         listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
@@ -860,15 +892,22 @@ async def advisor(req: AdvisorRequest):
     for h in req.history[-6:]:
         history_text += f"\n{h.role.upper()}: {h.content[:600]}"
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=f"advisor-{req.listing_id or 'anon'}",
-        system_message=ADVISOR_SYSTEM,
-    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
-
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_text = f"{history_text}\n\nUSER: {req.question}{context_msg}".strip()
-    reply = await chat.send_message(UserMessage(text=user_text))
-    return AdvisorResponse(reply=reply.strip())
+    messages = []
+    if history_text:
+        for h in req.history[-6:]:
+            messages.append({"role": h.role, "content": h.content[:600]})
+    messages.append({"role": "user", "content": user_text})
+
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=512,
+        system=ADVISOR_SYSTEM,
+        messages=messages,
+    )
+    reply = response.content[0].text.strip()
+    return AdvisorResponse(reply=reply)
 
 
 # ===== Video Generation =====
@@ -1010,41 +1049,8 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
     # Subscription mode for monthly/annual Pro; one-time for everything else
     is_subscription = req.package_id in ("pro_month", "pro_annual")
 
-    # Detect Emergent's mock test key — fall back to wrapper for sandbox testing
-    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
-
-    if is_emergent_test and not is_subscription:
-        # Use Emergent wrapper (it handles their mock test key)
-        from emergentintegrations.payments.stripe.checkout import (
-            StripeCheckout, CheckoutSessionRequest,
-        )
-        host_url = str(request.base_url)
-        webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
-        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        cs_req = CheckoutSessionRequest(
-            amount=float(pkg["amount"]),
-            currency=pkg["currency"],
-            success_url=success_url,
-            cancel_url=cancel_url,
-            metadata=metadata,
-        )
-        session_obj = await sc.create_checkout_session(cs_req)
-        await db.payment_transactions.insert_one({
-            "id": str(uuid.uuid4()),
-            "stripe_session_id": session_obj.session_id,
-            "package_id": req.package_id,
-            "package_kind": pkg["kind"],
-            "amount": pkg["amount"],
-            "currency": pkg["currency"],
-            "lw_session_id": req.session_id or "",
-            "email": req.email or "",
-            "ref": metadata["ref"],
-            "status": "initiated",
-            "payment_status": "pending",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "metadata": metadata,
-        })
-        return {"url": session_obj.url, "session_id": session_obj.session_id}
+    # Use raw Stripe SDK for everything (skip emergent wrapper)
+    is_emergent_test = False
 
     line_item = {
         "price_data": {
@@ -1101,7 +1107,7 @@ async def checkout_status(stripe_session_id: str, request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
 
-    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
+    is_emergent_test = False  # skip emergent wrapper
     if is_emergent_test:
         from emergentintegrations.payments.stripe.checkout import StripeCheckout
         host_url = str(request.base_url).rstrip("/")
@@ -1179,7 +1185,7 @@ async def stripe_webhook(request: Request):
     body = await request.body()
     sig = request.headers.get("Stripe-Signature", "")
 
-    is_emergent_test = STRIPE_API_KEY == "sk_test_emergent"
+    is_emergent_test = False  # skip emergent wrapper
     if is_emergent_test:
         from emergentintegrations.payments.stripe.checkout import StripeCheckout
         host_url = str(request.base_url)

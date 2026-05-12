@@ -14,7 +14,12 @@ import uuid
 from pathlib import Path
 from typing import List, Optional
 
-from PIL import Image, ImageDraw, ImageFont
+try:
+    from openai import AsyncOpenAI
+    HAS_OPENAI = True
+except ImportError:
+    HAS_OPENAI = False
+    AsyncOpenAI = None
 
 logger = logging.getLogger(__name__)
 
@@ -160,12 +165,18 @@ async def _generate_voiceover_mp3(
     api_key: str, text: str, dest: Path, voice: str = "onyx"
 ) -> bool:
     try:
-        from emergentintegrations.llm.openai import OpenAITextToSpeech
-        tts = OpenAITextToSpeech(api_key=api_key)
-        audio = await tts.generate_speech(
-            text=text[:600], model="tts-1-hd", voice=voice, speed=0.95
+        if not HAS_OPENAI:
+            logger.warning("openai package not installed — skipping TTS")
+            return False
+        client = AsyncOpenAI(api_key=api_key)
+        response = await client.audio.speech.create(
+            model="tts-1-hd",
+            voice=voice,
+            input=text[:600],
+            speed=0.95,
         )
-        dest.write_bytes(audio)
+        audio_bytes = response.read()
+        dest.write_bytes(audio_bytes)
         return True
     except Exception:
         logger.exception("TTS generation failed")
