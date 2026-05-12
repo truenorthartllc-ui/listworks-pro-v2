@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
   X, Upload, Play, Pause, Mic, Square, Trash2, Loader2, Film, Download, Lock,
 } from "lucide-react";
+import { getEntitlements } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -52,6 +53,7 @@ export default function VideoBuilder({ listing, onClose }) {
   const [agentName, setAgentName] = useState("");
   const [agentBrokerage, setAgentBrokerage] = useState("");
   const [fmt, setFmt] = useState("16:9");
+  const [isPro, setIsPro] = useState(false);
   const [virtualTour, setVirtualTour] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
@@ -61,15 +63,8 @@ export default function VideoBuilder({ listing, onClose }) {
   const recordChunksRef = useRef([]);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const onKey = (e) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-      if (previewAudioRef.current) previewAudioRef.current.pause();
-    };
-  }, [onClose]);
+    getEntitlements().then(d => setIsPro(d.is_pro)).catch(() => {});
+  }, []);
 
   const onPhotoUpload = async (files) => {
     const incoming = Array.from(files).slice(0, 12 - photos.length);
@@ -138,8 +133,8 @@ export default function VideoBuilder({ listing, onClose }) {
       toast.error("Upload at least one photo.");
       return;
     }
-    if (fmt === "9:16") {
-      toast.error("9:16 Reels format is a Pro feature. Using 16:9.");
+    if (fmt === "9:16" && !isPro) {
+      toast.error("9:16 Reels is a Pro feature.");
       return;
     }
     setGenerating(true);
@@ -281,10 +276,22 @@ export default function VideoBuilder({ listing, onClose }) {
                 </button>
                 <button
                   data-testid="fmt-9-16-btn"
-                  onClick={() => toast("9:16 Reels is a Pro feature.", { duration: 2500 })}
-                  className="px-5 py-3 border border-oat/20 text-oat/40 font-heading text-[11px] uppercase tracking-[0.12em] cursor-not-allowed flex items-center gap-2"
+                  onClick={() => {
+                    if (isPro) {
+                      setFmt("9:16");
+                    } else {
+                      toast("9:16 Reels is a Pro feature.", { duration: 2500 });
+                    }
+                  }}
+                  className={`px-5 py-3 border font-heading text-[11px] uppercase tracking-[0.12em] cursor-pointer flex items-center gap-2 transition ${
+                    fmt === "9:16" && isPro
+                      ? "bg-vermillion border-vermillion text-oat"
+                      : isPro
+                      ? "border-oat/30 hover:border-oat text-oat"
+                      : "border-oat/20 text-oat/40 cursor-not-allowed"
+                  }`}
                 >
-                  9:16 Reels <Lock className="w-3 h-3" /> Pro
+                  {isPro ? "9:16 Reels" : "9:16 Reels "}<Lock className="w-3 h-3" /> {!isPro && "Pro"}
                 </button>
                 <label className="px-5 py-3 border border-oat/30 hover:border-oat font-heading text-[11px] uppercase tracking-[0.12em] cursor-pointer flex items-center gap-2">
                   <input type="checkbox" data-testid="virtual-tour-toggle" checked={virtualTour} onChange={(e) => setVirtualTour(e.target.checked)} className="accent-vermillion" />

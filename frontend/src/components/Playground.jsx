@@ -345,8 +345,30 @@ export default function Playground() {
                   </button>
                   <button
                     data-testid="make-10-btn"
-                    onClick={() => startCheckout("pro_month")}
-                    className="border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                    onClick={async () => {
+                      if (!result?.id) return;
+                      setLoading(true);
+                      try {
+                        const session_id = localStorage.getItem("lw_session_id");
+                        const { data } = await axios.post(
+                          `${API}/rewrite/enhance`,
+                          { listing_id: result.id, session_id }
+                        );
+                        setResult(data);
+                        setActiveTab("mls");
+                        toast.success("Elevated to 10/10. That's the one.");
+                      } catch (e) {
+                        if (e?.response?.status === 402) {
+                          setPaywallOpen(true);
+                          return;
+                        }
+                        toast.error(e?.response?.data?.detail || "Enhance failed. Try again.");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                    className="border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5 disabled:opacity-50"
                   >
                     <Flame className="w-3.5 h-3.5" /> Make It 10/10 — Pro
                   </button>

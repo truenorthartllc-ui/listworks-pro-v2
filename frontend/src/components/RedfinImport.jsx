@@ -45,7 +45,7 @@ export default function RedfinImport({ onImport }) {
       <button
         onClick={handleImport}
         disabled={loading || !url.trim()}
-        className="btn-vermilion px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2 disabled:opacity-60 whitespace-nowrap"
+        className="btn-vermillion px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2 disabled:opacity-60 whitespace-nowrap"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Import className="w-4 h-4" />}
         Import
