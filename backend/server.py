@@ -443,6 +443,65 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     }
 
 
+# ============== RATE LIMITING + BOT PROTECTION ==============
+_free_rewrites_per_session: Dict[str, int] = {}
+_rate_limit_log: Dict[str, list] = {}
+_rate_limit_lock = asyncio.Lock()
+
+
+async def _is_rate_limited(session_id: str, endpoint: str, limit: int = 20, window: int = 60) -> bool:
+    """Block if an IP/session exceeds `limit` requests to `endpoint` within `window` seconds."""
+    if not session_id:
+        return False
+    key = f"{session_id}:{endpoint}"
+    now = datetime.now(timezone.utc)
+    cutoff = now.timestamp() - window
+
+    async with _rate_limit_lock:
+        timestamps = _rate_limit_log.get(key, [])
+        timestamps = [t for t in timestamps if t > cutoff]
+        if len(timestamps) >= limit:
+            _rate_limit_log[key] = timestamps
+            return True
+        timestamps.append(now.timestamp())
+        _rate_limit_log[key] = timestamps
+        return False
+
+
+def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
+    """Detect obvious bot / scraper patterns. Returns (is_bot, reason)."""
+    ua = request.headers.get("user-agent", "").lower()
+
+    if not ua:
+        return True, "no user-agent"
+    if "curl" in ua or "wget" in ua or "python" in ua or "scrap" in ua:
+        return True, "suspicious user-agent"
+    if not session_id or len(session_id) < 10:
+        return True, "invalid session"
+    if session_id.startswith("s_") and len(session_id) < 20:
+        return True, "session too short"
+    return False, ""
+
+
+# Hard 3-trial limit: track FREE rewrites used per session (in-memory, no DB hit)
+FREE_TRIALS_PER_SESSION = 3
+
+
+def _check_free_trial(session_id: str) -> tuple[bool, int]:
+    """Returns (allowed, remaining). Tracks usage in-process memory."""
+    if not session_id:
+        return True, 0
+    used = _free_rewrites_per_session.get(session_id, 0)
+    if used >= FREE_TRIALS_PER_SESSION:
+        return False, 0
+    return True, FREE_TRIALS_PER_SESSION - used
+
+
+def _record_free_trial(session_id: str) -> None:
+    if session_id:
+        _free_rewrites_per_session[session_id] = _free_rewrites_per_session.get(session_id, 0) + 1
+
+
 async def _get_usage(session_id: Optional[str]) -> dict:
     """Resolve a session's free quota status, paid credits, and Pro entitlement."""
     if not session_id:
@@ -747,19 +806,29 @@ async def root():
 
 
 @api_router.post("/rewrite", response_model=RewriteOutput)
-async def rewrite_listing(req: RewriteRequest):
+async def rewrite_listing(req: RewriteRequest, request: Request):
     if len(req.raw_listing.strip()) < 10:
         raise HTTPException(400, "Listing too short. Add at least a sentence.")
 
-    # 🚧 Paywall gate — enforce free quota / credits / Pro
-    usage = await _get_usage(req.session_id)
-    if usage["paywall"]:
+    # Bot detection
+    is_bot, reason = _is_bot_request(request, req.session_id or "")
+    if is_bot:
+        raise HTTPException(403, f"Request blocked: {reason}")
+
+    # Rate limiting (20 req/min per session)
+    if await _is_rate_limited(req.session_id or "", "rewrite", 20, 60):
+        raise HTTPException(429, "Too many requests. Slow down.")
+
+    # Hard 3-trial limit for free users
+    allowed, remaining = _check_free_trial(req.session_id or "")
+    if not allowed:
         raise HTTPException(
-            status_code=402,  # Payment Required
+            status_code=402,
             detail={
-                "code": "paywall",
-                "message": f"You've used your {FREE_REWRITES_PER_SESSION} free rewrites. Upgrade to keep generating.",
-                "usage": usage,
+                "code": "trial_exceeded",
+                "message": "You've used your 3 free rewrites. Upgrade to Pro or Lifetime to continue.",
+                "trials_used": FREE_TRIALS_PER_SESSION,
+                "remaining": 0,
             },
         )
 
@@ -767,12 +836,10 @@ async def rewrite_listing(req: RewriteRequest):
     listing_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
 
-    # Decrement credits if user is on the credit plan (and not Pro)
-    if not usage["is_pro"] and usage["credits"] > 0 and req.session_id:
-        await db.credits.update_one(
-            {"lw_session_id": req.session_id},
-            {"$inc": {"balance": -1}},
-        )
+    # Record free trial usage (runs after generation to avoid race)
+    _record_free_trial(req.session_id or "")
+    updated_allowed, updated_remaining = _check_free_trial(req.session_id or "")
+    usage_meta = {"trials_used": FREE_TRIALS_PER_SESSION - updated_remaining, "remaining": updated_remaining}
 
     doc = {
         "id": listing_id,
@@ -789,13 +856,17 @@ async def rewrite_listing(req: RewriteRequest):
     }
     await db.listings.insert_one({k: v for k, v in doc.items()})
 
-    return RewriteOutput(
-        id=listing_id,
-        tone=req.tone,
-        raw_listing=req.raw_listing,
-        created_at=created_at,
-        **outputs,
-    )
+    return {
+        **RewriteOutput(
+            id=listing_id,
+            tone=req.tone,
+            raw_listing=req.raw_listing,
+            created_at=created_at,
+            **outputs,
+        ).model_dump(),
+        "trial_remaining": updated_remaining,
+        "trial_limit": FREE_TRIALS_PER_SESSION,
+    }
 
 
 @api_router.post("/batch-rewrite", response_model=BatchRewriteResponse)
@@ -803,6 +874,21 @@ async def batch_rewrite(req: BatchRewriteRequest):
     results = []
     success_count = 0
     failed_count = 0
+
+    # Trial check before processing batch
+    if req.listings:
+        first_session = req.listings[0].session_id or ""
+        allowed, _ = _check_free_trial(first_session)
+        if not allowed:
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "trial_exceeded",
+                    "message": "Trial exceeded. Upgrade to continue.",
+                    "trials_used": FREE_TRIALS_PER_SESSION,
+                    "remaining": 0,
+                },
+            )
 
     for listing_req in req.listings:
         try:

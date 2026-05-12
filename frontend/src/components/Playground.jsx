@@ -32,6 +32,8 @@ const TABS = [
 
 const SAMPLE = `3 bed 2 bath ranch home. 1,840 sqft. Updated kitchen with granite counters and stainless appliances. Hardwood floors throughout. Fenced backyard. Two-car garage. Walking distance to top-rated schools. Move-in ready.`;
 
+const FREE_TRIALS_PER_SESSION = 3;
+
 export default function Playground() {
   const [raw, setRaw] = useState("");
   const [tone, setTone] = useState("Modern");
@@ -44,7 +46,7 @@ export default function Playground() {
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [strengthOpen, setStrengthOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const [freeUsed, setFreeUsed] = useState(0);
+  const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
   const outputRef = useRef(null);
 
@@ -78,13 +80,16 @@ export default function Playground() {
       });
       setResult(data);
       setActiveTab("mls");
+      setTrialRemaining(data.trial_remaining ?? null);
+      if (data.trial_remaining === 0) {
+        setPaywallOpen(true);
+      }
       toast.success(forcedTone ? `Rewritten in ${forcedTone} tone.` : "Listing rewritten — copy & crush it.");
     } catch (e) {
       console.error(e);
-      // 402 = paywall: show modal instead of generic error
+      // 402 = trial exceeded or paywall: show modal
       if (e?.response?.status === 402) {
-        const usage = e.response.data?.detail?.usage || {};
-        setFreeUsed(usage.free_used ?? 3);
+        setTrialRemaining(0);
         setPaywallOpen(true);
         return;
       }
@@ -493,7 +498,8 @@ export default function Playground() {
       <PaywallModal
         open={paywallOpen}
         onClose={() => setPaywallOpen(false)}
-        freeUsed={freeUsed}
+        freeUsed={FREE_TRIALS_PER_SESSION}
+        trialRemaining={trialRemaining}
       />
     </section>
   );

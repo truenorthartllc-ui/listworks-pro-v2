@@ -5,8 +5,11 @@ import { startCheckout } from "@/lib/checkout";
  * PaywallModal — fired when the /api/rewrite endpoint returns a 402 paywall response.
  * Shows the user clean upgrade options: $5 for 10 credits, $49/mo Pro, or $299 lifetime.
  */
-export default function PaywallModal({ open, onClose, freeUsed = 3 }) {
+export default function PaywallModal({ open, onClose, freeUsed = 3, trialRemaining = null }) {
   if (!open) return null;
+
+  const remaining = trialRemaining !== null ? trialRemaining : 0;
+  const used = freeUsed - remaining;
 
   const options = [
     {
@@ -66,7 +69,7 @@ export default function PaywallModal({ open, onClose, freeUsed = 3 }) {
           </div>
           <h2 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.05] mb-3">
             <span className="font-light">You used your</span>{" "}
-            <span className="italic">{freeUsed} free rewrites.</span>
+            <span className="italic">{freeUsed} free {freeUsed === 1 ? "rewrite" : "rewrites"}.</span>
           </h2>
           <p className="font-body text-ink/65 mb-8 max-w-lg">
             Pick an option below to keep generating. Or close this and come back tomorrow — no pressure.
