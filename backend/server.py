@@ -77,6 +77,20 @@ class RewriteRequest(BaseModel):
     session_id: Optional[str] = None
 
 
+class RewriteOutput(BaseModel):
+    id: str
+    mls: str
+    instagram: str
+    facebook: str
+    headlines: List[str]
+    email: str
+    listing_strength: float
+    strength_reasons: List[str]
+    tone: str
+    raw_listing: str
+    created_at: str
+
+
 class BatchRewriteRequest(BaseModel):
     listings: List[RewriteRequest]
 
@@ -97,20 +111,6 @@ class Template(BaseModel):
     id: str
     name: str
     tone: str
-    created_at: str
-
-
-class RewriteOutput(BaseModel):
-    id: str
-    mls: str
-    instagram: str
-    facebook: str
-    headlines: List[str]
-    email: str
-    listing_strength: float
-    strength_reasons: List[str]
-    tone: str
-    raw_listing: str
     created_at: str
 
 
