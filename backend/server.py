@@ -556,6 +556,190 @@ async def track_ref_click(req: RefClickIn):
     return {"ok": True}
 
 
+# ============== AFFILIATE SELF-SIGNUP ==============
+class AffiliateCreateIn(BaseModel):
+    name: str
+    email: str
+    ref: Optional[str] = None
+
+
+@api_router.post("/affiliate/create")
+async def affiliate_create(req: AffiliateCreateIn):
+    name = req.name.strip()[:100]
+    email = req.email.strip().lower()[:254]
+    if "@" not in email or "." not in email:
+        raise HTTPException(400, "Invalid email")
+    if not name:
+        raise HTTPException(400, "Name required")
+
+    existing = await db.affiliates.find_one({"email": email})
+    if existing:
+        ref = existing["ref"]
+    else:
+        ref = name.lower().replace(" ", "-").replace("@", "").replace(".", "")[:32]
+        ref = ref + "-" + str(uuid.uuid4())[:6]
+        ref = ref.strip("-")
+
+        await db.affiliates.insert_one({
+            "ref": ref,
+            "name": name,
+            "email": email,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "commission_rate": COMMISSION_RATE,
+            "status": "active",
+        })
+
+        if RESEND_API_KEY:
+            await _send_affiliate_welcome(email, name, ref)
+
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    link = f"{frontend_url}/?ref={ref}"
+    return {"ref": ref, "link": link, "commission_rate": int(COMMISSION_RATE * 100)}
+
+
+async def _send_affiliate_welcome(email: str, name: str, ref: str) -> None:
+    from email_engine import send_email
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    link = f"{frontend_url}/?ref={ref}"
+    dashboard = f"{frontend_url}/affiliate/{ref}"
+    body = f"""Hey {name},
+
+You are officially a ListWorks PRO affiliate! Congrats.
+
+Here's your referral link:
+{link}
+
+Your dashboard (share this URL with anyone):
+{dashboard}
+
+You'll earn 30% of every sale your link brings in. We pay out monthly via Stripe once you hit $50.
+
+How to earn:
+1. Share your link with fellow real estate agents
+2. Post it on social media
+3. Text it to your sphere
+
+The first 3 rewrites are free — so there's zero friction for them to try it.
+
+Let's get you paid.
+
+— The ListWorks PRO Team
+"""
+    try:
+        await asyncio.to_thread(
+            send_email,
+            to=email,
+            subject=f"You are a ListWorks PRO Affiliate, {name}!",
+            body=body,
+        )
+    except Exception as e:
+        logger.warning("Could not send affiliate welcome email to %s: %s", email, e)
+
+
+# ============== AFFILIATE DASHBOARD (full stats + recent sales) ==============
+@api_router.get("/affiliate/dashboard/{ref}")
+async def affiliate_full(ref: str):
+    basic = await db.affiliates.find_one({"ref": ref.strip().lower()}, {"_id": 0})
+    if not basic:
+        raise HTTPException(404, "Affiliate not found")
+
+    ref_lower = ref.strip().lower()
+    cursor = db.payment_transactions.find(
+        {"ref": ref_lower, "payment_status": "paid"},
+        {"_id": 0, "stripe_session_id": 1, "amount": 1,
+         "package_kind": 1, "package_id": 1, "paid_at": 1, "drip_email": 1},
+    ).sort("paid_at", -1)
+    sales = await cursor.to_list(length=500)
+
+    total_revenue = sum(s.get("amount", 0) for s in sales)
+    total_commission = round(total_revenue * COMMISSION_RATE, 2)
+    clicks = await db.ref_clicks.count_documents({"ref": ref_lower})
+    conversion = round(len(sales) / clicks * 100, 1) if clicks > 0 else 0.0
+
+    return {
+        **basic,
+        "clicks": clicks,
+        "sales_count": len(sales),
+        "total_revenue": round(total_revenue, 2),
+        "commission_owed": total_commission,
+        "conversion": conversion,
+        "recent_sales": [
+            {
+                "amount": s.get("amount"),
+                "package": s.get("package_id"),
+                "kind": s.get("package_kind"),
+                "paid_at": s.get("paid_at"),
+                "buyer": _mask_email(s.get("drip_email") or ""),
+            }
+            for s in sales[:50]
+        ],
+    }
+
+
+# ============== AFFILIATE SHARE TEXT (AI-crafted copy) ==============
+class ShareTextRequest(BaseModel):
+    ref: str
+    platform: Optional[str] = "twitter"
+    tone: Optional[str] = "casual"
+    custom_note: Optional[str] = None
+
+
+SHARE_PROMPTS = {
+    "twitter": {
+        "prefix": "listing copy that actually sells homes",
+        "body": "I used this AI tool to rewrite a boring MLS draft in 10 seconds — Instagram caption, FB post, 5 headlines, email blast. First 3 free",
+        "hashtags": "#realestate #realestateagent #listings",
+    },
+    "facebook": {
+        "prefix": "Just tried this for listing copy",
+        "body": "3 bed 2 bath ranch to Instagram caption + FB post + 5 headlines + email blast, all in 10 seconds. First 3 free.",
+        "hashtags": "",
+    },
+    "linkedin": {
+        "prefix": "Sharing a tool that has changed how I do listing copy",
+        "body": "Paste a boring MLS draft, get publish-ready Instagram, Facebook, 5 headlines, and email blast in 10 seconds. First 3 free.",
+        "hashtags": "",
+    },
+    "text": {
+        "prefix": "Check this out",
+        "body": "ListWorks PRO — paste your boring MLS draft, get publish-ready copy in 10 seconds. Instagram, Facebook, 5 headlines, email. First 3 free.",
+        "hashtags": "",
+    },
+}
+
+
+@api_router.post("/affiliate/share-text")
+async def affiliate_share_text(req: ShareTextRequest):
+    ref = req.ref.strip().lower()[:64]
+    if not ref:
+        raise HTTPException(400, "ref required")
+
+    template = SHARE_PROMPTS.get(req.platform, SHARE_PROMPTS["twitter"])
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    link = f"{frontend_url}/?ref={ref}"
+    parts = [template["prefix"], template["body"], link]
+    if template["hashtags"]:
+        parts.append(template["hashtags"])
+    if req.custom_note:
+        parts.insert(0, req.custom_note)
+
+    copy = "\n\n".join(parts)
+
+    twitter_url = f"https://twitter.com/intent/tweet?text={encodeURIComponent(copy)}"
+    fb_url = f"https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(link)}"
+    li_url = f"https://www.linkedin.com/sharing/share-offsite/?url={encodeURIComponent(link)}"
+
+    return {
+        "copy": copy,
+        "platforms": {
+            "twitter": twitter_url,
+            "facebook": fb_url,
+            "linkedin": li_url,
+            "text": None,
+        },
+    }
+
+
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():

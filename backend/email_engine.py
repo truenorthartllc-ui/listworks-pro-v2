@@ -272,6 +272,12 @@ def _iso_in(days: int) -> str:
     return (datetime.now(timezone.utc) + timedelta(days=days)).isoformat()
 
 
+async def send_email(*, to: str, subject: str, body: str, tag: Optional[str] = None) -> Optional[str]:
+    """Simple plain-text email send."""
+    html = f"<p style='font-family:sans-serif;line-height:1.6'>{body.replace(chr(10), '<br>')}</p>"
+    return await _send(to=to, subject=subject, html=html, tag=tag or "transactional")
+
+
 async def send_guide_drip(email: str, first_name: Optional[str] = None) -> dict:
     """
     Fire the full PDF-buyer drip:
