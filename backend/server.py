@@ -1115,6 +1115,30 @@ async def post_sale_report(req: PostSaleReportRequest):
     }
 
 
+# ============== WAITLIST ==============
+class WaitlistJoin(BaseModel):
+    name: str
+    email: str
+
+
+@api_router.post("/waitlist/join")
+async def waitlist_join(req: WaitlistJoin):
+    name = req.name.strip()[:100]
+    email = req.email.strip().lower()[:254]
+    if "@" not in email or "." not in email:
+        raise HTTPException(400, "Invalid email")
+    existing = await db.waitlist.find_one({"email": email})
+    if existing:
+        return {"ok": True, "message": "Already on the list!"}
+    await db.waitlist.insert_one({
+        "name": name,
+        "email": email,
+        "joined_at": datetime.now(timezone.utc).isoformat(),
+        "source": "landing",
+    })
+    return {"ok": True, "message": "You're on the list!"}
+
+
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():

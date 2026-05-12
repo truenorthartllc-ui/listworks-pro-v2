@@ -7,6 +7,7 @@ import PaymentSuccess from "@/pages/PaymentSuccess";
 import SharedListing from "@/pages/SharedListing";
 import AffiliateDashboard from "@/pages/AffiliateDashboard";
 import AffiliateSignup from "@/pages/AffiliateSignup";
+import Waitlist from "@/pages/Waitlist";
 import OpenHouseCheckin from "@/pages/OpenHouseCheckin";
 import { captureRefFromURL } from "@/lib/checkout";
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/affiliate/signup" element={<AffiliateSignup />} />
           <Route path="/affiliate/demo" element={<AffiliateSignup />} />
           <Route path="/openhouse/:eventId" element={<OpenHouseCheckin />} />
+          <Route path="/waitlist" element={<Waitlist />} />
         </Routes>
       </BrowserRouter>
     </div>
