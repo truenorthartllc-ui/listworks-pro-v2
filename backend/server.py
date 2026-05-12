@@ -22,7 +22,7 @@ except ImportError:
     AsyncAnthropic = None
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
-from email_engine import send_guide_drip, send_pro_welcome
+from email_engine import send_guide_drip, send_pro_welcome, send_email
 import stripe as stripe_sdk
 import httpx
 
@@ -471,6 +471,8 @@ async def _is_rate_limited(session_id: str, endpoint: str, limit: int = 20, wind
 def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
     """Detect obvious bot / scraper patterns. Returns (is_bot, reason)."""
     ua = request.headers.get("user-agent", "").lower()
+    real_mobile_patterns = ["mozilla/5.0", "mobile ", "android", "iphone", "ipad"]
+    is_likely_real = any(p in ua for p in real_mobile_patterns) if ua else False
 
     if not ua:
         return True, "no user-agent"
@@ -480,6 +482,8 @@ def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
         return True, "invalid session"
     if session_id.startswith("s_") and len(session_id) < 20:
         return True, "session too short"
+    if not is_likely_real and any(k in ua for k in ["bot", "crawler", "spider", "slurp"]):
+        return True, "bot detected"
     return False, ""
 
 
@@ -500,6 +504,189 @@ def _check_free_trial(session_id: str) -> tuple[bool, int]:
 def _record_free_trial(session_id: str) -> None:
     if session_id:
         _free_rewrites_per_session[session_id] = _free_rewrites_per_session.get(session_id, 0) + 1
+
+
+# ============== OPEN HOUSE CAPTURE ==============
+class OpenHouseCreateIn(BaseModel):
+    address: str
+    listing_url: Optional[str] = None
+    agent_name: str
+    agent_phone: str
+    agent_email: str
+    session_id: Optional[str] = None
+
+
+class OpenHouseVisitorIn(BaseModel):
+    event_id: str
+    visitor_name: Optional[str] = None
+    visitor_phone: Optional[str] = None
+    visitor_email: Optional[str] = None
+    message: Optional[str] = None
+    source: Optional[str] = "qr"  # qr | text | manual
+
+
+@api_router.post("/openhouse/create")
+async def openhouse_create(req: OpenHouseCreateIn, request: Request):
+    is_bot, reason = _is_bot_request(request, req.session_id or "")
+    if is_bot:
+        raise HTTPException(403, f"Request blocked: {reason}")
+
+    event_id = str(uuid.uuid4())[:8]
+    created_at = datetime.now(timezone.utc).isoformat()
+
+    event = {
+        "event_id": event_id,
+        "address": req.address.strip(),
+        "listing_url": req.listing_url or "",
+        "agent_name": req.agent_name.strip(),
+        "agent_phone": req.agent_phone.strip(),
+        "agent_email": req.agent_email.strip(),
+        "session_id": req.session_id,
+        "created_at": created_at,
+        "status": "active",
+    }
+    await db.openhouse_events.insert_one(event)
+
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    checkin_url = f"{frontend_url}/openhouse/{event_id}"
+    share_link = f"https://listworks.pro/?ref=oh&event={event_id}"
+
+    return {
+        "event_id": event_id,
+        "checkin_url": checkin_url,
+        "share_link": share_link,
+        "qr_data": checkin_url,
+        "address": req.address,
+    }
+
+
+@api_router.post("/openhouse/checkin")
+async def openhouse_checkin(req: OpenHouseVisitorIn, request: Request):
+    is_bot, reason = _is_bot_request(request, "")
+    if is_bot:
+        raise HTTPException(403, f"Request blocked: {reason}")
+
+    if await _is_rate_limited("", "checkin", 5, 60):
+        raise HTTPException(429, "Too many checkins. Slow down.")
+
+    event = await db.openhouse_events.find_one({"event_id": req.event_id})
+    if not event:
+        raise HTTPException(404, "Event not found")
+
+    visitor = {
+        "event_id": req.event_id,
+        "name": (req.visitor_name or "").strip()[:100],
+        "phone": (req.visitor_phone or "").strip()[:20],
+        "email": (req.visitor_email or "").strip().lower()[:254],
+        "message": (req.message or "").strip()[:500],
+        "source": req.source or "qr",
+        "checked_in_at": datetime.now(timezone.utc).isoformat(),
+        "drip_sent": False,
+        "drip_step": 0,
+    }
+    result = await db.openhouse_visitors.insert_one(visitor)
+    visitor_id = str(result.inserted_id)
+
+    if visitor["email"] and RESEND_API_KEY:
+        await _send_openhouse_drip(visitor["email"], visitor["name"], event)
+
+    return {
+        "ok": True,
+        "visitor_id": visitor_id,
+        "message": f"Thanks for visiting {event['address']}! The agent will follow up shortly.",
+    }
+
+
+async def _send_openhouse_drip(email: str, name: str, event: dict) -> None:
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    address = event.get("address", "")
+    agent_name = event.get("agent_name", "")
+    agent_phone = event.get("agent_phone", "")
+    body = f"""Hi{name and f" {name}" or " there"},
+
+Thanks for visiting {address}! It was great meeting{name and f" you" or ""}.
+
+If you have any questions about the property or want to schedule a showing, feel free to reach out:
+
+{agent_name}
+{agent_phone}
+
+Here's the full listing with AI-generated copy:
+{frontend_url}
+
+Looking forward to connecting!
+
+Best,
+{agent_name}
+"""
+    try:
+        await asyncio.to_thread(
+            send_email,
+            to=email,
+            subject=f"Thanks for visiting {address}!",
+            body=body,
+            tag="openhouse_visitor",
+        )
+        await db.openhouse_visitors.update_one(
+            {"event_id": event["event_id"], "email": email},
+            {"$set": {"drip_sent": True}},
+        )
+    except Exception as e:
+        logger.warning("Open house drip send failed: %s", e)
+
+
+@api_router.get("/openhouse/{event_id}/visitors")
+async def openhouse_visitors(event_id: str, request: Request):
+    is_bot, reason = _is_bot_request(request, "")
+    if is_bot:
+        raise HTTPException(403, f"Request blocked: {reason}")
+
+    event = await db.openhouse_events.find_one({"event_id": event_id})
+    if not event:
+        raise HTTPException(404, "Event not found")
+
+    cursor = db.openhouse_visitors.find(
+        {"event_id": event_id},
+        {"_id": 0, "name": 1, "phone": 1, "email": 1, "source": 1, "checked_in_at": 1, "drip_sent": 1},
+    ).sort("checked_in_at", -1)
+    visitors = await cursor.to_list(length=200)
+
+    return {
+        "event_id": event_id,
+        "address": event["address"],
+        "total": len(visitors),
+        "visitors": visitors,
+    }
+
+
+# ============== FAIR HOUSING COMPLIANCE GUARD ==============
+FH_VIOLATION_PATTERNS = [
+    (r"\b(perfect for|ideal for|great for)\s+(families?|kids?|children)\b", "Avoid describing a home as ideal for families with children — may constitute familial status discrimination."),
+    (r"\b(quiet|peaceful|tranquil)\s+(neighborhood|area)\b", "Describing a neighborhood as 'quiet' can imply homogeneity — avoid in favor of specific community facts."),
+    (r"\b(walking distance|steps? from|near|close to)\s+(school|church|park|transit|shuttle)\b", "Proximity to schools/churches/transit can imply discriminatory preference under FHA."),
+    (r"\b(master\s+suite|master\s+bed|master\s+bath)\b", "'Master' terminology is being retired industry-wide — use 'primary suite' instead."),
+    (r"\b(adult\s+(living|community|home|only))\b", "Adult-only communities have specific FHA exemptions — verify before using this language."),
+    (r"\b(no\s+kids|pets? ok|no\s+pets?)\b", "Pet and occupancy policies have strict FHA guidelines — avoid casual language."),
+    (r"\b(exclusive|premium|prestigious)\b", "These terms may imply discriminatory preference — use specific property facts instead."),
+    (r"\b(traditional\s+family|family-oriented)\b", "Family status discrimination risk — describe community amenities instead."),
+    (r"\b(heterosexual|gay|lesbian|LGBTQ|immigrant|religion)\b", "Never reference protected classes in listing copy."),
+    (r"\b(minority|ethnic|demographic)\b", "Never reference demographic characteristics in listing copy."),
+]
+
+
+def _check_fair_housing(raw_text: str) -> list[dict]:
+    violations = []
+    text_lower = raw_text.lower()
+    for pattern, explanation in FH_VIOLATION_PATTERNS:
+        matches = re.findall(pattern, text_lower, re.IGNORECASE)
+        if matches:
+            violations.append({
+                "phrase": matches[0] if isinstance(matches[0], str) else matches[0][0] if matches[0] else "",
+                "risk": "HIGH",
+                "rule": "FHA Protected Class / Discriminatory Language",
+                "fix": explanation,
+            })
+    return violations
 
 
 async def _get_usage(session_id: Optional[str]) -> dict:
@@ -796,6 +983,23 @@ async def affiliate_share_text(req: ShareTextRequest):
             "linkedin": li_url,
             "text": None,
         },
+    }
+
+
+# ============== FAIR HOUSING ANALYSIS ==============
+class FairHousingIn(BaseModel):
+    text: str
+
+
+@api_router.post("/analyze/fair-housing")
+async def analyze_fair_housing(req: FairHousingIn):
+    if not req.text or len(req.text.strip()) < 20:
+        raise HTTPException(400, "Text too short")
+    violations = _check_fair_housing(req.text)
+    return {
+        "violations": violations,
+        "total": len(violations),
+        "clean": len(violations) == 0,
     }
 
 

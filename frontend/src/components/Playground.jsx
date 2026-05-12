@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -18,6 +18,8 @@ import SellerDashboard from "@/components/SellerDashboard";
 import LeadNurture from "@/components/LeadNurture";
 import LeadScore from "@/components/LeadScore";
 import TransactionTracker from "@/components/TransactionTracker";
+import OpenHousePanel from "@/components/OpenHousePanel";
+import FairHousingPanel from "@/components/FairHousingPanel";
 import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -48,6 +50,10 @@ export default function Playground() {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
+  const [openHouseResult, setOpenHouseResult] = useState(null);
+  const [fhText, setFhText] = useState("");
+  const [fhResult, setFhResult] = useState(null);
+  const [fhLoading, setFhLoading] = useState(false);
   const outputRef = useRef(null);
 
   const handleRedfinImport = (data) => {
@@ -154,6 +160,8 @@ export default function Playground() {
               <button onClick={() => setMode("nurture")} data-active={mode === "nurture"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MessageSquare className="w-4 h-4" />Lead Nurture</button>
               <button onClick={() => setMode("score")} data-active={mode === "score"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Target className="w-4 h-4" />Lead Score</button>
               <button onClick={() => setMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions</button>
+              <button onClick={() => setMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House</button>
+              <button onClick={() => setMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing</button>
             </div>
           </div>
         </div>
@@ -481,6 +489,14 @@ export default function Playground() {
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <TransactionTracker />
         </div>
+      )}
+
+      {mode === "openhouse" && (
+        <OpenHousePanel result={openHouseResult} setResult={setOpenHouseResult} />
+      )}
+
+      {mode === "fairhousing" && (
+        <FairHousingPanel text={fhText} setText={setFhText} result={fhResult} setResult={setFhResult} loading={fhLoading} setLoading={setFhLoading} />
       )}
 
       {showVideo && result && (
