@@ -26,9 +26,17 @@ export default function Footer() {
         </div>
 
         <div className="col-span-6 md:col-span-2">
+          <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-oat/50 mb-5">Earn</div>
+          <ul className="space-y-3 font-body text-oat/85">
+            <li><Link to="/affiliate/signup" className="hover:text-vermillion transition">Become an Affiliate</Link></li>
+            <li><Link to="/affiliate/demo" className="hover:text-vermillion transition">Affiliate Dashboard</Link></li>
+            <li><a href="mailto:hello@listworks.pro" className="hover:text-vermillion transition">Contact</a></li>
+          </ul>
+        </div>
+
+        <div className="col-span-6 md:col-span-2">
           <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-oat/50 mb-5">Company</div>
           <ul className="space-y-3 font-body text-oat/85">
-            <li><a href="mailto:hello@listworks.pro" className="hover:text-vermillion transition">Contact</a></li>
             <li><a href="#" className="hover:text-vermillion transition">Privacy</a></li>
             <li><a href="#" className="hover:text-vermillion transition">Terms</a></li>
           </ul>
