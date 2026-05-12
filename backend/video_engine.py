@@ -11,8 +11,11 @@ import subprocess
 import tempfile
 import textwrap
 import uuid
+from io import BytesIO
 from pathlib import Path
 from typing import List, Optional
+
+from PIL import Image, ImageDraw, ImageFont
 
 try:
     from openai import AsyncOpenAI
@@ -54,7 +57,7 @@ def _decode_image(data_url_or_b64: str, dest: Path) -> Path:
     else:
         b64 = data_url_or_b64
     raw = base64.b64decode(b64)
-    img = Image.open(__import__("io").BytesIO(raw)).convert("RGB")
+    img = Image.open(BytesIO(raw)).convert("RGB")
     img.save(dest, "JPEG", quality=88)
     return dest
 

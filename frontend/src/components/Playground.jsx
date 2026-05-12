@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -13,6 +13,9 @@ import ListingHistory from "@/components/ListingHistory";
 import SavedTemplates from "@/components/SavedTemplates";
 import BatchGenerator from "@/components/BatchGenerator";
 import EmailCapture from "@/components/EmailCapture";
+import ContractReview from "@/components/ContractReview";
+import SellerDashboard from "@/components/SellerDashboard";
+import LeadNurture from "@/components/LeadNurture";
 import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -139,6 +142,9 @@ export default function Playground() {
               <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
               <button onClick={() => setMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts</button>
               <button onClick={() => setMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Redfin Import</button>
+              <button onClick={() => setMode("contract")} data-active={mode === "contract"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Contract Review</button>
+              <button onClick={() => setMode("seller")} data-active={mode === "seller"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Seller Reports</button>
+              <button onClick={() => setMode("nurture")} data-active={mode === "nurture"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MessageSquare className="w-4 h-4" />Lead Nurture</button>
             </div>
           </div>
         </div>
@@ -435,6 +441,24 @@ export default function Playground() {
               <p className="text-ink/50 text-sm mt-2">Switch to "Rewrite" mode to generate copy.</p>
             </div>
           )}
+        </div>
+      )}
+
+      {mode === "contract" && (
+        <div className="bg-oat border border-ink/15 p-8 mt-px">
+          <ContractReview />
+        </div>
+      )}
+
+      {mode === "seller" && (
+        <div className="bg-oat border border-ink/15 p-8 mt-px">
+          <SellerDashboard />
+        </div>
+      )}
+
+      {mode === "nurture" && (
+        <div className="bg-oat border border-ink/15 p-8 mt-px">
+          <LeadNurture />
         </div>
       )}
 

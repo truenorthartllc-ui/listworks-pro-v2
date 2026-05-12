@@ -247,24 +247,87 @@ No sentence longer than 25 words. Max one exclamation per asset. No bullet point
 ═══════════════════════════════════════════════════════════════
 OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
 ═══════════════════════════════════════════════════════════════
-{
-  "mls": "200-250 words. Full 5-part structure. Flowing paragraphs. Soft confident CTA.",
-  "instagram": "100-130 words. Hook line works without image. Conversational. Ends with question or CTA. Final line: 12-15 targeted hashtags separated by spaces.",
-  "facebook": "150-180 words. Story-driven, lifestyle-led. Ends with low-pressure CTA.",
-  "headlines": [
-    "3 scroll-stopping headlines, under 10 words each.",
-    "Variation 1 leads with EMOTION.",
-    "Variation 2 leads with SPECIFICITY.",
-    "Variation 3 leads with URGENCY."
-  ],
-  "email": "120-160 words. First line: 'Subject: …'. Blank line. Then body. Personal, warm, confident.",
-  "listing_strength": 7.4,
-  "strength_reasons": [
-    "3-4 short reasons explaining the score, citing real elements (e.g. 'Specific neighborhood detail used', 'Clear FBF translation in lifestyle paragraph').",
-    "If score is below 9, include 1-2 concrete suggestions to improve it."
-  ]
-}
+CONTRACT_REVIEW_SYSTEM = """You are a real estate contract risk analyst for US residential transactions.
+You review purchase agreements, counter-offers, addenda, and disclosure forms.
+You identify: (1) critical risks, (2) missing fields, (3) unfavorable terms, (4) deadline issues.
+You NEVER give legal advice. You advise agents to consult an attorney for anything material.
 
+OUTPUT FORMAT — STRICT JSON ONLY:
+{
+  "risk_level": "low | medium | high",
+  "summary": "one paragraph plain-English summary of overall risk",
+  "findings": [
+    {
+      "severity": "critical | warning | note",
+      "area": "financing | inspection | disclosure | deadlines | contingency | price_terms | other",
+      "text": "specific issue found in the contract text",
+      "recommendation": "what to do or ask about this"
+    }
+  ],
+  "plain_english": "detailed breakdown in plain language a non-attorney can understand",
+  "todo_checklist": ["action item 1", "action item 2", ...]
+}
+"""
+
+
+class ContractReviewRequest(BaseModel):
+    content: str
+    focus_areas: List[str] = Field(default_factory=list)
+    session_id: Optional[str] = None
+
+
+class ContractReviewResponse(BaseModel):
+    risk_level: str
+    summary: str
+    findings: List[Dict[str, str]]
+    plain_english: str
+    todo_checklist: List[str]
+
+
+@api_router.post("/contract/review", response_model=ContractReviewResponse)
+async def contract_review(req: ContractReviewRequest):
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(500, "LLM key missing")
+    if not HAS_ANTHROPIC:
+        raise HTTPException(500, "anthropic package not installed")
+
+    focus_note = ""
+    if req.focus_areas:
+        focus_list = ", ".join(req.focus_areas)
+        focus_note = f"\\nPay extra attention to these areas: {focus_list}."
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system=CONTRACT_REVIEW_SYSTEM,
+        messages=[{
+            "role": "user",
+            "content": (
+                f"Review this real estate contract. Flag risks in plain English.{focus_note}\n\n"
+                "CONTRACT TEXT:\n" + req.content[:8000]
+            ),
+        }],
+    )
+    cleaned = _strip_json(response.content[0].text)
+    try:
+        data = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("Contract review JSON parse failed")
+        raise HTTPException(500, f"Could not parse contract review: {str(e)[:120]}")
+
+    return ContractReviewResponse(
+        risk_level=str(data.get("risk_level", "medium")),
+        summary=str(data.get("summary", "")),
+        findings=[{
+            "severity": str(f.get("severity", "note")),
+            "area": str(f.get("area", "other")),
+            "text": str(f.get("text", "")),
+            "recommendation": str(f.get("recommendation", "")),
+        } for f in data.get("findings", [])],
+        plain_english=str(data.get("plain_english", "")),
+        todo_checklist=[str(t) for t in data.get("todo_checklist", [])],
+    )
 The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
 input + your output expresses the framework. Be honest — most rewrites land between
 6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
@@ -642,7 +705,158 @@ async def _notify_telegram_lead(email: str, listing_address: str, source: str):
         await _send_telegram(chat["telegram_chat_id"], text, token)
 
 
-async def _notify_telegram_sale(email: str, package: str, amount: float):
+# ===== SELLER DASHBOARD =====
+class SellerListingRequest(BaseModel):
+    session_id: Optional[str] = None
+
+
+@api_router.get("/seller/listings")
+async def seller_listings(session_id: Optional[str] = None):
+    session_id = session_id or ""
+    listings = await db.listings.find(
+        {"session_id": session_id},
+        {"_id": 0, "id": 1, "address": 1, "tone": 1, "created_at": 1, "mls": 1},
+    ).to_list(50)
+    for l in listings:
+        l["views"] = await db.share_views.count_documents({"listing_id": l.get("id")})
+        l["inquiries"] = await db.lead_notifications.count_documents({"listing_id": l.get("id")})
+        l["showings"] = 0
+        l["report_enabled"] = False
+    return {"listings": listings}
+
+
+@api_router.post("/seller/report-toggle")
+async def seller_report_toggle(req: dict):
+    listing_id = req.get("listing_id")
+    enabled = req.get("enabled", False)
+    session_id = req.get("session_id", "")
+    await db.seller_reports.update_one(
+        {"listing_id": listing_id},
+        {"$set": {"enabled": enabled, "session_id": session_id}},
+        upsert=True,
+    )
+    return {"ok": True}
+
+
+@api_router.post("/seller/report-send")
+async def seller_report_send(req: dict):
+    listing_id = req.get("listing_id")
+    session_id = req.get("session_id", "")
+    listing = await db.listings.find_one({"id": listing_id}, {"_id": 0})
+    if not listing:
+        raise HTTPException(404, "Listing not found")
+    views = await db.share_views.count_documents({"listing_id": listing_id})
+    inquiries = await db.lead_notifications.count_documents({"listing_id": listing_id})
+    address = listing.get("address", "Your Property")
+    report_text = (
+        f"Hi! Here's your listing report for {address}.\n\n"
+        f"Views: {views} | Inquiries: {inquiries} | Showings: 0\n\n"
+        f"Keep your agent posted on any feedback. Full report at listworks.pro"
+    )
+    return {"ok": True, "report": report_text}
+
+
+# ===== LEAD NURTURING ENGINE =====
+class NurtureThreadRequest(BaseModel):
+    listing_id: str
+    lead_name: str
+    lead_contact: str  # email or phone
+    channel: str = "telegram"  # "telegram" | "email" | "sms"
+    tone: str = "friendly"  # "friendly" | "professional" | "urgent"
+
+
+class NurtureMessage(BaseModel):
+    role: str  # "agent" | "lead" | "assistant"
+    content: str
+    sent_at: Optional[str] = None
+
+
+@api_router.post("/nurture/thread")
+async def nurture_thread(req: NurtureThreadRequest):
+    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+    if not listing:
+        raise HTTPException(404, "Listing not found")
+
+    thread_id = str(uuid.uuid4())
+    first_message = (
+        f"Hi {req.lead_name}! I saw your inquiry on {listing.get('address', 'this listing')}. "
+        f"Happy to answer any questions. Is this still on your radar? "
+        f"What's most important to you — the location, price, or the condition?"
+    )
+
+    doc = {
+        "id": thread_id,
+        "listing_id": req.listing_id,
+        "lead_name": req.lead_name,
+        "lead_contact": req.lead_contact,
+        "channel": req.channel,
+        "tone": req.tone,
+        "messages": [
+            {"role": "assistant", "content": first_message, "sent_at": datetime.now(timezone.utc).isoformat()},
+        ],
+        "status": "active",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.nurture_threads.insert_one(doc)
+
+    if req.channel == "telegram":
+        token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+        if token and req.lead_contact.startswith("@"):
+            chat_id = req.lead_contact
+            await _send_telegram(chat_id, f"💬 Hey {req.lead_name}, your question is being reviewed — I'll have an answer shortly.", token)
+
+    return {"thread_id": thread_id, "first_message": first_message}
+
+
+@api_router.post("/nurture/reply")
+async def nurture_reply(req: dict):
+    thread_id = req.get("thread_id")
+    lead_message = req.get("message", "")
+    if not thread_id or not lead_message:
+        raise HTTPException(400, "thread_id and message required")
+
+    thread = await db.nurture_threads.find_one({"id": thread_id}, {"_id": 0})
+    if not thread:
+        raise HTTPException(404, "Thread not found")
+
+    history = [
+        {"role": m["role"], "content": m["content"]}
+        for m in thread.get("messages", [])[-10:]
+    ]
+    history.append({"role": "lead", "content": lead_message})
+
+    NURTURE_SYSTEM = f"""You are a friendly, helpful real estate assistant. You respond to buyer leads
+on behalf of a licensed agent. Be warm, curious, and consultative. Never give legal advice.
+If asked about contracts, referrals, or specific legal terms — suggest talking to the agent.
+Keep responses short and conversational (3-5 sentences max).
+Lead name: {thread['lead_name']}. Tone: {thread['tone']}."""
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=256,
+        system=NURTURE_SYSTEM,
+        messages=[{"role": "user", "content": lead_message}],
+    )
+    reply = response.content[0].text.strip()
+    now = datetime.now(timezone.utc).isoformat()
+    await db.nurture_threads.update_one(
+        {"id": thread_id},
+        {"$push": {"messages": {"$each": [
+            {"role": "lead", "content": lead_message, "sent_at": now},
+            {"role": "assistant", "content": reply, "sent_at": now},
+        ]}}},
+    )
+    return {"reply": reply}
+
+
+@api_router.get("/nurture/threads")
+async def nurture_threads(session_id: Optional[str] = None):
+    q = {}
+    if session_id:
+        q["session_id"] = session_id
+    threads = await db.nurture_threads.find(q, {"_id": 0}).to_list(50)
+    return {"threads": threads}
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     if not token:
         return

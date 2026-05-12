@@ -63,12 +63,12 @@ async def _download(url: str, client: httpx.AsyncClient) -> bytes | None:
         r.raise_for_status()
         return r.content
     except Exception as e:
-        print(f"  ✗ download failed: {url[:60]}... — {e}")
+        print(f"  FAIL download: {url[:60]}... - {e}")
         return None
 
 
 async def main() -> None:
-    print("📥 Downloading 10 luxury photos from Unsplash...")
+    print("downloading 10 middle-class home photos from unsplash...")
     photos_b64: list[str] = []
     async with httpx.AsyncClient() as client:
         results = await asyncio.gather(*[_download(u, client) for u in PHOTO_URLS])
@@ -77,13 +77,13 @@ async def main() -> None:
             continue
         photos_b64.append(base64.b64encode(raw).decode("ascii"))
         size_kb = len(raw) // 1024
-        print(f"  ✓ photo {i}: {size_kb} KB")
+        print(f"  OK photo {i}: {size_kb} KB")
 
     if len(photos_b64) < 4:
-        print(f"❌ Only got {len(photos_b64)} photos — aborting (need at least 4)")
+        print(f"ABORT: only got {len(photos_b64)} photos - need at least 4")
         sys.exit(1)
 
-    print(f"\n🎬 Rendering cinematic demo with {len(photos_b64)} photos...")
+    print(f"rendering cinematic demo with {len(photos_b64)} photos...")
     result = await generate_listing_video(
         photos_b64=photos_b64,
         slides=SLIDE_TEXTS,
@@ -92,22 +92,19 @@ async def main() -> None:
         agent_brokerage="Generated in 8 seconds",
         fmt="16:9",
     )
-    print(f"  ✓ rendered: id={result['id']}  duration={result['duration']}s")
+    print(f"  OK rendered: id={result['id']}  duration={result['duration']}s")
 
     # Move from backend static to frontend public so it ships with React build
     backend_path = Path(__file__).resolve().parent.parent / "static" / "videos" / f"{result['id']}.mp4"
     frontend_path = Path(__file__).resolve().parent.parent.parent / "frontend" / "public" / "hero-demo.mp4"
     if not backend_path.exists():
-        print(f"❌ Rendered file not found: {backend_path}")
+        print(f"ABORT: rendered file not found: {backend_path}")
         sys.exit(1)
 
     frontend_path.parent.mkdir(parents=True, exist_ok=True)
     frontend_path.write_bytes(backend_path.read_bytes())
     size_mb = frontend_path.stat().st_size / (1024 * 1024)
-    print(f"\n✅ Hero demo deployed:")
-    print(f"   {frontend_path}")
-    print(f"   {size_mb:.2f} MB")
-    print(f"\nNext: reference as <video src=\"/hero-demo.mp4\" /> in the React Hero component.")
+    print(f"DONE. hero demo at: {frontend_path} ({size_mb:.2f} MB)")
 
 
 if __name__ == "__main__":
