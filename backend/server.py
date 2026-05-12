@@ -556,9 +556,209 @@ async def track_ref_click(req: RefClickIn):
     return {"ok": True}
 
 
-# ============== ROUTES ==============
-@api_router.get("/")
-async def root():
+# ===== TELEGRAM BOT BACKEND =====
+class TelegramLinkIn(BaseModel):
+    email: str
+    telegram_chat_id: int
+
+
+class TelegramUnlinkIn(BaseModel):
+    telegram_chat_id: int
+
+
+async def _send_telegram(chat_id: int, text: str, token: str, parse_mode: str = "HTML"):
+    if not token:
+        return
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    async with httpx.AsyncClient(timeout=15) as client:
+        await client.post(url, json={
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": parse_mode,
+        })
+
+
+@api_router.post("/telegram/link")
+async def tg_link(req: TelegramLinkIn):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+    if not token:
+        raise HTTPException(500, "Telegram not configured")
+
+    sessions = await db.listings.distinct("session_id", {"drip_email": req.email.lower()})
+    if not sessions:
+        sessions = [None]
+
+    await db.telegram_links.update_one(
+        {"telegram_chat_id": req.telegram_chat_id},
+        {"$set": {
+            "telegram_chat_id": req.telegram_chat_id,
+            "email": req.email.lower(),
+            "linked_at": datetime.now(timezone.utc).isoformat(),
+            "sessions": sessions,
+        }},
+        upsert=True,
+    )
+
+    await _send_telegram(
+        req.telegram_chat_id,
+        f"✅ Linked! You're connected to <b>{req.email}</b>. I'll ping you when leads come in.",
+        token,
+    )
+
+    return {"ok": True, "session_count": len([s for s in sessions if s])}
+
+
+@api_router.post("/telegram/unlink")
+async def tg_unlink(req: TelegramUnlinkIn):
+    await db.telegram_links.delete_one({"telegram_chat_id": req.telegram_chat_id})
+    return {"ok": True}
+
+
+@api_router.get("/telegram/status/{chat_id}")
+async def tg_status(chat_id: int):
+    doc = await db.telegram_links.find_one({"telegram_chat_id": chat_id}, {"_id": 0})
+    if not doc:
+        return {"linked_email": None, "recent_leads": 0}
+    email = doc.get("email", "")
+    leads = await db.lead_notifications.count_documents({"email": email.lower()})
+    return {"linked_email": email, "recent_leads": leads}
+
+
+async def _notify_telegram_lead(email: str, listing_address: str, source: str):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+    if not token:
+        return
+    chats = await db.telegram_links.find({"email": email.lower()}).to_list(100)
+    if not chats:
+        return
+    site = os.environ.get("SITE_URL", "https://listworks.pro")
+    text = (
+        f"📬 <b>New Lead</b>\n\n"
+        f"Address: <b>{listing_address}</b>\n"
+        f"Source: {source}\n\n"
+        f"Log in to reply: {site}"
+    )
+    for chat in chats:
+        await _send_telegram(chat["telegram_chat_id"], text, token)
+
+
+async def _notify_telegram_sale(email: str, package: str, amount: float):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+    if not token:
+        return
+    chats = await db.telegram_links.find({"email": email.lower()}).to_list(100)
+    if not chats:
+        return
+    commission = round(amount * COMMISSION_RATE, 2)
+    text = (
+        f"🎉 <b>Sale! You earned ${commission:.2f}</b>\n\n"
+        f"Package: {package}\n"
+        f"Commission: {int(COMMISSION_RATE * 100)}%\n\n"
+        f"Paid out monthly (min $50). Track at listworks.pro/a/{email.split('@')[0]}"
+    )
+    for chat in chats:
+        await _send_telegram(chat["telegram_chat_id"], text, token)
+
+
+# ===== AFFILIATE UPGRADES =====
+class AffiliateCreateIn(BaseModel):
+    email: str
+    name: str
+    referral_code: str
+
+
+class ShareTextRequest(BaseModel):
+    package: str = "general"
+
+
+@api_router.post("/affiliate/create")
+async def affiliate_create(req: AffiliateCreateIn):
+    ref = req.referral_code.strip().lower()
+    if not ref or len(ref) > 32 or not re.match(r"^[a-z0-9_]+$", ref):
+        raise HTTPException(400, "Invalid code — letters, numbers, underscores only, max 32 chars")
+    existing = await db.affiliates.find_one({"ref": ref})
+    if existing:
+        raise HTTPException(409, "That referral code is taken.")
+    await db.affiliates.insert_one({
+        "ref": ref,
+        "email": req.email.lower(),
+        "name": req.name.strip(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "clicks": 0,
+        "sales": 0,
+        "commission_owed": 0.0,
+        "paid_out": 0.0,
+    })
+    site = os.environ.get("SITE_URL", "https://listworks.pro")
+    link = f"{site}/?ref={ref}"
+    return {"ref": ref, "link": link, "commission_rate": int(COMMISSION_RATE * 100)}
+
+
+@api_router.post("/affiliate/share-text")
+async def affiliate_share_text(req: ShareTextRequest):
+    site = os.environ.get("SITE_URL", "https://listworks.pro")
+    if req.package == "guide":
+        return {
+            "platform": "Instagram",
+            "text": (
+                "Listing copy that actually sells homes 🚀\n\n"
+                "I used this AI tool to rewrite my MLS draft in 10 seconds — "
+                "it gave me an Instagram caption, a Facebook post, 5 headlines, and an email blast.\n\n"
+                "First 3 are FREE → listworks.pro\n\n"
+                "#realestate #realestateagent #listings #homesweethome"
+            ),
+        }
+    if req.package == "pro":
+        return {
+            "platform": "Facebook",
+            "text": (
+                "Just started using ListWorks PRO for listing copy.\n\n"
+                "3 bed 2 bath ranch → Instagram caption + FB post + 5 headlines + email blast, "
+                "all in 10 seconds. First 3 free.\n\n"
+                "👉 listworks.pro\n\n"
+                "Has anyone else tried it? Worth the $49/mo?"
+            ),
+        }
+    return {
+        "platform": "General",
+        "text": (
+            "This AI tool rewrites boring MLS listing copy into publish-ready content in 10 seconds.\n\n"
+            "Free to try → listworks.pro\n\n"
+            "#realestate #listings #realestateagent"
+        ),
+    }
+
+
+@api_router.get("/affiliate/dashboard/{ref}")
+async def affiliate_full(ref: str):
+    basic = await db.affiliates.find_one({"ref": ref.strip().lower()}, {"_id": 0})
+    if not basic:
+        raise HTTPException(404, "Affiliate not found")
+
+    sales = await db.payment_transactions.find(
+        {"ref": ref.strip().lower(), "payment_status": "paid"},
+    ).to_list(500)
+    total_revenue = sum(s.get("amount", 0) for s in sales)
+    clicks = await db.ref_clicks.count_documents({"ref": ref.strip().lower()})
+    conversion = round((len(sales) / clicks * 100), 2) if clicks > 0 else 0.0
+
+    site = os.environ.get("SITE_URL", "https://listworks.pro")
+    base = f"{site}/?ref={ref.strip().lower()}"
+    share_links = {
+        "twitter": f"https://twitter.com/intent/tweet?text={site}&url={base}",
+        "facebook": f"https://www.facebook.com/sharer/sharer.php?u={base}",
+        "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={base}",
+        "copy": base,
+    }
+    return {
+        **basic,
+        "clicks": clicks,
+        "conversion": conversion,
+        "total_revenue": round(total_revenue, 2),
+        "commission_owed": round(total_revenue * COMMISSION_RATE, 2),
+        "paid_out": basic.get("paid_out", 0.0),
+        "share_links": share_links,
+    }
     return {"app": "ListWorks PRO", "status": "live", "engine": "Claude Sonnet 4.5"}
 
 
@@ -1140,10 +1340,10 @@ async def get_examples():
         },
         {
             "id": "ex2",
-            "address": "12 Skyline Dr, Beverly Hills CA",
-            "before": "Large modern home, 5 bedrooms, pool, city views. High ceilings. Two car garage.",
-            "after": "Carved into the hillside above Sunset, this 5-bedroom architectural statement turns the city into your private theater. Walls of glass dissolve into infinity-edge water. Ceilings climb. Light pools. Five suites — each its own sanctuary. The kind of home where mornings start with a swim and evenings end with the skyline at your feet.",
-            "tone": "Luxury",
+            "address": "418 Willowbrook Ln, Scottsdale AZ",
+            "before": "Updated 4 bed 3 bath in desirable neighborhood. New quartz counters. Pool. 3-car garage. Mountain views.",
+            "after": "The kind of pool you actually use — not just for show. Four bedrooms, three baths, and a kitchen that's been touched by someone who cooks. Quartz counters that don't feel like a compromise. A 3-car garage for the truck, the toys, and everything else. And views of the McDowells that remind you why you moved here in the first place.",
+            "tone": "Modern",
         },
         {
             "id": "ex3",

@@ -25,28 +25,35 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from video_engine import generate_listing_video  # noqa: E402
 
 
-# Curated luxury real estate photos (Unsplash — free commercial use)
-# Each URL uses the &w=1920&q=85 size hint for high-res, manageable file size.
+# Middle-upper class American homes (the kind agents actually sell every day)
 PHOTO_URLS = [
-    # Aerial drone-style middle-class to upper-class home shots
-    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=85&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=85&auto=format&fit=crop",
+    # Photo 1: Traditional two-story colonial, brick, nice lawn — $450-600k range
     "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1920&q=85&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=85&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1920&q=85&auto=format&fit=crop",
+    # Photo 2: Updated ranch with attached garage, landscaping — $350-500k range
     "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1920&q=85&auto=format&fit=crop",
+    # Photo 3: Brick colonial with mature trees, white trim — $500-750k range
     "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1920&q=85&auto=format&fit=crop",
+    # Photo 4: Traditional two-story with covered porch, lawn — $400-600k range
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1920&q=85&auto=format&fit=crop",
+    # Photo 5: Suburban home with garage, bushes, neat lawn — $350-500k range
+    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=85&auto=format&fit=crop",
+    # Photo 6: Modern farmhouse — white siding, covered porch — $500-700k range
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=85&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=1920&q=85&auto=format&fit=crop",
+    # Photo 7: Brick home with two-car garage, autumn trees — $400-600k range
     "https://images.unsplash.com/photo-1592595896616-c37162298647?w=1920&q=85&auto=format&fit=crop",
+    # Photo 8: Updated split-level, clean lines, nice landscaping — $380-550k range
+    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=85&auto=format&fit=crop",
+    # Photo 9: Colonial revival, stone accent, mature yard — $550-750k range
+    "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=1920&q=85&auto=format&fit=crop",
+    # Photo 10: Well-maintained suburban, driveway, garage — $320-480k range
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=85&auto=format&fit=crop",
 ]
 
-
 SLIDE_TEXTS = [
-    "Some homes you walk through. This one — you arrive at.",
-    "The kitchen wasn't designed. It was earned.",
-    "A pool that turns Saturdays into memories.",
-    "The address you stop searching at.",
+    "The kitchen where Sunday dinners happen.",
+    "A backyard that actually gets used.",
+    "Three bedrooms. Enough room to breathe.",
+    "Close to good schools. Closer to home.",
 ]
 
 
