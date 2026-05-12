@@ -1003,6 +1003,118 @@ async def analyze_fair_housing(req: FairHousingIn):
     }
 
 
+# ============== VOICE-TO-DESCRIPTION ==============
+class VoiceDescriptionIn(BaseModel):
+    transcript: str
+    tone: Optional[str] = "Modern"
+
+
+VOICE_POLISH_SYSTEM = """You are a professional real estate listing copywriter. An agent has narrated their observations while walking through a property. Your job is to transform their natural, conversational speech into a polished, professional listing description.
+
+Rules:
+- Preserve specific, impressive details (square footage, material names, years)
+- Fix grammar, remove rambling, eliminate "um" and "uh" filler
+- Keep the agent's genuine enthusiasm and authentic observations
+- Write in active, confident voice
+- No invented details — if the agent didn't mention it, don't add it
+- Keep length proportional to the input (don't pad or truncate unnaturally)
+
+Return JSON with a single key "raw_description" containing the polished text."""
+
+
+@api_router.post("/analyze/voice-description")
+async def analyze_voice_description(req: VoiceDescriptionIn):
+    if not req.transcript or len(req.transcript.strip()) < 5:
+        raise HTTPException(400, "Transcript too short")
+
+    if not EMERGENT_LLM_KEY or not HAS_ANTHROPIC:
+        raise HTTPException(500, "AI not configured")
+
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system=VOICE_POLISH_SYSTEM,
+        messages=[{"role": "user", "content": req.transcript.strip()}],
+    )
+    raw = response.content[0].text.strip()
+    try:
+        data = json.loads(raw)
+        raw_description = data.get("raw_description", raw)
+    except Exception:
+        raw_description = raw
+
+    return {"raw_description": raw_description}
+
+
+# ============== POST-SALE MARKETING REPORT ==============
+class PostSaleReportIn(BaseModel):
+    session_id: str
+    listing_id: Optional[str] = None
+
+
+class PostSaleReportRequest(BaseModel):
+    session_id: Optional[str] = None
+    listing_id: Optional[str] = None
+    seller_name: Optional[str] = None
+    sold_price: Optional[str] = None
+    days_on_market: Optional[int] = None
+
+
+@api_router.post("/report/post-sale")
+async def post_sale_report(req: PostSaleReportRequest):
+    session_id = req.session_id or ""
+
+    listing = None
+    if req.listing_id:
+        listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+    elif session_id:
+        listing = await db.listings.find_one(
+            {"session_id": session_id},
+            {"_id": 0},
+            sort=[("created_at", -1)],
+        )
+
+    if not listing:
+        raise HTTPException(404, "No listing found for this session")
+
+    address = listing.get("address", "your home")
+    listing_strength = listing.get("listing_strength", 0)
+
+    shares = await db.shared_listings.count_documents({"listing_id": listing.get("id") or ""})
+    views_est = shares * 47 + 120
+    showing_requests = 0
+    offers_received = 0
+
+    strength_label = "Exceptional" if listing_strength >= 9 else "Strong" if listing_strength >= 7.5 else "Effective" if listing_strength >= 6 else "Average"
+    price_position = "Above market expectation" if listing_strength >= 8 else "At market value" if listing_strength >= 6 else "Below asking"
+    time_context = "well under the national average" if (req.days_on_market or 30) < 45 else "within typical market time" if (req.days_on_market or 30) < 75 else "reflecting current market conditions"
+
+    return {
+        "report": {
+            "address": address,
+            "seller_name": req.seller_name or "Homeowner",
+            "sold_price": req.sold_price or "",
+            "days_on_market": req.days_on_market or 0,
+            "listing_strength": listing_strength,
+            "strength_label": strength_label,
+            "views_estimated": views_est,
+            "shares": shares,
+            "showing_requests": showing_requests,
+            "offers_received": offers_received,
+            "price_position": price_position,
+            "time_context": time_context,
+        },
+        "copy": {
+            "headline": f"How We Sold {address} for {req.sold_price or 'Top Dollar'}",
+            "summary": f"Your home at {address} received an estimated {views_est} views and was successfully sold in {req.days_on_market or 0} days — {time_context}.",
+            "buyers_loved": f"The AI-generated listing copy highlighted the property's {strength_label.lower()} features. {price_position}.",
+            "closing": f"Sold by your agent using ListWorks PRO — AI-powered listing copy that turns listings into conversations.",
+        },
+        "share_text": f"Just closed on {address}! 🏡 The AI-generated listing copy was incredible. Sold in {req.days_on_market or 0} days. If you're buying or selling, hit up your agent — and ask them about ListWorks PRO!",
+    }
+
+
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():

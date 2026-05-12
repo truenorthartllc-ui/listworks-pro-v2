@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -20,6 +20,8 @@ import LeadScore from "@/components/LeadScore";
 import TransactionTracker from "@/components/TransactionTracker";
 import OpenHousePanel from "@/components/OpenHousePanel";
 import FairHousingPanel from "@/components/FairHousingPanel";
+import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
+import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -162,6 +164,8 @@ export default function Playground() {
               <button onClick={() => setMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions</button>
               <button onClick={() => setMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House</button>
               <button onClick={() => setMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing</button>
+              <button onClick={() => setMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk</button>
+              <button onClick={() => setMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report</button>
             </div>
           </div>
         </div>
@@ -497,6 +501,14 @@ export default function Playground() {
 
       {mode === "fairhousing" && (
         <FairHousingPanel text={fhText} setText={setFhText} result={fhResult} setResult={setFhResult} loading={fhLoading} setLoading={setFhLoading} />
+      )}
+
+      {mode === "voice" && (
+        <VoiceDescriptionPanel setRaw={(text) => { setRaw(text); setMode("rewrite"); }} setMode={setMode} />
+      )}
+
+      {mode === "report" && (
+        <PostSaleReportPanel />
       )}
 
       {showVideo && result && (
