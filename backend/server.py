@@ -43,12 +43,12 @@ DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
 if STRIPE_API_KEY:
     stripe_sdk.api_key = STRIPE_API_KEY
 
-# Server-side fixed pricing — NEVER accept amounts from frontend
+# Server-side fixed pricing - NEVER accept amounts from frontend
 PACKAGES = {
     "guide_pdf":   {"amount":  20.00, "currency": "usd", "name": "ListWorks Guide PDF",          "kind": "guide"},
-    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
-    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
-    "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
+    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro - 1 Month",     "kind": "pro"},
+    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro - Annual",      "kind": "pro"},
+    "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime - All-In",  "kind": "lifetime"},
     "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
     "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},
 }
@@ -210,49 +210,51 @@ TONE_GUIDE = {
     "Investor": "Data-forward, ROI-aware. Cap rate potential, rental comps, location upside, low maintenance.",
 }
 
-REWRITE_SYSTEM = """You are ListWorks PRO — a professional real estate copywriter trained
+REWRITE_SYSTEM = """You are ListWorks PRO - a professional real estate copywriter trained
 on the official ListWorks framework. Your writing is confident, specific, and
 emotionally resonant. You make buyers FEEL something first, then give them facts
 to justify that feeling.
 
-═══════════════════════════════════════════════════════════════
+===============================================================
 THE LISTWORKS 5-PART STRUCTURE (use for MLS, Facebook, Email)
-═══════════════════════════════════════════════════════════════
-1. THE OPENING HOOK — stops the scroll, earns the read.
-2. THE LIFESTYLE PARAGRAPH — sells the LIFE, not the specs.
-3. THE FEATURE TRANSLATION LAYER — convert specs into desire using FBF.
-4. THE NEIGHBORHOOD & CONTEXT — place the buyer in the world of this home.
-5. THE CALL TO ACTION — confidence without begging.
+===============================================================
+1. THE OPENING HOOK - stops the scroll, earns the read.
+2. THE LIFESTYLE PARAGRAPH - sells the LIFE, not the specs.
+3. THE FEATURE TRANSLATION LAYER - convert specs into desire using FBF.
+4. THE NEIGHBORHOOD & CONTEXT - place the buyer in the world of this home.
+5. THE CALL TO ACTION - confidence without begging.
 
-═══════════════════════════════════════════════════════════════
-FEATURE → BENEFIT → FEELING (FBF)
-═══════════════════════════════════════════════════════════════
-Feature: what it has → Benefit: what it does → Feeling: how it feels.
+===============================================================
+FEATURE -> BENEFIT -> FEELING (FBF)
+===============================================================
+Feature: what it has -> Benefit: what it does -> Feeling: how it feels.
 Always write the FEELING.
 
-═══════════════════════════════════════════════════════════════
+===============================================================
 BUYER TRIGGERS (activate at least one per asset)
-═══════════════════════════════════════════════════════════════
-Belonging · Status · Safety · Urgency
+===============================================================
+Belonging  *  Status  *  Safety  *  Urgency
 
-═══════════════════════════════════════════════════════════════
-HARD RULES — DO NOT VIOLATE
-═══════════════════════════════════════════════════════════════
-BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliché),
+===============================================================
+HARD RULES - DO NOT VIOLATE
+===============================================================
+BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliche),
 "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell",
 "Call for details".
 DO NOT open with the address or property type. No more than 2 adjectives in a row.
 No sentence longer than 25 words. Max one exclamation per asset. No bullet points.
 
-═══════════════════════════════════════════════════════════════
-OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
-═══════════════════════════════════════════════════════════════
+===============================================================
+OUTPUT - STRICT JSON ONLY (no markdown, no commentary)
+===============================================================
+"""
+
 CONTRACT_REVIEW_SYSTEM = """You are a real estate contract risk analyst for US residential transactions.
 You review purchase agreements, counter-offers, addenda, and disclosure forms.
 You identify: (1) critical risks, (2) missing fields, (3) unfavorable terms, (4) deadline issues.
 You NEVER give legal advice. You advise agents to consult an attorney for anything material.
 
-OUTPUT FORMAT — STRICT JSON ONLY:
+OUTPUT FORMAT - STRICT JSON ONLY:
 {
   "risk_level": "low | medium | high",
   "summary": "one paragraph plain-English summary of overall risk",
@@ -329,16 +331,16 @@ async def contract_review(req: ContractReviewRequest):
         todo_checklist=[str(t) for t in data.get("todo_checklist", [])],
     )
 The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
-input + your output expresses the framework. Be honest — most rewrites land between
+input + your output expresses the framework. Be honest - most rewrites land between
 6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
 """
 
-EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO — a real estate marketing expert specializing in expired listings.
+EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO - a real estate marketing expert specializing in expired listings.
 Your job is to write outreach scripts that get the seller to pick up the phone or agree to a meeting.
 
-══════════════════════════════════════════════════════════════
+==============================================================
 TONE: Professional, empathetic, confident. Never desperate or pushy.
-══════════════════════════════════════════════════════════════
+==============================================================
 
 The seller just went through a failed listing attempt. They're likely frustrated, skeptical, and cautious.
 Your scripts must:
@@ -348,32 +350,32 @@ Your scripts must:
 - NEVER criticize their previous agent
 - Use "we" more than "I" to sound like a team
 
-══════════════════════════════════════════════════════════════
+==============================================================
 SCRIPT TYPES REQUIRED (JSON output)
-══════════════════════════════════════════════════════════════
-1. COLD CALL SCRIPT: 150-200 words. Opening hook → acknowledge → value proposition → objection handling → CTA.
+==============================================================
+1. COLD CALL SCRIPT: 150-200 words. Opening hook -> acknowledge -> value proposition -> objection handling -> CTA.
    Start with their name. Use the address naturally. End with a specific question, not "call me."
 
-2. VOICEMAIL SCRIPT: 30-45 seconds (60-80 words). Hook → context → callback request with specific time.
-   Must work as audio only — no context needed. Speak naturally.
+2. VOICEMAIL SCRIPT: 30-45 seconds (60-80 words). Hook -> context -> callback request with specific time.
+   Must work as audio only - no context needed. Speak naturally.
 
 3. TEXT MESSAGE: Under 160 characters. Casual but professional. Include address and one key value hook.
    End with a question to trigger response.
 
-4. DOOR KNOCK SCRIPT: 200-250 words. Greeting → acknowledge expired → brief value → ask for 5 min conversation → offer specific time.
+4. DOOR KNOCK SCRIPT: 200-250 words. Greeting -> acknowledge expired -> brief value -> ask for 5 min conversation -> offer specific time.
 
 HARD RULES:
 - Use the seller's name when provided
 - Use the property address in every script
 - Include days on market if provided to show research
-- Never say "expired" negatively — use "previous listing" or "your home was on the market"
+- Never say "expired" negatively - use "previous listing" or "your home was on the market"
 - Offer ONE clear next step per script
-- No heavy sales language — be a helpful expert, not a closer
+- No heavy sales language - be a helpful expert, not a closer
 - Include your agent name placeholder: [YOUR_NAME]
 
-══════════════════════════════════════════════════════════════
-OUTPUT — STRICT JSON ONLY
-══════════════════════════════════════════════════════════════
+==============================================================
+OUTPUT - STRICT JSON ONLY
+==============================================================
 {
   "cold_call_script": "...",
   "voicemail_script": "...",
@@ -407,7 +409,7 @@ HARD RULES:
 - Beds/baths can be decimals (e.g., 2.5)
 - Address should be complete (street, city, state, zip)
 
-OUTPUT — STRICT JSON ONLY:
+OUTPUT - STRICT JSON ONLY:
 {
   "address": "...",
   "price": "$...",
@@ -482,7 +484,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
 
     headlines = data.get("headlines", [])
     if isinstance(headlines, str):
-        headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
+        headlines = [h.strip("- -*").strip() for h in headlines.split("\n") if h.strip()]
     headlines = [h.strip() for h in headlines if h.strip()][:3]
 
     reasons = data.get("strength_reasons", [])
@@ -544,14 +546,14 @@ async def get_usage(session_id: str):
 
 
 # ============== AFFILIATE TRACKING ==============
-# Commission: 30% recurring on Pro · 30% one-time on PDF/Lifetime/Credits
+# Commission: 30% recurring on Pro  *  30% one-time on PDF/Lifetime/Credits
 COMMISSION_RATE = 0.30
 
 
 @api_router.get("/affiliate/{ref}")
 async def affiliate_stats(ref: str):
     """Public dashboard for an affiliate. Anyone with the URL sees their stats.
-    Format: GET /api/affiliate/mike → totals + recent referred sales.
+    Format: GET /api/affiliate/mike -> totals + recent referred sales.
     """
     ref = ref.strip().lower()
     if not ref or len(ref) > 64:
@@ -568,7 +570,7 @@ async def affiliate_stats(ref: str):
     total_revenue = sum(s.get("amount", 0) for s in sales)
     total_commission = round(total_revenue * COMMISSION_RATE, 2)
 
-    # Total clicks (anyone who landed with the ref param — frontend posts to /api/ref-click)
+    # Total clicks (anyone who landed with the ref param - frontend posts to /api/ref-click)
     clicks = await db.ref_clicks.count_documents({"ref": ref})
 
     return {
@@ -584,7 +586,7 @@ async def affiliate_stats(ref: str):
                 "package": s.get("package_id"),
                 "kind": s.get("package_kind"),
                 "paid_at": s.get("paid_at"),
-                # Don't leak full email — show first letter + domain
+                # Don't leak full email - show first letter + domain
                 "buyer": _mask_email(s.get("drip_email") or ""),
             }
             for s in sales[:50]
@@ -664,7 +666,7 @@ async def tg_link(req: TelegramLinkIn):
 
     await _send_telegram(
         req.telegram_chat_id,
-        f"✅ Linked! You're connected to <b>{req.email}</b>. I'll ping you when leads come in.",
+        f"? Linked! You're connected to <b>{req.email}</b>. I'll ping you when leads come in.",
         token,
     )
 
@@ -696,7 +698,7 @@ async def _notify_telegram_lead(email: str, listing_address: str, source: str):
         return
     site = os.environ.get("SITE_URL", "https://listworks.pro")
     text = (
-        f"📬 <b>New Lead</b>\n\n"
+        f"? <b>New Lead</b>\n\n"
         f"Address: <b>{listing_address}</b>\n"
         f"Source: {source}\n\n"
         f"Log in to reply: {site}"
@@ -768,7 +770,7 @@ SCORING RUBRIC:
 - Warm (50-79): timeline 60-90d, some engagement, budget aligned
 - Cold (0-49): no prequal, browsing, low engagement, weak source
 
-OUTPUT — STRICT JSON ONLY:
+OUTPUT - STRICT JSON ONLY:
 {
   "score": 75,
   "tier": "warm",
@@ -1120,7 +1122,7 @@ async def nurture_thread(req: NurtureThreadRequest):
     first_message = (
         f"Hi {req.lead_name}! I saw your inquiry on {listing.get('address', 'this listing')}. "
         f"Happy to answer any questions. Is this still on your radar? "
-        f"What's most important to you — the location, price, or the condition?"
+        f"What's most important to you - the location, price, or the condition?"
     )
 
     doc = {
@@ -1142,7 +1144,7 @@ async def nurture_thread(req: NurtureThreadRequest):
         token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
         if token and req.lead_contact.startswith("@"):
             chat_id = req.lead_contact
-            await _send_telegram(chat_id, f"💬 Hey {req.lead_name}, your question is being reviewed — I'll have an answer shortly.", token)
+            await _send_telegram(chat_id, f"[chat] Hey {req.lead_name}, your question is being reviewed - I'll have an answer shortly.", token)
 
     return {"thread_id": thread_id, "first_message": first_message}
 
@@ -1166,7 +1168,7 @@ async def nurture_reply(req: dict):
 
     NURTURE_SYSTEM = f"""You are a friendly, helpful real estate assistant. You respond to buyer leads
 on behalf of a licensed agent. Be warm, curious, and consultative. Never give legal advice.
-If asked about contracts, referrals, or specific legal terms — suggest talking to the agent.
+If asked about contracts, referrals, or specific legal terms - suggest talking to the agent.
 Keep responses short and conversational (3-5 sentences max).
 Lead name: {thread['lead_name']}. Tone: {thread['tone']}."""
 
@@ -1204,7 +1206,7 @@ async def nurture_threads(session_id: Optional[str] = None):
         return
     commission = round(amount * COMMISSION_RATE, 2)
     text = (
-        f"🎉 <b>Sale! You earned ${commission:.2f}</b>\n\n"
+        f"? <b>Sale! You earned ${commission:.2f}</b>\n\n"
         f"Package: {package}\n"
         f"Commission: {int(COMMISSION_RATE * 100)}%\n\n"
         f"Paid out monthly (min $50). Track at listworks.pro/a/{email.split('@')[0]}"
@@ -1228,7 +1230,7 @@ class ShareTextRequest(BaseModel):
 async def affiliate_create(req: AffiliateCreateIn):
     ref = req.referral_code.strip().lower()
     if not ref or len(ref) > 32 or not re.match(r"^[a-z0-9_]+$", ref):
-        raise HTTPException(400, "Invalid code — letters, numbers, underscores only, max 32 chars")
+        raise HTTPException(400, "Invalid code - letters, numbers, underscores only, max 32 chars")
     existing = await db.affiliates.find_one({"ref": ref})
     if existing:
         raise HTTPException(409, "That referral code is taken.")
@@ -1254,10 +1256,10 @@ async def affiliate_share_text(req: ShareTextRequest):
         return {
             "platform": "Instagram",
             "text": (
-                "Listing copy that actually sells homes 🚀\n\n"
-                "I used this AI tool to rewrite my MLS draft in 10 seconds — "
+                "Listing copy that actually sells homes [rocket]\n\n"
+                "I used this AI tool to rewrite my MLS draft in 10 seconds - "
                 "it gave me an Instagram caption, a Facebook post, 5 headlines, and an email blast.\n\n"
-                "First 3 are FREE → listworks.pro\n\n"
+                "First 3 are FREE -> listworks.pro\n\n"
                 "#realestate #realestateagent #listings #homesweethome"
             ),
         }
@@ -1266,9 +1268,9 @@ async def affiliate_share_text(req: ShareTextRequest):
             "platform": "Facebook",
             "text": (
                 "Just started using ListWorks PRO for listing copy.\n\n"
-                "3 bed 2 bath ranch → Instagram caption + FB post + 5 headlines + email blast, "
+                "3 bed 2 bath ranch -> Instagram caption + FB post + 5 headlines + email blast, "
                 "all in 10 seconds. First 3 free.\n\n"
-                "👉 listworks.pro\n\n"
+                "? listworks.pro\n\n"
                 "Has anyone else tried it? Worth the $49/mo?"
             ),
         }
@@ -1276,7 +1278,7 @@ async def affiliate_share_text(req: ShareTextRequest):
         "platform": "General",
         "text": (
             "This AI tool rewrites boring MLS listing copy into publish-ready content in 10 seconds.\n\n"
-            "Free to try → listworks.pro\n\n"
+            "Free to try -> listworks.pro\n\n"
             "#realestate #listings #realestateagent"
         ),
     }
@@ -1320,7 +1322,7 @@ async def rewrite_listing(req: RewriteRequest):
     if len(req.raw_listing.strip()) < 10:
         raise HTTPException(400, "Listing too short. Add at least a sentence.")
 
-    # 🚧 Paywall gate — enforce free quota / credits / Pro
+    # ? Paywall gate - enforce free quota / credits / Pro
     usage = await _get_usage(req.session_id)
     if usage["paywall"]:
         raise HTTPException(
@@ -1372,14 +1374,14 @@ listings into exceptional ones. You take a near-finished listing and push every 
 to a 9.5-10/10 on emotional impact, specificity, and buyer resonance.
 
 You will receive a listing with its MLS copy, headlines, and social assets.
-Your job is to rewrite ALL outputs so they are 10/10 — vivid, specific, emotionally
+Your job is to rewrite ALL outputs so they are 10/10 - vivid, specific, emotionally
 charged, and impossible to scroll past.
 
 HARD RULES:
 - Replace every generic adjective with a concrete, sensory detail
-- Every sentence must earn its place — cut anything that doesn't create a picture
+- Every sentence must earn its place - cut anything that doesn't create a picture
 - Open with a feeling, not a fact
-- Headlines must hit in under 3 seconds — lead with the most compelling hook
+- Headlines must hit in under 3 seconds - lead with the most compelling hook
 - Instagram: starts with a feeling or a question, ends with a strong CTA
 - Facebook: conversational, community-aware, drives comments
 - Email: subject line worthy, first line hooks, one clear CTA
@@ -1387,7 +1389,7 @@ HARD RULES:
   "Motivated seller", "Charming", "Nestled", "Priced to sell"
 - Max one exclamation mark total across all outputs
 
-OUTPUT FORMAT — STRICT JSON ONLY:
+OUTPUT FORMAT - STRICT JSON ONLY:
 {
   "mls": "...",
   "instagram": "...",
@@ -1471,7 +1473,7 @@ Return STRICT JSON with all enhanced outputs."""  # noqa: F541
 
     headlines = data.get("headlines", [])
     if isinstance(headlines, str):
-        headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
+        headlines = [h.strip("- -*").strip() for h in headlines.split("\n") if h.strip()]
     headlines = [h.strip() for h in headlines if h.strip()][:3]
 
     reasons = data.get("strength_reasons", [])
@@ -1700,7 +1702,7 @@ Return the JSON object with all available property details. JSON only."""
 
 @api_router.get("/share/{listing_id}")
 async def get_shared_listing(listing_id: str):
-    """Public share endpoint — returns the before/after for a listing.
+    """Public share endpoint - returns the before/after for a listing.
     Anyone can view via /share/{id} on the frontend (no auth)."""
     listing = await db.listings.find_one({"id": listing_id}, {"_id": 0, "session_id": 0})
     if not listing:
@@ -1763,15 +1765,15 @@ async def analyze_photo(req: PhotoAnalyzeRequest):
 
 
 # ===== AI Advisor (chat) =====
-ADVISOR_SYSTEM = """You are the ListWorks AI Advisor — a senior real estate marketing
-strategist trained on the ListWorks framework (5-part structure, Feature → Benefit → Feeling,
+ADVISOR_SYSTEM = """You are the ListWorks AI Advisor - a senior real estate marketing
+strategist trained on the ListWorks framework (5-part structure, Feature -> Benefit -> Feeling,
 4 buyer triggers). You give concise, opinionated, actionable advice on listing copy,
 photos, video strategy, and buyer psychology.
 
 Keep responses under 180 words. Use plain text, short paragraphs, no markdown headers.
 When the user shares listing copy, critique it against the framework: point to specific
 banned-word offenders, missing FBF translations, weak hooks, and dead CTAs. Suggest
-exact rewrites — don't just describe."""
+exact rewrites - don't just describe."""
 
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
@@ -1888,21 +1890,21 @@ async def get_examples():
             "id": "ex1",
             "address": "248 Linden Ave, Austin TX",
             "before": "3 bed 2 bath ranch home. Updated kitchen with granite. Fenced backyard. Close to schools. Move-in ready.",
-            "after": "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of Linden trades quietly — and rarely.",
+            "after": "Sunlight pours through the front window at 7 a.m. - and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of Linden trades quietly - and rarely.",
             "tone": "Cozy",
         },
         {
             "id": "ex2",
             "address": "418 Willowbrook Ln, Scottsdale AZ",
             "before": "Updated 4 bed 3 bath in desirable neighborhood. New quartz counters. Pool. 3-car garage. Mountain views.",
-            "after": "The kind of pool you actually use — not just for show. Four bedrooms, three baths, and a kitchen that's been touched by someone who cooks. Quartz counters that don't feel like a compromise. A 3-car garage for the truck, the toys, and everything else. And views of the McDowells that remind you why you moved here in the first place.",
+            "after": "The kind of pool you actually use - not just for show. Four bedrooms, three baths, and a kitchen that's been touched by someone who cooks. Quartz counters that don't feel like a compromise. A 3-car garage for the truck, the toys, and everything else. And views of the McDowells that remind you why you moved here in the first place.",
             "tone": "Modern",
         },
         {
             "id": "ex3",
             "address": "904 Ironwood Ct, Denver CO",
             "before": "Investment property. 4-plex. Fully rented. Cap rate 6.2%. Recent roof. Off-street parking.",
-            "after": "A rare 4-plex in Denver's tightest sub-market — fully tenanted, freshly capitalized, and engineered to print. 6.2% cap on actuals. New roof, new bones, new opportunity. Off-street parking, low turnover, and an emerging block where comps are climbing 9% YoY. The kind of asset you don't list — you whisper.",
+            "after": "A rare 4-plex in Denver's tightest sub-market - fully tenanted, freshly capitalized, and engineered to print. 6.2% cap on actuals. New roof, new bones, new opportunity. Off-street parking, low turnover, and an emerging block where comps are climbing 9% YoY. The kind of asset you don't list - you whisper.",
             "tone": "Investor",
         },
     ]
@@ -1977,7 +1979,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "success_url": success_url,
         "cancel_url": cancel_url,
         "metadata": metadata,
-        "allow_promotion_codes": True,  # 🔥 Customers can enter COMEBACK29 etc.
+        "allow_promotion_codes": True,  # [hot] Customers can enter COMEBACK29 etc.
     }
     if req.email:
         cs_params["customer_email"] = req.email
@@ -2070,7 +2072,7 @@ async def checkout_status(stripe_session_id: str, request: Request):
                 upsert=True,
             )
 
-        # Fire drip emails (idempotent — only first time payment_status flips to paid)
+        # Fire drip emails (idempotent - only first time payment_status flips to paid)
         await _trigger_drip_for_txn(stripe_session_id, txn)
 
     return {
@@ -2146,7 +2148,7 @@ async def stripe_webhook(request: Request):
                     }},
                     upsert=True,
                 )
-            # Fire drip emails — idempotent via drip_sent flag
+            # Fire drip emails - idempotent via drip_sent flag
             if txn:
                 await _trigger_drip_for_txn(session_id, txn)
     return {"received": True}
@@ -2171,10 +2173,10 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
         except Exception as e:
             logger.warning("Could not fetch Stripe email for %s: %s", stripe_session_id, e)
 
-    # 🔔 Fire Slack notification regardless (motivation + tracking)
+    # ? Fire Slack notification regardless (motivation + tracking)
     await _notify_slack_sale(txn, email)
 
-    # 📧 Email drips (only if Resend configured and we have an email)
+    # [email] Email drips (only if Resend configured and we have an email)
     ids: dict = {}
     if os.environ.get("RESEND_API_KEY") and email:
         kind = txn.get("package_kind")
@@ -2186,7 +2188,7 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
         except Exception as e:
             logger.exception("Drip send failed for %s: %s", stripe_session_id, e)
 
-    # 💎 Credit grant for credit packages
+    # ? Credit grant for credit packages
     pkg = PACKAGES.get(txn.get("package_id") or "", {})
     if pkg.get("kind") == "credits" and txn.get("lw_session_id"):
         credit_amount = int(pkg.get("credits", 0))
@@ -2223,7 +2225,7 @@ async def _notify_slack_sale(txn: dict, email: str) -> None:
             "lifetime": ":crown:", "credits": ":coin:",
         }.get(kind, ":moneybag:")
 
-        text = f"{emoji} *NEW SALE — ${amount}* — {name}\n_email:_ `{email or 'unknown'}`  ·  _kind:_ `{kind}`"
+        text = f"{emoji} *NEW SALE - ${amount}* - {name}\n_email:_ `{email or 'unknown'}`   *   _kind:_ `{kind}`"
         async with httpx.AsyncClient(timeout=10.0) as client:
             await client.post(SLACK_WEBHOOK_URL, json={"text": text})
     except Exception as e:
@@ -2313,7 +2315,7 @@ class EmailTestRequest(BaseModel):
 @api_router.post("/email/test")
 async def email_test(req: EmailTestRequest):
     """Send the welcome email immediately to verify Resend is wired correctly.
-    Drip emails are NOT scheduled here — this is for smoke-testing only."""
+    Drip emails are NOT scheduled here - this is for smoke-testing only."""
     if not os.environ.get("RESEND_API_KEY"):
         raise HTTPException(503, "RESEND_API_KEY not configured")
     from email_engine import _send, tpl_guide_welcome, tpl_pro_welcome
@@ -2325,7 +2327,7 @@ async def email_test(req: EmailTestRequest):
         tag = "test_guide_welcome"
     eid = await _send(to=req.email, subject=s, html=h, tag=tag)
     if not eid:
-        raise HTTPException(502, "Resend send failed — check backend logs")
+        raise HTTPException(502, "Resend send failed - check backend logs")
     return {"sent": True, "email_id": eid, "to": req.email, "flow": req.flow}
 
 
