@@ -738,8 +738,347 @@ async def seller_report_toggle(req: dict):
     return {"ok": True}
 
 
-@api_router.post("/seller/report-send")
-async def seller_report_send(req: dict):
+# ===== LEAD SCORING ENGINE =====
+class LeadScoreRequest(BaseModel):
+    listing_id: str
+    lead_name: str
+    lead_contact: str
+    lead_source: str = "web"  # "web" | "zillow" | "realtor" | "fb" | "referral" | "cold"
+    messages_count: int = 0
+    showings_scheduled: int = 0
+    budget: Optional[str] = None
+    timeline: Optional[str] = None  # "30d" | "60d" | "90d" | "6mo" | "browsing"
+    prequalified: bool = False
+
+
+class LeadScoreResponse(BaseModel):
+    score: int  # 0-100
+    tier: str  # "hot" | "warm" | "cold"
+    signals: List[str]
+    recommendation: str
+    next_action: str
+
+
+LEAD_SCORING_SYSTEM = """You are a real estate lead qualification analyst.
+Score a buyer's likelihood to close (0-100) based on the signals provided.
+Consider: budget, timeline, prequalification status, engagement level, source quality.
+
+SCORING RUBRIC:
+- Hot (80-100): prequalified, timeline < 60d, high engagement, referral source
+- Warm (50-79): timeline 60-90d, some engagement, budget aligned
+- Cold (0-49): no prequal, browsing, low engagement, weak source
+
+OUTPUT — STRICT JSON ONLY:
+{
+  "score": 75,
+  "tier": "warm",
+  "signals": ["short bullet signals that affected the score"],
+  "recommendation": "what to do with this lead",
+  "next_action": "specific next step for the agent"
+}
+"""
+
+
+@api_router.post("/leads/score", response_model=LeadScoreResponse)
+async def score_lead(req: LeadScoreRequest):
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(500, "LLM key missing")
+
+    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
+    if not listing:
+        raise HTTPException(404, "Listing not found")
+
+    score_text = f"""Score this lead for the listing at {listing.get('address', 'the listing')}.
+
+Lead info:
+- Name: {req.lead_name}
+- Contact: {req.lead_contact}
+- Source: {req.lead_source}
+- Budget: {req.budget or 'unknown'}
+- Timeline: {req.timeline or 'unknown'}
+- Prequalified: {'yes' if req.prequalified else 'no'}
+- Messages: {req.messages_count}
+- Showings scheduled: {req.showings_scheduled}
+
+Respond ONLY with the JSON scoring object."""
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=512,
+        system=LEAD_SCORING_SYSTEM,
+        messages=[{"role": "user", "content": score_text}],
+    )
+    cleaned = _strip_json(response.content[0].text)
+    try:
+        data = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("Lead score JSON failed: %s", e)
+        raise HTTPException(500, f"Lead scoring failed: {str(e)[:100]}")
+
+    score = int(data.get("score", 50))
+    tier = data.get("tier", "warm")
+    signals = data.get("signals", [])
+
+    await db.lead_scores.update_one(
+        {"lead_contact": req.lead_contact, "listing_id": req.listing_id},
+        {"$set": {
+            "lead_name": req.lead_name,
+            "lead_contact": req.lead_contact,
+            "lead_source": req.lead_source,
+            "score": score,
+            "tier": tier,
+            "signals": signals,
+            "listing_id": req.listing_id,
+            "scored_at": datetime.now(timezone.utc).isoformat(),
+        }},
+        upsert=True,
+    )
+
+    return LeadScoreResponse(
+        score=score,
+        tier=tier,
+        signals=[str(s) for s in signals],
+        recommendation=str(data.get("recommendation", "")),
+        next_action=str(data.get("next_action", "")),
+    )
+
+
+# ===== TRANSACTION DEADLINE TRACKER =====
+class TransactionCreate(BaseModel):
+    address: str
+    closing_date: str  # ISO date string
+    inspection_date: Optional[str] = None
+    financing_date: Optional[str] = None
+    appraisal_date: Optional[str] = None
+    due_diligence_date: Optional[str] = None
+    agent_name: Optional[str] = None
+    agent_email: Optional[str] = None
+
+
+class DeadlineItem(BaseModel):
+    task: str
+    deadline: str
+    days_until: int
+    urgency: str  # "overdue" | "today" | "soon" | "normal"
+    completed: bool
+    notes: Optional[str] = None
+
+
+class TransactionResponse(BaseModel):
+    id: str
+    address: str
+    closing_date: str
+    days_to_close: int
+    closing_urgency: str
+    deadlines: List[DeadlineItem]
+    overdue_count: int
+    soon_count: int
+
+
+STANDARD_DEADLINES = [
+    {"task": "Seller disclosures (SOD)", "days_before": 5, "key": "disclosure"},
+    {"task": "HOA documents requested", "days_before": 7, "key": "hoa"},
+    {"task": "Inspection objection deadline", "days_before": 3, "key": "inspection_objection"},
+    {"task": "Financing commitment letter", "days_before": 7, "key": "financing_commitment"},
+    {"task": "Appraisal ordered", "days_before": 10, "key": "appraisal_ordered"},
+    {"task": "Homeowner's insurance", "days_before": 5, "key": "insurance"},
+    {"task": "Final walkthrough scheduled", "days_before": 1, "key": "walkthrough"},
+    {"task": "Wire transfer instructions reviewed", "days_before": 1, "key": "wire"},
+]
+
+
+def _build_deadlines(closing_str: str, custom: dict) -> List[DeadlineItem]:
+    try:
+        closing = datetime.strptime(closing_str[:10], "%Y-%m-%d")
+    except Exception:
+        closing = datetime.now() + datetime.timedelta(days=30)
+
+    items = []
+    for d in STANDARD_DEADLINES:
+        deadline = closing - datetime.timedelta(days=d["days_before"])
+        now = datetime.now()
+        delta = (deadline - now).days
+        if delta < 0:
+            urgency = "overdue"
+        elif delta == 0:
+            urgency = "today"
+        elif delta <= 3:
+            urgency = "soon"
+        else:
+            urgency = "normal"
+        items.append(DeadlineItem(
+            task=d["task"],
+            deadline=deadline.strftime("%Y-%m-%d"),
+            days_until=delta,
+            urgency=urgency,
+            completed=False,
+        ))
+    return items
+
+
+@api_router.post("/transaction/create", response_model=TransactionResponse)
+async def transaction_create(req: TransactionCreate):
+    tx_id = str(uuid.uuid4())
+    closing_date = req.closing_date[:10]
+    try:
+        closing_dt = datetime.strptime(closing_date, "%Y-%m-%d")
+        days_to_close = (closing_dt - datetime.now()).days
+    except Exception:
+        days_to_close = 30
+
+    if days_to_close < 0:
+        urgency = "overdue"
+    elif days_to_close <= 7:
+        urgency = "today"
+    elif days_to_close <= 14:
+        urgency = "soon"
+    else:
+        urgency = "normal"
+
+    custom_dates = {
+        "inspection": req.inspection_date[:10] if req.inspection_date else None,
+        "financing": req.financing_date[:10] if req.financing_date else None,
+        "appraisal": req.appraisal_date[:10] if req.appraisal_date else None,
+        "due_diligence": req.due_diligence_date[:10] if req.due_diligence_date else None,
+    }
+
+    deadlines = _build_deadlines(closing_date, custom_dates)
+    overdue_count = sum(1 for d in deadlines if d.urgency == "overdue")
+    soon_count = sum(1 for d in deadlines if d.urgency == "soon")
+
+    doc = {
+        "id": tx_id,
+        "address": req.address,
+        "closing_date": closing_date,
+        "custom_dates": custom_dates,
+        "deadlines": [d.model_dump() for d in deadlines],
+        "agent_name": req.agent_name or "",
+        "agent_email": req.agent_email or "",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.transactions.insert_one(doc)
+
+    return TransactionResponse(
+        id=tx_id,
+        address=req.address,
+        closing_date=closing_date,
+        days_to_close=days_to_close,
+        closing_urgency=urgency,
+        deadlines=deadlines,
+        overdue_count=overdue_count,
+        soon_count=soon_count,
+    )
+
+
+@api_router.get("/transactions")
+async def transactions_list(session_id: Optional[str] = None):
+    q = {}
+    if session_id:
+        q["agent_email"] = {"$exists": True}
+    txs = await db.transactions.find(q, {"_id": 0}).to_list(50)
+    for tx in txs:
+        tx["days_to_close"] = 0
+        try:
+            cd = datetime.strptime(tx["closing_date"][:10], "%Y-%m-%d")
+            tx["days_to_close"] = (cd - datetime.now()).days
+        except Exception:
+            tx["days_to_close"] = 0
+        tx["overdue_count"] = sum(1 for d in tx.get("deadlines", []) if d.get("urgency") == "overdue")
+        tx["soon_count"] = sum(1 for d in tx.get("deadlines", []) if d.get("urgency") == "soon")
+    return {"transactions": txs}
+
+
+@api_router.post("/transaction/deadline-complete")
+async def deadline_complete(req: dict):
+    tx_id = req.get("transaction_id")
+    task_key = req.get("task")
+    await db.transactions.update_one(
+        {"id": tx_id},
+        {"$set": {f"deadlines.$[d].completed": True}},
+        array_filters=[{"d.task": task_key}],
+    )
+    return {"ok": True}
+
+
+# ===== MARKET VALUATION =====
+class MarketValuationRequest(BaseModel):
+    address: str
+    sqft: Optional[int] = None
+    beds: Optional[int] = None
+    baths: Optional[float] = None
+    year_built: Optional[int] = None
+
+
+class MarketValuationResponse(BaseModel):
+    address: str
+    estimated_value: str
+    price_per_sqft: str
+    comps_count: int
+    market_condition: str  # "hot" | "balanced" | "slow"
+    days_on_market_avg: int
+    trend: str  # "rising" | "stable" | "falling"
+    over_under: str  # "$12k above comps" etc.
+    analysis: str
+
+
+@api_router.post("/market/valuation", response_model=MarketValuationResponse)
+async def market_valuation(req: MarketValuationRequest):
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(500, "LLM key missing")
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    prompt = f"""Analyze this property for a comparative market analysis (CMA).
+
+Property: {req.address}
+Size: {req.sqft or 'unknown'} sqft, {req.beds or '?'} bed, {req.baths or '?'} bath
+Year built: {req.year_built or 'unknown'}
+
+Using your knowledge of US residential real estate markets, provide:
+1. Estimated market value range ($200k-$2M scale)
+2. Price per sqft estimate for this neighborhood tier
+3. Market condition (hot/balanced/slow)
+4. Average days on market for this type of home
+5. Price trend (rising/stable/falling)
+6. Whether this listing is priced above or below comps
+7. A 3-paragraph analysis a real estate agent can use in a CMA
+
+Respond in STRICT JSON only:
+{{
+  "estimated_value": "$450,000-$475,000",
+  "price_per_sqft": "$287/sqft",
+  "comps_count": 8,
+  "market_condition": "hot",
+  "days_on_market_avg": 12,
+  "trend": "rising",
+  "over_under": "$8k above comps",
+  "analysis": "3-paragraph market analysis..."
+}}"""
+
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system="You are a US real estate market analyst. Provide CMA-level analysis.",
+        messages=[{"role": "user", "content": prompt}],
+    )
+    cleaned = _strip_json(response.content[0].text)
+    try:
+        data = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("Market valuation parse failed: %s", e)
+        raise HTTPException(500, f"Could not analyze market: {str(e)[:120]}")
+
+    return MarketValuationResponse(
+        address=req.address,
+        estimated_value=str(data.get("estimated_value", "Contact agent")),
+        price_per_sqft=str(data.get("price_per_sqft", "Varies")),
+        comps_count=int(data.get("comps_count", 0)),
+        market_condition=str(data.get("market_condition", "balanced")),
+        days_on_market_avg=int(data.get("days_on_market_avg", 30)),
+        trend=str(data.get("trend", "stable")),
+        over_under=str(data.get("over_under", "")),
+        analysis=str(data.get("analysis", "")),
+    )
     listing_id = req.get("listing_id")
     session_id = req.get("session_id", "")
     listing = await db.listings.find_one({"id": listing_id}, {"_id": 0})
