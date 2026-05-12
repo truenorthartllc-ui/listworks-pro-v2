@@ -43,12 +43,12 @@ DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
 if STRIPE_API_KEY:
     stripe_sdk.api_key = STRIPE_API_KEY
 
-# Server-side fixed pricing - NEVER accept amounts from frontend
+# Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
     "guide_pdf":   {"amount":  20.00, "currency": "usd", "name": "ListWorks Guide PDF",          "kind": "guide"},
-    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro - 1 Month",     "kind": "pro"},
-    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro - Annual",      "kind": "pro"},
-    "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime - All-In",  "kind": "lifetime"},
+    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
+    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
+    "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
     "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
     "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},
 }
@@ -210,137 +210,72 @@ TONE_GUIDE = {
     "Investor": "Data-forward, ROI-aware. Cap rate potential, rental comps, location upside, low maintenance.",
 }
 
-REWRITE_SYSTEM = """You are ListWorks PRO - a professional real estate copywriter trained
+REWRITE_SYSTEM = """You are ListWorks PRO — a professional real estate copywriter trained
 on the official ListWorks framework. Your writing is confident, specific, and
 emotionally resonant. You make buyers FEEL something first, then give them facts
 to justify that feeling.
 
-===============================================================
+═══════════════════════════════════════════════════════════════
 THE LISTWORKS 5-PART STRUCTURE (use for MLS, Facebook, Email)
-===============================================================
-1. THE OPENING HOOK - stops the scroll, earns the read.
-2. THE LIFESTYLE PARAGRAPH - sells the LIFE, not the specs.
-3. THE FEATURE TRANSLATION LAYER - convert specs into desire using FBF.
-4. THE NEIGHBORHOOD & CONTEXT - place the buyer in the world of this home.
-5. THE CALL TO ACTION - confidence without begging.
+═══════════════════════════════════════════════════════════════
+1. THE OPENING HOOK — stops the scroll, earns the read.
+2. THE LIFESTYLE PARAGRAPH — sells the LIFE, not the specs.
+3. THE FEATURE TRANSLATION LAYER — convert specs into desire using FBF.
+4. THE NEIGHBORHOOD & CONTEXT — place the buyer in the world of this home.
+5. THE CALL TO ACTION — confidence without begging.
 
-===============================================================
-FEATURE -> BENEFIT -> FEELING (FBF)
-===============================================================
-Feature: what it has -> Benefit: what it does -> Feeling: how it feels.
+═══════════════════════════════════════════════════════════════
+FEATURE → BENEFIT → FEELING (FBF)
+═══════════════════════════════════════════════════════════════
+Feature: what it has → Benefit: what it does → Feeling: how it feels.
 Always write the FEELING.
 
-===============================================================
+═══════════════════════════════════════════════════════════════
 BUYER TRIGGERS (activate at least one per asset)
-===============================================================
-Belonging  *  Status  *  Safety  *  Urgency
+═══════════════════════════════════════════════════════════════
+Belonging · Status · Safety · Urgency
 
-===============================================================
-HARD RULES - DO NOT VIOLATE
-===============================================================
-BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliche),
+═══════════════════════════════════════════════════════════════
+HARD RULES — DO NOT VIOLATE
+═══════════════════════════════════════════════════════════════
+BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliché),
 "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell",
 "Call for details".
 DO NOT open with the address or property type. No more than 2 adjectives in a row.
 No sentence longer than 25 words. Max one exclamation per asset. No bullet points.
 
-===============================================================
-OUTPUT - STRICT JSON ONLY (no markdown, no commentary)
-===============================================================
-"""
-
-CONTRACT_REVIEW_SYSTEM = """You are a real estate contract risk analyst for US residential transactions.
-You review purchase agreements, counter-offers, addenda, and disclosure forms.
-You identify: (1) critical risks, (2) missing fields, (3) unfavorable terms, (4) deadline issues.
-You NEVER give legal advice. You advise agents to consult an attorney for anything material.
-
-OUTPUT FORMAT - STRICT JSON ONLY:
+═══════════════════════════════════════════════════════════════
+OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
+═══════════════════════════════════════════════════════════════
 {
-  "risk_level": "low | medium | high",
-  "summary": "one paragraph plain-English summary of overall risk",
-  "findings": [
-    {
-      "severity": "critical | warning | note",
-      "area": "financing | inspection | disclosure | deadlines | contingency | price_terms | other",
-      "text": "specific issue found in the contract text",
-      "recommendation": "what to do or ask about this"
-    }
+  "mls": "200-250 words. Full 5-part structure. Flowing paragraphs. Soft confident CTA.",
+  "instagram": "100-130 words. Hook line works without image. Conversational. Ends with question or CTA. Final line: 12-15 targeted hashtags separated by spaces.",
+  "facebook": "150-180 words. Story-driven, lifestyle-led. Ends with low-pressure CTA.",
+  "headlines": [
+    "3 scroll-stopping headlines, under 10 words each.",
+    "Variation 1 leads with EMOTION.",
+    "Variation 2 leads with SPECIFICITY.",
+    "Variation 3 leads with URGENCY."
   ],
-  "plain_english": "detailed breakdown in plain language a non-attorney can understand",
-  "todo_checklist": ["action item 1", "action item 2", ...]
+  "email": "120-160 words. First line: 'Subject: …'. Blank line. Then body. Personal, warm, confident.",
+  "listing_strength": 7.4,
+  "strength_reasons": [
+    "3-4 short reasons explaining the score, citing real elements (e.g. 'Specific neighborhood detail used', 'Clear FBF translation in lifestyle paragraph').",
+    "If score is below 9, include 1-2 concrete suggestions to improve it."
+  ]
 }
-"""
 
-
-class ContractReviewRequest(BaseModel):
-    content: str
-    focus_areas: List[str] = Field(default_factory=list)
-    session_id: Optional[str] = None
-
-
-class ContractReviewResponse(BaseModel):
-    risk_level: str
-    summary: str
-    findings: List[Dict[str, str]]
-    plain_english: str
-    todo_checklist: List[str]
-
-
-@api_router.post("/contract/review", response_model=ContractReviewResponse)
-async def contract_review(req: ContractReviewRequest):
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(500, "LLM key missing")
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    focus_note = ""
-    if req.focus_areas:
-        focus_list = ", ".join(req.focus_areas)
-        focus_note = f"\\nPay extra attention to these areas: {focus_list}."
-
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=CONTRACT_REVIEW_SYSTEM,
-        messages=[{
-            "role": "user",
-            "content": (
-                f"Review this real estate contract. Flag risks in plain English.{focus_note}\n\n"
-                "CONTRACT TEXT:\n" + req.content[:8000]
-            ),
-        }],
-    )
-    cleaned = _strip_json(response.content[0].text)
-    try:
-        data = json.loads(cleaned)
-    except Exception as e:
-        logging.exception("Contract review JSON parse failed")
-        raise HTTPException(500, f"Could not parse contract review: {str(e)[:120]}")
-
-    return ContractReviewResponse(
-        risk_level=str(data.get("risk_level", "medium")),
-        summary=str(data.get("summary", "")),
-        findings=[{
-            "severity": str(f.get("severity", "note")),
-            "area": str(f.get("area", "other")),
-            "text": str(f.get("text", "")),
-            "recommendation": str(f.get("recommendation", "")),
-        } for f in data.get("findings", [])],
-        plain_english=str(data.get("plain_english", "")),
-        todo_checklist=[str(t) for t in data.get("todo_checklist", [])],
-    )
 The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
-input + your output expresses the framework. Be honest - most rewrites land between
+input + your output expresses the framework. Be honest — most rewrites land between
 6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
 """
 
-EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO - a real estate marketing expert specializing in expired listings.
+EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO — a real estate marketing expert specializing in expired listings.
 Your job is to write outreach scripts that get the seller to pick up the phone or agree to a meeting.
 
-==============================================================
+══════════════════════════════════════════════════════════════
 TONE: Professional, empathetic, confident. Never desperate or pushy.
-==============================================================
+══════════════════════════════════════════════════════════════
 
 The seller just went through a failed listing attempt. They're likely frustrated, skeptical, and cautious.
 Your scripts must:
@@ -350,32 +285,32 @@ Your scripts must:
 - NEVER criticize their previous agent
 - Use "we" more than "I" to sound like a team
 
-==============================================================
+══════════════════════════════════════════════════════════════
 SCRIPT TYPES REQUIRED (JSON output)
-==============================================================
-1. COLD CALL SCRIPT: 150-200 words. Opening hook -> acknowledge -> value proposition -> objection handling -> CTA.
+══════════════════════════════════════════════════════════════
+1. COLD CALL SCRIPT: 150-200 words. Opening hook → acknowledge → value proposition → objection handling → CTA.
    Start with their name. Use the address naturally. End with a specific question, not "call me."
 
-2. VOICEMAIL SCRIPT: 30-45 seconds (60-80 words). Hook -> context -> callback request with specific time.
-   Must work as audio only - no context needed. Speak naturally.
+2. VOICEMAIL SCRIPT: 30-45 seconds (60-80 words). Hook → context → callback request with specific time.
+   Must work as audio only — no context needed. Speak naturally.
 
 3. TEXT MESSAGE: Under 160 characters. Casual but professional. Include address and one key value hook.
    End with a question to trigger response.
 
-4. DOOR KNOCK SCRIPT: 200-250 words. Greeting -> acknowledge expired -> brief value -> ask for 5 min conversation -> offer specific time.
+4. DOOR KNOCK SCRIPT: 200-250 words. Greeting → acknowledge expired → brief value → ask for 5 min conversation → offer specific time.
 
 HARD RULES:
 - Use the seller's name when provided
 - Use the property address in every script
 - Include days on market if provided to show research
-- Never say "expired" negatively - use "previous listing" or "your home was on the market"
+- Never say "expired" negatively — use "previous listing" or "your home was on the market"
 - Offer ONE clear next step per script
-- No heavy sales language - be a helpful expert, not a closer
+- No heavy sales language — be a helpful expert, not a closer
 - Include your agent name placeholder: [YOUR_NAME]
 
-==============================================================
-OUTPUT - STRICT JSON ONLY
-==============================================================
+══════════════════════════════════════════════════════════════
+OUTPUT — STRICT JSON ONLY
+══════════════════════════════════════════════════════════════
 {
   "cold_call_script": "...",
   "voicemail_script": "...",
@@ -409,7 +344,7 @@ HARD RULES:
 - Beds/baths can be decimals (e.g., 2.5)
 - Address should be complete (street, city, state, zip)
 
-OUTPUT - STRICT JSON ONLY:
+OUTPUT — STRICT JSON ONLY:
 {
   "address": "...",
   "price": "$...",
@@ -484,7 +419,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
 
     headlines = data.get("headlines", [])
     if isinstance(headlines, str):
-        headlines = [h.strip("- -*").strip() for h in headlines.split("\n") if h.strip()]
+        headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
     headlines = [h.strip() for h in headlines if h.strip()][:3]
 
     reasons = data.get("strength_reasons", [])
@@ -546,14 +481,14 @@ async def get_usage(session_id: str):
 
 
 # ============== AFFILIATE TRACKING ==============
-# Commission: 30% recurring on Pro  *  30% one-time on PDF/Lifetime/Credits
+# Commission: 30% recurring on Pro · 30% one-time on PDF/Lifetime/Credits
 COMMISSION_RATE = 0.30
 
 
 @api_router.get("/affiliate/{ref}")
 async def affiliate_stats(ref: str):
     """Public dashboard for an affiliate. Anyone with the URL sees their stats.
-    Format: GET /api/affiliate/mike -> totals + recent referred sales.
+    Format: GET /api/affiliate/mike → totals + recent referred sales.
     """
     ref = ref.strip().lower()
     if not ref or len(ref) > 64:
@@ -570,7 +505,7 @@ async def affiliate_stats(ref: str):
     total_revenue = sum(s.get("amount", 0) for s in sales)
     total_commission = round(total_revenue * COMMISSION_RATE, 2)
 
-    # Total clicks (anyone who landed with the ref param - frontend posts to /api/ref-click)
+    # Total clicks (anyone who landed with the ref param — frontend posts to /api/ref-click)
     clicks = await db.ref_clicks.count_documents({"ref": ref})
 
     return {
@@ -586,7 +521,7 @@ async def affiliate_stats(ref: str):
                 "package": s.get("package_id"),
                 "kind": s.get("package_kind"),
                 "paid_at": s.get("paid_at"),
-                # Don't leak full email - show first letter + domain
+                # Don't leak full email — show first letter + domain
                 "buyer": _mask_email(s.get("drip_email") or ""),
             }
             for s in sales[:50]
@@ -621,699 +556,9 @@ async def track_ref_click(req: RefClickIn):
     return {"ok": True}
 
 
-# ===== TELEGRAM BOT BACKEND =====
-class TelegramLinkIn(BaseModel):
-    email: str
-    telegram_chat_id: int
-
-
-class TelegramUnlinkIn(BaseModel):
-    telegram_chat_id: int
-
-
-async def _send_telegram(chat_id: int, text: str, token: str, parse_mode: str = "HTML"):
-    if not token:
-        return
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    async with httpx.AsyncClient(timeout=15) as client:
-        await client.post(url, json={
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": parse_mode,
-        })
-
-
-@api_router.post("/telegram/link")
-async def tg_link(req: TelegramLinkIn):
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-    if not token:
-        raise HTTPException(500, "Telegram not configured")
-
-    sessions = await db.listings.distinct("session_id", {"drip_email": req.email.lower()})
-    if not sessions:
-        sessions = [None]
-
-    await db.telegram_links.update_one(
-        {"telegram_chat_id": req.telegram_chat_id},
-        {"$set": {
-            "telegram_chat_id": req.telegram_chat_id,
-            "email": req.email.lower(),
-            "linked_at": datetime.now(timezone.utc).isoformat(),
-            "sessions": sessions,
-        }},
-        upsert=True,
-    )
-
-    await _send_telegram(
-        req.telegram_chat_id,
-        f"? Linked! You're connected to <b>{req.email}</b>. I'll ping you when leads come in.",
-        token,
-    )
-
-    return {"ok": True, "session_count": len([s for s in sessions if s])}
-
-
-@api_router.post("/telegram/unlink")
-async def tg_unlink(req: TelegramUnlinkIn):
-    await db.telegram_links.delete_one({"telegram_chat_id": req.telegram_chat_id})
-    return {"ok": True}
-
-
-@api_router.get("/telegram/status/{chat_id}")
-async def tg_status(chat_id: int):
-    doc = await db.telegram_links.find_one({"telegram_chat_id": chat_id}, {"_id": 0})
-    if not doc:
-        return {"linked_email": None, "recent_leads": 0}
-    email = doc.get("email", "")
-    leads = await db.lead_notifications.count_documents({"email": email.lower()})
-    return {"linked_email": email, "recent_leads": leads}
-
-
-async def _notify_telegram_lead(email: str, listing_address: str, source: str):
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-    if not token:
-        return
-    chats = await db.telegram_links.find({"email": email.lower()}).to_list(100)
-    if not chats:
-        return
-    site = os.environ.get("SITE_URL", "https://listworks.pro")
-    text = (
-        f"? <b>New Lead</b>\n\n"
-        f"Address: <b>{listing_address}</b>\n"
-        f"Source: {source}\n\n"
-        f"Log in to reply: {site}"
-    )
-    for chat in chats:
-        await _send_telegram(chat["telegram_chat_id"], text, token)
-
-
-# ===== SELLER DASHBOARD =====
-class SellerListingRequest(BaseModel):
-    session_id: Optional[str] = None
-
-
-@api_router.get("/seller/listings")
-async def seller_listings(session_id: Optional[str] = None):
-    session_id = session_id or ""
-    listings = await db.listings.find(
-        {"session_id": session_id},
-        {"_id": 0, "id": 1, "address": 1, "tone": 1, "created_at": 1, "mls": 1},
-    ).to_list(50)
-    for l in listings:
-        l["views"] = await db.share_views.count_documents({"listing_id": l.get("id")})
-        l["inquiries"] = await db.lead_notifications.count_documents({"listing_id": l.get("id")})
-        l["showings"] = 0
-        l["report_enabled"] = False
-    return {"listings": listings}
-
-
-@api_router.post("/seller/report-toggle")
-async def seller_report_toggle(req: dict):
-    listing_id = req.get("listing_id")
-    enabled = req.get("enabled", False)
-    session_id = req.get("session_id", "")
-    await db.seller_reports.update_one(
-        {"listing_id": listing_id},
-        {"$set": {"enabled": enabled, "session_id": session_id}},
-        upsert=True,
-    )
-    return {"ok": True}
-
-
-# ===== LEAD SCORING ENGINE =====
-class LeadScoreRequest(BaseModel):
-    listing_id: str
-    lead_name: str
-    lead_contact: str
-    lead_source: str = "web"  # "web" | "zillow" | "realtor" | "fb" | "referral" | "cold"
-    messages_count: int = 0
-    showings_scheduled: int = 0
-    budget: Optional[str] = None
-    timeline: Optional[str] = None  # "30d" | "60d" | "90d" | "6mo" | "browsing"
-    prequalified: bool = False
-
-
-class LeadScoreResponse(BaseModel):
-    score: int  # 0-100
-    tier: str  # "hot" | "warm" | "cold"
-    signals: List[str]
-    recommendation: str
-    next_action: str
-
-
-LEAD_SCORING_SYSTEM = """You are a real estate lead qualification analyst.
-Score a buyer's likelihood to close (0-100) based on the signals provided.
-Consider: budget, timeline, prequalification status, engagement level, source quality.
-
-SCORING RUBRIC:
-- Hot (80-100): prequalified, timeline < 60d, high engagement, referral source
-- Warm (50-79): timeline 60-90d, some engagement, budget aligned
-- Cold (0-49): no prequal, browsing, low engagement, weak source
-
-OUTPUT - STRICT JSON ONLY:
-{
-  "score": 75,
-  "tier": "warm",
-  "signals": ["short bullet signals that affected the score"],
-  "recommendation": "what to do with this lead",
-  "next_action": "specific next step for the agent"
-}
-"""
-
-
-@api_router.post("/leads/score", response_model=LeadScoreResponse)
-async def score_lead(req: LeadScoreRequest):
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(500, "LLM key missing")
-
-    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
-    if not listing:
-        raise HTTPException(404, "Listing not found")
-
-    score_text = f"""Score this lead for the listing at {listing.get('address', 'the listing')}.
-
-Lead info:
-- Name: {req.lead_name}
-- Contact: {req.lead_contact}
-- Source: {req.lead_source}
-- Budget: {req.budget or 'unknown'}
-- Timeline: {req.timeline or 'unknown'}
-- Prequalified: {'yes' if req.prequalified else 'no'}
-- Messages: {req.messages_count}
-- Showings scheduled: {req.showings_scheduled}
-
-Respond ONLY with the JSON scoring object."""
-
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=512,
-        system=LEAD_SCORING_SYSTEM,
-        messages=[{"role": "user", "content": score_text}],
-    )
-    cleaned = _strip_json(response.content[0].text)
-    try:
-        data = json.loads(cleaned)
-    except Exception as e:
-        logging.exception("Lead score JSON failed: %s", e)
-        raise HTTPException(500, f"Lead scoring failed: {str(e)[:100]}")
-
-    score = int(data.get("score", 50))
-    tier = data.get("tier", "warm")
-    signals = data.get("signals", [])
-
-    await db.lead_scores.update_one(
-        {"lead_contact": req.lead_contact, "listing_id": req.listing_id},
-        {"$set": {
-            "lead_name": req.lead_name,
-            "lead_contact": req.lead_contact,
-            "lead_source": req.lead_source,
-            "score": score,
-            "tier": tier,
-            "signals": signals,
-            "listing_id": req.listing_id,
-            "scored_at": datetime.now(timezone.utc).isoformat(),
-        }},
-        upsert=True,
-    )
-
-    return LeadScoreResponse(
-        score=score,
-        tier=tier,
-        signals=[str(s) for s in signals],
-        recommendation=str(data.get("recommendation", "")),
-        next_action=str(data.get("next_action", "")),
-    )
-
-
-# ===== TRANSACTION DEADLINE TRACKER =====
-class TransactionCreate(BaseModel):
-    address: str
-    closing_date: str  # ISO date string
-    inspection_date: Optional[str] = None
-    financing_date: Optional[str] = None
-    appraisal_date: Optional[str] = None
-    due_diligence_date: Optional[str] = None
-    agent_name: Optional[str] = None
-    agent_email: Optional[str] = None
-
-
-class DeadlineItem(BaseModel):
-    task: str
-    deadline: str
-    days_until: int
-    urgency: str  # "overdue" | "today" | "soon" | "normal"
-    completed: bool
-    notes: Optional[str] = None
-
-
-class TransactionResponse(BaseModel):
-    id: str
-    address: str
-    closing_date: str
-    days_to_close: int
-    closing_urgency: str
-    deadlines: List[DeadlineItem]
-    overdue_count: int
-    soon_count: int
-
-
-STANDARD_DEADLINES = [
-    {"task": "Seller disclosures (SOD)", "days_before": 5, "key": "disclosure"},
-    {"task": "HOA documents requested", "days_before": 7, "key": "hoa"},
-    {"task": "Inspection objection deadline", "days_before": 3, "key": "inspection_objection"},
-    {"task": "Financing commitment letter", "days_before": 7, "key": "financing_commitment"},
-    {"task": "Appraisal ordered", "days_before": 10, "key": "appraisal_ordered"},
-    {"task": "Homeowner's insurance", "days_before": 5, "key": "insurance"},
-    {"task": "Final walkthrough scheduled", "days_before": 1, "key": "walkthrough"},
-    {"task": "Wire transfer instructions reviewed", "days_before": 1, "key": "wire"},
-]
-
-
-def _build_deadlines(closing_str: str, custom: dict) -> List[DeadlineItem]:
-    try:
-        closing = datetime.strptime(closing_str[:10], "%Y-%m-%d")
-    except Exception:
-        closing = datetime.now() + datetime.timedelta(days=30)
-
-    items = []
-    for d in STANDARD_DEADLINES:
-        deadline = closing - datetime.timedelta(days=d["days_before"])
-        now = datetime.now()
-        delta = (deadline - now).days
-        if delta < 0:
-            urgency = "overdue"
-        elif delta == 0:
-            urgency = "today"
-        elif delta <= 3:
-            urgency = "soon"
-        else:
-            urgency = "normal"
-        items.append(DeadlineItem(
-            task=d["task"],
-            deadline=deadline.strftime("%Y-%m-%d"),
-            days_until=delta,
-            urgency=urgency,
-            completed=False,
-        ))
-    return items
-
-
-@api_router.post("/transaction/create", response_model=TransactionResponse)
-async def transaction_create(req: TransactionCreate):
-    tx_id = str(uuid.uuid4())
-    closing_date = req.closing_date[:10]
-    try:
-        closing_dt = datetime.strptime(closing_date, "%Y-%m-%d")
-        days_to_close = (closing_dt - datetime.now()).days
-    except Exception:
-        days_to_close = 30
-
-    if days_to_close < 0:
-        urgency = "overdue"
-    elif days_to_close <= 7:
-        urgency = "today"
-    elif days_to_close <= 14:
-        urgency = "soon"
-    else:
-        urgency = "normal"
-
-    custom_dates = {
-        "inspection": req.inspection_date[:10] if req.inspection_date else None,
-        "financing": req.financing_date[:10] if req.financing_date else None,
-        "appraisal": req.appraisal_date[:10] if req.appraisal_date else None,
-        "due_diligence": req.due_diligence_date[:10] if req.due_diligence_date else None,
-    }
-
-    deadlines = _build_deadlines(closing_date, custom_dates)
-    overdue_count = sum(1 for d in deadlines if d.urgency == "overdue")
-    soon_count = sum(1 for d in deadlines if d.urgency == "soon")
-
-    doc = {
-        "id": tx_id,
-        "address": req.address,
-        "closing_date": closing_date,
-        "custom_dates": custom_dates,
-        "deadlines": [d.model_dump() for d in deadlines],
-        "agent_name": req.agent_name or "",
-        "agent_email": req.agent_email or "",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.transactions.insert_one(doc)
-
-    return TransactionResponse(
-        id=tx_id,
-        address=req.address,
-        closing_date=closing_date,
-        days_to_close=days_to_close,
-        closing_urgency=urgency,
-        deadlines=deadlines,
-        overdue_count=overdue_count,
-        soon_count=soon_count,
-    )
-
-
-@api_router.get("/transactions")
-async def transactions_list(session_id: Optional[str] = None):
-    q = {}
-    if session_id:
-        q["agent_email"] = {"$exists": True}
-    txs = await db.transactions.find(q, {"_id": 0}).to_list(50)
-    for tx in txs:
-        tx["days_to_close"] = 0
-        try:
-            cd = datetime.strptime(tx["closing_date"][:10], "%Y-%m-%d")
-            tx["days_to_close"] = (cd - datetime.now()).days
-        except Exception:
-            tx["days_to_close"] = 0
-        tx["overdue_count"] = sum(1 for d in tx.get("deadlines", []) if d.get("urgency") == "overdue")
-        tx["soon_count"] = sum(1 for d in tx.get("deadlines", []) if d.get("urgency") == "soon")
-    return {"transactions": txs}
-
-
-@api_router.post("/transaction/deadline-complete")
-async def deadline_complete(req: dict):
-    tx_id = req.get("transaction_id")
-    task_key = req.get("task")
-    await db.transactions.update_one(
-        {"id": tx_id},
-        {"$set": {f"deadlines.$[d].completed": True}},
-        array_filters=[{"d.task": task_key}],
-    )
-    return {"ok": True}
-
-
-# ===== MARKET VALUATION =====
-class MarketValuationRequest(BaseModel):
-    address: str
-    sqft: Optional[int] = None
-    beds: Optional[int] = None
-    baths: Optional[float] = None
-    year_built: Optional[int] = None
-
-
-class MarketValuationResponse(BaseModel):
-    address: str
-    estimated_value: str
-    price_per_sqft: str
-    comps_count: int
-    market_condition: str  # "hot" | "balanced" | "slow"
-    days_on_market_avg: int
-    trend: str  # "rising" | "stable" | "falling"
-    over_under: str  # "$12k above comps" etc.
-    analysis: str
-
-
-@api_router.post("/market/valuation", response_model=MarketValuationResponse)
-async def market_valuation(req: MarketValuationRequest):
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(500, "LLM key missing")
-
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    prompt = f"""Analyze this property for a comparative market analysis (CMA).
-
-Property: {req.address}
-Size: {req.sqft or 'unknown'} sqft, {req.beds or '?'} bed, {req.baths or '?'} bath
-Year built: {req.year_built or 'unknown'}
-
-Using your knowledge of US residential real estate markets, provide:
-1. Estimated market value range ($200k-$2M scale)
-2. Price per sqft estimate for this neighborhood tier
-3. Market condition (hot/balanced/slow)
-4. Average days on market for this type of home
-5. Price trend (rising/stable/falling)
-6. Whether this listing is priced above or below comps
-7. A 3-paragraph analysis a real estate agent can use in a CMA
-
-Respond in STRICT JSON only:
-{{
-  "estimated_value": "$450,000-$475,000",
-  "price_per_sqft": "$287/sqft",
-  "comps_count": 8,
-  "market_condition": "hot",
-  "days_on_market_avg": 12,
-  "trend": "rising",
-  "over_under": "$8k above comps",
-  "analysis": "3-paragraph market analysis..."
-}}"""
-
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system="You are a US real estate market analyst. Provide CMA-level analysis.",
-        messages=[{"role": "user", "content": prompt}],
-    )
-    cleaned = _strip_json(response.content[0].text)
-    try:
-        data = json.loads(cleaned)
-    except Exception as e:
-        logging.exception("Market valuation parse failed: %s", e)
-        raise HTTPException(500, f"Could not analyze market: {str(e)[:120]}")
-
-    return MarketValuationResponse(
-        address=req.address,
-        estimated_value=str(data.get("estimated_value", "Contact agent")),
-        price_per_sqft=str(data.get("price_per_sqft", "Varies")),
-        comps_count=int(data.get("comps_count", 0)),
-        market_condition=str(data.get("market_condition", "balanced")),
-        days_on_market_avg=int(data.get("days_on_market_avg", 30)),
-        trend=str(data.get("trend", "stable")),
-        over_under=str(data.get("over_under", "")),
-        analysis=str(data.get("analysis", "")),
-    )
-    listing_id = req.get("listing_id")
-    session_id = req.get("session_id", "")
-    listing = await db.listings.find_one({"id": listing_id}, {"_id": 0})
-    if not listing:
-        raise HTTPException(404, "Listing not found")
-    views = await db.share_views.count_documents({"listing_id": listing_id})
-    inquiries = await db.lead_notifications.count_documents({"listing_id": listing_id})
-    address = listing.get("address", "Your Property")
-    report_text = (
-        f"Hi! Here's your listing report for {address}.\n\n"
-        f"Views: {views} | Inquiries: {inquiries} | Showings: 0\n\n"
-        f"Keep your agent posted on any feedback. Full report at listworks.pro"
-    )
-    return {"ok": True, "report": report_text}
-
-
-# ===== LEAD NURTURING ENGINE =====
-class NurtureThreadRequest(BaseModel):
-    listing_id: str
-    lead_name: str
-    lead_contact: str  # email or phone
-    channel: str = "telegram"  # "telegram" | "email" | "sms"
-    tone: str = "friendly"  # "friendly" | "professional" | "urgent"
-
-
-class NurtureMessage(BaseModel):
-    role: str  # "agent" | "lead" | "assistant"
-    content: str
-    sent_at: Optional[str] = None
-
-
-@api_router.post("/nurture/thread")
-async def nurture_thread(req: NurtureThreadRequest):
-    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
-    if not listing:
-        raise HTTPException(404, "Listing not found")
-
-    thread_id = str(uuid.uuid4())
-    first_message = (
-        f"Hi {req.lead_name}! I saw your inquiry on {listing.get('address', 'this listing')}. "
-        f"Happy to answer any questions. Is this still on your radar? "
-        f"What's most important to you - the location, price, or the condition?"
-    )
-
-    doc = {
-        "id": thread_id,
-        "listing_id": req.listing_id,
-        "lead_name": req.lead_name,
-        "lead_contact": req.lead_contact,
-        "channel": req.channel,
-        "tone": req.tone,
-        "messages": [
-            {"role": "assistant", "content": first_message, "sent_at": datetime.now(timezone.utc).isoformat()},
-        ],
-        "status": "active",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.nurture_threads.insert_one(doc)
-
-    if req.channel == "telegram":
-        token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-        if token and req.lead_contact.startswith("@"):
-            chat_id = req.lead_contact
-            await _send_telegram(chat_id, f"[chat] Hey {req.lead_name}, your question is being reviewed - I'll have an answer shortly.", token)
-
-    return {"thread_id": thread_id, "first_message": first_message}
-
-
-@api_router.post("/nurture/reply")
-async def nurture_reply(req: dict):
-    thread_id = req.get("thread_id")
-    lead_message = req.get("message", "")
-    if not thread_id or not lead_message:
-        raise HTTPException(400, "thread_id and message required")
-
-    thread = await db.nurture_threads.find_one({"id": thread_id}, {"_id": 0})
-    if not thread:
-        raise HTTPException(404, "Thread not found")
-
-    history = [
-        {"role": m["role"], "content": m["content"]}
-        for m in thread.get("messages", [])[-10:]
-    ]
-    history.append({"role": "lead", "content": lead_message})
-
-    NURTURE_SYSTEM = f"""You are a friendly, helpful real estate assistant. You respond to buyer leads
-on behalf of a licensed agent. Be warm, curious, and consultative. Never give legal advice.
-If asked about contracts, referrals, or specific legal terms - suggest talking to the agent.
-Keep responses short and conversational (3-5 sentences max).
-Lead name: {thread['lead_name']}. Tone: {thread['tone']}."""
-
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=256,
-        system=NURTURE_SYSTEM,
-        messages=[{"role": "user", "content": lead_message}],
-    )
-    reply = response.content[0].text.strip()
-    now = datetime.now(timezone.utc).isoformat()
-    await db.nurture_threads.update_one(
-        {"id": thread_id},
-        {"$push": {"messages": {"$each": [
-            {"role": "lead", "content": lead_message, "sent_at": now},
-            {"role": "assistant", "content": reply, "sent_at": now},
-        ]}}},
-    )
-    return {"reply": reply}
-
-
-@api_router.get("/nurture/threads")
-async def nurture_threads(session_id: Optional[str] = None):
-    q = {}
-    if session_id:
-        q["session_id"] = session_id
-    threads = await db.nurture_threads.find(q, {"_id": 0}).to_list(50)
-    return {"threads": threads}
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-    if not token:
-        return
-    chats = await db.telegram_links.find({"email": email.lower()}).to_list(100)
-    if not chats:
-        return
-    commission = round(amount * COMMISSION_RATE, 2)
-    text = (
-        f"? <b>Sale! You earned ${commission:.2f}</b>\n\n"
-        f"Package: {package}\n"
-        f"Commission: {int(COMMISSION_RATE * 100)}%\n\n"
-        f"Paid out monthly (min $50). Track at listworks.pro/a/{email.split('@')[0]}"
-    )
-    for chat in chats:
-        await _send_telegram(chat["telegram_chat_id"], text, token)
-
-
-# ===== AFFILIATE UPGRADES =====
-class AffiliateCreateIn(BaseModel):
-    email: str
-    name: str
-    referral_code: str
-
-
-class ShareTextRequest(BaseModel):
-    package: str = "general"
-
-
-@api_router.post("/affiliate/create")
-async def affiliate_create(req: AffiliateCreateIn):
-    ref = req.referral_code.strip().lower()
-    if not ref or len(ref) > 32 or not re.match(r"^[a-z0-9_]+$", ref):
-        raise HTTPException(400, "Invalid code - letters, numbers, underscores only, max 32 chars")
-    existing = await db.affiliates.find_one({"ref": ref})
-    if existing:
-        raise HTTPException(409, "That referral code is taken.")
-    await db.affiliates.insert_one({
-        "ref": ref,
-        "email": req.email.lower(),
-        "name": req.name.strip(),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "clicks": 0,
-        "sales": 0,
-        "commission_owed": 0.0,
-        "paid_out": 0.0,
-    })
-    site = os.environ.get("SITE_URL", "https://listworks.pro")
-    link = f"{site}/?ref={ref}"
-    return {"ref": ref, "link": link, "commission_rate": int(COMMISSION_RATE * 100)}
-
-
-@api_router.post("/affiliate/share-text")
-async def affiliate_share_text(req: ShareTextRequest):
-    site = os.environ.get("SITE_URL", "https://listworks.pro")
-    if req.package == "guide":
-        return {
-            "platform": "Instagram",
-            "text": (
-                "Listing copy that actually sells homes [rocket]\n\n"
-                "I used this AI tool to rewrite my MLS draft in 10 seconds - "
-                "it gave me an Instagram caption, a Facebook post, 5 headlines, and an email blast.\n\n"
-                "First 3 are FREE -> listworks.pro\n\n"
-                "#realestate #realestateagent #listings #homesweethome"
-            ),
-        }
-    if req.package == "pro":
-        return {
-            "platform": "Facebook",
-            "text": (
-                "Just started using ListWorks PRO for listing copy.\n\n"
-                "3 bed 2 bath ranch -> Instagram caption + FB post + 5 headlines + email blast, "
-                "all in 10 seconds. First 3 free.\n\n"
-                "? listworks.pro\n\n"
-                "Has anyone else tried it? Worth the $49/mo?"
-            ),
-        }
-    return {
-        "platform": "General",
-        "text": (
-            "This AI tool rewrites boring MLS listing copy into publish-ready content in 10 seconds.\n\n"
-            "Free to try -> listworks.pro\n\n"
-            "#realestate #listings #realestateagent"
-        ),
-    }
-
-
-@api_router.get("/affiliate/dashboard/{ref}")
-async def affiliate_full(ref: str):
-    basic = await db.affiliates.find_one({"ref": ref.strip().lower()}, {"_id": 0})
-    if not basic:
-        raise HTTPException(404, "Affiliate not found")
-
-    sales = await db.payment_transactions.find(
-        {"ref": ref.strip().lower(), "payment_status": "paid"},
-    ).to_list(500)
-    total_revenue = sum(s.get("amount", 0) for s in sales)
-    clicks = await db.ref_clicks.count_documents({"ref": ref.strip().lower()})
-    conversion = round((len(sales) / clicks * 100), 2) if clicks > 0 else 0.0
-
-    site = os.environ.get("SITE_URL", "https://listworks.pro")
-    base = f"{site}/?ref={ref.strip().lower()}"
-    share_links = {
-        "twitter": f"https://twitter.com/intent/tweet?text={site}&url={base}",
-        "facebook": f"https://www.facebook.com/sharer/sharer.php?u={base}",
-        "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={base}",
-        "copy": base,
-    }
-    return {
-        **basic,
-        "clicks": clicks,
-        "conversion": conversion,
-        "total_revenue": round(total_revenue, 2),
-        "commission_owed": round(total_revenue * COMMISSION_RATE, 2),
-        "paid_out": basic.get("paid_out", 0.0),
-        "share_links": share_links,
-    }
+# ============== ROUTES ==============
+@api_router.get("/")
+async def root():
     return {"app": "ListWorks PRO", "status": "live", "engine": "Claude Sonnet 4.5"}
 
 
@@ -1322,7 +567,7 @@ async def rewrite_listing(req: RewriteRequest):
     if len(req.raw_listing.strip()) < 10:
         raise HTTPException(400, "Listing too short. Add at least a sentence.")
 
-    # ? Paywall gate - enforce free quota / credits / Pro
+    # 🚧 Paywall gate — enforce free quota / credits / Pro
     usage = await _get_usage(req.session_id)
     if usage["paywall"]:
         raise HTTPException(
@@ -1374,14 +619,14 @@ listings into exceptional ones. You take a near-finished listing and push every 
 to a 9.5-10/10 on emotional impact, specificity, and buyer resonance.
 
 You will receive a listing with its MLS copy, headlines, and social assets.
-Your job is to rewrite ALL outputs so they are 10/10 - vivid, specific, emotionally
+Your job is to rewrite ALL outputs so they are 10/10 — vivid, specific, emotionally
 charged, and impossible to scroll past.
 
 HARD RULES:
 - Replace every generic adjective with a concrete, sensory detail
-- Every sentence must earn its place - cut anything that doesn't create a picture
+- Every sentence must earn its place — cut anything that doesn't create a picture
 - Open with a feeling, not a fact
-- Headlines must hit in under 3 seconds - lead with the most compelling hook
+- Headlines must hit in under 3 seconds — lead with the most compelling hook
 - Instagram: starts with a feeling or a question, ends with a strong CTA
 - Facebook: conversational, community-aware, drives comments
 - Email: subject line worthy, first line hooks, one clear CTA
@@ -1389,7 +634,7 @@ HARD RULES:
   "Motivated seller", "Charming", "Nestled", "Priced to sell"
 - Max one exclamation mark total across all outputs
 
-OUTPUT FORMAT - STRICT JSON ONLY:
+OUTPUT FORMAT — STRICT JSON ONLY:
 {
   "mls": "...",
   "instagram": "...",
@@ -1473,7 +718,7 @@ Return STRICT JSON with all enhanced outputs."""  # noqa: F541
 
     headlines = data.get("headlines", [])
     if isinstance(headlines, str):
-        headlines = [h.strip("- -*").strip() for h in headlines.split("\n") if h.strip()]
+        headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
     headlines = [h.strip() for h in headlines if h.strip()][:3]
 
     reasons = data.get("strength_reasons", [])
@@ -1702,7 +947,7 @@ Return the JSON object with all available property details. JSON only."""
 
 @api_router.get("/share/{listing_id}")
 async def get_shared_listing(listing_id: str):
-    """Public share endpoint - returns the before/after for a listing.
+    """Public share endpoint — returns the before/after for a listing.
     Anyone can view via /share/{id} on the frontend (no auth)."""
     listing = await db.listings.find_one({"id": listing_id}, {"_id": 0, "session_id": 0})
     if not listing:
@@ -1765,15 +1010,15 @@ async def analyze_photo(req: PhotoAnalyzeRequest):
 
 
 # ===== AI Advisor (chat) =====
-ADVISOR_SYSTEM = """You are the ListWorks AI Advisor - a senior real estate marketing
-strategist trained on the ListWorks framework (5-part structure, Feature -> Benefit -> Feeling,
+ADVISOR_SYSTEM = """You are the ListWorks AI Advisor — a senior real estate marketing
+strategist trained on the ListWorks framework (5-part structure, Feature → Benefit → Feeling,
 4 buyer triggers). You give concise, opinionated, actionable advice on listing copy,
 photos, video strategy, and buyer psychology.
 
 Keep responses under 180 words. Use plain text, short paragraphs, no markdown headers.
 When the user shares listing copy, critique it against the framework: point to specific
 banned-word offenders, missing FBF translations, weak hooks, and dead CTAs. Suggest
-exact rewrites - don't just describe."""
+exact rewrites — don't just describe."""
 
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
@@ -1890,21 +1135,21 @@ async def get_examples():
             "id": "ex1",
             "address": "248 Linden Ave, Austin TX",
             "before": "3 bed 2 bath ranch home. Updated kitchen with granite. Fenced backyard. Close to schools. Move-in ready.",
-            "after": "Sunlight pours through the front window at 7 a.m. - and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of Linden trades quietly - and rarely.",
+            "after": "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of Linden trades quietly — and rarely.",
             "tone": "Cozy",
         },
         {
             "id": "ex2",
-            "address": "418 Willowbrook Ln, Scottsdale AZ",
-            "before": "Updated 4 bed 3 bath in desirable neighborhood. New quartz counters. Pool. 3-car garage. Mountain views.",
-            "after": "The kind of pool you actually use - not just for show. Four bedrooms, three baths, and a kitchen that's been touched by someone who cooks. Quartz counters that don't feel like a compromise. A 3-car garage for the truck, the toys, and everything else. And views of the McDowells that remind you why you moved here in the first place.",
-            "tone": "Modern",
+            "address": "12 Skyline Dr, Beverly Hills CA",
+            "before": "Large modern home, 5 bedrooms, pool, city views. High ceilings. Two car garage.",
+            "after": "Carved into the hillside above Sunset, this 5-bedroom architectural statement turns the city into your private theater. Walls of glass dissolve into infinity-edge water. Ceilings climb. Light pools. Five suites — each its own sanctuary. The kind of home where mornings start with a swim and evenings end with the skyline at your feet.",
+            "tone": "Luxury",
         },
         {
             "id": "ex3",
             "address": "904 Ironwood Ct, Denver CO",
             "before": "Investment property. 4-plex. Fully rented. Cap rate 6.2%. Recent roof. Off-street parking.",
-            "after": "A rare 4-plex in Denver's tightest sub-market - fully tenanted, freshly capitalized, and engineered to print. 6.2% cap on actuals. New roof, new bones, new opportunity. Off-street parking, low turnover, and an emerging block where comps are climbing 9% YoY. The kind of asset you don't list - you whisper.",
+            "after": "A rare 4-plex in Denver's tightest sub-market — fully tenanted, freshly capitalized, and engineered to print. 6.2% cap on actuals. New roof, new bones, new opportunity. Off-street parking, low turnover, and an emerging block where comps are climbing 9% YoY. The kind of asset you don't list — you whisper.",
             "tone": "Investor",
         },
     ]
@@ -1979,7 +1224,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
         "success_url": success_url,
         "cancel_url": cancel_url,
         "metadata": metadata,
-        "allow_promotion_codes": True,  # [hot] Customers can enter COMEBACK29 etc.
+        "allow_promotion_codes": True,  # 🔥 Customers can enter COMEBACK29 etc.
     }
     if req.email:
         cs_params["customer_email"] = req.email
@@ -2072,7 +1317,7 @@ async def checkout_status(stripe_session_id: str, request: Request):
                 upsert=True,
             )
 
-        # Fire drip emails (idempotent - only first time payment_status flips to paid)
+        # Fire drip emails (idempotent — only first time payment_status flips to paid)
         await _trigger_drip_for_txn(stripe_session_id, txn)
 
     return {
@@ -2148,7 +1393,7 @@ async def stripe_webhook(request: Request):
                     }},
                     upsert=True,
                 )
-            # Fire drip emails - idempotent via drip_sent flag
+            # Fire drip emails — idempotent via drip_sent flag
             if txn:
                 await _trigger_drip_for_txn(session_id, txn)
     return {"received": True}
@@ -2173,10 +1418,10 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
         except Exception as e:
             logger.warning("Could not fetch Stripe email for %s: %s", stripe_session_id, e)
 
-    # ? Fire Slack notification regardless (motivation + tracking)
+    # 🔔 Fire Slack notification regardless (motivation + tracking)
     await _notify_slack_sale(txn, email)
 
-    # [email] Email drips (only if Resend configured and we have an email)
+    # 📧 Email drips (only if Resend configured and we have an email)
     ids: dict = {}
     if os.environ.get("RESEND_API_KEY") and email:
         kind = txn.get("package_kind")
@@ -2188,7 +1433,7 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
         except Exception as e:
             logger.exception("Drip send failed for %s: %s", stripe_session_id, e)
 
-    # ? Credit grant for credit packages
+    # 💎 Credit grant for credit packages
     pkg = PACKAGES.get(txn.get("package_id") or "", {})
     if pkg.get("kind") == "credits" and txn.get("lw_session_id"):
         credit_amount = int(pkg.get("credits", 0))
@@ -2225,7 +1470,7 @@ async def _notify_slack_sale(txn: dict, email: str) -> None:
             "lifetime": ":crown:", "credits": ":coin:",
         }.get(kind, ":moneybag:")
 
-        text = f"{emoji} *NEW SALE - ${amount}* - {name}\n_email:_ `{email or 'unknown'}`   *   _kind:_ `{kind}`"
+        text = f"{emoji} *NEW SALE — ${amount}* — {name}\n_email:_ `{email or 'unknown'}`  ·  _kind:_ `{kind}`"
         async with httpx.AsyncClient(timeout=10.0) as client:
             await client.post(SLACK_WEBHOOK_URL, json={"text": text})
     except Exception as e:
@@ -2315,7 +1560,7 @@ class EmailTestRequest(BaseModel):
 @api_router.post("/email/test")
 async def email_test(req: EmailTestRequest):
     """Send the welcome email immediately to verify Resend is wired correctly.
-    Drip emails are NOT scheduled here - this is for smoke-testing only."""
+    Drip emails are NOT scheduled here — this is for smoke-testing only."""
     if not os.environ.get("RESEND_API_KEY"):
         raise HTTPException(503, "RESEND_API_KEY not configured")
     from email_engine import _send, tpl_guide_welcome, tpl_pro_welcome
@@ -2327,7 +1572,7 @@ async def email_test(req: EmailTestRequest):
         tag = "test_guide_welcome"
     eid = await _send(to=req.email, subject=s, html=h, tag=tag)
     if not eid:
-        raise HTTPException(502, "Resend send failed - check backend logs")
+        raise HTTPException(502, "Resend send failed — check backend logs")
     return {"sent": True, "email_id": eid, "to": req.email, "flow": req.flow}
 
 
