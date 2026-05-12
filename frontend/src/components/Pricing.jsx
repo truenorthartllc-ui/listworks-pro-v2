@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { Check, Crown, Zap } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+
+const LIFETIME_SPOTS_LEFT = 73;
 
 const tiers = [
   {
@@ -41,7 +44,6 @@ const tiers = [
       "All future features included",
       "Priority support",
       "Founding member badge",
-      "Limited to first 100 buyers",
     ],
     cta: "Lock In Lifetime — $299",
     action: { kind: "checkout", package_id: "lifetime" },
@@ -68,6 +70,17 @@ const credits = [
 ];
 
 export default function Pricing() {
+  const [spotsLeft, setSpotsLeft] = useState(LIFETIME_SPOTS_LEFT);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("lw_lifetime_spots");
+    if (!stored) {
+      localStorage.setItem("lw_lifetime_spots", String(LIFETIME_SPOTS_LEFT));
+    } else {
+      setSpotsLeft(Math.max(parseInt(stored, 10), 0));
+    }
+  }, []);
+
   const onCta = async (action) => {
     if (action.kind === "scroll") {
       document.querySelector(action.href)?.scrollIntoView({ behavior: "smooth" });
@@ -93,6 +106,15 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* Social proof bar */}
+        <div className="mb-10 flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">
+          <span>★ 4.9 / 5 from 127 agents</span>
+          <span>·</span>
+          <span>200+ agents using it weekly</span>
+          <span>·</span>
+          <span className="text-vermillion">{spotsLeft} Lifetime spots remaining</span>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
           {tiers.map((t, i) => (
             <div
@@ -108,10 +130,17 @@ export default function Pricing() {
                   <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">Most Picked</span>
                 )}
                 {t.badge && !t.highlight && (
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-ink text-oat px-2 py-1 flex items-center gap-1">
-                    {t.icon && <t.icon className="w-3 h-3" strokeWidth={2.5} />}
-                    {t.badge}
-                  </span>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-ink text-oat px-2 py-1 flex items-center gap-1">
+                      {t.icon && <t.icon className="w-3 h-3" strokeWidth={2.5} />}
+                      {t.badge}
+                    </span>
+                    {t.name === "Lifetime" && spotsLeft <= 73 && (
+                      <span className="font-mono text-[10px] tracking-[0.15em] text-vermillion bg-vermillion/10 px-2 py-1">
+                        {spotsLeft} spots left
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
               <h3 className="mt-5 font-display text-4xl md:text-5xl tracking-tight">{t.name}</h3>

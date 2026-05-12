@@ -11,10 +11,12 @@ import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import FloatingAdvisorButton from "@/components/FloatingAdvisorButton";
+import ViralNotifications from "@/components/ViralNotifications";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-oat text-ink font-body">
+      <ViralNotifications />
       <Header />
       <main>
         <Hero />

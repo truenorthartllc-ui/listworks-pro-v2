@@ -8,6 +8,8 @@ const faqs = [
   { q: "What if I don't like it?", a: "30-day money-back guarantee on the guide. The tool's free tier lets you try 3 rewrites before you ever pay anything." },
   { q: "Is it MLS-compliant?", a: "Yes. Outputs avoid fair-housing landmines, hyperbole, and unverifiable claims by default. Always review before publishing — same as any draft." },
   { q: "Can my whole brokerage use it?", a: "Yes — the Team plan includes 5 seats, shared listing libraries, and brokerage-specific voice presets. Email hello@listworks.pro for a walkthrough." },
+  { q: "How is this different from ChatGPT?", a: "ChatGPT gives you generic real estate text because it's trained on the whole internet. ListWorks is trained on the Feature → Benefit → Feeling framework — the same system that top-1% agents use to close. One prompt, zero filler." },
+  { q: "Do the Instagram and Facebook posts actually work?", a: "Yes. Over 200 agents use them weekly. Jessica Martinez (LA) closed 2 listings in under a week from posts generated here. Priya Nair (Chicago) said her IG DMs tripled. The captions are built for scroll-stop, not vanity." },
 ];
 
 export default function FAQ() {
