@@ -2,11 +2,17 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
 import PaywallModal from "@/components/PaywallModal";
+import ExpiredListingScripts from "@/components/ExpiredListingScripts";
+import RedfinImport from "@/components/RedfinImport";
+import ListingHistory from "@/components/ListingHistory";
+import SavedTemplates from "@/components/SavedTemplates";
+import BatchGenerator from "@/components/BatchGenerator";
+import EmailCapture from "@/components/EmailCapture";
 import { startCheckout } from "@/lib/checkout";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -34,7 +40,13 @@ export default function Playground() {
   const [strengthOpen, setStrengthOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [freeUsed, setFreeUsed] = useState(0);
+  const [mode, setMode] = useState("rewrite");
   const outputRef = useRef(null);
+
+  const handleRedfinImport = (data) => {
+    setMeta({ address: data.address || "", price: data.price || "", beds: data.beds || "", baths: data.baths || "", sqft: data.sqft || "" });
+    if (data.description) setRaw(data.description);
+  };
 
   useEffect(() => {
     if (result && outputRef.current) {
@@ -122,10 +134,16 @@ export default function Playground() {
               <span className="font-light">Your boring listing in.</span><br />
               <span className="italic">Five publish-ready assets out.</span>
             </h2>
+
+            <div className="flex flex-wrap gap-3 mt-6">
+              <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
+              <button onClick={() => setMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts</button>
+              <button onClick={() => setMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Redfin Import</button>
+            </div>
           </div>
         </div>
 
-        {/* Bento grid */}
+        {mode === "rewrite" && (
         <div className="grid grid-cols-12 gap-px bg-ink/15 border border-ink/15">
           {/* Input column */}
           <div className="col-span-12 lg:col-span-5 bg-oat p-6 md:p-8">
@@ -342,6 +360,7 @@ export default function Playground() {
             )}
           </div>
         </div>
+        )}
 
         {/* Pro upsell banner under playground */}
         {result && (
@@ -364,6 +383,38 @@ export default function Playground() {
           </div>
         )}
       </div>
+
+      {mode === "expired" && (
+        <div className="bg-white border border-ink/15 p-8 mt-px">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">NEW</span>
+            <h3 className="font-heading text-xl tracking-wide text-ink">Expired Listing Scripts</h3>
+          </div>
+          <p className="text-ink/60 text-sm mb-4">Turn expired listings into new opportunities. Get cold call scripts, voicemails, texts, and door knock scripts for any property that didn't sell.</p>
+          <ExpiredListingScripts />
+        </div>
+      )}
+
+      {mode === "import" && (
+        <div className="bg-oat border border-ink/15 p-8 mt-px">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">NEW</span>
+              <h3 className="font-heading text-xl tracking-wide text-ink">One-Click Redfin Import</h3>
+            </div>
+            <p className="text-ink/60 text-sm mb-4">Paste any Redfin listing URL to auto-import address, price, beds, baths, sqft, and description. Then switch to "Listing Rewrite" to generate copy.</p>
+            <RedfinImport onImport={handleRedfinImport} />
+          </div>
+          {meta.address && (
+            <div className="mt-6 p-4 bg-white border border-ink/10">
+              <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 mb-2">Imported</p>
+              <p className="text-ink font-medium">{meta.address}</p>
+              {meta.price && <p className="text-ink/70">{meta.price} · {meta.beds}bd · {meta.baths}ba · {meta.sqft}sf</p>}
+              <p className="text-ink/50 text-sm mt-2">Switch to "Rewrite" mode to generate copy.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {showVideo && result && (
         <VideoBuilder

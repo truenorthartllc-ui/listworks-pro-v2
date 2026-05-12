@@ -110,6 +110,20 @@ html, body, #root {
   color: #F4F3EF;
 }
 
+.mode-btn {
+  border: 1px solid rgba(18,18,18,0.2);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.mode-btn[data-active="true"] {
+  background: #121212;
+  color: #F4F3EF;
+  border-color: #121212;
+}
+.mode-btn:not([data-active="true"]):hover {
+  background: rgba(18,18,18,0.06);
+}
+
 .bento-cell {
   border: 1px solid rgba(18,18,18,0.15);
   background: #FFFFFF;

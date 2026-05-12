@@ -72,6 +72,29 @@ class RewriteRequest(BaseModel):
     session_id: Optional[str] = None
 
 
+class BatchRewriteRequest(BaseModel):
+    listings: List[RewriteRequest]
+
+
+class BatchRewriteResponse(BaseModel):
+    results: List[RewriteOutput]
+    success_count: int
+    failed_count: int
+
+
+class TemplateSaveRequest(BaseModel):
+    name: str
+    tone: str
+    is_default: bool = False
+
+
+class Template(BaseModel):
+    id: str
+    name: str
+    tone: str
+    created_at: str
+
+
 class RewriteOutput(BaseModel):
     id: str
     mls: str
@@ -135,6 +158,42 @@ class VideoGenerateResponse(BaseModel):
     url: str
     duration: float
     format: str
+
+
+class ExpiredListingRequest(BaseModel):
+    address: str
+    price: Optional[str] = None
+    beds: Optional[str] = None
+    baths: Optional[str] = None
+    sqft: Optional[str] = None
+    seller_name: Optional[str] = None
+    days_on_market: Optional[str] = None
+    original_price: Optional[str] = None
+    listing_reason: Optional[str] = None  # "relocating", "priced_too_high", "not_selling", "other"
+
+
+class ExpiredListingScripts(BaseModel):
+    cold_call_script: str
+    voicemail_script: str
+    text_message: str
+    door_knock_script: str
+
+
+class RedfinImportRequest(BaseModel):
+    redfin_url: str
+
+
+class RedfinPropertyData(BaseModel):
+    address: str
+    price: Optional[str] = None
+    beds: Optional[str] = None
+    baths: Optional[str] = None
+    sqft: Optional[str] = None
+    year_built: Optional[str] = None
+    property_type: Optional[str] = None
+    lot_size: Optional[str] = None
+    parking: Optional[str] = None
+    description: Optional[str] = None
 
 
 # ============== AI HELPERS ==============
@@ -204,6 +263,95 @@ OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
 The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
 input + your output expresses the framework. Be honest — most rewrites land between
 6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
+"""
+
+EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO — a real estate marketing expert specializing in expired listings.
+Your job is to write outreach scripts that get the seller to pick up the phone or agree to a meeting.
+
+══════════════════════════════════════════════════════════════
+TONE: Professional, empathetic, confident. Never desperate or pushy.
+══════════════════════════════════════════════════════════════
+
+The seller just went through a failed listing attempt. They're likely frustrated, skeptical, and cautious.
+Your scripts must:
+- Acknowledge their experience without making them feel stupid
+- Show you understand their situation
+- Offer a clear, low-pressure next step
+- NEVER criticize their previous agent
+- Use "we" more than "I" to sound like a team
+
+══════════════════════════════════════════════════════════════
+SCRIPT TYPES REQUIRED (JSON output)
+══════════════════════════════════════════════════════════════
+1. COLD CALL SCRIPT: 150-200 words. Opening hook → acknowledge → value proposition → objection handling → CTA.
+   Start with their name. Use the address naturally. End with a specific question, not "call me."
+
+2. VOICEMAIL SCRIPT: 30-45 seconds (60-80 words). Hook → context → callback request with specific time.
+   Must work as audio only — no context needed. Speak naturally.
+
+3. TEXT MESSAGE: Under 160 characters. Casual but professional. Include address and one key value hook.
+   End with a question to trigger response.
+
+4. DOOR KNOCK SCRIPT: 200-250 words. Greeting → acknowledge expired → brief value → ask for 5 min conversation → offer specific time.
+
+HARD RULES:
+- Use the seller's name when provided
+- Use the property address in every script
+- Include days on market if provided to show research
+- Never say "expired" negatively — use "previous listing" or "your home was on the market"
+- Offer ONE clear next step per script
+- No heavy sales language — be a helpful expert, not a closer
+- Include your agent name placeholder: [YOUR_NAME]
+
+══════════════════════════════════════════════════════════════
+OUTPUT — STRICT JSON ONLY
+══════════════════════════════════════════════════════════════
+{
+  "cold_call_script": "...",
+  "voicemail_script": "...",
+  "text_message": "...",
+  "door_knock_script": "..."
+}
+"""
+
+REDFIN_IMPORT_SYSTEM = """You are a real estate data extraction assistant. Your job is to extract property details from Redfin listing URLs.
+
+TONE: Accurate, precise, factual. No marketing language.
+
+Extract the following fields from the Redfin listing:
+- address: Full street address
+- price: Current listing price (just the number with $)
+- beds: Number of bedrooms
+- baths: Number of bathrooms  
+- sqft: Square footage
+- year_built: Year built
+- property_type: Type (e.g., Single Family, Condo, Townhouse)
+- lot_size: Lot size (e.g., 0.25 acres or 10,000 sqft)
+- parking: Parking details (e.g., 2-car garage, driveway)
+- description: The listing description/remarks from the seller
+
+If a field is not available on the listing, use null or omit it.
+
+HARD RULES:
+- Extract ONLY what's visible on the listing page
+- Don't make up data
+- Price should include $ and commas (e.g., $750,000)
+- Beds/baths can be decimals (e.g., 2.5)
+- Address should be complete (street, city, state, zip)
+
+OUTPUT — STRICT JSON ONLY:
+{
+  "address": "...",
+  "price": "$...",
+  "beds": "...",
+  "baths": "...",
+  "sqft": "...",
+  "year_built": "...",
+  "property_type": "...",
+  "lot_size": "...",
+  "parking": "...",
+  "description": "..."
+}
 """
 
 
@@ -453,6 +601,180 @@ async def rewrite_listing(req: RewriteRequest):
         raw_listing=req.raw_listing,
         created_at=created_at,
         **outputs,
+    )
+
+
+@api_router.post("/batch-rewrite", response_model=BatchRewriteResponse)
+async def batch_rewrite(req: BatchRewriteRequest):
+    results = []
+    success_count = 0
+    failed_count = 0
+
+    for listing_req in req.listings:
+        try:
+            outputs = await call_rewrite_llm(listing_req)
+            listing_id = str(uuid.uuid4())
+            created_at = datetime.now(timezone.utc).isoformat()
+
+            doc = {
+                "id": listing_id,
+                "session_id": listing_req.session_id,
+                "tone": listing_req.tone,
+                "raw_listing": listing_req.raw_listing,
+                "address": listing_req.address,
+                "price": listing_req.price,
+                "beds": listing_req.beds,
+                "baths": listing_req.baths,
+                "sqft": listing_req.sqft,
+                "created_at": created_at,
+                **outputs,
+            }
+            await db.listings.insert_one({k: v for k, v in doc.items()})
+
+            results.append(RewriteOutput(
+                id=listing_id,
+                tone=listing_req.tone,
+                raw_listing=listing_req.raw_listing,
+                created_at=created_at,
+                **outputs,
+            ))
+            success_count += 1
+        except Exception as e:
+            logging.exception("Batch item failed")
+            failed_count += 1
+
+    return BatchRewriteResponse(results=results, success_count=success_count, failed_count=failed_count)
+
+
+@api_router.get("/templates/{session_id}")
+async def get_templates(session_id: str):
+    rows = await db.templates.find(
+        {"session_id": session_id}, {"_id": 0}
+    ).sort("created_at", -1).to_list(20)
+    return rows
+
+
+@api_router.post("/templates/{session_id}")
+async def save_template(session_id: str, req: TemplateSaveRequest):
+    doc = {
+        "id": str(uuid.uuid4()),
+        "session_id": session_id,
+        "name": req.name,
+        "tone": req.tone,
+        "is_default": req.is_default,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.templates.insert_one(doc)
+    return doc
+
+
+@api_router.delete("/templates/{session_id}/{template_id}")
+async def delete_template(session_id: str, template_id: str):
+    await db.templates.delete_one({"id": template_id, "session_id": session_id})
+    return {"deleted": True}
+
+
+@api_router.post("/capture-email")
+async def capture_email(email: str, session_id: str):
+    doc = {
+        "email": email,
+        "session_id": session_id,
+        "captured_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.leads.insert_one(doc)
+    return {"captured": True}
+
+
+@api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
+async def get_expired_scripts(req: ExpiredListingRequest):
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(500, "LLM key missing")
+
+    meta_parts = []
+    if req.price:
+        meta_parts.append(f"Original price: {req.price}")
+    if req.beds or req.baths or req.sqft:
+        details = f"{req.beds or '?'} bed, {req.baths or '?'} bath, {req.sqft or '?'} sqft"
+        meta_parts.append(f"Details: {details}")
+    if req.days_on_market:
+        meta_parts.append(f"Days on market: {req.days_on_market}")
+    if req.seller_name:
+        meta_parts.append(f"Seller: {req.seller_name}")
+    if req.original_price:
+        meta_parts.append(f"Original asking price: {req.original_price}")
+    if req.listing_reason:
+        meta_parts.append(f"Likely reason: {req.listing_reason}")
+
+    meta_str = "\n".join(meta_parts) if meta_parts else "No additional details provided."
+
+    user_prompt = f"""PROPERTY: {req.address}
+
+META:
+{meta_str}
+
+Now produce the JSON object with all 4 scripts. JSON only."""
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=str(uuid.uuid4()),
+        system_message=EXPIRED_LISTING_SYSTEM,
+    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
+
+    response = await chat.send_message(UserMessage(text=user_prompt))
+    cleaned = _strip_json(response)
+    try:
+        data = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("JSON parse failed for expired scripts")
+        raise HTTPException(500, f"AI returned invalid JSON: {str(e)[:120]}")
+
+    return ExpiredListingScripts(
+        cold_call_script=data.get("cold_call_script", "").strip(),
+        voicemail_script=data.get("voicemail_script", "").strip(),
+        text_message=data.get("text_message", "").strip(),
+        door_knock_script=data.get("door_knock_script", "").strip(),
+    )
+
+
+@api_router.post("/import/redfin", response_model=RedfinPropertyData)
+async def import_redfin(req: RedfinImportRequest):
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(500, "LLM key missing")
+
+    if not req.redfin_url or "redfin.com" not in req.redfin_url.lower():
+        raise HTTPException(400, "Invalid Redfin URL. Please provide a valid Redfin listing URL.")
+
+    user_prompt = f"""Extract property data from this Redfin listing:
+
+URL: {req.redfin_url}
+
+Return the JSON object with all available property details. JSON only."""
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=str(uuid.uuid4()),
+        system_message=REDFIN_IMPORT_SYSTEM,
+    ).with_model(DEFAULT_PROVIDER, DEFAULT_MODEL)
+
+    response = await chat.send_message(UserMessage(text=user_prompt))
+    cleaned = _strip_json(response)
+    try:
+        data = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("JSON parse failed for Redfin import")
+        raise HTTPException(500, f"Failed to parse Redfin data: {str(e)[:120]}")
+
+    return RedfinPropertyData(
+        address=data.get("address", "").strip(),
+        price=data.get("price"),
+        beds=data.get("beds"),
+        baths=data.get("baths"),
+        sqft=data.get("sqft"),
+        year_built=data.get("year_built"),
+        property_type=data.get("property_type"),
+        lot_size=data.get("lot_size"),
+        parking=data.get("parking"),
+        description=data.get("description"),
     )
 
 
