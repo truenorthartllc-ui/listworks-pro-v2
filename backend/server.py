@@ -33,7 +33,7 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('ANTHROPIC_API_KEY', '')
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
@@ -77,20 +77,6 @@ class RewriteRequest(BaseModel):
     session_id: Optional[str] = None
 
 
-class RewriteOutput(BaseModel):
-    id: str
-    mls: str
-    instagram: str
-    facebook: str
-    headlines: List[str]
-    email: str
-    listing_strength: float
-    strength_reasons: List[str]
-    tone: str
-    raw_listing: str
-    created_at: str
-
-
 class BatchRewriteRequest(BaseModel):
     listings: List[RewriteRequest]
 
@@ -111,6 +97,20 @@ class Template(BaseModel):
     id: str
     name: str
     tone: str
+    created_at: str
+
+
+class RewriteOutput(BaseModel):
+    id: str
+    mls: str
+    instagram: str
+    facebook: str
+    headlines: List[str]
+    email: str
+    listing_strength: float
+    strength_reasons: List[str]
+    tone: str
+    raw_listing: str
     created_at: str
 
 
@@ -395,13 +395,13 @@ Now produce the JSON object. JSON only."""
 
 
 async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
-    if not ANTHROPIC_API_KEY:
+    if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
     if not HAS_ANTHROPIC:
         raise HTTPException(500, "anthropic package not installed")
 
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_text = _build_user_prompt(req)
 
     response = client.messages.create(
@@ -614,158 +614,6 @@ async def rewrite_listing(req: RewriteRequest):
     )
 
 
-ENHANCE_SYSTEM = """You are a senior real estate copywriter specializing in turning good
-listings into exceptional ones. You take a near-finished listing and push every element
-to a 9.5-10/10 on emotional impact, specificity, and buyer resonance.
-
-You will receive a listing with its MLS copy, headlines, and social assets.
-Your job is to rewrite ALL outputs so they are 10/10 — vivid, specific, emotionally
-charged, and impossible to scroll past.
-
-HARD RULES:
-- Replace every generic adjective with a concrete, sensory detail
-- Every sentence must earn its place — cut anything that doesn't create a picture
-- Open with a feeling, not a fact
-- Headlines must hit in under 3 seconds — lead with the most compelling hook
-- Instagram: starts with a feeling or a question, ends with a strong CTA
-- Facebook: conversational, community-aware, drives comments
-- Email: subject line worthy, first line hooks, one clear CTA
-- No banned phrases: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy",
-  "Motivated seller", "Charming", "Nestled", "Priced to sell"
-- Max one exclamation mark total across all outputs
-
-OUTPUT FORMAT — STRICT JSON ONLY:
-{
-  "mls": "...",
-  "instagram": "...",
-  "facebook": "...",
-  "headlines": ["headline 1", "headline 2", "headline 3"],
-  "email": "...",
-  "listing_strength": 9.8,
-  "strength_reasons": ["reason 1", "reason 2", ...]
-}
-"""
-
-
-class EnhanceRequest(BaseModel):
-    listing_id: str
-    session_id: Optional[str] = None
-
-
-class EnhanceResponse(BaseModel):
-    id: str
-    mls: str
-    instagram: str
-    facebook: str
-    headlines: List[str]
-    email: str
-    listing_strength: float
-    strength_reasons: List[str]
-    tone: str
-    raw_listing: str
-    created_at: str
-
-
-@api_router.post("/rewrite/enhance", response_model=EnhanceResponse)
-async def enhance_listing(req: EnhanceRequest):
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(500, "LLM key missing")
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    usage = await _get_usage(req.session_id)
-    if usage["paywall"]:
-        raise HTTPException(402, "Upgrade to Pro to use Make it 10/10")
-
-    listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
-    if not listing:
-        raise HTTPException(404, "Listing not found")
-
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    user_prompt = f"""Enhance this listing to 10/10:
-
-ORIGINAL RAW: {listing.get('raw_listing', '')}
-
-CURRENT MLS OUTPUT:
-{listing.get('mls', '')}
-
-CURRENT HEADLINES:
-{chr(10).join(f'- {h}' for h in (listing.get('headlines') or []))}
-
-CURRENT INSTAGRAM:
-{listing.get('instagram', '')}
-
-CURRENT FACEBOOK:
-{listing.get('facebook', '')}
-
-CURRENT EMAIL:
-{listing.get('email', '')}
-
-Return STRICT JSON with all enhanced outputs."""  # noqa: F541
-
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=ENHANCE_SYSTEM,
-        messages=[{"role": "user", "content": user_prompt}],
-    )
-    cleaned = _strip_json(response.content[0].text)
-    try:
-        data = json.loads(cleaned)
-    except Exception as e:
-        logging.exception("Enhance JSON parse failed")
-        raise HTTPException(500, f"Enhance failed: {str(e)[:120]}")
-
-    headlines = data.get("headlines", [])
-    if isinstance(headlines, str):
-        headlines = [h.strip("- •*").strip() for h in headlines.split("\n") if h.strip()]
-    headlines = [h.strip() for h in headlines if h.strip()][:3]
-
-    reasons = data.get("strength_reasons", [])
-    if isinstance(reasons, str):
-        reasons = [r.strip() for r in reasons.split("\n") if r.strip()]
-
-    try:
-        strength = float(data.get("listing_strength", 9.5))
-    except (TypeError, ValueError):
-        strength = 9.5
-    strength = max(0.0, min(10.0, round(strength, 1)))
-
-    enhanced_id = str(uuid.uuid4())
-    created_at = datetime.now(timezone.utc).isoformat()
-
-    doc = {
-        "id": enhanced_id,
-        "session_id": listing.get("session_id"),
-        "parent_id": listing.get("id"),
-        "tone": listing.get("tone", "Modern"),
-        "raw_listing": listing.get("raw_listing", ""),
-        "mls": data.get("mls", "").strip(),
-        "instagram": data.get("instagram", "").strip(),
-        "facebook": data.get("facebook", "").strip(),
-        "headlines": headlines,
-        "email": data.get("email", "").strip(),
-        "listing_strength": strength,
-        "strength_reasons": [r for r in reasons if isinstance(r, str)][:5],
-        "created_at": created_at,
-    }
-    await db.listings.insert_one(doc)
-
-    return EnhanceResponse(
-        id=enhanced_id,
-        tone=listing.get("tone", "Modern"),
-        raw_listing=listing.get("raw_listing", ""),
-        created_at=created_at,
-        mls=doc["mls"],
-        instagram=doc["instagram"],
-        facebook=doc["facebook"],
-        headlines=doc["headlines"],
-        email=doc["email"],
-        listing_strength=strength,
-        strength_reasons=doc["strength_reasons"],
-    )
-
-
 @api_router.post("/batch-rewrite", response_model=BatchRewriteResponse)
 async def batch_rewrite(req: BatchRewriteRequest):
     results = []
@@ -849,13 +697,13 @@ async def capture_email(email: str, session_id: str):
 
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
 async def get_expired_scripts(req: ExpiredListingRequest):
-    if not ANTHROPIC_API_KEY:
+    if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
     if not HAS_ANTHROPIC:
         raise HTTPException(500, "anthropic package not installed")
 
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     meta_parts = []
     if req.price:
         meta_parts.append(f"Original price: {req.price}")
@@ -902,7 +750,7 @@ Now produce the JSON object with all 4 scripts. JSON only."""
 
 @api_router.post("/import/redfin", response_model=RedfinPropertyData)
 async def import_redfin(req: RedfinImportRequest):
-    if not ANTHROPIC_API_KEY:
+    if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
     if not req.redfin_url or "redfin.com" not in req.redfin_url.lower():
@@ -911,7 +759,7 @@ async def import_redfin(req: RedfinImportRequest):
     if not HAS_ANTHROPIC:
         raise HTTPException(500, "anthropic package not installed")
 
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_prompt = f"""Extract property data from this Redfin listing:
 
 URL: {req.redfin_url}
@@ -962,13 +810,13 @@ async def get_shared_listing(listing_id: str):
 
 @api_router.post("/analyze-photo", response_model=PhotoAnalyzeResponse)
 async def analyze_photo(req: PhotoAnalyzeRequest):
-    if not ANTHROPIC_API_KEY:
+    if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
     if not HAS_ANTHROPIC:
         raise HTTPException(500, "anthropic package not installed")
 
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     prompt = (
         "You analyze real estate property photos. "
         "Return STRICT JSON: {\"features\":[8 short property features detected, "
@@ -1023,7 +871,7 @@ exact rewrites — don't just describe."""
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
 async def advisor(req: AdvisorRequest):
-    if not ANTHROPIC_API_KEY:
+    if not EMERGENT_LLM_KEY:
         raise HTTPException(500, "LLM key missing")
 
     if not HAS_ANTHROPIC:
@@ -1044,7 +892,7 @@ async def advisor(req: AdvisorRequest):
     for h in req.history[-6:]:
         history_text += f"\n{h.role.upper()}: {h.content[:600]}"
 
-    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_text = f"{history_text}\n\nUSER: {req.question}{context_msg}".strip()
     messages = []
     if history_text:
@@ -1088,7 +936,7 @@ async def video_generate(req: VideoGenerateRequest):
             agent_name=req.agent_name,
             agent_brokerage=req.agent_brokerage,
             fmt=req.fmt,
-            api_key=ANTHROPIC_API_KEY,
+            api_key=EMERGENT_LLM_KEY,
         )
     except ValueError as ve:
         raise HTTPException(400, str(ve))
