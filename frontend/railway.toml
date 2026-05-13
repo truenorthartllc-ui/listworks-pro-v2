@@ -1,5 +1,0 @@
-[build]
-command = "npm install && npm run build"
-
-[start]
-command = "npx serve -s build -l 8080"
