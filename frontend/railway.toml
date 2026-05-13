@@ -1,5 +1,5 @@
 [build]
-command = "yarn install && yarn build"
+command = "npm install && npm run build"
 
-[deploy]
-startCommand = "npx serve -s build -l $PORT"
+[start]
+command = "npx serve -s build -l 8080"
