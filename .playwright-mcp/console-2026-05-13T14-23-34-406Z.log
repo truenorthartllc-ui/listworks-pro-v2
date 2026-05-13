@@ -1,0 +1,12 @@
+[   44032ms] ReferenceError: Link is not defined
+    at fr (http://localhost:3000/static/js/main.aa2f9d6d.js:2:505391)
+    at es (http://localhost:3000/static/js/main.aa2f9d6d.js:2:54215)
+    at qo (http://localhost:3000/static/js/main.aa2f9d6d.js:2:74908)
+    at sl (http://localhost:3000/static/js/main.aa2f9d6d.js:2:85247)
+    at dd (http://localhost:3000/static/js/main.aa2f9d6d.js:2:125983)
+    at ld (http://localhost:3000/static/js/main.aa2f9d6d.js:2:125911)
+    at od (http://localhost:3000/static/js/main.aa2f9d6d.js:2:125753)
+    at Gc (http://localhost:3000/static/js/main.aa2f9d6d.js:2:121465)
+    at Ud (http://localhost:3000/static/js/main.aa2f9d6d.js:2:137212)
+    at MessagePort.A (http://localhost:3000/static/js/main.aa2f9d6d.js:2:190648)
+[   44652ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3000/favicon.ico:0

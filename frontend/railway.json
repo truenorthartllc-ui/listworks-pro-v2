@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.app/schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "yarn install && yarn build",
+    "startCommand": "npx serve -s build -l $PORT"
+  },
+  "deploy": {
+    "numReplicas": 1
+  }
+}

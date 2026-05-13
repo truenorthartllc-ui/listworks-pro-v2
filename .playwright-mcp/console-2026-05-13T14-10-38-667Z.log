@@ -1,0 +1,11 @@
+[     744ms] ReferenceError: Link is not defined
+    at fr (https://listworks.pro/static/js/main.30e7b083.js:2:503459)
+    at es (https://listworks.pro/static/js/main.30e7b083.js:2:54123)
+    at qo (https://listworks.pro/static/js/main.30e7b083.js:2:74816)
+    at sl (https://listworks.pro/static/js/main.30e7b083.js:2:85155)
+    at dd (https://listworks.pro/static/js/main.30e7b083.js:2:125891)
+    at ld (https://listworks.pro/static/js/main.30e7b083.js:2:125819)
+    at od (https://listworks.pro/static/js/main.30e7b083.js:2:125661)
+    at Qc (https://listworks.pro/static/js/main.30e7b083.js:2:121373)
+    at Ud (https://listworks.pro/static/js/main.30e7b083.js:2:137120)
+    at MessagePort._ (https://listworks.pro/static/js/main.30e7b083.js:2:190556)
