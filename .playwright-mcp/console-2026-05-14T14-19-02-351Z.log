@@ -1,2 +1,5 @@
 [     719ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://listworks.pro/undefined/api/examples:0
 [    1255ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://listworks.pro/favicon.ico:0
+[  234447ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://listworks.pro/affiliate/signup:0
+[  242597ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://listworks.pro/undefined/api/examples:0
+[  242607ms] [ERROR] Failed to load resource: net::ERR_CACHE_OPERATION_NOT_SUPPORTED @ https://listworks.pro/hero-demo.mp4?v11-music:0
