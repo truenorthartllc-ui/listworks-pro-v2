@@ -340,7 +340,7 @@ export default function Playground() {
                 </div>
                 {showShareCard && (
                   <div className="mb-6">
-                    <ShareCard rawListing={raw} rewrittenListing={currentText} tone={tone} />
+                    <ShareCard rawListing={raw || ""} rewrittenListing={typeof currentText === 'string' ? currentText : JSON.stringify(currentText || "")} tone={tone} />
                   </div>
                 )}
                 <div className="flex flex-wrap gap-2.5 mb-5">
