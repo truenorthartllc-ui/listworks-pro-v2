@@ -1,0 +1,9 @@
+/*  /index.html  200
+/affiliate/signup  /index.html  200
+/affiliate/demo  /index.html  200
+/affiliate/:ref  /index.html  200
+/share/:id  /index.html  200
+/payment-success  /index.html  200
+/openhouse/:eventId  /index.html  200
+/waitlist  /index.html  200
+/a/:ref  /index.html  200
