@@ -288,3 +288,7 @@ credentials.json
 *.pem
 *.key
 .credentials
+
+# Video files (regenerate locally via python generate_video.py)
+frontend/public/hero-demo-narrated.mp4
+frontend/public/hero-demo.mp4

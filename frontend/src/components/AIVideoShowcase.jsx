@@ -13,8 +13,8 @@ export default function AIVideoShowcase() {
   const [playing, setPlaying] = useState(true);
 
   // Cache-buster: bump this when re-rendering the demo so browsers pull fresh
-  const VIDEO_VERSION = "v11-music";
-  const VIDEO_SRC = `/hero-demo.mp4?${VIDEO_VERSION}`;
+  const VIDEO_VERSION = "v12-new-photos";
+  const VIDEO_SRC = `/hero-demo-narrated.mp4?${VIDEO_VERSION}`;
 
   // Source photos — same 10 the video was built from (your uploaded family-home set)
   const sourcePhotos = [
