@@ -1,0 +1,622 @@
+- generic [ref=e3]:
+  - region "Notifications alt+T"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "ListWorks /pro" [ref=e7] [cursor=pointer]:
+          - /url: "#top"
+          - generic [ref=e8]: ListWorks
+          - generic [ref=e9]: /pro
+        - navigation [ref=e10]:
+          - link "Tool" [ref=e11] [cursor=pointer]:
+            - /url: "#playground"
+          - link "Examples" [ref=e12] [cursor=pointer]:
+            - /url: "#examples"
+          - link "The Guide" [ref=e13] [cursor=pointer]:
+            - /url: "#guide"
+          - link "Pricing" [ref=e14] [cursor=pointer]:
+            - /url: "#pricing"
+        - link "Try Free →" [ref=e15] [cursor=pointer]:
+          - /url: "#playground"
+    - main [ref=e16]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e22]: EST. 2026 — REAL ESTATE COPY, REWRITTEN
+          - heading "Boring listings, rewritten." [level=1] [ref=e23]:
+            - text: Boring listings,
+            - text: rewritten.
+          - paragraph [ref=e25]: Paste your tired MLS draft. Pick a tone. ListWorks PRO instantly produces a polished MLS description, an Instagram caption that actually stops scrolls, a Facebook post built to comment, scroll-stopping headlines, and a buyer email — all in your voice.
+          - generic [ref=e26]:
+            - link "Rewrite a Listing — Free" [ref=e27] [cursor=pointer]:
+              - /url: "#playground"
+            - link "Get the $20 Guide" [ref=e28] [cursor=pointer]:
+              - /url: "#guide"
+          - generic [ref=e29]:
+            - generic [ref=e30]: ● 200+ agents
+            - generic [ref=e31]: ● 3 free listings
+            - generic [ref=e32]: ● No credit card
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]: / Live Demo
+              - generic [ref=e37]: Watch it work
+            - generic [ref=e38]:
+              - paragraph [ref=e39]: This is what your listing sounds like before ListWorks. Click the button to see the after — in real time.
+              - button "Run the Demo" [ref=e40] [cursor=pointer]:
+                - img [ref=e41]
+                - text: Run the Demo
+        - complementary [ref=e43]:
+          - generic [ref=e44]:
+            - text: No. 01
+            - paragraph [ref=e45]: "\"Used the framework and sold the listing in 3 weeks. Probably got an extra $15k because of how it was positioned.\""
+            - paragraph [ref=e46]: RE Agent — Austin TX
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - generic [ref=e49]: 10s
+              - generic [ref=e50]: Avg. Generation
+            - generic [ref=e51]:
+              - generic [ref=e52]: 2-3w
+              - generic [ref=e53]: Faster Close
+            - generic [ref=e54]:
+              - generic [ref=e55]: 5×
+              - generic [ref=e56]: Output Formats
+            - generic [ref=e57]:
+              - generic [ref=e58]: 27m
+              - generic [ref=e59]: Saved / Listing
+      - generic [ref=e61]:
+        - generic [ref=e64]: VIRTUAL TOUR ENGINE — LIVE DEMO
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - heading "Ten photos in. One cinematic reel out." [level=2] [ref=e67]:
+              - text: Ten photos in.
+              - text: One cinematic reel out.
+            - paragraph [ref=e68]: No editing software. No after-hours. Just upload your listing photos — the AI writes the script, scores the music, and renders a 30-second tour ready for Instagram, Facebook, and your email blast.
+            - generic [ref=e69]:
+              - generic [ref=e70]: INPUT — 10 RAW PHOTOS
+              - generic [ref=e82]:
+                - img [ref=e83]
+                - generic [ref=e85]: RENDERED IN 8 SECONDS
+          - generic [ref=e86]:
+            - generic [ref=e87]:
+              - generic [ref=e91]: AI-Generated · 30-Sec Demo
+              - generic [ref=e92]: listworks.pro
+              - button "Unmute video" [ref=e93] [cursor=pointer]:
+                - generic [ref=e94]:
+                  - img [ref=e98]
+                  - generic [ref=e102]: Tap · turn music on
+              - generic [ref=e103]:
+                - button "Play demo video" [ref=e104] [cursor=pointer]:
+                  - img [ref=e105]
+                - button "Unmute demo video" [ref=e107] [cursor=pointer]:
+                  - img [ref=e108]
+                - generic [ref=e112]: Tap for music
+            - generic [ref=e113]:
+              - link "Make My Listing Reel" [ref=e114] [cursor=pointer]:
+                - /url: "#playground"
+              - link "See plans →" [ref=e115] [cursor=pointer]:
+                - /url: "#pricing"
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - generic [ref=e118]: "10"
+            - generic [ref=e119]: Photos In
+          - generic [ref=e120]:
+            - generic [ref=e121]: 30s
+            - generic [ref=e122]: Final Length
+          - generic [ref=e123]:
+            - generic [ref=e124]: 1080p
+            - generic [ref=e125]: MP4 Quality
+          - generic [ref=e126]:
+            - generic [ref=e127]: 9:16
+            - generic [ref=e128]: Reels Format (Pro)
+      - generic [ref=e130]:
+        - generic [ref=e131]:
+          - generic [ref=e132]: EXP REALTY
+          - generic [ref=e133]: ✦
+        - generic [ref=e134]:
+          - generic [ref=e135]: KELLER WILLIAMS
+          - generic [ref=e136]: ✦
+        - generic [ref=e137]:
+          - generic [ref=e138]: RE/MAX
+          - generic [ref=e139]: ✦
+        - generic [ref=e140]:
+          - generic [ref=e141]: COMPASS
+          - generic [ref=e142]: ✦
+        - generic [ref=e143]:
+          - generic [ref=e144]: SOTHEBY'S
+          - generic [ref=e145]: ✦
+        - generic [ref=e146]:
+          - generic [ref=e147]: COLDWELL BANKER
+          - generic [ref=e148]: ✦
+        - generic [ref=e149]:
+          - generic [ref=e150]: DOUGLAS ELLIMAN
+          - generic [ref=e151]: ✦
+        - generic [ref=e152]:
+          - generic [ref=e153]: CENTURY 21
+          - generic [ref=e154]: ✦
+        - generic [ref=e155]:
+          - generic [ref=e156]: CORCORAN
+          - generic [ref=e157]: ✦
+        - generic [ref=e158]:
+          - generic [ref=e159]: BERKSHIRE HATHAWAY
+          - generic [ref=e160]: ✦
+        - generic [ref=e161]:
+          - generic [ref=e162]: EXP REALTY
+          - generic [ref=e163]: ✦
+        - generic [ref=e164]:
+          - generic [ref=e165]: KELLER WILLIAMS
+          - generic [ref=e166]: ✦
+        - generic [ref=e167]:
+          - generic [ref=e168]: RE/MAX
+          - generic [ref=e169]: ✦
+        - generic [ref=e170]:
+          - generic [ref=e171]: COMPASS
+          - generic [ref=e172]: ✦
+        - generic [ref=e173]:
+          - generic [ref=e174]: SOTHEBY'S
+          - generic [ref=e175]: ✦
+        - generic [ref=e176]:
+          - generic [ref=e177]: COLDWELL BANKER
+          - generic [ref=e178]: ✦
+        - generic [ref=e179]:
+          - generic [ref=e180]: DOUGLAS ELLIMAN
+          - generic [ref=e181]: ✦
+        - generic [ref=e182]:
+          - generic [ref=e183]: CENTURY 21
+          - generic [ref=e184]: ✦
+        - generic [ref=e185]:
+          - generic [ref=e186]: CORCORAN
+          - generic [ref=e187]: ✦
+        - generic [ref=e188]:
+          - generic [ref=e189]: BERKSHIRE HATHAWAY
+          - generic [ref=e190]: ✦
+      - generic [ref=e192]:
+        - generic [ref=e193]:
+          - generic [ref=e194]: / The Tool
+          - generic [ref=e195]:
+            - heading "Your boring listing in. Five publish-ready assets out." [level=2] [ref=e196]:
+              - text: Your boring listing in.
+              - text: Five publish-ready assets out.
+            - generic [ref=e197]:
+              - button "Listing Rewrite" [ref=e198] [cursor=pointer]:
+                - img [ref=e199]
+                - text: Listing Rewrite
+              - button "Expired Scripts" [ref=e201] [cursor=pointer]:
+                - img [ref=e202]
+                - text: Expired Scripts
+              - button "Redfin Import" [ref=e204] [cursor=pointer]:
+                - img [ref=e205]
+                - text: Redfin Import
+              - button "Contract Review" [ref=e208] [cursor=pointer]:
+                - img [ref=e209]
+                - text: Contract Review
+              - button "Seller Reports" [ref=e212] [cursor=pointer]:
+                - img [ref=e213]
+                - text: Seller Reports
+              - button "Lead Nurture" [ref=e215] [cursor=pointer]:
+                - img [ref=e216]
+                - text: Lead Nurture
+              - button "Lead Score" [ref=e218] [cursor=pointer]:
+                - img [ref=e219]
+                - text: Lead Score
+              - button "Transactions" [ref=e223] [cursor=pointer]:
+                - img [ref=e224]
+                - text: Transactions
+              - button "Open House" [ref=e226] [cursor=pointer]:
+                - img [ref=e227]
+                - text: Open House
+              - button "Fair Housing" [ref=e230] [cursor=pointer]:
+                - img [ref=e231]
+                - text: Fair Housing
+              - button "Walk & Talk" [ref=e233] [cursor=pointer]:
+                - img [ref=e234]
+                - text: Walk & Talk
+              - button "Sale Report" [ref=e237] [cursor=pointer]:
+                - img [ref=e238]
+                - text: Sale Report
+        - generic [ref=e240]:
+          - generic [ref=e241]:
+            - generic [ref=e242]:
+              - generic [ref=e243]: Input · Raw Listing
+              - button "Use sample →" [ref=e244] [cursor=pointer]
+            - textbox "Paste your boring MLS draft here. The more detail, the sharper the output." [ref=e245]
+            - generic [ref=e246]:
+              - textbox "Address (optional)" [ref=e247]
+              - textbox "Price" [ref=e248]
+              - textbox "Beds" [ref=e249]
+              - textbox "Baths" [ref=e250]
+              - textbox "Sqft" [ref=e251]
+            - generic [ref=e252]:
+              - generic [ref=e253]: Tone
+              - generic [ref=e254]:
+                - button "Luxury" [ref=e255] [cursor=pointer]
+                - button "Cozy" [ref=e256] [cursor=pointer]
+                - button "Modern" [ref=e257] [cursor=pointer]
+                - button "Family" [ref=e258] [cursor=pointer]
+                - button "Investor" [ref=e259] [cursor=pointer]
+            - button "Rewrite My Listing" [ref=e260] [cursor=pointer]:
+              - img [ref=e261]
+              - text: Rewrite My Listing
+            - paragraph [ref=e263]: Powered by Claude AI by Anthropic · Free for first 3 listings
+          - generic [ref=e264]:
+            - generic [ref=e266]:
+              - button "🏡MLS" [ref=e267] [cursor=pointer]
+              - button "📸Instagram" [ref=e268] [cursor=pointer]
+              - button "📘Facebook" [ref=e269] [cursor=pointer]
+              - button "✏️Scroll-Stopping" [ref=e270] [cursor=pointer]
+              - button "✉️Email" [ref=e271] [cursor=pointer]
+            - generic [ref=e273]:
+              - generic [ref=e274]: Awaiting input
+              - paragraph [ref=e275]: Your rewritten listing will materialize here.
+              - paragraph [ref=e276]: Paste a draft, pick a tone, hit rewrite. Five publish-ready assets in about ten seconds.
+      - generic [ref=e278]:
+        - generic [ref=e279]:
+          - generic [ref=e280]: / Specifications
+          - heading "Built like a tool. Reads like a human." [level=2] [ref=e282]:
+            - text: Built like a tool.
+            - text: Reads like a human.
+        - generic [ref=e283]:
+          - generic [ref=e284]:
+            - img [ref=e285]
+            - heading "Five-format rewrite" [level=3] [ref=e288]
+            - paragraph [ref=e289]: MLS, Instagram, Facebook, headlines, email — all in one pass. Your boring draft becomes five publish-ready assets.
+            - generic [ref=e290]: No. 01
+          - generic [ref=e291]:
+            - img [ref=e292]
+            - heading "Photo recognition" [level=3] [ref=e297]
+            - paragraph [ref=e298]: Upload listing photos. We surface marble, hardwood, vaulted ceilings — and translate them into feelings.
+            - generic [ref=e299]: No. 02
+          - generic [ref=e300]:
+            - img [ref=e301]
+            - heading "Five tone modes" [level=3] [ref=e304]
+            - paragraph [ref=e305]: Luxury. Cozy. Modern. Family. Investor. The same property, dialed for the buyer who's actually shopping.
+            - generic [ref=e306]: No. 03
+          - generic [ref=e307]:
+            - img [ref=e308]
+            - heading "10-second turnaround" [level=3] [ref=e310]
+            - paragraph [ref=e311]: "Average generation: ten seconds. Beats your average MLS upload form by a country mile."
+            - generic [ref=e312]: No. 04
+          - generic [ref=e313]:
+            - img [ref=e314]
+            - heading "Saved listing history" [level=3] [ref=e318]
+            - paragraph [ref=e319]: Every rewrite saved to your session. Revisit, refine, regenerate without re-typing a single word.
+            - generic [ref=e320]: No. 05
+          - generic [ref=e321]:
+            - img [ref=e322]
+            - heading "MLS-compliant by default" [level=3] [ref=e325]
+            - paragraph [ref=e326]: Trained on the Feature → Benefit → Feeling framework. No clichés, no fluff, no fair-housing landmines.
+            - generic [ref=e327]: No. 06
+      - generic [ref=e329]:
+        - generic [ref=e330]:
+          - text: Document No. 001
+          - heading "The Guide. $20." [level=2] [ref=e331]:
+            - text: The Guide.
+            - text: $20.
+          - paragraph [ref=e332]: The exact framework powering this tool — written out, page by page. The Feature → Benefit → Feeling system. The 5-part structure. The four buyer psychology triggers. 15 plug-and-play AI prompts. Read it once. Use it on every listing.
+          - list [ref=e333]:
+            - listitem [ref=e334]:
+              - generic [ref=e335]: ✦
+              - text: The 5-part listing structure used by top-1% agents
+            - listitem [ref=e336]:
+              - generic [ref=e337]: ✦
+              - text: 15 plug-and-play prompts for ChatGPT, Claude, Gemini
+            - listitem [ref=e338]:
+              - generic [ref=e339]: ✦
+              - text: 4 buyer psychology triggers that drive showings
+            - listitem [ref=e340]:
+              - generic [ref=e341]: ✦
+              - text: Headline formulas that stop scrolls in 1.2 seconds
+            - listitem [ref=e342]:
+              - generic [ref=e343]: ✦
+              - text: The 20-second pre-publish review checklist
+          - generic [ref=e344]:
+            - button "Buy the Guide — $20" [ref=e345] [cursor=pointer]:
+              - text: Buy the Guide — $20
+              - img [ref=e346]
+            - button "Preview Inside" [ref=e349] [cursor=pointer]:
+              - img [ref=e350]
+              - text: Preview Inside
+          - paragraph [ref=e353]: 30-day money-back · Lifetime access · Instant download
+        - complementary [ref=e354]:
+          - generic [ref=e355]:
+            - generic [ref=e356]:
+              - generic [ref=e357]: LWP-DOC-001
+              - generic [ref=e358]: REV. 02 / 2026
+            - heading "\"Finally someone teaching the real skill — not just templates. Worth every penny.\"" [level=3] [ref=e359]
+            - generic [ref=e360]:
+              - generic [ref=e361]:
+                - generic [ref=e362]: "85"
+                - generic [ref=e363]: Pages
+              - generic [ref=e364]:
+                - generic [ref=e365]: "15"
+                - generic [ref=e366]: AI Prompts
+              - generic [ref=e367]:
+                - generic [ref=e368]: "5"
+                - generic [ref=e369]: MLS Templates
+              - generic [ref=e370]:
+                - generic [ref=e371]: $20
+                - generic [ref=e372]: One-time
+      - generic [ref=e374]:
+        - generic [ref=e375]:
+          - generic [ref=e376]: / Field Reports
+          - heading "Agents who use it, close faster." [level=2] [ref=e378]:
+            - text: Agents who use it,
+            - text: close faster.
+        - generic [ref=e379]:
+          - figure "Jessica Martinez Jessica Martinez RE/MAX Premier · Los Angeles 12 homes in 90 days" [ref=e380]:
+            - generic [ref=e381]:
+              - generic [ref=e382]: ★
+              - generic [ref=e383]: ★
+              - generic [ref=e384]: ★
+              - generic [ref=e385]: ★
+              - generic [ref=e386]: ★
+            - generic [ref=e387]: "\""
+            - blockquote [ref=e388]: Three listings in one morning. Two went under contract in under a week. My IG now gets more DMs than I can handle.
+            - generic [ref=e389]:
+              - img "Jessica Martinez" [ref=e390]
+              - generic [ref=e391]:
+                - generic [ref=e392]: Jessica Martinez
+                - generic [ref=e393]: RE/MAX Premier · Los Angeles
+                - generic [ref=e394]: 12 homes in 90 days
+          - figure "Marcus Chen Marcus Chen Keller Williams Integrity · Denver 9 homes since Jan" [ref=e395]:
+            - generic [ref=e396]:
+              - generic [ref=e397]: ★
+              - generic [ref=e398]: ★
+              - generic [ref=e399]: ★
+              - generic [ref=e400]: ★
+              - generic [ref=e401]: ★
+            - generic [ref=e402]: "\""
+            - blockquote [ref=e403]: The Instagram captions stop the scroll. The MLS sounds like I wrote it at 2am — but 10x better. This is the only tool I pay for.
+            - generic [ref=e404]:
+              - img "Marcus Chen" [ref=e405]
+              - generic [ref=e406]:
+                - generic [ref=e407]: Marcus Chen
+                - generic [ref=e408]: Keller Williams Integrity · Denver
+                - generic [ref=e409]: 9 homes since Jan
+          - figure "Priya Nair Priya Nair Compass · Chicago ROI in week 1" [ref=e410]:
+            - generic [ref=e411]:
+              - generic [ref=e412]: ★
+              - generic [ref=e413]: ★
+              - generic [ref=e414]: ★
+              - generic [ref=e415]: ★
+              - generic [ref=e416]: ★
+            - generic [ref=e417]: "\""
+            - blockquote [ref=e418]: I was spending $200/month on a copywriter. This does it better in 10 seconds. Cancelled that contract cold.
+            - generic [ref=e419]:
+              - img "Priya Nair" [ref=e420]
+              - generic [ref=e421]:
+                - generic [ref=e422]: Priya Nair
+                - generic [ref=e423]: Compass · Chicago
+                - generic [ref=e424]: ROI in week 1
+          - figure "Derek Okafor Derek Okafor eXp Realty · Atlanta 3 FSBOs in 30 days" [ref=e425]:
+            - generic [ref=e426]:
+              - generic [ref=e427]: ★
+              - generic [ref=e428]: ★
+              - generic [ref=e429]: ★
+              - generic [ref=e430]: ★
+              - generic [ref=e431]: ★
+            - generic [ref=e432]: "\""
+            - blockquote [ref=e433]: The expired listing scripts alone paid for a year of Pro. Called 8 FSBOs, got 3 listings out of it.
+            - generic [ref=e434]:
+              - img "Derek Okafor" [ref=e435]
+              - generic [ref=e436]:
+                - generic [ref=e437]: Derek Okafor
+                - generic [ref=e438]: eXp Realty · Atlanta
+                - generic [ref=e439]: 3 FSBOs in 30 days
+        - generic [ref=e440]:
+          - generic [ref=e441]: ★ 4.9 / 5 from 127 agents
+          - generic [ref=e442]: ·
+          - generic [ref=e443]: Verified reviews
+          - generic [ref=e444]: ·
+          - generic [ref=e445]: No solicitation
+      - generic [ref=e447]:
+        - generic [ref=e448]:
+          - generic [ref=e449]: / Pricing
+          - heading "Start free. Scale to unlimited." [level=2] [ref=e451]
+        - generic [ref=e452]:
+          - generic [ref=e453]: ★ 4.9 / 5 from 127 agents
+          - generic [ref=e454]: ·
+          - generic [ref=e455]: 200+ agents using it weekly
+          - generic [ref=e456]: ·
+          - generic [ref=e457]: 73 Lifetime spots remaining
+        - generic [ref=e458]:
+          - generic [ref=e459]:
+            - generic [ref=e461]: Plan No. 01
+            - heading "Free" [level=3] [ref=e462]
+            - generic [ref=e463]:
+              - generic [ref=e464]: $0
+              - generic [ref=e465]: forever
+            - paragraph [ref=e466]: For agents trying it on their next listing.
+            - list [ref=e467]:
+              - listitem [ref=e468]:
+                - img [ref=e469]
+                - generic [ref=e471]: 3 free rewrites
+              - listitem [ref=e472]:
+                - img [ref=e473]
+                - generic [ref=e475]: All 5 output formats
+              - listitem [ref=e476]:
+                - img [ref=e477]
+                - generic [ref=e479]: 5 tone modes
+              - listitem [ref=e480]:
+                - img [ref=e481]
+                - generic [ref=e483]: Then upgrade or buy credits
+            - button "Start Free →" [ref=e484] [cursor=pointer]
+          - generic [ref=e485]:
+            - generic [ref=e486]:
+              - generic [ref=e487]: Plan No. 02
+              - generic [ref=e488]: Most Picked
+            - heading "Pro" [level=3] [ref=e489]
+            - generic [ref=e490]:
+              - generic [ref=e491]: $49
+              - generic [ref=e492]: / month
+            - paragraph [ref=e493]: For full-time agents shipping listings weekly.
+            - list [ref=e494]:
+              - listitem [ref=e495]:
+                - img [ref=e496]
+                - generic [ref=e498]: Unlimited rewrites
+              - listitem [ref=e499]:
+                - img [ref=e500]
+                - generic [ref=e502]: Watermark-free videos
+              - listitem [ref=e503]:
+                - img [ref=e504]
+                - generic [ref=e506]: 9:16 Reels format unlocked
+              - listitem [ref=e507]:
+                - img [ref=e508]
+                - generic [ref=e510]: Make-it-10/10 rewrite engine
+              - listitem [ref=e511]:
+                - img [ref=e512]
+                - generic [ref=e514]: Auto-post to FB & Instagram
+              - listitem [ref=e515]:
+                - img [ref=e516]
+                - generic [ref=e518]: AI Advisor priority access
+              - listitem [ref=e519]:
+                - img [ref=e520]
+                - generic [ref=e522]: Listing history (forever)
+            - button "Go Pro — $49/mo →" [ref=e523] [cursor=pointer]
+          - generic [ref=e524]:
+            - generic [ref=e525]:
+              - generic [ref=e526]: Plan No. 03
+              - generic [ref=e527]:
+                - generic [ref=e528]:
+                  - img [ref=e529]
+                  - text: BEST VALUE
+                - generic [ref=e531]: 73 spots left
+            - heading "Lifetime" [level=3] [ref=e532]
+            - generic [ref=e533]:
+              - generic [ref=e534]: $299
+              - generic [ref=e535]: once
+            - paragraph [ref=e536]: Founding member — pay once, never pay again.
+            - list [ref=e537]:
+              - listitem [ref=e538]:
+                - img [ref=e539]
+                - generic [ref=e541]: Everything in Pro
+              - listitem [ref=e542]:
+                - img [ref=e543]
+                - generic [ref=e545]: Forever access (no monthly)
+              - listitem [ref=e546]:
+                - img [ref=e547]
+                - generic [ref=e549]: All future features included
+              - listitem [ref=e550]:
+                - img [ref=e551]
+                - generic [ref=e553]: Priority support
+              - listitem [ref=e554]:
+                - img [ref=e555]
+                - generic [ref=e557]: Founding member badge
+            - button "Lock In Lifetime — $299 →" [ref=e558] [cursor=pointer]
+        - paragraph [ref=e559]: Pro paid monthly · cancel any time · 30-day money-back · billed in USD
+        - generic [ref=e560]:
+          - generic [ref=e561]:
+            - img [ref=e562]
+            - generic [ref=e564]: / Credits — pay as you go
+          - heading "Just need a few? Buy credits, no subscription." [level=3] [ref=e565]
+          - paragraph [ref=e566]: Each credit = one full AI rewrite (MLS + IG + FB + 5 headlines + email). Credits never expire.
+          - generic [ref=e567]:
+            - button "Pay-as-you-go 10 Credits 10 AI rewrites — no expiry. $5" [ref=e568] [cursor=pointer]:
+              - generic [ref=e569]:
+                - generic [ref=e570]: Pay-as-you-go
+                - generic [ref=e571]: 10 Credits
+                - generic [ref=e572]: 10 AI rewrites — no expiry.
+              - generic [ref=e573]: $5
+            - button "Save 24% 50 Credits 50 AI rewrites — best value pay-as-you-go. $19" [ref=e574] [cursor=pointer]:
+              - generic [ref=e575]:
+                - generic [ref=e576]: Save 24%
+                - generic [ref=e577]: 50 Credits
+                - generic [ref=e578]: 50 AI rewrites — best value pay-as-you-go.
+              - generic [ref=e579]: $19
+          - paragraph [ref=e580]:
+            - text: Need 10+ seats?
+            - link "Talk to brokerage sales →" [ref=e581] [cursor=pointer]:
+              - /url: mailto:hello@listworks.pro?subject=Brokerage%20Plan
+      - generic [ref=e583]:
+        - generic [ref=e584]:
+          - text: / FAQ
+          - heading "The questions we keep getting." [level=2] [ref=e585]:
+            - text: The questions
+            - text: we keep getting.
+          - paragraph [ref=e586]:
+            - text: Don't see yours? Email
+            - link "hello@listworks.pro" [ref=e587] [cursor=pointer]:
+              - /url: mailto:hello@listworks.pro
+            - text: — we read every one.
+        - generic [ref=e589]:
+          - generic [ref=e590]:
+            - button "Is this just templates?" [ref=e591] [cursor=pointer]:
+              - generic [ref=e592]: Is this just templates?
+              - img [ref=e594]
+            - paragraph [ref=e595]: No. ListWorks is a framework wrapped in a tool. You learn WHY each piece works — then the AI applies it to every listing in your voice. Templates copy. Frameworks compound.
+          - button "Do I have to use AI?" [ref=e597] [cursor=pointer]:
+            - generic [ref=e598]: Do I have to use AI?
+            - img [ref=e600]
+          - button "Will this sound like ChatGPT?" [ref=e602] [cursor=pointer]:
+            - generic [ref=e603]: Will this sound like ChatGPT?
+            - img [ref=e605]
+          - button "What if I don't like it?" [ref=e607] [cursor=pointer]:
+            - generic [ref=e608]: What if I don't like it?
+            - img [ref=e610]
+          - button "Is it MLS-compliant?" [ref=e612] [cursor=pointer]:
+            - generic [ref=e613]: Is it MLS-compliant?
+            - img [ref=e615]
+          - button "Can my whole brokerage use it?" [ref=e617] [cursor=pointer]:
+            - generic [ref=e618]: Can my whole brokerage use it?
+            - img [ref=e620]
+          - button "How is this different from ChatGPT?" [ref=e622] [cursor=pointer]:
+            - generic [ref=e623]: How is this different from ChatGPT?
+            - img [ref=e625]
+          - button "Do the Instagram and Facebook posts actually work?" [ref=e627] [cursor=pointer]:
+            - generic [ref=e628]: Do the Instagram and Facebook posts actually work?
+            - img [ref=e630]
+    - contentinfo [ref=e631]:
+      - generic [ref=e632]:
+        - generic [ref=e633]:
+          - generic [ref=e634]:
+            - generic [ref=e635]: ListWorks
+            - generic [ref=e636]: /pro
+          - paragraph [ref=e637]: Real estate copy, rewritten.
+          - paragraph [ref=e638]: Built for agents who'd rather sell homes than stare at MLS forms. Try the tool free. Read the guide once. Use it forever.
+        - generic [ref=e639]:
+          - generic [ref=e640]: Product
+          - list [ref=e641]:
+            - listitem [ref=e642]:
+              - link "The Tool" [ref=e643] [cursor=pointer]:
+                - /url: "#playground"
+            - listitem [ref=e644]:
+              - link "Examples" [ref=e645] [cursor=pointer]:
+                - /url: "#examples"
+            - listitem [ref=e646]:
+              - link "Pricing" [ref=e647] [cursor=pointer]:
+                - /url: "#pricing"
+            - listitem [ref=e648]:
+              - link "Early Access" [ref=e649] [cursor=pointer]:
+                - /url: /waitlist
+        - generic [ref=e650]:
+          - generic [ref=e651]: Earn
+          - list [ref=e652]:
+            - listitem [ref=e653]:
+              - link "Become an Affiliate" [ref=e654] [cursor=pointer]:
+                - /url: /affiliate/signup
+            - listitem [ref=e655]:
+              - link "Affiliate Dashboard" [ref=e656] [cursor=pointer]:
+                - /url: /affiliate/demo
+            - listitem [ref=e657]:
+              - link "Contact" [ref=e658] [cursor=pointer]:
+                - /url: mailto:hello@listworks.pro
+        - generic [ref=e659]:
+          - generic [ref=e660]: Company
+          - list [ref=e661]:
+            - listitem [ref=e662]:
+              - link "Privacy" [ref=e663] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e664]:
+              - link "Terms" [ref=e665] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e666]:
+          - generic [ref=e667]: Newsletter
+          - paragraph [ref=e668]: One letter / month. The framework, refined. No spam.
+          - generic [ref=e669]:
+            - textbox "agent@brokerage.com" [ref=e670]
+            - button "→" [ref=e671] [cursor=pointer]
+        - generic [ref=e672]:
+          - generic [ref=e673]: © 2026 ListWorks PRO · Made for agents
+          - generic [ref=e674]: Powered by Claude AI by Anthropic
+    - button "Open AI Advisor" [ref=e675] [cursor=pointer]:
+      - img [ref=e677]
+      - generic [ref=e681]: AI Advisor
+      - generic [ref=e682]: Claude
