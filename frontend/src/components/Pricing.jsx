@@ -112,7 +112,7 @@ export default function Pricing() {
           <span>·</span>
           <span>200+ agents using it weekly</span>
           <span>·</span>
-          <span className="text-vermillion">{spotsLeft} Lifetime spots remaining</span>
+          <span className="text-vermillion">Join 200+ agents using it weekly</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/15">

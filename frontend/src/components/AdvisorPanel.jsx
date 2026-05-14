@@ -73,7 +73,7 @@ export default function AdvisorPanel({ listingId, onClose }) {
             </div>
             <div>
               <div className="font-display italic text-xl">AI Advisor</div>
-              <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-oat/60">Powered by Claude</div>
+              <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-oat/60">Powered by ListWorks AI</div>
             </div>
           </div>
           <button

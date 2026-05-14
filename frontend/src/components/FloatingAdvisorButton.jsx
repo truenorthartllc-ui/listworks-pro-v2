@@ -19,7 +19,7 @@ export default function FloatingAdvisorButton() {
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-oat rounded-full animate-pulse" />
           </span>
           <span className="hidden sm:inline">AI Advisor</span>
-          <span className="font-mono text-[9px] tracking-[0.2em] text-oat/75 hidden md:inline">Claude</span>
+          
         </button>
       )}
       {open && (

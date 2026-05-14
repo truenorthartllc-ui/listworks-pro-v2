@@ -45,7 +45,7 @@ export default function GuideUpsell() {
 
           <ul className="mt-8 space-y-3 font-body text-oat/85 max-w-xl">
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> The 5-part listing structure used by top-1% agents</li>
-            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 15 plug-and-play prompts for ChatGPT, Claude, Gemini</li>
+            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 15 plug-and-play prompts for writing listing copy</li>
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 4 buyer psychology triggers that drive showings</li>
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> Headline formulas that stop scrolls in 1.2 seconds</li>
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> The 20-second pre-publish review checklist</li>

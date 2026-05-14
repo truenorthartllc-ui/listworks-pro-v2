@@ -178,7 +178,7 @@ export default function VoiceDescriptionPanel({ setRaw, setMode }) {
               <div>
                 <Mic className="w-10 h-10 text-ink/20 mx-auto mb-3" />
                 <div className="font-display italic text-ink/40">Polished description will appear here</div>
-                <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/30 mt-2">Powered by Claude AI</div>
+                <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/30 mt-2"></div>
               </div>
             </div>
           )}

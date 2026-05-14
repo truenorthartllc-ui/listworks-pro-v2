@@ -1,0 +1,12 @@
+[     795ms] ReferenceError: Link is not defined
+    at fr (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:505391)
+    at es (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:54215)
+    at qo (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:74908)
+    at sl (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:85247)
+    at dd (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:125983)
+    at ld (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:125911)
+    at od (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:125753)
+    at Gc (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:121465)
+    at Ud (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:137212)
+    at MessagePort.A (https://peaceful-daffodil-006972.netlify.app/static/js/main.aa2f9d6d.js:2:190648)
+[    2851ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://peaceful-daffodil-006972.netlify.app/favicon.ico:0
