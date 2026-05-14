@@ -23,6 +23,7 @@ import FairHousingPanel from "@/components/FairHousingPanel";
 import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
 import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import { startCheckout } from "@/lib/checkout";
+import ShareCard from "@/components/ShareCard";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Family", "Investor"];
@@ -48,6 +49,7 @@ export default function Playground() {
   const [copiedKey, setCopiedKey] = useState(null);
   const [showVideo, setShowVideo] = useState(false);
   const [showAdvisor, setShowAdvisor] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
   const [strengthOpen, setStrengthOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
@@ -329,6 +331,18 @@ export default function Playground() {
 
             {result && !loading && (
               <div className="mt-6 pt-5 border-t border-ink/10">
+                <div className="flex items-center gap-2 mb-4">
+                  <Share2 className="w-4 h-4 text-vermillion" />
+                  <span className="font-heading text-sm uppercase tracking-[0.12em] text-ink">Share My Transformation</span>
+                  <button onClick={() => setShowShareCard(!showShareCard)} className="ml-auto text-xs text-vermillion hover:underline">
+                    {showShareCard ? "Hide" : "Show"} Card
+                  </button>
+                </div>
+                {showShareCard && (
+                  <div className="mb-6">
+                    <ShareCard rawListing={raw} rewrittenListing={currentText} tone={tone} />
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2.5 mb-5">
                   <button
                     data-testid="open-video-btn"

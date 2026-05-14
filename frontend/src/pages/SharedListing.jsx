@@ -17,6 +17,7 @@ export default function SharedListing() {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("mls");
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -136,6 +137,35 @@ export default function SharedListing() {
 
             <p className="font-body text-base leading-relaxed text-oat/95 whitespace-pre-wrap min-h-[200px]">
               {tabContent[tab]}
+            </p>
+          </div>
+        </div>
+
+        {/* Lead Capture — Book a Showing */}
+        <div className="bg-oat border border-ink/15 p-8 md:p-12 mb-12">
+          <div className="max-w-xl mx-auto text-center">
+            <h3 className="font-display text-2xl md:text-3xl mb-3">Want to see this home?</h3>
+            <p className="text-ink/60 mb-6">Book a showing or get pre-approved — we'll connect you with a local agent within 24 hours.</p>
+            <form onSubmit={(e) => { e.preventDefault(); setLeadSubmitted(true); }} className="space-y-4">
+              {leadSubmitted ? (
+                <div className="bg-coal text-oat p-6 text-center">
+                  <p className="font-heading text-lg mb-2">We'll be in touch within 24 hours!</p>
+                  <p className="font-mono text-[11px] tracking-[0.15em] uppercase text-oat/60">A local agent will reach out shortly</p>
+                </div>
+              ) : (
+                <>
+                  <input required type="text" placeholder="Your name" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input required type="email" placeholder="Email address" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input required type="tel" placeholder="Phone (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input type="text" placeholder="Message (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <button type="submit" className="w-full btn-vermillion px-6 py-4 font-heading text-sm uppercase tracking-[0.15em]">
+                    Book a Showing →
+                  </button>
+                </>
+              )}
+            </form>
+            <p className="mt-4 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">
+              Get pre-approved faster → <a href="https://www.rocketmortgage.com" target="_blank" rel="noopener" className="text-vermillion hover:underline">Rocket Mortgage</a>
             </p>
           </div>
         </div>
