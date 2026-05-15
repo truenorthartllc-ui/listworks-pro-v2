@@ -1,4 +1,4 @@
-import { Wand2, ScanLine, Mic, Zap, Layers, ShieldCheck } from "lucide-react";
+import { Wand2, ScanLine, Mic, Zap, Layers, ShieldCheck, Box } from "lucide-react";
 
 const features = [
   { icon: Wand2, title: "Five-format rewrite", body: "MLS, Instagram, Facebook, headlines, email — all in one pass. Your boring draft becomes five publish-ready assets." },
@@ -7,6 +7,7 @@ const features = [
   { icon: Zap, title: "10-second turnaround", body: "Average generation: ten seconds. Beats your average MLS upload form by a country mile." },
   { icon: Layers, title: "Saved listing history", body: "Every rewrite saved to your session. Revisit, refine, regenerate without re-typing a single word." },
   { icon: ShieldCheck, title: "MLS-compliant by default", body: "Trained on the Feature → Benefit → Feeling framework. No clichés, no fluff, no fair-housing landmines." },
+  { icon: Box, title: "360° Virtual Tour embeds", body: "Plug in any Matterport, Kuula, or CloudPano link. Buyers explore the home in immersive 3D right from your listing." },
 ];
 
 export default function Features() {
