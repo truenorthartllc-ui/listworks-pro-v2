@@ -143,12 +143,17 @@ export default function SharedListing() {
 
         {/* 360° Virtual Tour embed */}
         {listing?.virtual_tour_url && (
-          <div className="mb-12">
-            <div className="flex items-center gap-2 mb-4">
-              <Box className="w-5 h-5 text-vermillion" />
-              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">360° Virtual Tour — Explore the Property</span>
+          <div className="mb-12 bg-white border-2 border-vermillion/40 rounded-xl p-6 md:p-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="bg-vermillion text-white w-10 h-10 rounded-full flex items-center justify-center">
+                <Box className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="font-heading text-lg uppercase tracking-[0.15em] text-ink">360° Virtual Tour</span>
+                <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50">Explore the property in stunning 3D</p>
+              </div>
             </div>
-            <div className="relative w-full border border-ink/15 overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+            <div className="relative w-full rounded-lg overflow-hidden border-2 border-vermillion/20" style={{ paddingBottom: "56.25%" }}>
               <iframe
                 src={listing.virtual_tour_url}
                 className="absolute top-0 left-0 w-full h-full border-0"

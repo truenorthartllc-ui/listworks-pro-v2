@@ -348,15 +348,27 @@ export default function Playground() {
 
               {/* 360° Virtual Tour embed */}
               {result?.virtual_tour_url && (
-                <div className="mt-6 border-t-2 border-vermillion pt-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Box className="w-5 h-5 text-vermillion" />
-                    <span className="font-mono text-[12px] tracking-[0.2em] uppercase text-vermillion">360° Virtual Tour</span>
+                <div className="mt-6 border-t-4 border-vermillion pt-5 bg-oat/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="bg-vermillion text-white w-8 h-8 rounded-full flex items-center justify-center">
+                        <Box className="w-4 h-4" />
+                      </div>
+                      <span className="font-heading text-sm uppercase tracking-[0.15em] text-ink">360° Virtual Tour</span>
+                    </div>
+                    <a
+                      href={result.virtual_tour_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-vermillion hover:text-[#ff2a0e] font-mono text-[10px] tracking-[0.15em] uppercase transition"
+                    >
+                      Open Full Screen →
+                    </a>
                   </div>
-                  <div className="relative w-full border border-ink/15 overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+                  <div className="relative w-full border-2 border-vermillion/30 rounded-lg overflow-hidden shadow-lg" style={{ paddingBottom: "56.25%" }}>
                     <iframe
                       src={result.virtual_tour_url}
-                      className="absolute top-0 left-0 w-full h-full border-0"
+                      className="absolute top-0 left-0 w-full h-full border-0 bg-ink/5"
                       allow="fullscreen; vr"
                       title="360 Virtual Tour"
                       loading="lazy"
