@@ -24,6 +24,7 @@ import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
 import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
+import ViralPostCard from "@/components/ViralPostCard";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Family", "Investor"];
@@ -388,8 +389,9 @@ export default function Playground() {
                   </button>
                 </div>
                 {showShareCard && (
-                  <div className="mb-6">
+                  <div className="mb-6 space-y-4">
                     <ShareCard rawListing={raw || ""} rewrittenListing={typeof currentText === 'string' ? currentText : JSON.stringify(currentText || "")} tone={tone} />
+                    <ViralPostCard rawListing={raw || ""} rewrittenListing={typeof currentText === 'string' ? currentText : JSON.stringify(currentText || "")} tone={tone} />
                   </div>
                 )}
                 <div className="flex flex-wrap gap-2.5 mb-5">
