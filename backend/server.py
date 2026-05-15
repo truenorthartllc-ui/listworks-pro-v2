@@ -74,6 +74,7 @@ class RewriteRequest(BaseModel):
     beds: Optional[str] = None
     baths: Optional[str] = None
     sqft: Optional[str] = None
+    virtual_tour_url: Optional[str] = None
     session_id: Optional[str] = None
 
 
@@ -88,6 +89,7 @@ class RewriteOutput(BaseModel):
     strength_reasons: List[str]
     tone: str
     raw_listing: str
+    virtual_tour_url: Optional[str] = None
     created_at: str
 
 
@@ -1191,16 +1193,18 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
         "beds": req.beds,
         "baths": req.baths,
         "sqft": req.sqft,
+        "virtual_tour_url": req.virtual_tour_url,
         "created_at": created_at,
         **outputs,
     }
-    await db.listings.insert_one({k: v for k, v in doc.items()})
+    await db.listings.insert_one({k: v for k, v in doc.items() if v is not None})
 
     return {
         **RewriteOutput(
             id=listing_id,
             tone=req.tone,
             raw_listing=req.raw_listing,
+            virtual_tour_url=req.virtual_tour_url,
             created_at=created_at,
             **outputs,
         ).model_dump(),
@@ -1246,15 +1250,17 @@ async def batch_rewrite(req: BatchRewriteRequest):
                 "beds": listing_req.beds,
                 "baths": listing_req.baths,
                 "sqft": listing_req.sqft,
+                "virtual_tour_url": getattr(listing_req, "virtual_tour_url", None),
                 "created_at": created_at,
                 **outputs,
             }
-            await db.listings.insert_one({k: v for k, v in doc.items()})
+            await db.listings.insert_one({k: v for k, v in doc.items() if v is not None})
 
             results.append(RewriteOutput(
                 id=listing_id,
                 tone=listing_req.tone,
                 raw_listing=listing_req.raw_listing,
+                virtual_tour_url=getattr(listing_req, "virtual_tour_url", None),
                 created_at=created_at,
                 **outputs,
             ))

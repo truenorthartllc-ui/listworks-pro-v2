@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -54,10 +54,12 @@ export default function Playground() {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
+  const [tourOpen, setTourOpen] = useState(false);
   const [openHouseResult, setOpenHouseResult] = useState(null);
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
   const [fhLoading, setFhLoading] = useState(false);
+  const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const outputRef = useRef(null);
 
   const handleRedfinImport = (data) => {
@@ -86,6 +88,7 @@ export default function Playground() {
         raw_listing: raw,
         tone: forcedTone || tone,
         ...meta,
+        virtual_tour_url: virtualTourUrl || undefined,
         session_id,
       });
       setResult(data);
@@ -197,6 +200,21 @@ export default function Playground() {
               <input data-testid="meta-beds" placeholder="Beds" value={meta.beds} onChange={(e) => setMeta({ ...meta, beds: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-baths" placeholder="Baths" value={meta.baths} onChange={(e) => setMeta({ ...meta, baths: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-sqft" placeholder="Sqft" value={meta.sqft} onChange={(e) => setMeta({ ...meta, sqft: e.target.value })} className="editorial-input text-sm col-span-2" />
+              <div className="col-span-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Link2 className="w-3.5 h-3.5 text-vermillion" strokeWidth={2} />
+                  <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/60">360° Virtual Tour</span>
+                </div>
+                <input
+                  data-testid="virtual-tour-url"
+                  type="url"
+                  placeholder="https://my.matterport.com/show/?m=..."
+                  value={virtualTourUrl}
+                  onChange={(e) => setVirtualTourUrl(e.target.value)}
+                  className="editorial-input text-sm w-full"
+                />
+                <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-ink/40 block mt-1">Matterport · Kuula · CloudPano · Zillow 3D</span>
+              </div>
             </div>
 
             <div className="mb-5">
@@ -324,8 +342,27 @@ export default function Playground() {
                 ) : (
                   <pre data-testid={`output-${activeTab}`} className="whitespace-pre-wrap font-mono text-[13px] leading-[1.7] text-ink">
                     {result[activeTab]}
-                  </pre>
+</pre>
                 )
+              )}
+
+              {/* 360° Virtual Tour embed */}
+              {result?.virtual_tour_url && (
+                <div className="mt-6 border-t-2 border-vermillion pt-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Box className="w-5 h-5 text-vermillion" />
+                    <span className="font-mono text-[12px] tracking-[0.2em] uppercase text-vermillion">360° Virtual Tour</span>
+                  </div>
+                  <div className="relative w-full border border-ink/15 overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+                    <iframe
+                      src={result.virtual_tour_url}
+                      className="absolute top-0 left-0 w-full h-full border-0"
+                      allow="fullscreen; vr"
+                      title="360 Virtual Tour"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               )}
             </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, Loader2, Box } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -140,6 +140,25 @@ export default function SharedListing() {
             </p>
           </div>
         </div>
+
+        {/* 360° Virtual Tour embed */}
+        {listing?.virtual_tour_url && (
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-4">
+              <Box className="w-5 h-5 text-vermillion" />
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">360° Virtual Tour — Explore the Property</span>
+            </div>
+            <div className="relative w-full border border-ink/15 overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+              <iframe
+                src={listing.virtual_tour_url}
+                className="absolute top-0 left-0 w-full h-full border-0"
+                allow="fullscreen; vr"
+                title="360 Virtual Tour"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Lead Capture — Book a Showing */}
         <div className="bg-oat border border-ink/15 p-8 md:p-12 mb-12">
