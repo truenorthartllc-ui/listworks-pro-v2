@@ -1,0 +1,26 @@
+[build]
+  command = "cd frontend && npm install --legacy-peer-deps && npm run build"
+  publish = "frontend/build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# After build, replace the SPA index.html with the pre-rendered SEO page
+# This runs as a post-build step via a custom shell command
+[[plugins]]
+  name = "netlify-plugin-post-build-seo"
+
+[[build.hooks]]
+  name = "replace-spa-index"
+  command = "cp frontend/public/index-seo.html frontend/build/index.html"
+
+# Also deploy robots.txt and sitemap
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml"
