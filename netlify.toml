@@ -4,6 +4,3 @@
 
 [build.environment]
   NODE_VERSION = "18"
-
-[[build.hooks.post_build]]
-  command = "cp frontend/public/index-seo.html frontend/build/index.html"
