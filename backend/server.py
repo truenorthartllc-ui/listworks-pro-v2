@@ -33,15 +33,46 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
-DEFAULT_PROVIDER = "anthropic"
-DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
+DEFAULT_PROVIDER = "openrouter"
+DEFAULT_MODEL = "openai/gpt-4o"
 
 if STRIPE_API_KEY:
     stripe_sdk.api_key = STRIPE_API_KEY
+
+# ── OpenRouter helper ─────────────────────────────────────
+OPENROUTER_BASE = "https://openrouter.ai/api/v1"
+
+async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
+    """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx."""
+    key = OPENROUTER_API_KEY or os.environ.get("OPENROUTER_API_KEY", "")
+    if not key:
+        raise HTTPException(500, "OpenRouter API key not configured")
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        resp = await client.post(
+            f"{OPENROUTER_BASE}/chat/completions",
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model or DEFAULT_MODEL,
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_text},
+                ],
+                "max_tokens": 2048,
+                "temperature": 0.7,
+            },
+        )
+        if resp.status_code != 200:
+            raise HTTPException(502, f"OpenRouter error {resp.status_code}: {resp.text[:200]}")
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
 
 # Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
@@ -212,64 +243,105 @@ TONE_GUIDE = {
     "Investor": "Data-forward, ROI-aware. Cap rate potential, rental comps, location upside, low maintenance.",
 }
 
-REWRITE_SYSTEM = """You are ListWorks PRO — a professional real estate copywriter trained
-on the official ListWorks framework. Your writing is confident, specific, and
-emotionally resonant. You make buyers FEEL something first, then give them facts
-to justify that feeling.
+REWRITE_SYSTEM = """You are ListWorks PRO — the most advanced real estate copywriting AI ever built. You outperform every human copywriter and every other AI at generating listing copy that converts. Your writing doesn't just describe homes — it triggers dopamine, activates mirror neurons, and compels action.
 
 ═══════════════════════════════════════════════════════════════
-THE LISTWORKS 5-PART STRUCTURE (use for MLS, Facebook, Email)
+CORE FRAMEWORK — THE LISTWORKS 5-PART STRUCTURE
 ═══════════════════════════════════════════════════════════════
-1. THE OPENING HOOK — stops the scroll, earns the read.
-2. THE LIFESTYLE PARAGRAPH — sells the LIFE, not the specs.
-3. THE FEATURE TRANSLATION LAYER — convert specs into desire using FBF.
-4. THE NEIGHBORHOOD & CONTEXT — place the buyer in the world of this home.
-5. THE CALL TO ACTION — confidence without begging.
+1. THE OPENING HOOK — 1-2 sentences. Must be emotionally disruptive, not descriptive. Never start with "Welcome to", the address, or "This beautiful home". Start with a feeling, a contrast, or an unexpected truth.
+
+2. THE LIFESTYLE PARAGRAPH — Sell the LIFE, not the specs. Paint a specific Wednesday afternoon or Saturday morning. Use sensory language (light, sound, texture, temperature). Make the reader see themselves there.
+
+3. THE FEATURE TRANSLATION LAYER — FBF (Feature → Benefit → Feeling). Every spec must answer: "So what?" A chef's kitchen isn't about appliances — it's about Sunday sauce simmering while friends gather around the island.
+
+4. THE NEIGHBORHOOD & CONTEXT — Specific > generic. Instead of "great location", say "three blocks from the farmers market and that coffee shop with the blue door". If no specifics given, create a believable archetype.
+
+5. THE CALL TO ACTION — Confident, not desperate. Never "call today!" or "schedule a showing". Instead: "Come see why 47 Elm Street won't last the weekend." Assume interest, don't beg for it.
 
 ═══════════════════════════════════════════════════════════════
-FEATURE → BENEFIT → FEELING (FBF)
+PLATFORM-SPECIFIC OPTIMIZATION — NON-NEGOTIABLE
 ═══════════════════════════════════════════════════════════════
-Feature: what it has → Benefit: what it does → Feeling: how it feels.
-Always write the FEELING.
+MLS (200-250 words):
+- Full 5-part structure, flowing paragraphs
+- Professional, confident, editorial tone
+- End with a soft CTA that assumes the buyer is already interested
+- No hashtags, no emojis, no gimmicks
+
+INSTAGRAM (100-130 words):
+- First 2 lines must work WITHOUT the image (they show in feed preview)
+- Conversational, punchy, emotional
+- End with a question to trigger comments
+- Final line: 12-15 hyper-targeted hashtags separated by spaces
+- Use line breaks for rhythm, not periods
+- Example structure: Hook → Feeling → Specs as texture → CTA question
+
+FACEBOOK (150-180 words):
+- Story-driven, lifestyle-led
+- Open with a micro-story (3 sentences max)
+- Middle: paint the lifestyle, weave in specs naturally
+- End with low-pressure CTA
+- Think: what would make an agent's friend comment "Wow where is this?"
+
+EMAIL (120-160 words):
+- First line: "Subject: [punchy subject line under 50 chars]" on its own line
+- Blank line after subject
+- Body: warm, personal, confident — like an email from a trusted friend
+- One clear CTA. Never "click here" or "call now"
+
+HEADLINES (3 variations):
+- Variation 1: EMOTION-led (makes you feel something first)
+- Variation 2: SPECIFICITY-led (uses a concrete detail to hook)
+- Variation 3: URGENCY-led (creates FOMO without being pushy)
+- Each under 10 words. Each could stand alone as a social post.
 
 ═══════════════════════════════════════════════════════════════
-BUYER TRIGGERS (activate at least one per asset)
+PSYCHOLOGICAL TRIGGERS — ACTIVATE AT LEAST 2 PER ASSET
 ═══════════════════════════════════════════════════════════════
-Belonging · Status · Safety · Urgency
+- Belonging: "This is where Sunday dinners happen"
+- Status: "The kind of address that says something before you do"
+- Safety: "Dead-end street. Kids still ride bikes here."
+- Urgency: "Three offers already. Seller reviewing Tuesday."
+- Novelty: "First time on the market in 18 years."
+- Validation: "The kind of neighborhood everyone drives through and wishes they lived in."
+- Sensory: Specific sounds, smells, light quality, tactile details
+- Contrast: "City energy when you want it. Tree-lined quiet when you don't."
 
 ═══════════════════════════════════════════════════════════════
-HARD RULES — DO NOT VIOLATE
+HARD RULES — VIOLATION = FAILURE
 ═══════════════════════════════════════════════════════════════
-BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (cliché),
-"Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell",
-"Call for details".
-DO NOT open with the address or property type. No more than 2 adjectives in a row.
-No sentence longer than 25 words. Max one exclamation per asset. No bullet points.
+ABSOLUTELY BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (as a crutch), "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell", "Call for details", "Opportunity awaits", "This gem", "Check out"
+
+DO NOT:
+- Open with the address or property type
+- Use more than 2 adjectives in a row
+- Write any sentence longer than 25 words
+- Use more than 1 exclamation mark per asset
+- Use bullet points in MLS or Email
+- Say "you won't want to miss this"
+- Use generic filler like "great schools" or "close to everything"
+- Describe the obvious (a kitchen has countertops, a bedroom has a closet)
+
+ALWAYS:
+- Write in present tense
+- Use active voice
+- Include at least one specific sensory detail per asset
+- Make the reader feel like this specific home, not any home
+- End every asset with forward momentum
 
 ═══════════════════════════════════════════════════════════════
 OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
 ═══════════════════════════════════════════════════════════════
 {
-  "mls": "200-250 words. Full 5-part structure. Flowing paragraphs. Soft confident CTA.",
-  "instagram": "100-130 words. Hook line works without image. Conversational. Ends with question or CTA. Final line: 12-15 targeted hashtags separated by spaces.",
-  "facebook": "150-180 words. Story-driven, lifestyle-led. Ends with low-pressure CTA.",
-  "headlines": [
-    "3 scroll-stopping headlines, under 10 words each.",
-    "Variation 1 leads with EMOTION.",
-    "Variation 2 leads with SPECIFICITY.",
-    "Variation 3 leads with URGENCY."
-  ],
-  "email": "120-160 words. First line: 'Subject: …'. Blank line. Then body. Personal, warm, confident.",
+  "mls": "Full MLS description following 5-part structure.",
+  "instagram": "Instagram caption with hook → feeling → hashtags.",
+  "facebook": "Story-driven Facebook post.",
+  "headlines": ["Emotion-led headline", "Specificity-led headline", "Urgency-led headline"],
+  "email": "Subject line on first line, then body.",
   "listing_strength": 7.4,
-  "strength_reasons": [
-    "3-4 short reasons explaining the score, citing real elements (e.g. 'Specific neighborhood detail used', 'Clear FBF translation in lifestyle paragraph').",
-    "If score is below 9, include 1-2 concrete suggestions to improve it."
-  ]
+  "strength_reasons": ["3-4 specific reasons for the score, citing real elements from the copy"]
 }
 
-The listing_strength is a number 0-10 (one decimal), reflecting how well the SOURCE
-input + your output expresses the framework. Be honest — most rewrites land between
-6.5 and 8.5. Reserve 9+ for inputs with strong specificity.
+The listing_strength is 0-10 (one decimal). Be honest — most land between 6.5-8.5. Reserve 9+ for truly exceptional listing detail + output. If score is below 9, include 1-2 concrete improvements in strength_reasons.
 """
 
 EXPIRED_LISTING_SYSTEM = """You are ListWorks PRO — a real estate marketing expert specializing in expired listings.
@@ -397,22 +469,12 @@ Now produce the JSON object. JSON only."""
 
 
 async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
+    if not OPENROUTER_API_KEY and not os.environ.get("OPENROUTER_API_KEY"):
+        raise HTTPException(500, "OpenRouter key missing")
 
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_text = _build_user_prompt(req)
-
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=REWRITE_SYSTEM,
-        messages=[{"role": "user", "content": user_text}],
-    )
-    cleaned = _strip_json(response.content[0].text)
+    raw = await call_openrouter(REWRITE_SYSTEM, user_text)
+    cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -1029,10 +1091,20 @@ async def analyze_voice_description(req: VoiceDescriptionIn):
     if not req.transcript or len(req.transcript.strip()) < 5:
         raise HTTPException(400, "Transcript too short")
 
-    if not EMERGENT_LLM_KEY or not HAS_ANTHROPIC:
-        raise HTTPException(500, "AI not configured")
-
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
+    async def _call_anthropic_voice(system_prompt: str, user_text: str) -> str:
+        """Voice description uses a different format — keep Anthropic for now."""
+        try:
+            client = AsyncAnthropic(api_key=os.environ.get("EMERGENT_LLM_KEY", ""))
+            resp = await client.messages.create(
+                model="claude-sonnet-4-5-20250929",
+                max_tokens=2048,
+                system=system_prompt,
+                messages=[{"role": "user", "content": user_text}],
+            )
+            return resp.content[0].text
+        except Exception:
+            # Fallback to OpenRouter
+            return await call_openrouter(system_prompt, user_text, model="openai/gpt-4o")
     response = client.messages.create(
         model=DEFAULT_MODEL,
         max_tokens=1024,
@@ -1313,43 +1385,16 @@ async def capture_email(email: str, session_id: str):
 
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
 async def get_expired_scripts(req: ExpiredListingRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
-
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
-    meta_parts = []
-    if req.price:
-        meta_parts.append(f"Original price: {req.price}")
-    if req.beds or req.baths or req.sqft:
-        details = f"{req.beds or '?'} bed, {req.baths or '?'} bath, {req.sqft or '?'} sqft"
-        meta_parts.append(f"Details: {details}")
-    if req.days_on_market:
-        meta_parts.append(f"Days on market: {req.days_on_market}")
-    if req.seller_name:
-        meta_parts.append(f"Seller: {req.seller_name}")
-    if req.original_price:
-        meta_parts.append(f"Original asking price: {req.original_price}")
-    if req.listing_reason:
-        meta_parts.append(f"Likely reason: {req.listing_reason}")
-
-    meta_str = "\n".join(meta_parts) if meta_parts else "No additional details provided."
     user_prompt = f"""PROPERTY: {req.address}
 
 META:
 {meta_str}
 
+
 Now produce the JSON object with all 4 scripts. JSON only."""
 
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=EXPIRED_LISTING_SYSTEM,
-        messages=[{"role": "user", "content": user_prompt}],
-    )
-    cleaned = _strip_json(response.content[0].text)
+    raw = await call_openrouter(EXPIRED_LISTING_SYSTEM, user_prompt)
+    cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -1366,29 +1411,17 @@ Now produce the JSON object with all 4 scripts. JSON only."""
 
 @api_router.post("/import/redfin", response_model=RedfinPropertyData)
 async def import_redfin(req: RedfinImportRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
-
     if not req.redfin_url or "redfin.com" not in req.redfin_url.lower():
         raise HTTPException(400, "Invalid Redfin URL. Please provide a valid Redfin listing URL.")
 
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_prompt = f"""Extract property data from this Redfin listing:
 
 URL: {req.redfin_url}
 
 Return the JSON object with all available property details. JSON only."""
 
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=512,
-        system=REDFIN_IMPORT_SYSTEM,
-        messages=[{"role": "user", "content": user_prompt}],
-    )
-    cleaned = _strip_json(response.content[0].text)
+    raw = await call_openrouter(REDFIN_IMPORT_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception as e:
@@ -1426,13 +1459,6 @@ async def get_shared_listing(listing_id: str):
 
 @api_router.post("/analyze-photo", response_model=PhotoAnalyzeResponse)
 async def analyze_photo(req: PhotoAnalyzeRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
-
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     prompt = (
         "You analyze real estate property photos. "
         "Return STRICT JSON: {\"features\":[8 short property features detected, "
@@ -1440,27 +1466,12 @@ async def analyze_photo(req: PhotoAnalyzeRequest):
         "\"style\":\"one short style label like 'Modern Farmhouse'\","
         "\"suggested_headline\":\"a single 10-word emotional headline for this property\"}"
     )
-    # strip data: URL prefix if present
     img_data = req.image_base64
     if img_data.startswith("data:"):
         img_data = img_data.split(",", 1)[1]
 
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
-        max_tokens=512,
-        system=prompt,
-        messages=[{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": "Analyze this property photo. JSON only."},
-                {
-                    "type": "image",
-                    "source": {"type": "base64", "media_type": req.mime_type, "data": img_data},
-                },
-            ],
-        }],
-    )
-    cleaned = _strip_json(response.content[0].text)
+    raw = await call_openrouter(prompt, "Analyze this real estate photo. Return JSON only.", model="openai/gpt-4o")
+    cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception:
@@ -1487,12 +1498,6 @@ exact rewrites — don't just describe."""
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
 async def advisor(req: AdvisorRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key missing")
-
-    if not HAS_ANTHROPIC:
-        raise HTTPException(500, "anthropic package not installed")
-
     context_msg = ""
     if req.listing_id:
         listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
@@ -1508,23 +1513,11 @@ async def advisor(req: AdvisorRequest):
     for h in req.history[-6:]:
         history_text += f"\n{h.role.upper()}: {h.content[:600]}"
 
-    client = AsyncAnthropic(api_key=EMERGENT_LLM_KEY)
     user_text = f"{history_text}\n\nUSER: {req.question}{context_msg}".strip()
-    messages = []
-    if history_text:
-        for h in req.history[-6:]:
-            messages.append({"role": h.role, "content": h.content[:600]})
-    messages.append({"role": "user", "content": user_text})
 
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=512,
-        system=ADVISOR_SYSTEM,
-        messages=messages,
-    )
-    reply = response.content[0].text.strip()
+    raw = await call_openrouter(ADVISOR_SYSTEM, user_text)
+    reply = raw.strip()
     return AdvisorResponse(reply=reply)
-
 
 # ===== Video Generation =====
 @api_router.post("/video/generate", response_model=VideoGenerateResponse)
