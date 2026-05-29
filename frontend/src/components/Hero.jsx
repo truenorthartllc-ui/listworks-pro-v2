@@ -124,7 +124,7 @@ export default function Hero() {
 
           <div className="mt-12 flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/60 animate-rise" style={{ animationDelay: "0.4s" }}>
             <span>● 200+ agents</span>
-            <span>● 3 free listings</span>
+            <span>● instant access</span>
             <span>● No credit card</span>
           </div>
 

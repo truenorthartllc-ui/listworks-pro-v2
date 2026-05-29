@@ -254,7 +254,7 @@ export default function Playground() {
               {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
             </button>
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
-              Free for first 3 listings
+              Pro — 9/mo · cancel anytime
             </p>
           </div>
 

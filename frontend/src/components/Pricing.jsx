@@ -10,7 +10,7 @@ const tiers = [
     price: "$0",
     period: "forever",
     blurb: "For agents trying it on their next listing.",
-    features: ["3 free rewrites", "All 5 output formats", "5 tone modes", "Then upgrade or buy credits"],
+    features: ["Full playground access", "All 5 output formats", "5 tone modes", "Then upgrade or buy credits"],
     cta: "Start Free",
     action: { kind: "scroll", href: "#playground" },
     highlight: false,

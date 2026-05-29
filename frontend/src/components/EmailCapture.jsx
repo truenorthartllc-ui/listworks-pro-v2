@@ -19,7 +19,7 @@ export default function EmailCapture({ onClose, remainingFree }) {
       const session_id = localStorage.getItem("lw_session_id") || uuid();
       localStorage.setItem("lw_session_id", session_id);
       await axios.post(`${API}/capture-email`, { email, session_id });
-      toast.success("Email saved! You get 3 more free listings.");
+      toast.success("Email saved! You are on the list — upgrade anytime.");
       onClose();
     } catch (e) {
       toast.error("Something went wrong");
@@ -37,7 +37,7 @@ export default function EmailCapture({ onClose, remainingFree }) {
           </div>
           <div>
             <h3 className="font-heading text-lg text-ink">Save Your Progress</h3>
-            <p className="text-ink/60 text-sm">You've used all {remainingFree} free listings</p>
+            <p className="text-ink/60 text-sm">Upgrade to Pro to keep going</p>
           </div>
         </div>
 
