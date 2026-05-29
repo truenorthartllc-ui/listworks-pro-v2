@@ -12,7 +12,6 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import uuid
-from urllib.parse import quote
 from datetime import datetime, timezone
 
 try:
@@ -83,7 +82,6 @@ PACKAGES = {
     "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
     "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
     "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},
-    "brokerage":   {"amount": 499.00, "currency": "usd", "name": "ListWorks Brokerage — Monthly","kind": "brokerage"},
 }
 
 # Free tier: how many free rewrites per anonymous session before paywall
@@ -1037,9 +1035,9 @@ async def affiliate_share_text(req: ShareTextRequest):
 
     copy = "\n\n".join(parts)
 
-    twitter_url = f"https://twitter.com/intent/tweet?text={quote(copy)}"
-    fb_url = f"https://www.facebook.com/sharer/sharer.php?u={quote(link)}"
-    li_url = f"https://www.linkedin.com/sharing/share-offsite/?url={quote(link)}"
+    twitter_url = f"https://twitter.com/intent/tweet?text={encodeURIComponent(copy)}"
+    fb_url = f"https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(link)}"
+    li_url = f"https://www.linkedin.com/sharing/share-offsite/?url={encodeURIComponent(link)}"
 
     return {
         "copy": copy,
@@ -1105,9 +1103,15 @@ async def analyze_voice_description(req: VoiceDescriptionIn):
             )
             return resp.content[0].text
         except Exception:
+            # Fallback to OpenRouter
             return await call_openrouter(system_prompt, user_text, model="openai/gpt-4o")
-
-    raw = await _call_anthropic_voice(VOICE_POLISH_SYSTEM, req.transcript.strip())
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=1024,
+        system=VOICE_POLISH_SYSTEM,
+        messages=[{"role": "user", "content": req.transcript.strip()}],
+    )
+    raw = response.content[0].text.strip()
     try:
         data = json.loads(raw)
         raw_description = data.get("raw_description", raw)
@@ -1381,17 +1385,6 @@ async def capture_email(email: str, session_id: str):
 
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
 async def get_expired_scripts(req: ExpiredListingRequest):
-    meta = [
-        f"Price: {req.price}" if req.price else None,
-        f"Beds: {req.beds}" if req.beds else None,
-        f"Baths: {req.baths}" if req.baths else None,
-        f"SqFt: {req.sqft}" if req.sqft else None,
-        f"Seller: {req.seller_name}" if req.seller_name else None,
-        f"Days on Market: {req.days_on_market}" if req.days_on_market else None,
-        f"Original Price: {req.original_price}" if req.original_price else None,
-        f"Reason: {req.listing_reason}" if req.listing_reason else None,
-    ]
-    meta_str = "\n".join(m for m in meta if m) or "No metadata provided."
     user_prompt = f"""PROPERTY: {req.address}
 
 META:
@@ -1663,7 +1656,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
     }
 
     # Subscription mode for monthly/annual Pro; one-time for everything else
-    is_subscription = req.package_id in ("pro_month", "pro_annual", "brokerage")
+    is_subscription = req.package_id in ("pro_month", "pro_annual")
 
     # Use raw Stripe SDK for everything (skip emergent wrapper)
     is_emergent_test = False
@@ -1765,25 +1758,18 @@ async def checkout_status(stripe_session_id: str, request: Request):
                 "paid_at": datetime.now(timezone.utc).isoformat(),
             }},
         )
-        # Grant entitlement (by session_id or email for non-logged-in buyers)
-        kind = txn.get("package_kind")
-        ent = {
-            "kind": kind,
-            "package_id": txn.get("package_id"),
-            "stripe_session_id": stripe_session_id,
-            "email": (txn.get("email") or "").strip(),
-            "granted_at": datetime.now(timezone.utc).isoformat(),
-        }
+        # Grant entitlement to the listworks session
         if txn.get("lw_session_id"):
-            ent["lw_session_id"] = txn["lw_session_id"]
+            kind = txn.get("package_kind")
+            ent = {
+                "lw_session_id": txn["lw_session_id"],
+                "kind": kind,
+                "package_id": txn.get("package_id"),
+                "stripe_session_id": stripe_session_id,
+                "granted_at": datetime.now(timezone.utc).isoformat(),
+            }
             await db.entitlements.update_one(
                 {"lw_session_id": txn["lw_session_id"], "kind": kind},
-                {"$set": ent},
-                upsert=True,
-            )
-        elif ent["email"]:
-            await db.entitlements.update_one(
-                {"email": ent["email"], "kind": kind},
                 {"$set": ent},
                 upsert=True,
             )
@@ -1852,42 +1838,28 @@ async def stripe_webhook(request: Request):
             txn = await db.payment_transactions.find_one(
                 {"stripe_session_id": session_id}, {"_id": 0}
             )
+            if txn and txn.get("lw_session_id"):
+                await db.entitlements.update_one(
+                    {"lw_session_id": txn["lw_session_id"], "kind": txn.get("package_kind")},
+                    {"$set": {
+                        "lw_session_id": txn["lw_session_id"],
+                        "kind": txn.get("package_kind"),
+                        "package_id": txn.get("package_id"),
+                        "stripe_session_id": session_id,
+                        "granted_at": datetime.now(timezone.utc).isoformat(),
+                    }},
+                    upsert=True,
+                )
+            # Fire drip emails — idempotent via drip_sent flag
             if txn:
-                kind = txn.get("package_kind")
-                email = (txn.get("email") or "").strip()
-                ent = {
-                    "kind": kind,
-                    "package_id": txn.get("package_id"),
-                    "stripe_session_id": session_id,
-                    "email": email,
-                    "granted_at": datetime.now(timezone.utc).isoformat(),
-                }
-                if txn.get("lw_session_id"):
-                    ent["lw_session_id"] = txn["lw_session_id"]
-                    await db.entitlements.update_one(
-                        {"lw_session_id": txn["lw_session_id"], "kind": kind},
-                        {"$set": ent},
-                        upsert=True,
-                    )
-                elif email:
-                    await db.entitlements.update_one(
-                        {"email": email, "kind": kind},
-                        {"$set": ent},
-                        upsert=True,
-                    )
                 await _trigger_drip_for_txn(session_id, txn)
     return {"received": True}
 
 
 async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
-    """Resolve buyer email and fire the appropriate Resend drip + Slack ping. Idempotent (atomic)."""
-    # Atomic claim: only first caller wins the race to fire drips
-    claimed = await db.payment_transactions.update_one(
-        {"stripe_session_id": stripe_session_id, "drip_sent": {"$ne": True}},
-        {"$set": {"drip_sent": True, "drip_claimed_at": datetime.now(timezone.utc).isoformat()}},
-    )
-    if claimed.modified_count == 0:
-        return  # already claimed by another request
+    """Resolve buyer email and fire the appropriate Resend drip + Slack ping. Idempotent."""
+    if txn.get("drip_sent"):
+        return  # already fired
 
     # Try transaction record, then fetch email from Stripe session if missing
     email = (txn.get("email") or "").strip()
@@ -1934,6 +1906,7 @@ async def _trigger_drip_for_txn(stripe_session_id: str, txn: dict) -> None:
     await db.payment_transactions.update_one(
         {"stripe_session_id": stripe_session_id},
         {"$set": {
+            "drip_sent": True,
             "drip_email": email,
             "drip_ids": ids,
             "drip_sent_at": datetime.now(timezone.utc).isoformat(),
