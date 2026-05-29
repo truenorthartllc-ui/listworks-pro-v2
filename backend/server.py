@@ -46,6 +46,8 @@ if STRIPE_API_KEY:
 
 # ── OpenRouter helper ─────────────────────────────────────
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
+G0DM0D3_BASE = "http://localhost:7860"
+G0DM0D3_API_KEY = "g0dm0d3-local-key-change-me"
 
 async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
     """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx."""
@@ -468,12 +470,39 @@ RAW / BORING LISTING:
 Now produce the JSON object. JSON only."""
 
 
+async def call_g0dm0d3(system: str, user_text: str, tier: str = "smart") -> str:
+    """Race multiple models via G0DM0D3 ultraplinian — returns best response."""
+    async with httpx.AsyncClient(timeout=90.0) as c:
+        resp = await c.post(
+            f"{G0DM0D3_BASE}/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {G0DM0D3_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": f"ultraplinian/{tier}",
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_text},
+                ],
+                "max_tokens": 2048,
+                "stream": False,
+            },
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+
 async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     if not OPENROUTER_API_KEY and not os.environ.get("OPENROUTER_API_KEY"):
         raise HTTPException(500, "OpenRouter key missing")
 
     user_text = _build_user_prompt(req)
-    raw = await call_openrouter(REWRITE_SYSTEM, user_text)
+    try:
+        raw = await call_g0dm0d3(REWRITE_SYSTEM, user_text, tier="smart")
+    except Exception as g_err:
+        logging.warning(f"G0DM0D3 unavailable ({g_err}), falling back to OpenRouter")
+        raw = await call_openrouter(REWRITE_SYSTEM, user_text)
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
