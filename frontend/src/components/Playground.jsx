@@ -22,6 +22,7 @@ import OpenHousePanel from "@/components/OpenHousePanel";
 import FairHousingPanel from "@/components/FairHousingPanel";
 import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
 import PostSaleReportPanel from "@/components/PostSaleReportPanel";
+import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
 import ViralPostCard from "@/components/ViralPostCard";
@@ -513,7 +514,7 @@ export default function Playground() {
         )}
       </div>
 
-      {mode === "expired" && (
+      {mode === "expired" && (isPro ? (
         <div className="bg-white border border-ink/15 p-8 mt-px">
           <div className="flex items-center gap-3 mb-4">
             <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">NEW</span>
@@ -522,9 +523,9 @@ export default function Playground() {
           <p className="text-ink/60 text-sm mb-4">Turn expired listings into new opportunities. Get cold call scripts, voicemails, texts, and door knock scripts for any property that didn't sell.</p>
           <ExpiredListingScripts />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="expired" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "import" && (
+      {mode === "import" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
@@ -543,53 +544,53 @@ export default function Playground() {
             </div>
           )}
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="import" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "contract" && (
+      {mode === "contract" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <ContractReview />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="contract" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "seller" && (
+      {mode === "seller" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <SellerDashboard />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="seller" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "nurture" && (
+      {mode === "nurture" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <LeadNurture />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="nurture" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "score" && (
+      {mode === "score" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <LeadScore />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="score" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "transaction" && (
+      {mode === "transaction" && (isPro ? (
         <div className="bg-oat border border-ink/15 p-8 mt-px">
           <TransactionTracker />
         </div>
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="transaction" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "openhouse" && (
+      {mode === "openhouse" && (isPro ? (
         <OpenHousePanel result={openHouseResult} setResult={setOpenHouseResult} />
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="openhouse" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "fairhousing" && (
+      {mode === "fairhousing" && (isPro ? (
         <FairHousingPanel text={fhText} setText={setFhText} result={fhResult} setResult={setFhResult} loading={fhLoading} setLoading={setFhLoading} />
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="fairhousing" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "voice" && (
+      {mode === "voice" && (isPro ? (
         <VoiceDescriptionPanel setRaw={(text) => { setRaw(text); setMode("rewrite"); }} setMode={setMode} />
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="voice" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "report" && (
+      {mode === "report" && (isPro ? (
         <PostSaleReportPanel />
-      )}
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="report" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
       {showVideo && result && (
         <VideoBuilder
