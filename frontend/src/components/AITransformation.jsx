@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const MLS = "3 bed 2 bath ranch. Updated kitchen with granite counters. Hardwood floors throughout. Fenced backyard. Close to top-rated schools. Move-in ready.";
 const AI_OUTPUT = "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs.";
@@ -60,6 +60,8 @@ export default function AITransformation() {
 
 function Typewriter({ text, speed, onDone }) {
   const [display, setDisplay] = useState("");
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     let i = 0;
@@ -68,7 +70,7 @@ function Typewriter({ text, speed, onDone }) {
       setDisplay(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(iv);
-        onDone?.();
+        onDoneRef.current?.();
       }
     }, speed);
     return () => clearInterval(iv);

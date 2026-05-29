@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Sparkles, Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
@@ -14,16 +14,18 @@ const FALLBACK_INSTAGRAM = `${FALLBACK_MLS}\n\n${FALLBACK_HEADLINE}\n\n#realesta
 
 function Typewriter({ text, speed = 18, onDone }) {
   const [display, setDisplay] = useState("");
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
   useEffect(() => {
     setDisplay("");
     let i = 0;
     const iv = setInterval(() => {
       i++;
       setDisplay(text.slice(0, i));
-      if (i >= text.length) { clearInterval(iv); onDone?.(); }
+      if (i >= text.length) { clearInterval(iv); onDoneRef.current?.(); }
     }, speed);
     return () => clearInterval(iv);
-  }, [text]);
+  }, [text, speed]);
   return <span>{display}<span className="animate-pulse text-vermillion">|</span></span>;
 }
 
