@@ -87,7 +87,7 @@ export default function Playground() {
   }, []);
 
   const requirePro = () => setPaywallOpen(true);
-  const handleProMode = (m) => { if (isPro) setMode(m); else requirePro(); };
+  const handleProMode = (m) => setMode(m);
 
   const handleSample = () => setRaw(SAMPLE);
 
