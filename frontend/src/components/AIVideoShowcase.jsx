@@ -13,7 +13,7 @@ export default function AIVideoShowcase() {
   const [playing, setPlaying] = useState(true);
 
   // Cache-buster: bump this when re-rendering the demo so browsers pull fresh
-  const VIDEO_VERSION = "v12-new-photos";
+  const VIDEO_VERSION = "v13-luxury";
   const VIDEO_SRC = `/hero-demo-narrated.mp4?${VIDEO_VERSION}`;
 
   // Source photos — same 10 the video was built from (your uploaded family-home set)
@@ -44,7 +44,7 @@ export default function AIVideoShowcase() {
           setPlaying(false);
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0 }
     );
     io.observe(v);
     return () => io.disconnect();
