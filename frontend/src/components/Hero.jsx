@@ -1,30 +1,62 @@
-import { useState } from "react";
-import { Sparkles, Loader2, Copy, Check, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Sparkles, Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
+import AITransformation from "./AITransformation";
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const DEMO_LISTING = "3 bed 2 bath ranch. Updated kitchen with granite counters. Hardwood floors throughout. Fenced backyard. Close to top-rated schools. Move-in ready.";
-const DEMO_RESULT = "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of the neighborhood trades quietly — and rarely.";
-const DEMO_PLATFORMS = [
-  { name: "Instagram", color: "from-purple-500 to-pink-500", hashtags: "#realestate #listings #home #luxury #realestateagent #homesweethome #property #dreamhome" },
-  { name: "Facebook", color: "from-blue-500 to-blue-700", icon: "f" },
-  { name: "X / Twitter", color: "from-gray-900 to-black", icon: "X" },
-];
-const DEMO_HEADLINE = "Sunday pancakes and slow weekends — this kitchen earns them.";
+
+const FALLBACK_MLS = "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of the neighborhood trades quietly — and rarely.";
+const FALLBACK_HEADLINE = "Sunday pancakes and slow weekends — this kitchen earns them.";
+const FALLBACK_INSTAGRAM = `${FALLBACK_MLS}\n\n${FALLBACK_HEADLINE}\n\n#realestate #listings #home #luxury #realestateagent #homesweethome #property #dreamhome`;
+
+function Typewriter({ text, speed = 18, onDone }) {
+  const [display, setDisplay] = useState("");
+  useEffect(() => {
+    setDisplay("");
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      setDisplay(text.slice(0, i));
+      if (i >= text.length) { clearInterval(iv); onDone?.(); }
+    }, speed);
+    return () => clearInterval(iv);
+  }, [text]);
+  return <span>{display}<span className="animate-pulse text-vermillion">|</span></span>;
+}
 
 export default function Hero() {
-  const [demoRaw, setDemoRaw] = useState("");
   const [demoLoading, setDemoLoading] = useState(false);
   const [demoDone, setDemoDone] = useState(false);
+  const [demoResult, setDemoResult] = useState(null);
+  const [typing, setTyping] = useState(false);
+  const [typingDone, setTypingDone] = useState(false);
   const [copied, setCopied] = useState(null);
 
-  const runDemo = () => {
+  const runDemo = async () => {
     setDemoLoading(true);
     setDemoDone(false);
-    setTimeout(() => {
-      setDemoRaw(DEMO_LISTING);
-      setDemoDone(true);
-      setDemoLoading(false);
-    }, 1800);
+    setDemoResult(null);
+    setTyping(false);
+    setTypingDone(false);
+    try {
+      const session_id =
+        localStorage.getItem("lw_session_id") ||
+        `demo-${Math.random().toString(36).slice(2)}`;
+      const { data } = await axios.post(`${API}/rewrite`, {
+        raw_listing: DEMO_LISTING,
+        tone: "aspirational",
+        session_id,
+      });
+      setDemoResult(data);
+    } catch {
+      // silently fall back to hardcoded
+    }
+    setDemoLoading(false);
+    setDemoDone(true);
+    setTyping(true);
   };
 
   const copyText = async (key, text) => {
@@ -36,11 +68,23 @@ export default function Hero() {
     } catch {}
   };
 
+  const mls = demoResult?.mls || FALLBACK_MLS;
+  const headline = demoResult?.headlines?.[0] || FALLBACK_HEADLINE;
+  const instagram = demoResult?.instagram || FALLBACK_INSTAGRAM;
+  const facebook = demoResult?.facebook || `${headline}\n\n${mls}`;
+  const tweet = `${headline} — ListWorks PRO`;
+
+  const platforms = [
+    { name: "Instagram", text: instagram },
+    { name: "Facebook", text: facebook },
+    { name: "X / Twitter", text: tweet },
+  ];
+
   return (
     <section id="top" data-testid="hero-section" className="relative overflow-hidden border-b border-ink/15">
       <div className="blueprint-bg absolute inset-0 opacity-60 pointer-events-none" />
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-12 pb-20 md:pt-20 md:pb-28 grid grid-cols-12 gap-6 relative">
-        {/* Left column */}
+
         <div className="col-span-12 lg:col-span-8">
           <div className="flex items-center gap-3 mb-8 animate-rise" style={{ animationDelay: "0.05s" }}>
             <span className="h-px w-10 bg-ink" />
@@ -66,18 +110,12 @@ export default function Hero() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4 animate-rise" style={{ animationDelay: "0.3s" }}>
-            <a
-              data-testid="hero-primary-cta"
-              href="#playground"
-              className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]"
-            >
+            <a data-testid="hero-primary-cta" href="#playground"
+              className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
               Rewrite a Listing — Free
             </a>
-            <a
-              data-testid="hero-secondary-cta"
-              href="#guide"
-              className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]"
-            >
+            <a data-testid="hero-secondary-cta" href="#guide"
+              className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
               Get the $20 Guide
             </a>
           </div>
@@ -88,25 +126,25 @@ export default function Hero() {
             <span>● No credit card</span>
           </div>
 
-          {/* INLINE DEMO — the viral hook */}
           <div className="mt-14 max-w-2xl animate-rise" style={{ animationDelay: "0.45s" }}>
             <div className="bg-white border border-ink/15 p-6 md:p-8">
               <div className="flex items-center gap-2 mb-4">
                 <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-vermillion">/ Live Demo</span>
-                <span className="bg-green-100 text-green-700 font-mono text-[10px] px-2 py-0.5 uppercase tracking-wider">Watch it work</span>
+                <span className="bg-green-100 text-green-700 font-mono text-[10px] px-2 py-0.5 uppercase tracking-wider">Real AI · No tricks</span>
               </div>
 
               {!demoDone && !demoLoading && (
                 <div>
-                  <p className="font-body text-sm text-ink/70 mb-4 leading-relaxed">
-                    This is what your listing sounds like before ListWorks. Click the button to see the after — in real time.
+                  <p className="font-body text-sm text-ink/70 mb-3 leading-relaxed font-mono italic">
+                    "{DEMO_LISTING}"
                   </p>
-                  <button
-                    onClick={runDemo}
-                    className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition"
-                  >
+                  <p className="font-body text-xs text-ink/50 mb-4">
+                    ↑ This is what your listing sounds like before ListWorks. Hit the button — watch the AI rewrite it live.
+                  </p>
+                  <button onClick={runDemo}
+                    className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition">
                     <Sparkles className="w-4 h-4" />
-                    Run the Demo
+                    Run Live Demo
                   </button>
                 </div>
               )}
@@ -114,13 +152,13 @@ export default function Hero() {
               {demoLoading && (
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="h-2 bg-ink/10 rounded w-3/4" />
-                    <span className="font-mono text-[10px] text-ink/40 uppercase tracking-widest">Rewriting...</span>
                     <Loader2 className="w-4 h-4 animate-spin text-vermillion" />
+                    <span className="font-mono text-[10px] text-ink/40 uppercase tracking-widest">AI is rewriting...</span>
                   </div>
                   <div className="space-y-2">
-                    {[12, 10, 8, 11, 9, 10].map((w, i) => (
-                      <div key={i} className={`h-2.5 bg-ink/8 w-${w}/12 rounded animate-pulse`} />
+                    {[75, 90, 60, 82, 70, 88].map((w, i) => (
+                      <div key={i} className="h-2.5 bg-ink/8 rounded animate-pulse"
+                        style={{ width: `${w}%`, animationDelay: `${i * 0.1}s` }} />
                     ))}
                   </div>
                 </div>
@@ -130,33 +168,44 @@ export default function Hero() {
                 <div>
                   <div className="mb-5">
                     <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 mb-2">BEFORE</div>
-                    <p className="font-mono text-xs text-ink/50 leading-relaxed italic">{demoRaw}</p>
+                    <p className="font-mono text-xs text-ink/50 leading-relaxed italic">{DEMO_LISTING}</p>
                   </div>
                   <div className="border-t border-ink/10 pt-5">
-                    <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion mb-3">AFTER / ListWorks</div>
-                    <p className="font-display italic text-xl md:text-2xl leading-[1.4] text-ink mb-4">{DEMO_RESULT}</p>
-
-                    <div className="mb-4">
-                      <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 mb-2">Headline</div>
-                      <p className="font-display italic text-lg text-ink">{DEMO_HEADLINE}</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">AFTER / ListWorks AI</span>
+                      {demoResult && <span className="ml-auto font-mono text-[9px] text-green-600 uppercase tracking-wider">● Live output</span>}
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      {DEMO_PLATFORMS.map((p) => (
-                        <button
-                          key={p.name}
-                          onClick={() => copyText(p.name, p.name === "Instagram"
-                            ? `${DEMO_RESULT}\n\n${DEMO_HEADLINE}\n\n${p.hashtags}`
-                            : p.name === "X / Twitter"
-                            ? `${DEMO_HEADLINE} — ListWorks PRO`
-                            : `${DEMO_HEADLINE}\n\n${DEMO_RESULT}`)}
-                          className="border border-ink/20 hover:border-vermillion px-3 py-1.5 font-heading text-[10px] uppercase tracking-[0.12em] flex items-center gap-1.5 transition"
-                        >
-                          {copied === p.name ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          {copied === p.name ? "Copied" : `Copy for ${p.name}`}
-                        </button>
-                      ))}
-                    </div>
+                    <p className="font-display italic text-xl md:text-2xl leading-[1.4] text-ink mb-4">
+                      {typing && !typingDone
+                        ? <Typewriter text={mls} onDone={() => setTypingDone(true)} />
+                        : mls}
+                    </p>
+
+                    {typingDone && (
+                      <>
+                        <div className="mb-4 animate-rise">
+                          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 mb-1">Headline</div>
+                          <p className="font-display italic text-lg text-ink">{headline}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {platforms.map((p) => (
+                            <button key={p.name} onClick={() => copyText(p.name, p.text)}
+                              className="border border-ink/20 hover:border-vermillion px-3 py-1.5 font-heading text-[10px] uppercase tracking-[0.12em] flex items-center gap-1.5 transition">
+                              {copied === p.name ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                              {copied === p.name ? "Copied" : `Copy for ${p.name}`}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-ink/10">
+                          <button onClick={runDemo}
+                            className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/40 hover:text-vermillion transition flex items-center gap-1">
+                            <Sparkles className="w-3 h-3" /> Run again
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -164,7 +213,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right column */}
         <aside className="col-span-12 lg:col-span-4 lg:pl-8 lg:border-l lg:border-ink/15 flex flex-col justify-between gap-8 animate-rise" style={{ animationDelay: "0.5s" }}>
           <div>
             <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/50">No. 01</span>
@@ -192,6 +240,10 @@ export default function Hero() {
             </div>
           </div>
         </aside>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pb-20 animate-rise" style={{ animationDelay: "0.6s" }}>
+        <AITransformation />
       </div>
     </section>
   );
