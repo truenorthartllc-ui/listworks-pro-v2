@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowUpRight, X, FileText, Loader2 } from "lucide-react";
+import { ArrowUpRight, X, FileText, Loader2, Lock } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 
 export default function GuideUpsell() {
@@ -34,7 +34,7 @@ export default function GuideUpsell() {
           <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Document No. 001</span>
           <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.95] mt-6">
             <span className="font-light">The Guide.</span><br />
-            <span className="italic">$20.</span>
+            <span className="italic">0.</span>
           </h2>
           <p className="mt-8 font-body text-lg md:text-xl text-oat/80 leading-relaxed max-w-xl">
             The exact framework powering this tool — written out, page by page.
@@ -74,7 +74,6 @@ export default function GuideUpsell() {
           </p>
         </div>
 
-        {/* Editorial blueprint card */}
         <aside className="col-span-12 lg:col-span-5 lg:pl-10 lg:border-l lg:border-oat/15">
           <div className="border border-oat/25 p-8 md:p-10 bg-coal/60">
             <div className="flex items-center justify-between mb-6 font-mono text-[10px] tracking-[0.25em] uppercase text-oat/50">
@@ -106,27 +105,27 @@ export default function GuideUpsell() {
         </aside>
       </div>
 
-      {/* PDF Preview Modal */}
       {previewOpen && (
         <div
           data-testid="guide-preview-modal"
           className="fixed inset-0 z-[100] bg-coal/95 backdrop-blur-sm flex flex-col animate-rise"
           onClick={(e) => e.target === e.currentTarget && setPreviewOpen(false)}
         >
-          <div className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-oat/20 bg-coal">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-oat/20 bg-coal shrink-0">
             <div className="flex items-baseline gap-3">
               <span className="font-display italic text-2xl text-oat">ListWorks Guide</span>
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Preview · LWP-DOC-001</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Preview · Pages 1–3 of 85</span>
             </div>
             <div className="flex items-center gap-3">
-              <a
+              <button
                 data-testid="modal-buy-btn"
-                href="#"
-                onClick={async (e) => { e.preventDefault(); await startCheckout("guide_pdf"); }}
+                onClick={buyGuide}
+                disabled={buying}
                 className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-5 py-2.5 font-heading text-[12px] uppercase tracking-[0.15em] flex items-center gap-2 transition"
               >
-                Buy — $20 <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
+                {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><ArrowUpRight className="w-3.5 h-3.5" /> Unlock All 85 Pages — $20</>}
+              </button>
               <button
                 data-testid="close-preview-btn"
                 onClick={() => setPreviewOpen(false)}
@@ -137,13 +136,41 @@ export default function GuideUpsell() {
               </button>
             </div>
           </div>
-          <div className="flex-1 bg-[#2a2a2a]">
+
+          {/* PDF teaser — locked to top portion, no interaction */}
+          <div className="relative flex-1 bg-[#2a2a2a] overflow-hidden">
             <iframe
               data-testid="guide-pdf-iframe"
-              src="/assets/listworks-guide.pdf#toolbar=0&navpanes=0"
+              src="/assets/listworks-guide.pdf#toolbar=0&navpanes=0&scrollbar=0&page=1&view=FitH"
               title="ListWorks Guide Preview"
               className="w-full h-full"
+              style={{ pointerEvents: "none" }}
             />
+
+            {/* Gradient fade — bottom 55% */}
+            <div
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{ height: "55%", background: "linear-gradient(to bottom, transparent 0%, #1a1a1a 60%, #1a1a1a 100%)" }}
+            />
+
+            {/* Paywall block */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-12 px-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 border border-oat/30 mb-4">
+                <Lock className="w-5 h-5 text-oat/60" />
+              </div>
+              <p className="font-display italic text-2xl md:text-3xl text-oat mb-2">Pages 4–85 are locked.</p>
+              <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-oat/50 mb-6">
+                15 prompts · 5 templates · buyer psychology · the full framework
+              </p>
+              <button
+                onClick={buyGuide}
+                disabled={buying}
+                className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2 transition-all hover:-translate-y-1 disabled:opacity-60"
+              >
+                {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ArrowUpRight className="w-4 h-4" /> Unlock Everything — $20</>}
+              </button>
+              <p className="mt-4 font-mono text-[10px] tracking-[0.18em] uppercase text-oat/40">30-day money-back · instant download</p>
+            </div>
           </div>
         </div>
       )}
