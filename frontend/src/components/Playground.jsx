@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -38,7 +38,7 @@ const TABS = [
 
 const SAMPLE = `3 bed 2 bath ranch home. 1,840 sqft. Updated kitchen with granite counters and stainless appliances. Hardwood floors throughout. Fenced backyard. Two-car garage. Walking distance to top-rated schools. Move-in ready.`;
 
-const FREE_TRIALS_PER_SESSION = 3;
+const FREE_TRIALS_PER_SESSION = 0;
 
 export default function Playground() {
   const [raw, setRaw] = useState("");
@@ -53,6 +53,8 @@ export default function Playground() {
   const [showShareCard, setShowShareCard] = useState(false);
   const [strengthOpen, setStrengthOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
+  const [isPro, setIsPro] = useState(false);
+  const [entitlementsLoaded, setEntitlementsLoaded] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
   const [tourOpen, setTourOpen] = useState(false);
@@ -74,9 +76,22 @@ export default function Playground() {
     }
   }, [result]);
 
+  useEffect(() => {
+    const sid = localStorage.getItem("lw_session_id");
+    if (!sid) { setEntitlementsLoaded(true); return; }
+    axios.get(`${API}/entitlements/${sid}`)
+      .then(({ data }) => setIsPro(data.is_pro || false))
+      .catch(() => {})
+      .finally(() => setEntitlementsLoaded(true));
+  }, []);
+
+  const requirePro = () => setPaywallOpen(true);
+  const handleProMode = (m) => { if (isPro) setMode(m); else requirePro(); };
+
   const handleSample = () => setRaw(SAMPLE);
 
   const generate = async (forcedTone = null) => {
+    if (!isPro) { setPaywallOpen(true); return; }
     if (raw.trim().length < 10) {
       toast.error("Add at least a sentence — give the AI something to work with.");
       return;
@@ -161,17 +176,17 @@ export default function Playground() {
 
             <div className="flex flex-wrap gap-3 mt-6">
               <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
-              <button onClick={() => setMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts</button>
-              <button onClick={() => setMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Redfin Import</button>
-              <button onClick={() => setMode("contract")} data-active={mode === "contract"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Contract Review</button>
-              <button onClick={() => setMode("seller")} data-active={mode === "seller"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Seller Reports</button>
-              <button onClick={() => setMode("nurture")} data-active={mode === "nurture"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MessageSquare className="w-4 h-4" />Lead Nurture</button>
-              <button onClick={() => setMode("score")} data-active={mode === "score"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Target className="w-4 h-4" />Lead Score</button>
-              <button onClick={() => setMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions</button>
-              <button onClick={() => setMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House</button>
-              <button onClick={() => setMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing</button>
-              <button onClick={() => setMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk</button>
-              <button onClick={() => setMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report</button>
+              <button onClick={() => handleProMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Redfin Import<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("contract")} data-active={mode === "contract"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Contract Review<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("seller")} data-active={mode === "seller"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Seller Reports<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("nurture")} data-active={mode === "nurture"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MessageSquare className="w-4 h-4" />Lead Nurture<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("score")} data-active={mode === "score"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Target className="w-4 h-4" />Lead Score<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
             </div>
           </div>
         </div>

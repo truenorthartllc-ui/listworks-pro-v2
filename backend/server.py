@@ -581,7 +581,7 @@ def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
 
 
 # Hard 3-trial limit: track FREE rewrites used per session (in-memory, no DB hit)
-FREE_TRIALS_PER_SESSION = 3
+FREE_TRIALS_PER_SESSION = 0
 
 
 def _check_free_trial(session_id: str) -> tuple[bool, int]:
