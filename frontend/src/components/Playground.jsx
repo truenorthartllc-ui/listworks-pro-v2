@@ -89,11 +89,12 @@ export default function Playground() {
   const requirePro = () => setPaywallOpen(true);
   const handleProMode = (m) => setMode(m);
 
-  const handleSample = () => setRaw(SAMPLE);
+  const handleSample = () => { setRaw(SAMPLE); generate(null, SAMPLE); };
 
-  const generate = async (forcedTone = null) => {
+  const generate = async (forcedTone = null, rawOverride = null) => {
     if (!isPro) { setPaywallOpen(true); return; }
-    if (raw.trim().length < 10) {
+    const listingText = rawOverride || raw;
+    if (listingText.trim().length < 10) {
       toast.error("Add at least a sentence — give the AI something to work with.");
       return;
     }
@@ -102,7 +103,7 @@ export default function Playground() {
     try {
       const session_id = localStorage.getItem("lw_session_id");
       const { data } = await axios.post(`${API}/rewrite`, {
-        raw_listing: raw,
+        raw_listing: listingText,
         tone: forcedTone || tone,
         ...meta,
         virtual_tour_url: virtualTourUrl || undefined,
