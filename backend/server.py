@@ -965,12 +965,7 @@ Let's get you paid.
 — The ListWorks PRO Team
 """
     try:
-        await asyncio.to_thread(
-            send_email,
-            to=email,
-            subject=f"You are a ListWorks PRO Affiliate, {name}!",
-            body=body,
-        )
+        await send_email(to=email, subject=f"You are a ListWorks PRO Affiliate, {name}!", body=body)
     except Exception as e:
         logger.warning("Could not send affiliate welcome email to %s: %s", email, e)
 
