@@ -38,7 +38,7 @@ const TABS = [
 ];
 
 const DEMO_RESULT = {
-  mls: "Some mornings just feel different.
+  mls: `Some mornings just feel different.
 
 The kind where you pad across warm hardwood floors in bare feet, pour your first cup in a kitchen that actually makes you want to cook, and look out at a backyard that's entirely, completely yours.
 
@@ -48,23 +48,23 @@ The fenced backyard isn't a feature — it's a lifestyle decision. A private san
 
 This isn't a starter home. It's a stay-here-forever home disguised as one. Move-in ready means exactly that — no projects, no contractors, no compromises.
 
-Offers reviewed as received.",
-  instagram: "Bare feet on hardwood. Coffee in a kitchen you actually love. A backyard that's yours alone. 🏡
+Offers reviewed as received.`,
+  instagram: `Bare feet on hardwood. Coffee in a kitchen you actually love. A backyard that's yours alone. 🏡
 
 This 3/2 ranch just hit the market and it's everything the algorithm can't capture.
 
 Updated kitchen · Hardwood throughout · Fenced yard · Top-rated schools · Move-in ready
 
-#JustListed #RealEstate #DreamHome #RanchStyle #MoveinReady #HomeGoals #HouseHunting",
-  facebook: "If you've been waiting for the right one — this is it.
+#JustListed #RealEstate #DreamHome #RanchStyle #MoveinReady #HomeGoals #HouseHunting`,
+  facebook: `If you've been waiting for the right one — this is it.
 
 A 3-bed, 2-bath ranch that's move-in ready, school-district perfect, and priced to move. Updated kitchen with granite and stainless. Hardwood throughout. Fenced backyard with room to breathe.
 
 No renovations. No compromises. Just keys and boxes.
 
-Comment TOUR and I'll get you in this week.",
+Comment TOUR and I'll get you in this week.`,
   headlines: ["Three Families Already Toured This. The Fourth One Is Going To Buy It.", "Everything You've Been Compromising On — This House Has It.", "You Said You Wanted Move-In Ready. Here It Is. Now What?"],
-  email: "Subject: The ranch on [Street] — you asked me to tell you when something like this came up
+  email: `Subject: The ranch on [Street] — you asked me to tell you when something like this came up
 
 Hey [Name],
 
@@ -72,7 +72,7 @@ This is that call.
 
 3 bed, 2 bath ranch. Updated kitchen, hardwood throughout, fenced backyard, top-rated schools walking distance. Move-in ready — genuinely, not just listing-speak.
 
-I've got showings filling up fast. Let me know if you want in before the weekend crowd.",
+I've got showings filling up fast. Let me know if you want in before the weekend crowd.`,
   listing_strength: 8.7,
   strength_reasons: ["Strong lifestyle-first narrative", "Urgency without desperation", "Specific features woven into story"],
   tone: "Modern",
