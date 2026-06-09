@@ -81,7 +81,7 @@ I've got showings filling up fast. Let me know if you want in before the weekend
 
 const SAMPLE = `3 bed 2 bath ranch home. 1,840 sqft. Updated kitchen with granite counters and stainless appliances. Hardwood floors throughout. Fenced backyard. Two-car garage. Walking distance to top-rated schools. Move-in ready.`;
 
-const FREE_TRIALS_PER_SESSION = 0;
+const FREE_TRIALS_PER_SESSION = 3;
 
 export default function Playground() {
   const [raw, setRaw] = useState("");
