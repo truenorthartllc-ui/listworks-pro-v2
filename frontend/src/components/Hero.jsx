@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Sparkles, Loader2, Copy, Check } from "lucide-react";
+import { Sparkles, Loader2, Copy, Check, Zap } from "lucide-react";
+import { startCheckout } from "@/lib/checkout";
 import { toast } from "sonner";
 import AITransformation from "./AITransformation";
 
@@ -120,6 +121,11 @@ export default function Hero() {
               className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
               Get the $20 Guide
             </a>
+            <button onClick={() => startCheckout("credits_10")}
+              className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2">
+              <Zap className="w-4 h-4 text-vermillion" strokeWidth={2} />
+              Buy 10 Credits — $5
+            </button>
           </div>
 
           <div className="mt-12 flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/60 animate-rise" style={{ animationDelay: "0.4s" }}>
