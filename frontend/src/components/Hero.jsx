@@ -7,10 +7,10 @@ import AITransformation from "./AITransformation";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const DEMO_LISTING = "3 bed 2 bath ranch. Updated kitchen with granite counters. Hardwood floors throughout. Fenced backyard. Close to top-rated schools. Move-in ready.";
+const DEMO_LISTING = "3 bed 2 bath ranch, 1,840 sqft. Updated kitchen with granite and stainless. Hardwood floors. Fenced backyard. Top-rated schools nearby. Move-in ready.";
 
-const FALLBACK_MLS = "Sunlight pours through the front window at 7 a.m. — and that's before you've even reached the kitchen, where granite catches the morning glow and Sunday pancakes practically make themselves. Three bedrooms. Two updated baths. A backyard built for slow weekends and faster dogs. Walk to top-rated schools, bike to the trail, and discover why this stretch of the neighborhood trades quietly — and rarely.";
-const FALLBACK_HEADLINE = "Sunday pancakes and slow weekends — this kitchen earns them.";
+const FALLBACK_MLS = "Welcome home to easy, single-level living where every morning starts with sunlight pouring across gleaming hardwood floors. Imagine slow Sunday breakfasts in a stunning updated kitchen — granite counters, stainless appliances, and room for everyone to gather while the coffee brews. Three bedrooms and two baths give your family space to grow. Out back, a fully fenced yard is ready for backyard barbecues, kids' adventures, and pets running free under open skies. Stroll your little ones to top-rated schools just blocks away, then return to a home that asks nothing of you. Move-in ready — truly, not just listing-speak.";
+const FALLBACK_HEADLINE = "Welcome home to single-level living — where hardwood meets Sunday mornings.";
 const FALLBACK_INSTAGRAM = `${FALLBACK_MLS}\n\n${FALLBACK_HEADLINE}\n\n#realestate #listings #home #luxury #realestateagent #homesweethome #property #dreamhome`;
 
 function Typewriter({ text, speed = 18, onDone }) {

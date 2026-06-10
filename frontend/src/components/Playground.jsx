@@ -38,29 +38,25 @@ const TABS = [
 ];
 
 const DEMO_RESULT = {
-  mls: `Some mornings just feel different.
+  mls: `Welcome home to easy, single-level living where every morning starts with sunlight pouring across gleaming hardwood floors.
 
-The kind where you pad across warm hardwood floors in bare feet, pour your first cup in a kitchen that actually makes you want to cook, and look out at a backyard that's entirely, completely yours.
+Imagine slow Sunday breakfasts in a stunning updated kitchen — granite counters, stainless appliances, and room for everyone to gather while the coffee brews.
 
-Three bedrooms. Two baths. A ranch layout that flows the way life actually works. The updated kitchen anchors the home with granite counters and stainless appliances that can handle a dinner party or a Tuesday takeout spread with equal grace.
+Three bedrooms and two baths give your family space to grow, breathe, and unwind. Out back, a fully fenced yard is ready for backyard barbecues, kids' adventures, and pets running free under open skies.
 
-The fenced backyard isn't a feature — it's a lifestyle decision. A private sanctuary where kids run, dogs roam, and adults finally exhale. Two-car garage. Top-rated schools walking distance away.
+Stroll your little ones to top-rated schools just blocks away, then return to a home that asks nothing of you — no projects, no contractors, no compromises.
 
-This isn't a starter home. It's a stay-here-forever home disguised as one. Move-in ready means exactly that — no projects, no contractors, no compromises.
+Move-in ready. Truly. This one won't last.`,
+  instagram: `Bare feet on warm hardwood. Coffee in a kitchen that actually makes you want to cook. A backyard that's entirely, completely yours. 🏡
 
-Offers reviewed as received.`,
-  instagram: `Bare feet on hardwood. Coffee in a kitchen you actually love. A backyard that's yours alone. 🏡
+This 3/2 ranch is everything the algorithm can't capture — updated kitchen, fenced yard, top-rated schools steps away. Move-in ready. Truly.
 
-This 3/2 ranch just hit the market and it's everything the algorithm can't capture.
-
-Updated kitchen · Hardwood throughout · Fenced yard · Top-rated schools · Move-in ready
-
-#JustListed #RealEstate #DreamHome #RanchStyle #MoveinReady #HomeGoals #HouseHunting`,
+#JustListed #RealEstate #DreamHome #RanchLife #MoveInReady`,
   facebook: `If you've been waiting for the right one — this is it.
 
-A 3-bed, 2-bath ranch that's move-in ready, school-district perfect, and priced to move. Updated kitchen with granite and stainless. Hardwood throughout. Fenced backyard with room to breathe.
+A 3-bed, 2-bath ranch that's genuinely move-in ready. Updated kitchen. Hardwood throughout. Fenced backyard with room to breathe. Walking distance to top-rated schools.
 
-No renovations. No compromises. Just keys and boxes.
+No renovations. No compromises. Just keys.
 
 Comment TOUR and I'll get you in this week.`,
   headlines: ["Three Families Already Toured This. The Fourth One Is Going To Buy It.", "Everything You've Been Compromising On — This House Has It.", "You Said You Wanted Move-In Ready. Here It Is. Now What?"],
@@ -79,7 +75,7 @@ I've got showings filling up fast. Let me know if you want in before the weekend
   id: "demo-sample-preview",
 };
 
-const SAMPLE = `3 bed 2 bath ranch home. 1,840 sqft. Updated kitchen with granite counters and stainless appliances. Hardwood floors throughout. Fenced backyard. Two-car garage. Walking distance to top-rated schools. Move-in ready.`;
+const SAMPLE = `Welcome home to single-level living where every morning starts with sunlight pouring across gleaming hardwood floors. Imagine slow Sunday breakfasts in a stunning updated kitchen — granite counters, stainless appliances, and room for everyone. Three bedrooms. Two baths. A fenced backyard ready for barbecues, kids' adventures, and pets running free. Top-rated schools just blocks away. Move-in ready means exactly that — no projects, no compromises, just keys.`;
 
 const FREE_TRIALS_PER_SESSION = 3;
 
