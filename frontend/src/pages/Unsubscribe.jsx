@@ -17,7 +17,7 @@ export default function Unsubscribe() {
       .then((r) => r.json())
       .then((d) => setStatus(d.unsubscribed ? "done" : "error"))
       .catch(() => setStatus("error"));
-  }, []);
+  }, [params]);
 
   return (
     <div
