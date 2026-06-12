@@ -23,6 +23,7 @@ import FairHousingPanel from "@/components/FairHousingPanel";
 import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
 import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import AgentBioPanel from "@/components/AgentBioPanel";
+import PhotoToListing from "@/components/PhotoToListing";
 import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
@@ -225,6 +226,7 @@ export default function Playground() {
             <div className="flex flex-wrap gap-3 mt-6">
               <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
               <button onClick={() => setMode("bio")} data-active={mode === "bio"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Box className="w-4 h-4" />Agent Bio</button>
+              <button onClick={() => setMode("photo")} data-active={mode === "photo"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Photo → Listing</button>
               <button onClick={() => handleProMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Redfin Import<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("contract")} data-active={mode === "contract"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Contract Review<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
@@ -681,6 +683,12 @@ export default function Playground() {
       {mode === "bio" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
           <AgentBioPanel />
+        </div>
+      )}
+
+      {mode === "photo" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <PhotoToListing onFeaturesDetected={(draft) => { setRaw(draft); setMode("rewrite"); }} />
         </div>
       )}
 
