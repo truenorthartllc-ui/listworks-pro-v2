@@ -79,8 +79,8 @@ async def call_openrouter(system: str, user_text: str, model: str = None) -> str
 # Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
     "guide_pdf":   {"amount":  20.00, "currency": "usd", "name": "ListWorks Guide PDF",          "kind": "guide"},
-    "pro_month":   {"amount":  49.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
-    "pro_annual":  {"amount": 470.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
+    "pro_month":   {"amount":  29.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
+    "pro_annual":  {"amount": 290.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
     "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
     "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
     "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},

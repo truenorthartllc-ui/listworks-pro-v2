@@ -17,7 +17,7 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "$49",
+    price: "$29",
     period: "/ month",
     blurb: "For full-time agents shipping listings weekly.",
     features: [
@@ -30,7 +30,7 @@ const tiers = [
       "Listing history (forever)",
       "360° Virtual Tour embeds",
     ],
-    cta: "Go Pro — $49/mo",
+    cta: "Go Pro — $29/mo",
     action: { kind: "checkout", package_id: "pro_month" },
     highlight: true,
   },

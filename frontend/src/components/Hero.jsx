@@ -132,6 +132,7 @@ export default function Hero() {
             <span>● 200+ agents</span>
             <span>● instant access</span>
             <span>● No credit card</span>
+            <span className="text-green-600">● Fair Housing compliant</span>
           </div>
 
           <div className="mt-14 max-w-2xl animate-rise" style={{ animationDelay: "0.45s" }}>
