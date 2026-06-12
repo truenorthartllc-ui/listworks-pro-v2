@@ -37,6 +37,9 @@ export default function GuideUpsell() {
             <span className="italic">0.</span>
           </h2>
           <p className="mt-8 font-body text-lg md:text-xl text-oat/80 leading-relaxed max-w-xl">
+            <span className="text-vermillion font-heading text-xs uppercase tracking-[0.15em]">Compiled by agents with 50+ years of combined sales experience.</span>
+          </p>
+          <p className="mt-3 font-body text-lg md:text-xl text-oat/80 leading-relaxed max-w-xl">
             The exact framework powering this tool — written out, page by page.
             The Feature → Benefit → Feeling system. The 5-part structure. The four
             buyer psychology triggers. 15 plug-and-play AI prompts. Read it once.
