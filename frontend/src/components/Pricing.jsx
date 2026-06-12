@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, Crown, Zap, Flame } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 
-const PROMO_ENDS = new Date("2026-06-19T23:59:59");
+const PROMO_ENDS = new Date("2026-06-25T23:59:59");
 
 function PromoCountdown() {
   const [timeLeft, setTimeLeft] = useState("");
@@ -127,7 +127,7 @@ export default function Pricing() {
             <span className="font-mono text-sm">Use code <strong>COMEBACK29</strong> at checkout.</span>
           </div>
           <div className="font-mono text-xs uppercase tracking-wider opacity-80 flex items-center gap-2">
-            Ends in <PromoCountdown />
+            Ends Jun 25 — <PromoCountdown />
           </div>
         </div>
 
