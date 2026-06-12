@@ -501,7 +501,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     user_text = _build_user_prompt(req)
     system = REWRITE_SYSTEM
     if req.language and req.language.lower() not in ("english", "en"):
-        system += f"\n\nIMPORTANT: Generate ALL output (MLS description, Instagram, Facebook, headlines, email) in {req.language}. Keep property details (address, price, measurements) in their original form."
+        system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, and email — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
     try:
         raw = await call_g0dm0d3(system, user_text, tier="smart")
     except Exception as g_err:

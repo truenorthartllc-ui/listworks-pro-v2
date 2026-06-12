@@ -329,7 +329,7 @@ export default function Playground() {
               <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">Output Language</span>
               <div className="flex flex-wrap gap-2">
                 {[{ code: "English", flag: "🇺🇸" }, { code: "Spanish", flag: "🇪🇸" }, { code: "Chinese", flag: "🇨🇳" }].map(({ code, flag }) => (
-                  <button key={code} onClick={() => setLanguage(code)} data-active={language === code} className="tone-pill flex items-center gap-1.5">
+                  <button key={code} onClick={() => { setLanguage(code); if (result && code !== language) toast.info(`Language set to ${code} — hit Rewrite to apply.`); }} data-active={language === code} className="tone-pill flex items-center gap-1.5">
                     <span>{flag}</span>{code}
                   </button>
                 ))}
