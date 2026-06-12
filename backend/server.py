@@ -2046,6 +2046,56 @@ async def unsubscribe_check(email: str):
 
 
 # ===== PRICING (frontend reads this) =====
+class LocalGemsRequest(BaseModel):
+    address: str
+    session_id: Optional[str] = None
+
+
+@api_router.post("/local-gems")
+async def local_gems(req: LocalGemsRequest):
+    if not req.address or len(req.address.strip()) < 5:
+        raise HTTPException(400, "Address required")
+
+    tavily_key = os.environ.get("TAVILY_API_KEY", "")
+    if not tavily_key:
+        raise HTTPException(503, "Tavily not configured")
+
+    address = req.address.strip()
+
+    async def tavily_search(query: str) -> str:
+        async with httpx.AsyncClient(timeout=15.0) as c:
+            r = await c.post(
+                "https://api.tavily.com/search",
+                json={"api_key": tavily_key, "query": query, "max_results": 3, "search_depth": "basic"},
+            )
+            if r.status_code != 200:
+                return ""
+            results = r.json().get("results", [])
+            return " ".join(res.get("content", "")[:300] for res in results[:3])
+
+    schools_raw, restaurants_raw, transit_raw = await asyncio.gather(
+        tavily_search(f"top rated schools near {address}"),
+        tavily_search(f"best restaurants cafes near {address}"),
+        tavily_search(f"transit walkability parks near {address}"),
+    )
+
+    system = (
+        "You write one short, punchy paragraph (3-4 sentences) for a real estate listing "
+        "highlighting the neighborhood's best local features. Tone: warm, specific, aspirational. "
+        "Use actual place names and ratings when present. No fluff. No 'nestled' or 'boasting'."
+    )
+    user = (
+        f"Property address: {address}\n\n"
+        f"Schools data: {schools_raw[:600] or 'top-rated schools nearby'}\n"
+        f"Restaurants/cafes data: {restaurants_raw[:600] or 'local dining options'}\n"
+        f"Transit/parks data: {transit_raw[:600] or 'parks and transit access'}\n\n"
+        "Write the Local Gems paragraph."
+    )
+
+    paragraph = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    return {"paragraph": paragraph.strip()}
+
+
 @api_router.get("/pricing")
 async def pricing():
     return {

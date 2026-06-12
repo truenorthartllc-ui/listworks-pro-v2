@@ -100,6 +100,7 @@ export default function Playground() {
   const [openHouseResult, setOpenHouseResult] = useState(null);
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
+  const [gemsLoading, setGemsLoading] = useState(false);
   const [fhLoading, setFhLoading] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const outputRef = useRef(null);
@@ -255,7 +256,34 @@ export default function Playground() {
             />
 
             <div className="grid grid-cols-2 gap-3 mb-5">
-              <input data-testid="meta-address" placeholder="Address (optional)" value={meta.address} onChange={(e) => setMeta({ ...meta, address: e.target.value })} className="editorial-input text-sm" />
+              <div className="relative">
+                <input data-testid="meta-address" placeholder="Address (optional)" value={meta.address} onChange={(e) => setMeta({ ...meta, address: e.target.value })} className="editorial-input text-sm w-full" />
+                {meta.address?.trim().length > 5 && (
+                  <button
+                    type="button"
+                    disabled={gemsLoading}
+                    onClick={async () => {
+                      setGemsLoading(true);
+                      try {
+                        const { data } = await axios.post(`${API}/local-gems`, {
+                          address: meta.address,
+                          session_id: localStorage.getItem("lw_session_id"),
+                        });
+                        setRaw(prev => prev ? `${prev}\n\n${data.paragraph}` : data.paragraph);
+                        toast.success("Local gems added to your listing.");
+                      } catch {
+                        toast.error("Couldn't fetch local data. Try again.");
+                      } finally {
+                        setGemsLoading(false);
+                      }
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-vermillion text-oat px-2 py-1 font-heading text-[9px] uppercase tracking-[0.12em] hover:bg-[#ff2a0e] transition"
+                  >
+                    {gemsLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    {gemsLoading ? "Fetching…" : "Local Gems"}
+                  </button>
+                )}
+              </div>
               <input data-testid="meta-price" placeholder="Price" value={meta.price} onChange={(e) => setMeta({ ...meta, price: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-beds" placeholder="Beds" value={meta.beds} onChange={(e) => setMeta({ ...meta, beds: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-baths" placeholder="Baths" value={meta.baths} onChange={(e) => setMeta({ ...meta, baths: e.target.value })} className="editorial-input text-sm" />
