@@ -118,6 +118,7 @@ export default function Playground() {
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
   const [gemsLoading, setGemsLoading] = useState(false);
+  const [lookupLoading, setLookupLoading] = useState(false);
   const [language, setLanguage] = useState("English");
   const [mlsPreset, setMlsPreset] = useState(MLS_PRESETS[0]);
   const [fhLoading, setFhLoading] = useState(false);
@@ -310,6 +311,40 @@ export default function Playground() {
                   </button>
                 )}
               </div>
+              {meta.address?.trim().length > 10 && !meta.beds && (
+                <div className="col-span-2 -mt-1">
+                  <button
+                    type="button"
+                    disabled={lookupLoading}
+                    onClick={async () => {
+                      setLookupLoading(true);
+                      try {
+                        const { data } = await axios.post(`${API}/lookup-address`, {
+                          address: meta.address,
+                          session_id: localStorage.getItem("lw_session_id"),
+                        });
+                        setMeta(prev => ({
+                          ...prev,
+                          price: data.price || prev.price,
+                          beds: data.beds || prev.beds,
+                          baths: data.baths || prev.baths,
+                          sqft: data.sqft || prev.sqft,
+                        }));
+                        toast.success("Property details auto-filled from public records.");
+                      } catch (e) {
+                        const msg = e?.response?.data?.detail || "No public data found — fill in manually.";
+                        toast.info(msg);
+                      } finally {
+                        setLookupLoading(false);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-vermillion hover:underline disabled:opacity-50"
+                  >
+                    {lookupLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    {lookupLoading ? "Looking up…" : "Auto-fill beds · baths · sqft →"}
+                  </button>
+                </div>
+              )}
               <input data-testid="meta-price" placeholder="Price" value={meta.price} onChange={(e) => setMeta({ ...meta, price: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-beds" placeholder="Beds" value={meta.beds} onChange={(e) => setMeta({ ...meta, beds: e.target.value })} className="editorial-input text-sm" />
               <input data-testid="meta-baths" placeholder="Baths" value={meta.baths} onChange={(e) => setMeta({ ...meta, baths: e.target.value })} className="editorial-input text-sm" />

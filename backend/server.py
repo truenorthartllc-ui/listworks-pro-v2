@@ -232,6 +232,11 @@ class ExpiredListingScripts(BaseModel):
     door_knock_script: str
 
 
+class AddressLookupRequest(BaseModel):
+    address: str
+    session_id: Optional[str] = None
+
+
 class RedfinImportRequest(BaseModel):
     redfin_url: str
 
@@ -322,9 +327,32 @@ PSYCHOLOGICAL TRIGGERS — ACTIVATE AT LEAST 2 PER ASSET
 - Contrast: "City energy when you want it. Tree-lined quiet when you don't."
 
 ═══════════════════════════════════════════════════════════════
+FAIR HOUSING COMPLIANCE — ABSOLUTE LAW
+═══════════════════════════════════════════════════════════════
+NEVER write language implying a property is suitable or unsuitable for any protected class.
+
+BANNED — protected class language:
+- Familial status: "perfect for families", "great for kids", "family-friendly", "kid-friendly"
+- Religion: "near churches", "walk to church", "religious community"
+- Race/national origin: any language implying neighborhood demographics
+- Age: "great for retirees", "senior living", "retirement community"
+- Disability: implying a person needs accessibility features
+
+INSTEAD — describe what is physically there:
+- "fenced backyard" NOT "perfect for kids"
+- "0.3 miles from First Baptist Church" NOT "church community nearby"
+- "wide doorways and zero-step entry" NOT "accessible"
+
+═══════════════════════════════════════════════════════════════
 HARD RULES — VIOLATION = FAILURE
 ═══════════════════════════════════════════════════════════════
-ABSOLUTELY BANNED: "Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (as a crutch), "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell", "Call for details", "Opportunity awaits", "This gem", "Check out"
+ABSOLUTELY BANNED (AI clichés that signal robot writing):
+"Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (as a crutch), "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell", "Call for details", "Opportunity awaits", "This gem", "Check out", "Stunning", "Gorgeous", "Meticulously", "Meticulously maintained", "Breathtaking", "Incredible", "Fantastic", "Spectacular", "Magnificent", "Immaculate", "Pristine", "Amazing", "Wonderful", "Exceptional", "Outstanding", "Remarkable"
+
+TEST: If the word could appear in 10,000 other listings, do not use it. Be specific instead.
+- NOT "stunning kitchen" → YES "quartz counters under a skylight, no overhead fluorescents"
+- NOT "meticulously maintained" → YES "new roof (2023), HVAC replaced last spring"
+- NOT "gorgeous views" → YES "south-facing windows frame open sky from every room"
 
 DO NOT:
 - Open with the address or property type
@@ -335,12 +363,14 @@ DO NOT:
 - Say "you won't want to miss this"
 - Use generic filler like "great schools" or "close to everything"
 - Describe the obvious (a kitchen has countertops, a bedroom has a closet)
+- Invent specific facts not provided in the input
 
 ALWAYS:
 - Write in present tense
 - Use active voice
 - Include at least one specific sensory detail per asset
-- Make the reader feel like this specific home, not any home
+- Ground every claim in facts from the input
+- Make the reader feel like THIS specific home, not any home
 - End every asset with forward momentum
 
 ═══════════════════════════════════════════════════════════════
@@ -1576,6 +1606,73 @@ Return the JSON object with all available property details. JSON only."""
         lot_size=data.get("lot_size"),
         parking=data.get("parking"),
         description=data.get("description"),
+    )
+
+
+ADDRESS_LOOKUP_SYSTEM = """You extract real estate property data from web search snippets.
+Return ONLY a JSON object with these fields (use null for any field not found):
+{
+  "price": "$XXX,XXX",
+  "beds": "3",
+  "baths": "2",
+  "sqft": "1,850",
+  "year_built": "1998",
+  "property_type": "Single Family",
+  "lot_size": "0.25 acres"
+}
+Rules: Extract only what is explicitly stated. No guessing. Numbers only for beds/baths/sqft. JSON only."""
+
+
+@api_router.post("/lookup-address", response_model=RedfinPropertyData)
+async def lookup_address(req: AddressLookupRequest):
+    address = req.address.strip()
+    if len(address) < 5:
+        raise HTTPException(400, "Please enter a full street address.")
+
+    tavily_key = os.environ.get("TAVILY_API_KEY", "")
+    if not tavily_key:
+        raise HTTPException(503, "Address lookup not available — Tavily not configured.")
+
+    async with httpx.AsyncClient(timeout=15.0) as c:
+        r = await c.post(
+            "https://api.tavily.com/search",
+            json={
+                "api_key": tavily_key,
+                "query": f"{address} bedrooms bathrooms square feet listing",
+                "max_results": 5,
+                "search_depth": "basic",
+                "include_domains": ["zillow.com", "redfin.com", "realtor.com", "trulia.com"],
+            },
+        )
+        if r.status_code != 200:
+            raise HTTPException(502, "Address lookup failed. Please fill in details manually.")
+        results = r.json().get("results", [])
+
+    if not results:
+        raise HTTPException(404, "No public listing data found for this address. Please fill in details manually.")
+
+    snippets = "\n\n".join(
+        f"Source: {res.get('url', '')}\n{res.get('content', '')[:500]}"
+        for res in results[:4]
+    )
+    user_prompt = f"Address: {address}\n\nSearch results:\n{snippets}\n\nExtract property data. JSON only."
+
+    raw = await call_openrouter(ADDRESS_LOOKUP_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    cleaned = _strip_json(raw)
+    try:
+        data = json.loads(cleaned)
+    except Exception:
+        raise HTTPException(500, "Could not parse property data. Please fill in details manually.")
+
+    return RedfinPropertyData(
+        address=address,
+        price=data.get("price"),
+        beds=data.get("beds"),
+        baths=data.get("baths"),
+        sqft=data.get("sqft"),
+        year_built=data.get("year_built"),
+        property_type=data.get("property_type"),
+        lot_size=data.get("lot_size"),
     )
 
 
