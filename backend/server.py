@@ -1078,6 +1078,80 @@ async def affiliate_share_text(req: ShareTextRequest):
     }
 
 
+# ============== REFERRAL PROGRAM (refer 3 → free Pro month) ==============
+REFERRAL_THRESHOLD = 3
+
+
+def _referral_code_for_session(session_id: str) -> str:
+    # Deterministic short code derived from session_id so same session always gets same code
+    import hashlib
+    return "lw-" + hashlib.sha256(session_id.encode()).hexdigest()[:8]
+
+
+@api_router.get("/referral/link/{session_id}")
+async def get_referral_link(session_id: str):
+    """Get or create a referral link for this session. Idempotent."""
+    if not session_id or len(session_id) < 4:
+        raise HTTPException(400, "Invalid session_id")
+
+    code = _referral_code_for_session(session_id)
+    doc = await db.referrals.find_one({"code": code}, {"_id": 0})
+
+    if not doc:
+        doc = {
+            "code": code,
+            "referrer_session": session_id,
+            "count": 0,
+            "granted": False,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.referrals.insert_one({**doc})
+
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    link = f"{frontend_url}/?ref={code}"
+    return {
+        "code": code,
+        "link": link,
+        "count": doc.get("count", 0),
+        "granted": doc.get("granted", False),
+        "threshold": REFERRAL_THRESHOLD,
+    }
+
+
+@api_router.post("/referral/activate")
+async def activate_referral(req: RefClickIn):
+    """Called when a NEW session lands with ?ref=REFERRAL_CODE.
+    Increments the referrer's count and grants a free Pro month at threshold."""
+    code = req.ref.strip().lower()
+    if not code.startswith("lw-"):
+        # Not a user referral code — might be affiliate code, skip silently
+        return {"ok": False, "reason": "not_referral_code"}
+
+    doc = await db.referrals.find_one({"code": code})
+    if not doc:
+        return {"ok": False, "reason": "code_not_found"}
+
+    new_count = doc.get("count", 0) + 1
+    granted = doc.get("granted", False)
+
+    if new_count >= REFERRAL_THRESHOLD and not granted:
+        granted = True
+        referrer_session = doc["referrer_session"]
+        await db.entitlements.insert_one({
+            "lw_session_id": referrer_session,
+            "kind": "pro",
+            "source": "referral_reward",
+            "granted_at": datetime.now(timezone.utc).isoformat(),
+        })
+
+    await db.referrals.update_one(
+        {"code": code},
+        {"$set": {"count": new_count, "granted": granted}},
+    )
+
+    return {"ok": True, "count": new_count, "granted": granted}
+
+
 # ============== FAIR HOUSING ANALYSIS ==============
 class FairHousingIn(BaseModel):
     text: str

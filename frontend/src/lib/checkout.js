@@ -18,6 +18,10 @@ export function captureRefFromURL() {
       localStorage.setItem("lw_ref_at", String(Date.now()));
       // Fire-and-forget click tracking
       axios.post(`${API}/ref-click`, { ref, path: window.location.pathname }).catch(() => {});
+      // If this is a user referral link (lw- prefix) activate the referral count for the referrer
+      if (ref.startsWith("lw-")) {
+        axios.post(`${API}/referral/activate`, { ref, path: window.location.pathname }).catch(() => {});
+      }
     }
   } catch {/* noop */}
 }
