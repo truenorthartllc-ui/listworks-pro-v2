@@ -28,7 +28,7 @@ import ShareCard from "@/components/ShareCard";
 import ViralPostCard from "@/components/ViralPostCard";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const TONES = ["Luxury", "Cozy", "Modern", "Family", "Investor"];
+const TONES = ["Luxury", "Cozy", "Modern", "Minimalist", "Family", "Investor"];
 const TABS = [
   { key: "mls", label: "MLS Description", icon: "🏡" },
   { key: "instagram", label: "Instagram Caption", icon: "📸" },

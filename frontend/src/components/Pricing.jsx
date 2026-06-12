@@ -1,6 +1,26 @@
 import { useState, useEffect } from "react";
-import { Check, Crown, Zap } from "lucide-react";
+import { Check, Crown, Zap, Flame } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+
+const PROMO_ENDS = new Date("2026-06-19T23:59:59");
+
+function PromoCountdown() {
+  const [timeLeft, setTimeLeft] = useState("");
+  useEffect(() => {
+    const tick = () => {
+      const diff = PROMO_ENDS - Date.now();
+      if (diff <= 0) { setTimeLeft(""); return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTimeLeft(`${h}h ${m}m ${s}s`);
+    };
+    tick();
+    const iv = setInterval(tick, 1000);
+    return () => clearInterval(iv);
+  }, []);
+  return timeLeft ? <span className="font-mono text-vermillion font-bold">{timeLeft}</span> : null;
+}
 
 
 const tiers = [
@@ -9,7 +29,7 @@ const tiers = [
     price: "$0",
     period: "forever",
     blurb: "For agents trying it on their next listing.",
-    features: ["Full playground access", "All 5 output formats", "5 tone modes", "Then upgrade or buy credits"],
+    features: ["Full playground access", "All 5 output formats", "6 tone modes", "Then upgrade or buy credits"],
     cta: "Start Free",
     action: { kind: "scroll", href: "#playground" },
     highlight: false,
@@ -30,6 +50,7 @@ const tiers = [
       "360° Virtual Tour embeds",
     ],
     cta: "Go Pro — $29/mo",
+    promoNote: "Use COMEBACK29 → first month $20.59",
     action: { kind: "checkout", package_id: "pro_month" },
     highlight: true,
   },
@@ -98,6 +119,18 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* Flash sale promo banner */}
+        <div className="mb-8 bg-vermillion text-oat px-6 py-4 flex flex-wrap items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <Flame className="w-4 h-4 flex-shrink-0" />
+            <span className="font-heading text-sm uppercase tracking-[0.15em]">Flash Sale — 29% off your first month.</span>
+            <span className="font-mono text-sm">Use code <strong>COMEBACK29</strong> at checkout.</span>
+          </div>
+          <div className="font-mono text-xs uppercase tracking-wider opacity-80 flex items-center gap-2">
+            Ends in <PromoCountdown />
+          </div>
+        </div>
+
         {/* Social proof bar */}
         <div className="mb-10 flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">
           <span>★ 4.9 / 5 from 127 agents</span>
@@ -155,6 +188,11 @@ export default function Pricing() {
               >
                 {t.cta} →
               </button>
+              {t.promoNote && (
+                <p className="mt-3 font-mono text-[11px] text-vermillion tracking-[0.12em] uppercase">
+                  ✦ {t.promoNote}
+                </p>
+              )}
             </div>
           ))}
         </div>
