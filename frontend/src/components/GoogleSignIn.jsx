@@ -11,7 +11,7 @@ export default function GoogleSignIn({ onAuthChange }) {
 
   useEffect(() => {
     if (onAuthChange) onAuthChange(user);
-  }, [user]);
+  }, [user, onAuthChange]);
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
