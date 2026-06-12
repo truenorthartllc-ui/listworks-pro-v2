@@ -7,3 +7,4 @@
 /openhouse/:eventId  /index.html  200
 /waitlist  /index.html  200
 /a/:ref  /index.html  200
+/unsubscribe  /index.html  200

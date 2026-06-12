@@ -2022,6 +2022,29 @@ async def social_post(req: SocialPostRequest):
     return {"queued": True, "platforms": req.platforms, "listing_id": req.listing_id}
 
 
+# ===== UNSUBSCRIBE (CAN-SPAM) =====
+@api_router.get("/unsubscribe")
+async def unsubscribe_email(email: str):
+    if not email or "@" not in email:
+        raise HTTPException(400, "Invalid email address")
+    clean = email.lower().strip()
+    await db.unsubscribes.update_one(
+        {"email": clean},
+        {"$set": {"email": clean, "unsubscribed_at": datetime.now(timezone.utc).isoformat()}},
+        upsert=True,
+    )
+    logger.info("Unsubscribed: %s", clean)
+    return {"unsubscribed": True, "email": clean}
+
+
+@api_router.get("/unsubscribe/check")
+async def unsubscribe_check(email: str):
+    if not email:
+        return {"unsubscribed": False}
+    doc = await db.unsubscribes.find_one({"email": email.lower().strip()})
+    return {"unsubscribed": doc is not None}
+
+
 # ===== PRICING (frontend reads this) =====
 @api_router.get("/pricing")
 async def pricing():

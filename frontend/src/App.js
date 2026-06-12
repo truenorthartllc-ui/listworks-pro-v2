@@ -9,6 +9,7 @@ import AffiliateDashboard from "@/pages/AffiliateDashboard";
 import AffiliateSignup from "@/pages/AffiliateSignup";
 import Waitlist from "@/pages/Waitlist";
 import OpenHouseCheckin from "@/pages/OpenHouseCheckin";
+import Unsubscribe from "@/pages/Unsubscribe";
 import { captureRefFromURL } from "@/lib/checkout";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/affiliate/demo" element={<AffiliateSignup />} />
           <Route path="/openhouse/:eventId" element={<OpenHouseCheckin />} />
           <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
         </Routes>
       </BrowserRouter>
     </div>
