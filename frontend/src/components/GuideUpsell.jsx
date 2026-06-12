@@ -34,24 +34,22 @@ export default function GuideUpsell() {
           <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Document No. 001</span>
           <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.95] mt-6">
             <span className="font-light">The Guide.</span><br />
-            <span className="italic">0.</span>
+            <span className="italic">$20.</span>
           </h2>
           <p className="mt-8 font-body text-lg md:text-xl text-oat/80 leading-relaxed max-w-xl">
             <span className="text-vermillion font-heading text-xs uppercase tracking-[0.15em]">Compiled by agents with 50+ years of combined sales experience.</span>
           </p>
           <p className="mt-3 font-body text-lg md:text-xl text-oat/80 leading-relaxed max-w-xl">
-            The exact framework powering this tool — written out, page by page.
-            The Feature → Benefit → Feeling system. The 5-part structure. The four
-            buyer psychology triggers. 15 plug-and-play AI prompts. Read it once.
-            Use it on every listing.
+            85 pages. The complete Feature → Benefit → Feeling framework. 15 copy-paste AI prompts.
+            5-part MLS template. Real before/after rewrites. Read it in one
+            sitting — use it on your next listing the same day.
           </p>
 
           <ul className="mt-8 space-y-3 font-body text-oat/85 max-w-xl">
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> The 5-part listing structure used by top-1% agents</li>
-            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 15 plug-and-play prompts for writing listing copy</li>
-            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 4 buyer psychology triggers that drive showings</li>
+            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> 15 plug-and-play prompts for ChatGPT, Claude, Gemini</li>
+            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> Buyer psychology triggers that drive showings</li>
             <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> Headline formulas that stop scrolls in 1.2 seconds</li>
-            <li className="flex items-start gap-3"><span className="font-mono text-vermillion mt-1">✦</span> The 20-second pre-publish review checklist</li>
           </ul>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
