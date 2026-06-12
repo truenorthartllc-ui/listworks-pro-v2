@@ -110,6 +110,17 @@ class RewriteRequest(BaseModel):
     sqft: Optional[str] = None
     virtual_tour_url: Optional[str] = None
     session_id: Optional[str] = None
+    brand_voice: Optional[dict] = None  # injected server-side from DB
+
+
+class BrandVoiceModel(BaseModel):
+    agent_name: Optional[str] = None
+    brokerage: Optional[str] = None
+    market: Optional[str] = None
+    style: Optional[str] = None          # "Conversational", "Polished", "Bold", "Minimal"
+    avoid_words: Optional[str] = None    # comma-separated
+    favorite_phrases: Optional[str] = None
+    extra: Optional[str] = None          # free-form notes
 
 
 class RewriteOutput(BaseModel):
@@ -500,6 +511,21 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
 
     user_text = _build_user_prompt(req)
     system = REWRITE_SYSTEM
+
+    # Inject brand voice if present
+    if req.brand_voice:
+        bv = req.brand_voice
+        parts = []
+        if bv.get("agent_name"): parts.append(f"Agent name: {bv['agent_name']}")
+        if bv.get("brokerage"): parts.append(f"Brokerage: {bv['brokerage']}")
+        if bv.get("market"): parts.append(f"Market area: {bv['market']}")
+        if bv.get("style"): parts.append(f"Writing style: {bv['style']}")
+        if bv.get("avoid_words"): parts.append(f"NEVER use these words or phrases: {bv['avoid_words']}")
+        if bv.get("favorite_phrases"): parts.append(f"Naturally weave in these phrases when relevant: {bv['favorite_phrases']}")
+        if bv.get("extra"): parts.append(f"Additional brand notes: {bv['extra']}")
+        if parts:
+            system += "\n\n═══ AGENT BRAND VOICE (apply to ALL outputs) ═══\n" + "\n".join(parts) + "\n═══════════════════════════════════════════════"
+
     if req.language and req.language.lower() not in ("english", "en"):
         system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, and email — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
     try:
@@ -1348,6 +1374,12 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
             },
         )
 
+    # Auto-inject brand voice if agent has one saved
+    if req.session_id and not req.brand_voice:
+        bv_doc = await db.brand_voices.find_one({"session_id": req.session_id}, {"_id": 0, "session_id": 0, "updated_at": 0})
+        if bv_doc:
+            req = req.model_copy(update={"brand_voice": bv_doc})
+
     outputs = await call_rewrite_llm(req)
     listing_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
@@ -2034,6 +2066,27 @@ async def _notify_slack_sale(txn: dict, email: str) -> None:
             await client.post(SLACK_WEBHOOK_URL, json={"text": text})
     except Exception as e:
         logger.warning("Slack notification failed: %s", e)
+
+
+# ============== BRAND VOICE ==============
+
+@api_router.get("/brand-voice/{session_id}")
+async def get_brand_voice(session_id: str):
+    doc = await db.brand_voices.find_one({"session_id": session_id}, {"_id": 0, "session_id": 0})
+    return doc or {}
+
+
+@api_router.post("/brand-voice/{session_id}")
+async def save_brand_voice(session_id: str, req: BrandVoiceModel):
+    data = req.model_dump(exclude_none=True)
+    data["session_id"] = session_id
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.brand_voices.update_one(
+        {"session_id": session_id},
+        {"$set": data},
+        upsert=True,
+    )
+    return {"ok": True}
 
 
 # ============== GOOGLE AUTH ==============

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock, Gift,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock, Gift, Fingerprint,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -25,6 +25,7 @@ import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import AgentBioPanel from "@/components/AgentBioPanel";
 import PhotoToListing from "@/components/PhotoToListing";
 import ReferralPanel from "@/components/ReferralPanel";
+import BrandVoicePanel from "@/components/BrandVoicePanel";
 import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
@@ -241,6 +242,7 @@ export default function Playground() {
               <button onClick={() => handleProMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => setMode("referral")} data-active={mode === "referral"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Gift className="w-4 h-4" />Refer & Earn</button>
+              <button onClick={() => setMode("brandvoice")} data-active={mode === "brandvoice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Fingerprint className="w-4 h-4" />Brand Voice</button>
             </div>
           </div>
         </div>
@@ -704,6 +706,12 @@ export default function Playground() {
       {mode === "referral" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
           <ReferralPanel />
+        </div>
+      )}
+
+      {mode === "brandvoice" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <BrandVoicePanel />
         </div>
       )}
 
