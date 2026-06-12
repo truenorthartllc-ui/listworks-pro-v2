@@ -101,6 +101,7 @@ export default function Playground() {
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
   const [gemsLoading, setGemsLoading] = useState(false);
+  const [language, setLanguage] = useState("English");
   const [fhLoading, setFhLoading] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const outputRef = useRef(null);
@@ -148,6 +149,7 @@ export default function Playground() {
       const { data } = await axios.post(`${API}/rewrite`, {
         raw_listing: listingText,
         tone: forcedTone || tone,
+        language: language !== "English" ? language : undefined,
         ...meta,
         virtual_tour_url: virtualTourUrl || undefined,
         session_id,
@@ -311,6 +313,17 @@ export default function Playground() {
                 {TONES.map((t) => (
                   <button key={t} data-testid={`tone-${t.toLowerCase()}-btn`} onClick={() => setTone(t)} data-active={tone === t} className="tone-pill">
                     {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">Output Language</span>
+              <div className="flex flex-wrap gap-2">
+                {[{ code: "English", flag: "🇺🇸" }, { code: "Spanish", flag: "🇪🇸" }, { code: "Chinese", flag: "🇨🇳" }].map(({ code, flag }) => (
+                  <button key={code} onClick={() => setLanguage(code)} data-active={language === code} className="tone-pill flex items-center gap-1.5">
+                    <span>{flag}</span>{code}
                   </button>
                 ))}
               </div>

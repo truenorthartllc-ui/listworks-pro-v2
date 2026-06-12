@@ -102,6 +102,7 @@ api_router = APIRouter(prefix="/api")
 class RewriteRequest(BaseModel):
     raw_listing: str
     tone: str = "Modern"
+    language: Optional[str] = None
     address: Optional[str] = None
     price: Optional[str] = None
     beds: Optional[str] = None
@@ -498,11 +499,14 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         raise HTTPException(500, "OpenRouter key missing")
 
     user_text = _build_user_prompt(req)
+    system = REWRITE_SYSTEM
+    if req.language and req.language.lower() not in ("english", "en"):
+        system += f"\n\nIMPORTANT: Generate ALL output (MLS description, Instagram, Facebook, headlines, email) in {req.language}. Keep property details (address, price, measurements) in their original form."
     try:
-        raw = await call_g0dm0d3(REWRITE_SYSTEM, user_text, tier="smart")
+        raw = await call_g0dm0d3(system, user_text, tier="smart")
     except Exception as g_err:
         logging.warning(f"G0DM0D3 unavailable ({g_err}), falling back to OpenRouter")
-        raw = await call_openrouter(REWRITE_SYSTEM, user_text)
+        raw = await call_openrouter(system, user_text)
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
