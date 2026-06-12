@@ -25,6 +25,47 @@ export default function LandingPage() {
         <Playground />
         <BeforeAfter />
         <Features />
+        <section className="bg-ink text-oat px-6 md:px-10 py-20">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="h-px w-10 bg-oat/40" />
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-oat/50">Fair Housing</span>
+            </div>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 lg:col-span-6">
+                <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-[1.05]">
+                  Every word scanned.
+                  <br />
+                  <span className="text-vermillion">Every listing protected.</span>
+                </h2>
+                <p className="font-body text-base md:text-lg text-oat/70 mt-6 max-w-lg leading-relaxed">
+                  ListWorks PRO automatically scans every rewrite for Fair Housing violations —
+                  discriminatory language, protected class references, risky phrasing. Caught before
+                  you publish. Not a checkbox. A guarantee.
+                </p>
+                <div className="mt-8 flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-oat/50">
+                  <span>● FHA guidelines</span>
+                  <span>● Real-time scan</span>
+                  <span>● Auto-fix suggestions</span>
+                </div>
+              </div>
+              <div className="col-span-12 lg:col-span-5 lg:col-start-8 flex items-center">
+                <div className="border border-oat/15 p-8 w-full">
+                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-green-400 mb-2">Protected</div>
+                  <p className="font-display italic text-xl md:text-2xl text-oat/90 leading-relaxed">
+                    "Family-friendly neighborhood near top-rated schools"   <span className="text-green-400">✓</span>
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-oat/10">
+                    <p className="font-display italic text-xl md:text-2xl text-ink/40 line-through leading-relaxed">
+                      "Perfect for young couples starting a family"
+                    </p>
+                    <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-red-400 mt-2">Flagged — family status discrimination</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <GuideUpsell />
         <Testimonials />
         <Pricing />

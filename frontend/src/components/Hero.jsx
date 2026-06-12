@@ -98,24 +98,26 @@ export default function Hero() {
 
           <h1 className="font-display tracking-tighter leading-[0.95] text-[14vw] md:text-[8.5vw] lg:text-[7.5rem] xl:text-[8.5rem] text-ink animate-rise"
               style={{ animationDelay: "0.1s" }}>
-            <span className="font-light">Boring listings,</span><br />
-            <span className="italic font-medium">rewritten</span>
+            <span className="font-light">10-second rewrites.</span><br />
+            <span className="italic font-medium">Faster listings.</span><br />
+            <span className="italic font-medium">Bigger results</span>
             <span className="text-vermillion">.</span>
           </h1>
 
           <div className="mt-10 max-w-xl border-l-2 border-vermillion pl-5 animate-rise" style={{ animationDelay: "0.2s" }}>
             <p className="font-body text-base md:text-lg text-ink/80 leading-relaxed">
-              Paste your tired MLS draft. Pick a tone. ListWorks PRO instantly produces
-              a polished MLS description, an Instagram caption that actually stops scrolls,
-              a Facebook post built to comment, scroll-stopping headlines, and a buyer
-              email — all in your voice.
+              Paste any MLS draft. Pick a tone. In 10 seconds you get
+              a polished MLS description, Instagram caption, Facebook post,
+              scroll-stopping headlines, and a buyer email — all in your voice.
+              <strong className="text-ink"> All Fair Housing compliant.</strong>
             </p>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4 animate-rise" style={{ animationDelay: "0.3s" }}>
             <a data-testid="hero-primary-cta" href="#playground"
-              className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
-              Rewrite a Listing — Free
+              className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              Try 3 Free Rewrites — No Credit Card
             </a>
             <a data-testid="hero-secondary-cta" href="#guide"
               className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
@@ -128,11 +130,11 @@ export default function Hero() {
             </button>
           </div>
 
-          <div className="mt-12 flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/60 animate-rise" style={{ animationDelay: "0.4s" }}>
-            <span>● 200+ agents</span>
-            <span>● instant access</span>
+          <div className="mt-10 flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/60 animate-rise" style={{ animationDelay: "0.4s" }}>
+            <span className="text-vermillion font-semibold">✦ 3 free rewrites</span>
             <span>● No credit card</span>
-            <span className="text-green-600">● Fair Housing compliant</span>
+            <span>● 10s per listing</span>
+            <span className="text-green-600">● Fair Housing scanned</span>
           </div>
 
           <div className="mt-14 max-w-2xl animate-rise" style={{ animationDelay: "0.45s" }}>
