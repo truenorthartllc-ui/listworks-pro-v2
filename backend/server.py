@@ -2080,6 +2080,50 @@ async def email_test(req: EmailTestRequest):
     return {"sent": True, "email_id": eid, "to": req.email, "flow": req.flow}
 
 
+ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "")
+
+
+@api_router.get("/admin/stats")
+async def admin_stats(secret: str = ""):
+    if not ADMIN_SECRET or secret != ADMIN_SECRET:
+        raise HTTPException(403, "Forbidden")
+
+    since_fix = datetime(2026, 6, 9, tzinfo=timezone.utc)
+
+    total_rewrites = await db.listings.count_documents({})
+    rewrites_since_fix = await db.listings.count_documents({"created_at": {"$gte": since_fix}})
+    unique_sessions = len(await db.listings.distinct("session_id"))
+    sessions_since_fix = len(await db.listings.distinct("session_id", {"created_at": {"$gte": since_fix}}))
+
+    total_purchases = await db.purchases.count_documents({})
+    purchases_since_fix = await db.purchases.count_documents({"created_at": {"$gte": since_fix}})
+
+    credit_holders = await db.credits.count_documents({"balance": {"$gt": 0}})
+
+    pro_users = await db.purchases.count_documents({"kind": {"$in": ["pro", "lifetime"]}})
+
+    recent = await db.listings.find(
+        {"created_at": {"$gte": since_fix}},
+        {"session_id": 1, "created_at": 1, "_id": 0}
+    ).sort("created_at", -1).limit(5).to_list(5)
+
+    return {
+        "all_time": {
+            "total_rewrites": total_rewrites,
+            "unique_sessions": unique_sessions,
+            "pro_or_lifetime_users": pro_users,
+            "credit_holders": credit_holders,
+            "total_purchases": total_purchases,
+        },
+        "since_free_trial_fix_jun9": {
+            "rewrites": rewrites_since_fix,
+            "unique_sessions": sessions_since_fix,
+            "purchases": purchases_since_fix,
+        },
+        "recent_sessions": recent,
+    }
+
+
 app.include_router(api_router)
 
 app.add_middleware(
