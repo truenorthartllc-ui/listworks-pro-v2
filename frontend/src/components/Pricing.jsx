@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Check, Crown, Zap } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 
-const LIFETIME_SPOTS_LEFT = 73;
 
 const tiers = [
   {
@@ -73,16 +72,6 @@ const credits = [
 ];
 
 export default function Pricing() {
-  const [spotsLeft, setSpotsLeft] = useState(LIFETIME_SPOTS_LEFT);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("lw_lifetime_spots");
-    if (!stored) {
-      localStorage.setItem("lw_lifetime_spots", String(LIFETIME_SPOTS_LEFT));
-    } else {
-      setSpotsLeft(Math.max(parseInt(stored, 10), 0));
-    }
-  }, []);
 
   const onCta = async (action) => {
     if (action.kind === "scroll") {
@@ -138,11 +127,6 @@ export default function Pricing() {
                       {t.icon && <t.icon className="w-3 h-3" strokeWidth={2.5} />}
                       {t.badge}
                     </span>
-                    {t.name === "Lifetime" && spotsLeft <= 73 && (
-                      <span className="font-mono text-[10px] tracking-[0.15em] text-vermillion bg-vermillion/10 px-2 py-1">
-                        {spotsLeft} spots left
-                      </span>
-                    )}
                   </div>
                 )}
               </div>
