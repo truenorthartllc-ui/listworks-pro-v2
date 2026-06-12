@@ -2100,6 +2100,56 @@ async def local_gems(req: LocalGemsRequest):
     return {"paragraph": paragraph.strip()}
 
 
+class AgentBioRequest(BaseModel):
+    name: str
+    years: Optional[str] = None
+    market: Optional[str] = None
+    specialties: Optional[str] = None
+    personality: str = "Professional"
+    session_id: Optional[str] = None
+
+
+@api_router.post("/agent-bio")
+async def agent_bio(req: AgentBioRequest):
+    if not req.name or len(req.name.strip()) < 2:
+        raise HTTPException(400, "Agent name required")
+
+    system = (
+        "You are an expert real estate personal branding copywriter. "
+        "You write agent bios that feel human, confident, and trustworthy — not corporate. "
+        "No clichés like 'passionate about real estate' or 'helping families find their dream home'. "
+        "Write in first person. Be specific. Make it sound like a real person wrote it."
+    )
+
+    personality_notes = {
+        "Professional": "polished, authoritative, confident",
+        "Warm": "friendly, approachable, community-focused",
+        "Bold": "direct, results-driven, no-nonsense",
+    }
+    vibe = personality_notes.get(req.personality, "professional and authentic")
+
+    user = (
+        f"Write three versions of an agent bio for:\n"
+        f"Name: {req.name}\n"
+        f"Years in real estate: {req.years or 'not specified'}\n"
+        f"Market/city: {req.market or 'not specified'}\n"
+        f"Specialties: {req.specialties or 'residential real estate'}\n"
+        f"Tone/vibe: {vibe}\n\n"
+        f"Return as JSON with keys: short (2 sentences, for Instagram), "
+        f"medium (4-5 sentences, for LinkedIn), full (7-8 sentences, for website). "
+        f"JSON only, no markdown."
+    )
+
+    raw = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    cleaned = _strip_json(raw)
+    try:
+        bios = json.loads(cleaned)
+    except Exception:
+        bios = {"short": raw[:200], "medium": raw[:400], "full": raw}
+
+    return bios
+
+
 @api_router.get("/pricing")
 async def pricing():
     return {
