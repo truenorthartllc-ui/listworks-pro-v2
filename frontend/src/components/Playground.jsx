@@ -33,6 +33,19 @@ import ViralPostCard from "@/components/ViralPostCard";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Minimalist", "Family", "Investor"];
+const MLS_PRESETS = [
+  { label: "No limit / Default", chars: 0 },
+  { label: "Bright MLS — 350 words", chars: 2800 },
+  { label: "CRMLS — 400 words", chars: 3200 },
+  { label: "GAMLS — 350 words", chars: 2800 },
+  { label: "Stellar MLS — 300 words", chars: 2400 },
+  { label: "MRED — 350 words", chars: 2800 },
+  { label: "REcolorado — 350 words", chars: 2800 },
+  { label: "Metrolist — 400 words", chars: 3200 },
+  { label: "ACTRIS — 300 words", chars: 2400 },
+  { label: "Custom — 250 words", chars: 2000 },
+  { label: "Custom — 500 words", chars: 4000 },
+];
 const TABS = [
   { key: "mls", label: "MLS Description", icon: "🏡" },
   { key: "instagram", label: "Instagram Caption", icon: "📸" },
@@ -106,6 +119,7 @@ export default function Playground() {
   const [fhResult, setFhResult] = useState(null);
   const [gemsLoading, setGemsLoading] = useState(false);
   const [language, setLanguage] = useState("English");
+  const [mlsPreset, setMlsPreset] = useState(MLS_PRESETS[0]);
   const [fhLoading, setFhLoading] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const outputRef = useRef(null);
@@ -154,6 +168,7 @@ export default function Playground() {
         raw_listing: listingText,
         tone: forcedTone || tone,
         language: language !== "English" ? language : undefined,
+        mls_char_limit: mlsPreset.chars || undefined,
         ...meta,
         virtual_tour_url: virtualTourUrl || undefined,
         session_id,
@@ -336,6 +351,22 @@ export default function Playground() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="mb-5">
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">MLS Character Limit</span>
+              <select
+                value={mlsPreset.label}
+                onChange={(e) => {
+                  const p = MLS_PRESETS.find(p => p.label === e.target.value);
+                  if (p) setMlsPreset(p);
+                }}
+                className="w-full border border-ink/20 px-3 py-2.5 font-body text-sm outline-none focus:border-vermillion transition bg-white"
+              >
+                {MLS_PRESETS.map((p) => (
+                  <option key={p.label} value={p.label}>{p.label}</option>
+                ))}
+              </select>
             </div>
 
             <button

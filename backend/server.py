@@ -103,6 +103,7 @@ class RewriteRequest(BaseModel):
     raw_listing: str
     tone: str = "Modern"
     language: Optional[str] = None
+    mls_char_limit: Optional[int] = None
     address: Optional[str] = None
     price: Optional[str] = None
     beds: Optional[str] = None
@@ -526,6 +527,8 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         if parts:
             system += "\n\n═══ AGENT BRAND VOICE (apply to ALL outputs) ═══\n" + "\n".join(parts) + "\n═══════════════════════════════════════════════"
 
+    if req.mls_char_limit and req.mls_char_limit > 0:
+        system += f"\n\n⚠️ MLS CHARACTER LIMIT: The MLS field MUST NOT exceed {req.mls_char_limit} characters (including spaces). Count carefully. If your draft exceeds {req.mls_char_limit} chars, shorten it. This is a hard requirement."
     if req.language and req.language.lower() not in ("english", "en"):
         system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, and email — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
     try:
