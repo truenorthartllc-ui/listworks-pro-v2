@@ -113,6 +113,21 @@ export default function Hero() {
             </p>
           </div>
 
+          <div className="mt-8 flex flex-wrap items-center gap-2 animate-rise" style={{ animationDelay: "0.25s" }}>
+            {[
+              { icon: "🏡", label: "MLS Description" },
+              { icon: "📸", label: "Instagram Caption" },
+              { icon: "📘", label: "Facebook Post" },
+              { icon: "✏️", label: "5 Headlines" },
+              { icon: "✉️", label: "Buyer Email" },
+            ].map((item) => (
+              <span key={item.label} className="flex items-center gap-1.5 border border-ink/20 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/70">
+                <span>{item.icon}</span>{item.label}
+              </span>
+            ))}
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-vermillion font-semibold">— all in one click.</span>
+          </div>
+
           <div className="mt-10 flex flex-wrap items-center gap-4 animate-rise" style={{ animationDelay: "0.3s" }}>
             <a data-testid="hero-primary-cta" href="#playground"
               className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2">
