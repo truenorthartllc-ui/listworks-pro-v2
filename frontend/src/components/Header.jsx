@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import GoogleSignIn from "@/components/GoogleSignIn";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -30,13 +31,16 @@ export default function Header() {
           <a href="#guide" data-testid="nav-guide" className="hover:text-vermillion transition">The Guide</a>
           <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">Pricing</a>
         </nav>
-        <a
-          data-testid="header-cta-btn"
-          href="#playground"
-          className="btn-vermillion px-5 py-2.5 font-heading text-[13px] uppercase tracking-[0.12em]"
-        >
-          Try Free →
-        </a>
+        <div className="flex items-center gap-3">
+          <GoogleSignIn />
+          <a
+            data-testid="header-cta-btn"
+            href="#playground"
+            className="btn-vermillion px-5 py-2.5 font-heading text-[13px] uppercase tracking-[0.12em]"
+          >
+            Try Free →
+          </a>
+        </div>
       </div>
     </header>
   );

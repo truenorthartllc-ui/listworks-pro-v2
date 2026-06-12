@@ -2036,11 +2036,84 @@ async def _notify_slack_sale(txn: dict, email: str) -> None:
         logger.warning("Slack notification failed: %s", e)
 
 
+# ============== GOOGLE AUTH ==============
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+
+
+class GoogleAuthRequest(BaseModel):
+    id_token: str
+    session_id: str  # The anonymous session to promote
+
+
+@api_router.post("/auth/google")
+async def auth_google(req: GoogleAuthRequest):
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(501, "Google auth not configured. Set GOOGLE_CLIENT_ID.")
+    try:
+        from google.oauth2 import id_token as google_id_token
+        from google.auth.transport import requests as google_requests
+        idinfo = google_id_token.verify_oauth2_token(
+            req.id_token, google_requests.Request(), GOOGLE_CLIENT_ID
+        )
+    except Exception as e:
+        raise HTTPException(401, f"Invalid Google token: {str(e)[:120]}")
+
+    google_id = idinfo["sub"]
+    email = idinfo.get("email", "").lower()
+    name = idinfo.get("name", "")
+    picture = idinfo.get("picture", "")
+
+    # Upsert user record
+    now = datetime.now(timezone.utc).isoformat()
+    await db.users.update_one(
+        {"google_id": google_id},
+        {"$set": {"email": email, "name": name, "picture": picture, "last_login": now},
+         "$setOnInsert": {"google_id": google_id, "created_at": now}},
+        upsert=True,
+    )
+
+    # Link current anonymous session to this Google account
+    session_id = req.session_id.strip()
+    if session_id:
+        await db.user_sessions.update_one(
+            {"session_id": session_id},
+            {"$set": {"google_id": google_id, "email": email, "linked_at": now}},
+            upsert=True,
+        )
+
+    return {"ok": True, "email": email, "name": name, "picture": picture, "google_id": google_id}
+
+
+@api_router.get("/auth/me/{session_id}")
+async def get_auth_me(session_id: str):
+    sess = await db.user_sessions.find_one({"session_id": session_id}, {"_id": 0})
+    if not sess or not sess.get("google_id"):
+        return {"signed_in": False}
+    user = await db.users.find_one({"google_id": sess["google_id"]}, {"_id": 0, "google_id": 0})
+    return {"signed_in": True, **(user or {})}
+
+
 @api_router.get("/entitlements/{session_id}")
 async def get_entitlements(session_id: str):
+    # Check direct entitlements on this session
     rows = await db.entitlements.find(
         {"lw_session_id": session_id}, {"_id": 0}
     ).to_list(20)
+
+    # Also check entitlements on all other sessions linked to the same Google account
+    if not any(r.get("kind") == "pro" for r in rows):
+        sess = await db.user_sessions.find_one({"session_id": session_id})
+        if sess and sess.get("google_id"):
+            other_sessions = await db.user_sessions.find(
+                {"google_id": sess["google_id"]}, {"session_id": 1}
+            ).to_list(50)
+            other_ids = [s["session_id"] for s in other_sessions if s["session_id"] != session_id]
+            if other_ids:
+                extra = await db.entitlements.find(
+                    {"lw_session_id": {"$in": other_ids}}, {"_id": 0}
+                ).to_list(50)
+                rows = rows + extra
+
     return {"entitlements": rows, "is_pro": any(r.get("kind") == "pro" for r in rows),
             "has_guide": any(r.get("kind") == "guide" for r in rows)}
 
