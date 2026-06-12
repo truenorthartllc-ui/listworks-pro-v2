@@ -249,20 +249,20 @@ export default function Hero() {
           </div>
           <div className="grid grid-cols-2 gap-px bg-ink/15">
             <div className="bg-oat p-5">
+              <div className="font-display text-4xl md:text-5xl leading-none text-vermillion">850+</div>
+              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Agents Trust Us</div>
+            </div>
+            <div className="bg-oat p-5">
+              <div className="font-display text-4xl md:text-5xl leading-none">24k+</div>
+              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Listings Rewritten</div>
+            </div>
+            <div className="bg-oat p-5">
               <div className="font-display text-4xl md:text-5xl leading-none">10s</div>
               <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Avg. Generation</div>
             </div>
             <div className="bg-oat p-5">
-              <div className="font-display text-4xl md:text-5xl leading-none text-vermillion">2-3w</div>
-              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Faster Close</div>
-            </div>
-            <div className="bg-oat p-5">
-              <div className="font-display text-4xl md:text-5xl leading-none">5×</div>
-              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Output Formats</div>
-            </div>
-            <div className="bg-oat p-5">
-              <div className="font-display text-4xl md:text-5xl leading-none">27m</div>
-              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Saved / Listing</div>
+              <div className="font-display text-4xl md:text-5xl leading-none">★ 4.9</div>
+              <div className="mt-2 font-heading text-[11px] uppercase tracking-[0.15em] text-ink/60">Agent Rating</div>
             </div>
           </div>
         </aside>

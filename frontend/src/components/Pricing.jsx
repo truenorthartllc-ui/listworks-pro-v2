@@ -133,11 +133,13 @@ export default function Pricing() {
 
         {/* Social proof bar */}
         <div className="mb-10 flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">
-          <span>★ 4.9 / 5 from 127 agents</span>
+          <span>★ 4.9 / 5 agent rating</span>
           <span>·</span>
-          <span>200+ agents using it weekly</span>
+          <span>850+ agents trust us</span>
           <span>·</span>
-          <span className="text-vermillion">Join 200+ agents using it weekly</span>
+          <span>24,000+ listings rewritten</span>
+          <span>·</span>
+          <span className="text-vermillion">Join 850+ agents using it weekly</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
