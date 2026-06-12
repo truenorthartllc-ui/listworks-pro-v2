@@ -11,6 +11,7 @@ import AffiliateSignup from "@/pages/AffiliateSignup";
 import Waitlist from "@/pages/Waitlist";
 import OpenHouseCheckin from "@/pages/OpenHouseCheckin";
 import Unsubscribe from "@/pages/Unsubscribe";
+import ComparePage from "@/pages/ComparePage";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -40,6 +41,7 @@ function App() {
           <Route path="/openhouse/:eventId" element={<OpenHouseCheckin />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
+          <Route path="/compare" element={<ComparePage />} />
         </Routes>
       </BrowserRouter>
     </div>
