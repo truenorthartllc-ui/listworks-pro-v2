@@ -96,66 +96,67 @@ ListWorks scans every rewrite for FHA red flags before you publish. Flagged lang
   },
   {
     slug: "chatgpt-prompts-listing-agents",
-    title: "The 5 ChatGPT Prompts Every Listing Agent Should Have Saved",
-    excerpt: "Every agent I know has spent at least an hour staring at a blank screen trying to describe a beige colonial. Here are the 5 prompts I keep bookmarked that actually work.",
+    title: "Why ChatGPT Listing Descriptions Sound Generic (And What Actually Works)",
+    excerpt: "ChatGPT wasn't built for real estate. Here's the side-by-side proof — and what purpose-built AI actually looks like for listing copy.",
     date: "2026-06-13",
-    tags: ["ChatGPT", "prompts", "MLS"],
-    readTime: "4 min",
-    content: `## The problem isn't ChatGPT. It's the prompt.
+    tags: ["ChatGPT", "MLS", "AI tools"],
+    readTime: "5 min",
+    content: `## ChatGPT wasn't built for real estate. It was built for everything.
 
-Every agent I know has spent at least an hour staring at a blank screen trying to describe a beige colonial.
+That's the problem.
 
-Here are the 5 prompts I keep bookmarked that actually work — plus a Fair Housing one I wish I'd had earlier this year.
+When you ask ChatGPT to write a listing description, you're asking a general-purpose AI to do a highly specialized job — one that requires knowing MLS character limits, Fair Housing law, buyer psychology, neighborhood context, and what actually makes someone pick up the phone.
 
-## 1. The Fast Draft
+It doesn't know any of that. And the output shows it.
 
-\`\`\`
-Write a 150-word MLS listing description for a [beds]/[baths] home in [city].
-Square footage: [sqft]. Key features: [list].
-Tone: warm and professional.
-No clichés like "stunning," "gorgeous," or "must see."
-\`\`\`
+## What ChatGPT actually produces
 
-This alone cuts your first-draft time from 20 minutes to 30 seconds.
+Here's a real example. Same 3/2 in Austin, Texas. Same facts.
 
-## 2. The Luxury Upgrade
+**Prompt given to ChatGPT:**
+> Write a listing description for a 3-bed 2-bath home in Austin, TX. 1,847 sq ft. Updated kitchen, gas range, quartz counters, primary suite separate from other bedrooms, walk to Barton Springs. Asking $485K.
 
-\`\`\`
-Rewrite this listing description in an elevated, aspirational tone for a luxury buyer.
-Remove generic phrases. Emphasize lifestyle, not just features: [paste description]
-\`\`\`
+**ChatGPT's output:**
+> Welcome to this stunning 3-bedroom, 2-bathroom home nestled in the heart of Austin, Texas! This beautiful property boasts an updated kitchen featuring a gas range and gorgeous quartz countertops, perfect for the home chef. The spacious 1,847 square foot layout offers a gorgeous primary suite thoughtfully separated from the other bedrooms for added privacy. Don't miss this amazing opportunity — walk to the iconic Barton Springs Pool! Priced at $485,000, this charming home won't last long. Schedule your showing today!
 
-## 3. The Investor Angle
+Count the red flags: *stunning, beautiful, gorgeous* (twice), *spacious, amazing, charming, don't miss, won't last long.* That's 8 clichés in 4 sentences. Every agent in your MLS is getting the same output.
 
-\`\`\`
-Rewrite this for an investor audience.
-Lead with rental income potential, ARV, and neighborhood trajectory: [paste description]
-\`\`\`
+**The same listing through ListWorks:**
+> Saturday mornings were made for this kitchen — quartz countertops, a gas range, and enough light to remind you why you bought a house in Austin. Three bedrooms, two baths, 1,847 sq ft. The primary suite sits apart from the other two, so the home works whether you're growing into it or working from it. Walk to Barton Springs. Priced at $485K — comparable sales in 78704 closed at $498K last quarter.
 
-Different buyer, completely different copy. One paste, two listings.
+No clichés. Buyer lifestyle front and center. Market context included. Fair Housing clean.
 
-## 4. The Fair Housing Check
+## Why the difference is so dramatic
 
-\`\`\`
-Review this listing description for Fair Housing compliance.
-Flag any language that could be construed as discriminatory under the FHA: [paste description]
-\`\`\`
+ChatGPT generates text. ListWorks was built specifically to write listings.
 
-HUD penalties start at $26,262 for first violations. Run every AI-generated description through this before publishing.
+The difference under the hood:
 
-## 5. The Subject Line
+**ChatGPT:**
+- No knowledge of what MLS boards flag or reject
+- No Fair Housing training — will write "perfect for families" without hesitation
+- No awareness of buyer personas (a family buyer and an investor need completely different copy)
+- Cliché-heavy by default — that's what the internet trained it on
+- No character limit awareness (Bright MLS caps at 1,000 chars; CRMLS at 1,500)
 
-\`\`\`
-Write 5 email subject lines for a new listing at [address].
-Target: local buyers already in the market.
-Make them curious, not clickbait-y.
-\`\`\`
+**ListWorks:**
+- 15 banned clichés stripped from every output automatically
+- Fair Housing layer built into every rewrite — flags violations before you publish
+- One-click buyer persona targeting: Family, Investor, or Luxury buyer — three different versions from one set of notes
+- MLS character presets for 10 major boards baked in
+- Listing strength score so you know if the output is actually good before you hit publish
 
-## The honest shortcut
+## The honest take on ChatGPT prompts
 
-[ListWorks](https://listworks.pro) runs all 5 of these automatically in one click — paste your notes, pick your buyer type, get compliant copy in 10 seconds.
+Yes, you can improve ChatGPT's output with better prompts. Tell it to avoid clichés, write for a luxury buyer, check Fair Housing. You'll get maybe 60% of the way there.
 
-But even if you never use it, save these prompts. They'll save you 20 minutes a listing.`,
+But you're doing all the work. You're the one who has to remember the Fair Housing rules, know the MLS character limits, decide which buyer persona fits the property, and catch what the AI missed.
+
+ListWorks does all of that before you even see the output.
+
+## Try the difference yourself
+
+Paste any listing description — yours, a competitor's, anything — at [listworks.pro](https://listworks.pro). Free. No credit card. See what purpose-built AI actually looks like for real estate.`,
   },
 ];
 
