@@ -29,6 +29,7 @@ export default function Header() {
           <a href="#playground" data-testid="nav-playground" className="hover:text-vermillion transition">Tool</a>
           <a href="#examples" data-testid="nav-examples" className="hover:text-vermillion transition">Examples</a>
           <a href="#guide" data-testid="nav-guide" className="hover:text-vermillion transition">The Guide</a>
+          <a href="/blog" className="hover:text-vermillion transition">Blog</a>
           <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">Pricing</a>
         </nav>
         <div className="flex items-center gap-3">
