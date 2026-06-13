@@ -118,6 +118,7 @@ export default function Playground() {
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
   const [gemsLoading, setGemsLoading] = useState(false);
+  const [gemsCard, setGemsCard] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [language, setLanguage] = useState("English");
   const [mlsPreset, setMlsPreset] = useState(MLS_PRESETS[0]);
@@ -283,9 +284,9 @@ export default function Playground() {
             />
 
             <div className="grid grid-cols-2 gap-3 mb-5">
-              <div className="relative">
-                <input data-testid="meta-address" placeholder="Address (optional)" value={meta.address} onChange={(e) => setMeta({ ...meta, address: e.target.value })} className="editorial-input text-sm w-full" />
-                {meta.address?.trim().length > 5 && (
+              <div className="col-span-2">
+                <input data-testid="meta-address" placeholder="Address (optional)" value={meta.address} onChange={(e) => { setMeta({ ...meta, address: e.target.value }); setGemsCard(null); }} className="editorial-input text-sm w-full" />
+                {meta.address?.trim().length > 5 && !gemsCard && (
                   <button
                     type="button"
                     disabled={gemsLoading}
@@ -296,19 +297,37 @@ export default function Playground() {
                           address: meta.address,
                           session_id: localStorage.getItem("lw_session_id"),
                         });
-                        setRaw(prev => prev ? `${prev}\n\n${data.paragraph}` : data.paragraph);
-                        toast.success("Local gems added to your listing.");
+                        setGemsCard(data.paragraph);
                       } catch {
-                        toast.error("Couldn't fetch local data. Try again.");
+                        toast.error("Couldn't fetch neighborhood data. Try again.");
                       } finally {
                         setGemsLoading(false);
                       }
                     }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-vermillion text-oat px-2 py-1 font-heading text-[9px] uppercase tracking-[0.12em] hover:bg-[#ff2a0e] transition"
+                    className="mt-2 w-full flex items-center justify-center gap-2 border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2 font-heading text-[11px] uppercase tracking-[0.12em] transition disabled:opacity-50"
                   >
-                    {gemsLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                    {gemsLoading ? "Fetching…" : "Local Gems"}
+                    {gemsLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    {gemsLoading ? "Fetching neighborhood data…" : "Show Schools · Restaurants · Neighborhood →"}
                   </button>
+                )}
+                {gemsCard && (
+                  <div className="mt-2 border border-ink/15 bg-white p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Neighborhood Insights</span>
+                      <button onClick={() => setGemsCard(null)} className="font-mono text-[10px] text-ink/40 hover:text-ink">✕</button>
+                    </div>
+                    <p className="font-body text-sm text-ink/80 leading-relaxed">{gemsCard}</p>
+                    <button
+                      onClick={() => {
+                        setRaw(prev => prev ? `${prev}\n\n${gemsCard}` : gemsCard);
+                        toast.success("Neighborhood context added to your listing.");
+                        setGemsCard(null);
+                      }}
+                      className="mt-3 flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-vermillion hover:underline"
+                    >
+                      <Sparkles className="w-3 h-3" /> Add to my listing →
+                    </button>
+                  </div>
                 )}
               </div>
               {meta.address?.trim().length > 10 && !meta.beds && (
