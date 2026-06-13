@@ -207,7 +207,9 @@ export default function ComparePage() {
             <a href="/vs/jasper" className="text-vermillion">Jasper vs ListWorks PRO</a> ·{" "}
             <a href="/vs/epique" className="text-vermillion">Epique AI vs ListWorks PRO</a> ·{" "}
             <a href="/vs/writehomes" className="text-vermillion">Write.Homes vs ListWorks PRO</a> ·{" "}
-            <a href="/vs/copyai" className="text-vermillion">Copy.ai vs ListWorks PRO</a>
+            <a href="/vs/copyai" className="text-vermillion">Copy.ai vs ListWorks PRO</a> ·{" "}
+            <a href="/listing-analyzer" className="text-vermillion">Free Listing Analyzer</a> ·{" "}
+            <a href="/prompt-library" className="text-vermillion">ChatGPT Prompt Library for Real Estate</a>
           </p>
         </div>
       </div>

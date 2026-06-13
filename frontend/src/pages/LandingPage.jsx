@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import TrustBar from "@/components/TrustBar";
 import AIVideoShowcase from "@/components/AIVideoShowcase";
 import Playground from "@/components/Playground";
 import Marquee from "@/components/Marquee";
@@ -12,14 +13,17 @@ import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import FloatingAdvisorButton from "@/components/FloatingAdvisorButton";
 import ViralNotifications from "@/components/ViralNotifications";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-oat text-ink font-body">
+      <ExitIntentPopup />
       <ViralNotifications />
       <Header />
       <main>
         <Hero />
+        <TrustBar />
         <AIVideoShowcase />
         <Marquee />
         <Playground />

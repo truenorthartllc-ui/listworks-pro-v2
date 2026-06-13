@@ -17,6 +17,7 @@ import BlogPage from "@/pages/BlogPage";
 import BlogPost from "@/pages/BlogPost";
 import CityPage from "@/pages/CityPage";
 import ListingAnalyzerPage from "@/pages/ListingAnalyzerPage";
+import PromptLibraryPage from "@/pages/PromptLibraryPage";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -58,6 +59,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/city/:city" element={<CityPage />} />
           <Route path="/listing-analyzer" element={<ListingAnalyzerPage />} />
+          <Route path="/prompt-library" element={<PromptLibraryPage />} />
         </Routes>
       </BrowserRouter>
     </div>
