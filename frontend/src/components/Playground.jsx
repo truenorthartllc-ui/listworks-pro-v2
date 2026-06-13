@@ -109,6 +109,8 @@ export default function Playground() {
   const [showShareCard, setShowShareCard] = useState(false);
   const [strengthOpen, setStrengthOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
+  const [emailCaptureOpen, setEmailCaptureOpen] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(() => !!localStorage.getItem("lw_email_captured"));
   const [isPro, setIsPro] = useState(false);
   const [entitlementsLoaded, setEntitlementsLoaded] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
@@ -179,6 +181,9 @@ export default function Playground() {
       setActiveTab("mls");
       setShowShareCard(true);
       setTrialRemaining(data.trial_remaining ?? null);
+      if (data.trial_remaining === 1 && !emailCaptured) {
+        setEmailCaptureOpen(true);
+      }
       if (data.trial_remaining === 0) {
         setPaywallOpen(true);
       }
@@ -812,6 +817,17 @@ export default function Playground() {
         <AdvisorPanel
           listingId={result?.id}
           onClose={() => setShowAdvisor(false)}
+        />
+      )}
+      {emailCaptureOpen && (
+        <EmailCapture
+          onClose={() => setEmailCaptureOpen(false)}
+          onBonusGranted={() => {
+            localStorage.setItem("lw_email_captured", "1");
+            setEmailCaptured(true);
+            setEmailCaptureOpen(false);
+            setTrialRemaining(3);
+          }}
         />
       )}
       <PaywallModal

@@ -225,6 +225,34 @@ def tpl_pro_welcome(first_name: Optional[str] = None) -> tuple[str, str, str]:
     return ("Welcome to ListGenius Pro", _wrap(inner, preheader), preheader)
 
 
+def tpl_free_trial_drip() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "Your 3 bonus rewrites are live — here's exactly how to use them."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:28px;font-weight:300;line-height:1.25;">
+        Your <em style="color:#ff3a1c;font-style:italic;">3 bonus rewrites</em> are ready.
+      </h2>
+      <p style="margin:0 0 16px;">
+        You just unlocked 3 more free rewrites in ListWorks PRO. Here's the fastest way to use them:
+      </p>
+      <ol style="margin:0 0 24px;padding-left:22px;line-height:2;">
+        <li>Paste your next listing's basic details — address, beds, baths, a few bullet points</li>
+        <li>Pick a tone: <strong>Luxury</strong> for high-end, <strong>Modern</strong> for most listings, <strong>Cozy</strong> for starter homes</li>
+        <li>Hit Rewrite — get MLS copy, Instagram caption, Facebook post, 5 headlines, and a buyer email in 8 seconds</li>
+      </ol>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#playground" style="{_BTN_VERMILLION}">Use Your Bonus Rewrites Now →</a>
+      </p>
+      <p style="margin:0 0 16px;color:#444;font-size:14px;">
+        When you're ready to go unlimited, Pro is $29/month — flat rate, no credit limits, cancel anytime.
+      </p>
+      <p style="margin:0;color:#444;font-size:14px;">
+        <a href="{site}/#pricing" style="color:#ff3a1c;text-decoration:underline;">See pricing →</a>
+      </p>
+    """
+    return ("Your 3 bonus rewrites are live", _wrap(inner, preheader), preheader)
+
+
 # ---------------------------------------------------------------------------
 # Sending helpers
 # ---------------------------------------------------------------------------

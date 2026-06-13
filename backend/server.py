@@ -1560,15 +1560,40 @@ async def delete_template(session_id: str, template_id: str):
     return {"deleted": True}
 
 
+class EmailCaptureIn(BaseModel):
+    email: str
+    session_id: Optional[str] = None
+
+
 @api_router.post("/capture-email")
-async def capture_email(email: str, session_id: str):
-    doc = {
-        "email": email,
-        "session_id": session_id,
-        "captured_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.leads.insert_one(doc)
-    return {"captured": True}
+async def capture_email(req: EmailCaptureIn):
+    email = req.email.strip().lower()
+    session_id = req.session_id or ""
+
+    existing = await db.leads.find_one({"email": email})
+    if not existing:
+        doc = {
+            "email": email,
+            "session_id": session_id,
+            "source": "trial_gate",
+            "captured_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.leads.insert_one(doc)
+        try:
+            from email_engine import tpl_free_trial_drip
+            subj, html, _ = tpl_free_trial_drip()
+            asyncio.create_task(asyncio.get_event_loop().run_in_executor(
+                None, lambda: resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "ListWorks PRO <hello@listworks.pro>"), "to": [email], "subject": subj, "html": html})
+            ))
+        except Exception:
+            pass
+
+    # Grant 3 bonus rewrites by resetting session usage
+    if session_id and session_id in _free_rewrites_per_session:
+        current = _free_rewrites_per_session[session_id]
+        _free_rewrites_per_session[session_id] = max(0, current - 3)
+
+    return {"captured": True, "bonus_rewrites": 3}
 
 
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
