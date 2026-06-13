@@ -49,6 +49,9 @@ function App() {
           <Route path="/vs/listingai" element={<VsPage competitor="listingai" />} />
           <Route path="/vs/chatgpt" element={<VsPage competitor="chatgpt" />} />
           <Route path="/vs/jasper" element={<VsPage competitor="jasper" />} />
+          <Route path="/vs/epique" element={<VsPage competitor="epique" />} />
+          <Route path="/vs/writehomes" element={<VsPage competitor="writehomes" />} />
+          <Route path="/vs/copyai" element={<VsPage competitor="copyai" />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
         </Routes>

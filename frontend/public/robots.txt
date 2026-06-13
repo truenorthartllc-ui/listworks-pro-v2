@@ -1,3 +1,4 @@
+# AI training crawlers — blocked
 User-agent: GPTBot
 Disallow: /
 
@@ -13,6 +14,9 @@ Disallow: /
 User-agent: CCBot
 Disallow: /
 
+User-agent: anthropic-ai
+Disallow: /
+
 User-agent: Bytespider
 Disallow: /
 
@@ -23,9 +27,6 @@ User-agent: PetalBot
 Disallow: /
 
 User-agent: ImagesiftBot
-Disallow: /
-
-User-agent: anthropic-ai
 Disallow: /
 
 User-agent: AI2Bot
@@ -40,12 +41,6 @@ Disallow: /
 User-agent: Googlebot-Extended
 Disallow: /
 
-User-agent: omgili
-Disallow: /
-
-User-agent: omgilibot
-Disallow: /
-
 User-agent: Applebot-Extended
 Disallow: /
 
@@ -53,6 +48,15 @@ User-agent: FacebookBot
 Disallow: /
 
 User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Meta-ExternalFetcher
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
 Disallow: /
 
 User-agent: Meltwater
@@ -67,6 +71,51 @@ Disallow: /
 User-agent: Magpie-Crawler
 Disallow: /
 
+# SEO analysis bots — blocked (competitors use these to audit you)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: SemrushBot-SA
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: SeznamBot
+Disallow: /
+
+User-agent: spbot
+Disallow: /
+
+# Scraping frameworks
+User-agent: Apify
+Disallow: /
+
+User-agent: HeadlessChrome
+Disallow: /
+
+User-agent: python-requests
+Disallow: /
+
+User-agent: python-httpx
+Disallow: /
+
+User-agent: Go-http-client
+Disallow: /
+
+User-agent: axios
+Disallow: /
+
+# All others — allow (human browsers, Google, Bing)
 User-agent: *
 Allow: /
 Crawl-delay: 10

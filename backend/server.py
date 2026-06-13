@@ -605,6 +605,17 @@ _rate_limit_log: Dict[str, list] = {}
 _rate_limit_lock = asyncio.Lock()
 
 
+def _get_client_ip(request: Request) -> str:
+    """Extract real client IP, respecting Cloudflare/proxy headers."""
+    cf_ip = request.headers.get("CF-Connecting-IP")
+    if cf_ip:
+        return cf_ip.strip()
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
 async def _is_rate_limited(session_id: str, endpoint: str, limit: int = 20, window: int = 60) -> bool:
     """Block if an IP/session exceeds `limit` requests to `endpoint` within `window` seconds."""
     if not session_id:
@@ -622,6 +633,14 @@ async def _is_rate_limited(session_id: str, endpoint: str, limit: int = 20, wind
         timestamps.append(now.timestamp())
         _rate_limit_log[key] = timestamps
         return False
+
+
+async def _is_ip_rate_limited(request: Request, endpoint: str, limit: int = 30, window: int = 60) -> bool:
+    """IP-level backstop — catches attackers who rotate session IDs."""
+    ip = _get_client_ip(request)
+    if not ip or ip == "unknown":
+        return False
+    return await _is_rate_limited(f"ip:{ip}", endpoint, limit, window)
 
 
 def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
@@ -1390,9 +1409,11 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
     if is_bot:
         raise HTTPException(403, f"Request blocked: {reason}")
 
-    # Rate limiting (20 req/min per session)
+    # Rate limiting — session layer (20/min) + IP layer (40/min backstop)
     if await _is_rate_limited(req.session_id or "", "rewrite", 20, 60):
         raise HTTPException(429, "Too many requests. Slow down.")
+    if await _is_ip_rate_limited(request, "rewrite", limit=40, window=60):
+        raise HTTPException(429, "Too many requests from this IP. Slow down.")
 
     # Hard 3-trial limit for free users
     allowed, remaining = _check_free_trial(req.session_id or "")
@@ -1624,7 +1645,10 @@ Rules: Extract only what is explicitly stated. No guessing. Numbers only for bed
 
 
 @api_router.post("/lookup-address", response_model=RedfinPropertyData)
-async def lookup_address(req: AddressLookupRequest):
+async def lookup_address(req: AddressLookupRequest, request: Request):
+    if await _is_ip_rate_limited(request, "lookup-address", limit=10, window=60):
+        raise HTTPException(429, "Too many requests. Slow down.")
+
     address = req.address.strip()
     if len(address) < 5:
         raise HTTPException(400, "Please enter a full street address.")
@@ -1692,7 +1716,10 @@ async def get_shared_listing(listing_id: str):
 
 
 @api_router.post("/analyze-photo", response_model=PhotoAnalyzeResponse)
-async def analyze_photo(req: PhotoAnalyzeRequest):
+async def analyze_photo(req: PhotoAnalyzeRequest, request: Request):
+    if await _is_ip_rate_limited(request, "analyze-photo", limit=15, window=60):
+        raise HTTPException(429, "Too many requests. Slow down.")
+
     prompt = (
         "You analyze real estate property photos. "
         "Return STRICT JSON: {\"features\":[8 short property features detected, "
@@ -1731,7 +1758,10 @@ exact rewrites — don't just describe."""
 
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
-async def advisor(req: AdvisorRequest):
+async def advisor(req: AdvisorRequest, request: Request):
+    if await _is_ip_rate_limited(request, "advisor", limit=20, window=60):
+        raise HTTPException(429, "Too many requests. Slow down.")
+
     context_msg = ""
     if req.listing_id:
         listing = await db.listings.find_one({"id": req.listing_id}, {"_id": 0})
