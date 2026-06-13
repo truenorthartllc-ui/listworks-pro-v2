@@ -95,68 +95,72 @@ ChatGPT has NO Fair Housing training.
 ListWorks scans every rewrite for FHA red flags before you publish. Flagged language is replaced automatically. Built into the rewrite process — not an afterthought.`,
   },
   {
+    slug: "chatgpt-listing-fair-housing",
+    title: "I Almost Published a Fair Housing Violation. ChatGPT Wrote It.",
+    excerpt: "HUD formally confirmed in 2024 that the Fair Housing Act applies to AI-generated listing copy. Here's what that means for every agent using ChatGPT right now — and what the side-by-side actually looks like.",
+    date: "2026-06-13",
+    tags: ["Fair Housing", "ChatGPT", "compliance", "AI tools"],
+    readTime: "5 min",
+    content: `## The near-miss
+
+Last week, ChatGPT wrote "perfect for families" in a listing description I almost published.
+
+That's familial status discrimination under the Fair Housing Act. First-time HUD penalty: **$26,262**. Repeat offenses: $131,308.
+
+I didn't write it. The AI did. HUD doesn't care.
+
+In 2024, the Department of Housing and Urban Development published formal guidance confirming the Fair Housing Act applies to AI-generated advertising — including listing descriptions. The agent is responsible for every word, whether a human or an algorithm wrote it.
+
+Most agents using ChatGPT for listing copy don't know this. I didn't.
+
+## What ChatGPT actually writes
+
+Here's a real example. Same 3/2 in Austin, Texas. Same facts fed to both.
+
+**ChatGPT's output:**
+> Welcome to this stunning 3-bedroom, 2-bathroom home in the heart of Austin! This beautiful property is **perfect for families**, with an updated kitchen featuring a gas range and gorgeous quartz countertops. The spacious layout is also **ideal for young professionals** looking to settle in a great neighborhood. Don't miss this charming home — walk to Barton Springs Pool! Won't last long!
+
+**Fair Housing violations in that paragraph:**
+- *"perfect for families"* — familial status discrimination
+- *"ideal for young professionals"* — age discrimination
+
+ChatGPT wrote both. In the same paragraph. Confidently. Because it was trained on real estate copy from the internet, and real estate copy on the internet has always violated Fair Housing law.
+
+**The same listing through ListWorks:**
+> Saturday mornings were made for this kitchen — quartz countertops, a gas range, and enough light to remind you why you bought a house in Austin. Three bedrooms, two baths, 1,847 sq ft. The primary suite sits apart from the other two, so the home works for whatever your life looks like right now. Walk to Barton Springs. Priced at $485K — comparable sales in 78704 closed at $498K last quarter.
+
+Zero violations. Zero clichés. The same facts — copy that actually sells.
+
+## What's different under the hood
+
+**ChatGPT** was trained on everything. The internet is full of real estate copy that violates Fair Housing law, so ChatGPT reproduces those patterns fluently and without warning.
+
+**ListWorks was built specifically for real estate listing copy:**
+
+- **Fair Housing layer** — every output is scanned before you see it. Violating phrases are flagged and rewritten automatically. You never publish something that could cost $26K.
+- **15 banned clichés** — *stunning, gorgeous, charming, perfect for families, don't miss, won't last long* — stripped from every output
+- **Buyer persona targeting** — one set of notes, three compliant versions: Family buyer, Investor, Luxury buyer. Each version leads with what that buyer actually cares about, without ever crossing into FHA territory.
+- **MLS character limits** — Bright MLS, CRMLS, GAMLS, and 7 other major boards built in. Output fits the first time.
+- **Listing strength score** — 0–10 rating on every rewrite so you know if the output is actually good before you publish
+
+## The honest question
+
+Every agent using ChatGPT for listing copy right now is one published description away from an HUD complaint they didn't see coming.
+
+The tool doesn't know what it's doing wrong. You're the one who signs your name.
+
+[Try ListWorks free — no credit card](https://listworks.pro). Paste your last ChatGPT listing and see what it flags.`,
+  },
+  {
     slug: "chatgpt-prompts-listing-agents",
     title: "Why ChatGPT Listing Descriptions Sound Generic (And What Actually Works)",
     excerpt: "ChatGPT wasn't built for real estate. Here's the side-by-side proof — and what purpose-built AI actually looks like for listing copy.",
     date: "2026-06-13",
     tags: ["ChatGPT", "MLS", "AI tools"],
-    readTime: "5 min",
+    readTime: "4 min",
     content: `## ChatGPT wasn't built for real estate. It was built for everything.
 
-That's the problem.
-
-When you ask ChatGPT to write a listing description, you're asking a general-purpose AI to do a highly specialized job — one that requires knowing MLS character limits, Fair Housing law, buyer psychology, neighborhood context, and what actually makes someone pick up the phone.
-
-It doesn't know any of that. And the output shows it.
-
-## What ChatGPT actually produces
-
-Here's a real example. Same 3/2 in Austin, Texas. Same facts.
-
-**Prompt given to ChatGPT:**
-> Write a listing description for a 3-bed 2-bath home in Austin, TX. 1,847 sq ft. Updated kitchen, gas range, quartz counters, primary suite separate from other bedrooms, walk to Barton Springs. Asking $485K.
-
-**ChatGPT's output:**
-> Welcome to this stunning 3-bedroom, 2-bathroom home nestled in the heart of Austin, Texas! This beautiful property boasts an updated kitchen featuring a gas range and gorgeous quartz countertops, perfect for the home chef. The spacious 1,847 square foot layout offers a gorgeous primary suite thoughtfully separated from the other bedrooms for added privacy. Don't miss this amazing opportunity — walk to the iconic Barton Springs Pool! Priced at $485,000, this charming home won't last long. Schedule your showing today!
-
-Count the red flags: *stunning, beautiful, gorgeous* (twice), *spacious, amazing, charming, don't miss, won't last long.* That's 8 clichés in 4 sentences. Every agent in your MLS is getting the same output.
-
-**The same listing through ListWorks:**
-> Saturday mornings were made for this kitchen — quartz countertops, a gas range, and enough light to remind you why you bought a house in Austin. Three bedrooms, two baths, 1,847 sq ft. The primary suite sits apart from the other two, so the home works whether you're growing into it or working from it. Walk to Barton Springs. Priced at $485K — comparable sales in 78704 closed at $498K last quarter.
-
-No clichés. Buyer lifestyle front and center. Market context included. Fair Housing clean.
-
-## Why the difference is so dramatic
-
-ChatGPT generates text. ListWorks was built specifically to write listings.
-
-The difference under the hood:
-
-**ChatGPT:**
-- No knowledge of what MLS boards flag or reject
-- No Fair Housing training — will write "perfect for families" without hesitation
-- No awareness of buyer personas (a family buyer and an investor need completely different copy)
-- Cliché-heavy by default — that's what the internet trained it on
-- No character limit awareness (Bright MLS caps at 1,000 chars; CRMLS at 1,500)
-
-**ListWorks:**
-- 15 banned clichés stripped from every output automatically
-- Fair Housing layer built into every rewrite — flags violations before you publish
-- One-click buyer persona targeting: Family, Investor, or Luxury buyer — three different versions from one set of notes
-- MLS character presets for 10 major boards baked in
-- Listing strength score so you know if the output is actually good before you hit publish
-
-## The honest take on ChatGPT prompts
-
-Yes, you can improve ChatGPT's output with better prompts. Tell it to avoid clichés, write for a luxury buyer, check Fair Housing. You'll get maybe 60% of the way there.
-
-But you're doing all the work. You're the one who has to remember the Fair Housing rules, know the MLS character limits, decide which buyer persona fits the property, and catch what the AI missed.
-
-ListWorks does all of that before you even see the output.
-
-## Try the difference yourself
-
-Paste any listing description — yours, a competitor's, anything — at [listworks.pro](https://listworks.pro). Free. No credit card. See what purpose-built AI actually looks like for real estate.`,
+This article has moved. Read the updated, more complete version here: [I Almost Published a Fair Housing Violation. ChatGPT Wrote It.](/blog/chatgpt-listing-fair-housing)`,
   },
 ];
 
