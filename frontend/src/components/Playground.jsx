@@ -177,6 +177,7 @@ export default function Playground() {
       });
       setResult(data);
       setActiveTab("mls");
+      setShowShareCard(true);
       setTrialRemaining(data.trial_remaining ?? null);
       if (data.trial_remaining === 0) {
         setPaywallOpen(true);
@@ -577,9 +578,10 @@ export default function Playground() {
               <div className="mt-6 pt-5 border-t border-ink/10">
                 <div className="flex items-center gap-2 mb-4">
                   <Share2 className="w-4 h-4 text-vermillion" />
-                  <span className="font-heading text-sm uppercase tracking-[0.12em] text-ink">Share My Transformation</span>
-                  <button onClick={() => setShowShareCard(!showShareCard)} className="ml-auto text-xs text-vermillion hover:underline">
-                    {showShareCard ? "Hide" : "Show"} Card
+                  <span className="font-heading text-sm uppercase tracking-[0.12em] text-ink">Share Your Transformation</span>
+                  <span className="ml-2 font-mono text-[9px] tracking-[0.15em] uppercase bg-vermillion text-oat px-1.5 py-0.5">Free marketing</span>
+                  <button onClick={() => setShowShareCard(!showShareCard)} className="ml-auto font-mono text-[10px] text-ink/40 hover:text-ink">
+                    {showShareCard ? "▲ hide" : "▼ show"}
                   </button>
                 </div>
                 {showShareCard && (
