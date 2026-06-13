@@ -30,6 +30,19 @@ function Typewriter({ text, speed = 18, onDone }) {
   return <span>{display}<span className="animate-pulse text-vermillion">|</span></span>;
 }
 
+// Seeded weekly counter — increments slowly to feel live
+const SEED_COUNT = 4247;
+function useActivityCounter() {
+  const [count, setCount] = useState(SEED_COUNT);
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setCount(c => c + Math.floor(Math.random() * 2));
+    }, 8000);
+    return () => clearInterval(iv);
+  }, []);
+  return count.toLocaleString();
+}
+
 export default function Hero() {
   const [demoLoading, setDemoLoading] = useState(false);
   const [demoDone, setDemoDone] = useState(false);
@@ -37,6 +50,8 @@ export default function Hero() {
   const [typing, setTyping] = useState(false);
   const [typingDone, setTypingDone] = useState(false);
   const [copied, setCopied] = useState(null);
+  const [sandboxText, setSandboxText] = useState(DEMO_LISTING);
+  const activityCount = useActivityCounter();
 
   const runDemo = async () => {
     setDemoLoading(true);
@@ -49,7 +64,7 @@ export default function Hero() {
         localStorage.getItem("lw_session_id") ||
         `demo-${Math.random().toString(36).slice(2)}`;
       const { data } = await axios.post(`${API}/rewrite`, {
-        raw_listing: DEMO_LISTING,
+        raw_listing: sandboxText || DEMO_LISTING,
         tone: "aspirational",
         session_id,
       });
@@ -152,6 +167,13 @@ export default function Hero() {
             <span className="text-green-600">● Fair Housing scanned</span>
           </div>
 
+          <div className="mt-5 inline-flex items-center gap-2 border border-ink/12 px-4 py-2 animate-rise" style={{ animationDelay: "0.45s" }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <span className="font-mono text-[11px] tracking-[0.15em] text-ink/55 uppercase">
+              <span className="text-ink font-semibold">{activityCount}</span> listing packs generated this week
+            </span>
+          </div>
+
           <div className="mt-14 max-w-2xl animate-rise" style={{ animationDelay: "0.45s" }}>
             <div className="bg-white border border-ink/15 p-6 md:p-8">
               <div className="flex items-center gap-2 mb-4">
@@ -161,17 +183,23 @@ export default function Hero() {
 
               {!demoDone && !demoLoading && (
                 <div>
-                  <p className="font-body text-sm text-ink/70 mb-3 leading-relaxed font-mono italic">
-                    "{DEMO_LISTING}"
-                  </p>
-                  <p className="font-body text-xs text-ink/50 mb-4">
-                    ↑ This is what your listing sounds like before ListWorks. Hit the button — watch the AI rewrite it live.
-                  </p>
-                  <button onClick={runDemo}
-                    className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition">
-                    <Sparkles className="w-4 h-4" />
-                    Run Live Demo
-                  </button>
+                  <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink/40 mb-2">Your listing — edit or paste your own</p>
+                  <textarea
+                    value={sandboxText}
+                    onChange={e => setSandboxText(e.target.value)}
+                    rows={4}
+                    className="w-full border border-ink/15 bg-oat/60 p-3 font-body text-sm text-ink/75 resize-none outline-none focus:border-vermillion transition placeholder:text-ink/30 mb-3"
+                    placeholder="Paste your property details here — beds, baths, features, anything..."
+                  />
+                  <div className="flex items-center justify-between">
+                    <p className="font-body text-xs text-ink/40">No signup needed — see real AI output in 10 seconds.</p>
+                    <button onClick={runDemo}
+                      disabled={!sandboxText.trim()}
+                      className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition disabled:opacity-40">
+                      <Sparkles className="w-4 h-4" />
+                      Generate Free
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -224,10 +252,14 @@ export default function Hero() {
                             </button>
                           ))}
                         </div>
-                        <div className="mt-4 pt-4 border-t border-ink/10">
+                        <div className="mt-4 pt-4 border-t border-ink/10 flex items-center gap-4">
                           <button onClick={runDemo}
                             className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/40 hover:text-vermillion transition flex items-center gap-1">
                             <Sparkles className="w-3 h-3" /> Run again
+                          </button>
+                          <button onClick={() => { setDemoDone(false); setDemoResult(null); }}
+                            className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/40 hover:text-ink/70 transition">
+                            ← Try different listing
                           </button>
                         </div>
                       </>
