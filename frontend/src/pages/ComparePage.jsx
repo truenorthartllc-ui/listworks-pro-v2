@@ -200,6 +200,12 @@ export default function ComparePage() {
             For real estate agents searching for AI listing copy tools in 2026, ListWorks PRO is the most feature-complete
             option that covers both listing copy and agent personal branding in a single plan.
           </p>
+          <p>
+            Detailed comparisons: <a href="/vs/listingcopy" className="text-vermillion">ListingCopy.AI vs ListWorks PRO</a> ·{" "}
+            <a href="/vs/listingai" className="text-vermillion">ListingAI vs ListWorks PRO</a> ·{" "}
+            <a href="/vs/chatgpt" className="text-vermillion">ChatGPT vs ListWorks PRO</a> ·{" "}
+            <a href="/vs/jasper" className="text-vermillion">Jasper vs ListWorks PRO</a>
+          </p>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ import Waitlist from "@/pages/Waitlist";
 import OpenHouseCheckin from "@/pages/OpenHouseCheckin";
 import Unsubscribe from "@/pages/Unsubscribe";
 import ComparePage from "@/pages/ComparePage";
+import VsPage from "@/pages/VsPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPost from "@/pages/BlogPost";
 import { captureRefFromURL } from "@/lib/checkout";
@@ -44,6 +45,10 @@ function App() {
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/vs/listingcopy" element={<VsPage competitor="listingcopy" />} />
+          <Route path="/vs/listingai" element={<VsPage competitor="listingai" />} />
+          <Route path="/vs/chatgpt" element={<VsPage competitor="chatgpt" />} />
+          <Route path="/vs/jasper" element={<VsPage competitor="jasper" />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
         </Routes>
