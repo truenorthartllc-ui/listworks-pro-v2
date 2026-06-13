@@ -94,6 +94,69 @@ ChatGPT has NO Fair Housing training.
 
 ListWorks scans every rewrite for FHA red flags before you publish. Flagged language is replaced automatically. Built into the rewrite process — not an afterthought.`,
   },
+  {
+    slug: "chatgpt-prompts-listing-agents",
+    title: "The 5 ChatGPT Prompts Every Listing Agent Should Have Saved",
+    excerpt: "Every agent I know has spent at least an hour staring at a blank screen trying to describe a beige colonial. Here are the 5 prompts I keep bookmarked that actually work.",
+    date: "2026-06-13",
+    tags: ["ChatGPT", "prompts", "MLS"],
+    readTime: "4 min",
+    content: `## The problem isn't ChatGPT. It's the prompt.
+
+Every agent I know has spent at least an hour staring at a blank screen trying to describe a beige colonial.
+
+Here are the 5 prompts I keep bookmarked that actually work — plus a Fair Housing one I wish I'd had earlier this year.
+
+## 1. The Fast Draft
+
+\`\`\`
+Write a 150-word MLS listing description for a [beds]/[baths] home in [city].
+Square footage: [sqft]. Key features: [list].
+Tone: warm and professional.
+No clichés like "stunning," "gorgeous," or "must see."
+\`\`\`
+
+This alone cuts your first-draft time from 20 minutes to 30 seconds.
+
+## 2. The Luxury Upgrade
+
+\`\`\`
+Rewrite this listing description in an elevated, aspirational tone for a luxury buyer.
+Remove generic phrases. Emphasize lifestyle, not just features: [paste description]
+\`\`\`
+
+## 3. The Investor Angle
+
+\`\`\`
+Rewrite this for an investor audience.
+Lead with rental income potential, ARV, and neighborhood trajectory: [paste description]
+\`\`\`
+
+Different buyer, completely different copy. One paste, two listings.
+
+## 4. The Fair Housing Check
+
+\`\`\`
+Review this listing description for Fair Housing compliance.
+Flag any language that could be construed as discriminatory under the FHA: [paste description]
+\`\`\`
+
+HUD penalties start at $26,262 for first violations. Run every AI-generated description through this before publishing.
+
+## 5. The Subject Line
+
+\`\`\`
+Write 5 email subject lines for a new listing at [address].
+Target: local buyers already in the market.
+Make them curious, not clickbait-y.
+\`\`\`
+
+## The honest shortcut
+
+[ListWorks](https://listworks.pro) runs all 5 of these automatically in one click — paste your notes, pick your buyer type, get compliant copy in 10 seconds.
+
+But even if you never use it, save these prompts. They'll save you 20 minutes a listing.`,
+  },
 ];
 
 export default ARTICLES;
