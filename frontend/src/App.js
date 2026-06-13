@@ -15,6 +15,7 @@ import ComparePage from "@/pages/ComparePage";
 import VsPage from "@/pages/VsPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPost from "@/pages/BlogPost";
+import CityPage from "@/pages/CityPage";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -54,6 +55,7 @@ function App() {
           <Route path="/vs/copyai" element={<VsPage competitor="copyai" />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/city/:city" element={<CityPage />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -119,3 +119,5 @@ Disallow: /
 User-agent: *
 Allow: /
 Crawl-delay: 10
+
+Sitemap: https://listworks.pro/sitemap.xml

@@ -21,8 +21,9 @@ export default function Footer() {
           <ul className="space-y-3 font-body text-oat/85">
             <li><a href="#playground" className="hover:text-vermillion transition">The Tool</a></li>
             <li><a href="#examples" className="hover:text-vermillion transition">Examples</a></li>
+            <li><a href="/blog" className="hover:text-vermillion transition">Blog</a></li>
+            <li><a href="/compare" className="hover:text-vermillion transition">Compare</a></li>
             <li><a href="#pricing" className="hover:text-vermillion transition">Pricing</a></li>
-            <li><a href="/waitlist" className="hover:text-vermillion transition">Early Access</a></li>
           </ul>
         </div>
 
