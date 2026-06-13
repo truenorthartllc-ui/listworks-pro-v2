@@ -38,7 +38,7 @@ const tiers = [
     name: "List + Bio",
     price: "$29",
     period: "/ month",
-    blurb: "Listing copy AND your agent brand — everything in one plan.",
+    blurb: "Unlimited rewrites, no credit anxiety. Listing copy + your agent brand — everything in one flat rate.",
     features: [
       "Unlimited listing rewrites",
       "Agent Bio Generator (3 formats)",
@@ -130,6 +130,16 @@ export default function Pricing() {
           <div className="font-mono text-xs uppercase tracking-wider opacity-80 flex items-center gap-2">
             Ends Jun 25 — <PromoCountdown />
           </div>
+        </div>
+
+        {/* Flat rate callout */}
+        <div className="mb-6 border border-ink/20 px-6 py-4 flex flex-wrap items-center gap-4 justify-between bg-oat">
+          <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.18em] uppercase">
+            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />No credit limits</span>
+            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />Flat rate — one price, always</span>
+            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />Unlimited rewrites — every listing</span>
+          </div>
+          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">No surprises. No overage fees. Ever.</span>
         </div>
 
         {/* Social proof bar */}

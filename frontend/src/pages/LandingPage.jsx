@@ -33,15 +33,18 @@ export default function LandingPage() {
             </div>
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-12 lg:col-span-6">
+                <div className="inline-flex items-baseline gap-3 mb-6 border border-vermillion/40 px-5 py-3">
+                  <span className="font-display text-3xl md:text-4xl text-vermillion font-bold">$26,262</span>
+                  <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-oat/60">minimum HUD fine · first violation · 2025</span>
+                </div>
                 <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-[1.05]">
                   Every word scanned.
                   <br />
                   <span className="text-vermillion">Every listing protected.</span>
                 </h2>
                 <p className="font-body text-base md:text-lg text-oat/70 mt-6 max-w-lg leading-relaxed">
-                  ListWorks PRO automatically scans every rewrite for Fair Housing violations —
-                  discriminatory language, protected class references, risky phrasing. Caught before
-                  you publish. Not a checkbox. A guarantee.
+                  ChatGPT will write "perfect for families" or "walk to church" — both Fair Housing violations.
+                  ListWorks screens every word before it leaves your screen. Not a checkbox. A guarantee.
                 </p>
                 <div className="mt-8 flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-oat/50">
                   <span>● FHA guidelines</span>
