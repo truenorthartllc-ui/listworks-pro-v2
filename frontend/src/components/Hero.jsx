@@ -30,18 +30,6 @@ function Typewriter({ text, speed = 18, onDone }) {
   return <span>{display}<span className="animate-pulse text-vermillion">|</span></span>;
 }
 
-// Seeded weekly counter — increments slowly to feel live
-const SEED_COUNT = 4247;
-function useActivityCounter() {
-  const [count, setCount] = useState(SEED_COUNT);
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setCount(c => c + Math.floor(Math.random() * 2));
-    }, 8000);
-    return () => clearInterval(iv);
-  }, []);
-  return count.toLocaleString();
-}
 
 export default function Hero() {
   const [demoLoading, setDemoLoading] = useState(false);
@@ -51,8 +39,6 @@ export default function Hero() {
   const [typingDone, setTypingDone] = useState(false);
   const [copied, setCopied] = useState(null);
   const [sandboxText, setSandboxText] = useState(DEMO_LISTING);
-  const activityCount = useActivityCounter();
-
   const runDemo = async () => {
     setDemoLoading(true);
     setDemoDone(false);
@@ -111,53 +97,48 @@ export default function Hero() {
             </span>
           </div>
 
-          <h1 className="font-display tracking-tighter leading-[0.95] text-[14vw] md:text-[8.5vw] lg:text-[7.5rem] xl:text-[8.5rem] text-ink animate-rise"
+          <h1 className="font-display tracking-tighter leading-[0.95] text-[11vw] md:text-[7vw] lg:text-[6rem] xl:text-[7rem] text-ink animate-rise"
               style={{ animationDelay: "0.1s" }}>
-            <span className="font-light">10-second rewrites.</span><br />
-            <span className="italic font-medium">Faster listings.</span><br />
-            <span className="italic font-medium">Bigger results</span>
-            <span className="text-vermillion">.</span>
+            <span className="font-light">Fair Housing violations</span><br />
+            <span className="italic font-medium">start at </span>
+            <span className="italic font-medium text-vermillion">$26,262</span>
+            <span className="text-ink">.</span>
           </h1>
 
           <div className="mt-10 max-w-xl border-l-2 border-vermillion pl-5 animate-rise" style={{ animationDelay: "0.2s" }}>
             <p className="font-body text-base md:text-lg text-ink/80 leading-relaxed">
-              Paste any MLS draft. Pick a tone. In 10 seconds you get
-              a polished MLS description, Instagram caption, Facebook post,
-              scroll-stopping headlines, and a buyer email — all in your voice.
-              <strong className="text-ink"> All Fair Housing compliant.</strong>
+              ListWorks scans every listing you write before it goes live. ChatGPT doesn't. Your gut doesn't. ListWorks does.
+            </p>
+            <p className="font-body text-sm text-ink/60 leading-relaxed mt-3">
+              Paste your raw MLS notes — get publish-ready copy, a Fair Housing compliance scan, Instagram caption, 5 headlines, and a buyer email in 10 seconds.
             </p>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-2 animate-rise" style={{ animationDelay: "0.25s" }}>
             {[
-              { icon: "🏡", label: "MLS Description" },
-              { icon: "📸", label: "Instagram Caption" },
-              { icon: "📘", label: "Facebook Post" },
-              { icon: "✏️", label: "5 Headlines" },
-              { icon: "✉️", label: "Buyer Email" },
-            ].map((item) => (
-              <span key={item.label} className="flex items-center gap-1.5 border border-ink/20 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/70">
-                <span>{item.icon}</span>{item.label}
+              "MLS Description",
+              "Instagram Caption",
+              "Facebook Post",
+              "5 Headlines",
+              "Buyer Email",
+            ].map((label) => (
+              <span key={label} className="border border-ink/20 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/70">
+                {label}
               </span>
             ))}
-            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-vermillion font-semibold">— all in one click.</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-vermillion font-semibold">— one click.</span>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4 animate-rise" style={{ animationDelay: "0.3s" }}>
             <a data-testid="hero-primary-cta" href="#playground"
               className="btn-vermillion px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              Try 3 Free Rewrites — No Credit Card
+              See it catch a violation. Free.
             </a>
             <a data-testid="hero-secondary-cta" href="#guide"
               className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em]">
               Get the $20 Guide
             </a>
-            <button onClick={() => startCheckout("credits_10")}
-              className="btn-ghost-ink px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2">
-              <Zap className="w-4 h-4 text-vermillion" strokeWidth={2} />
-              Buy 10 Credits — $5
-            </button>
           </div>
 
           <div className="mt-10 flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/60 animate-rise" style={{ animationDelay: "0.4s" }}>
@@ -168,9 +149,9 @@ export default function Hero() {
           </div>
 
           <div className="mt-5 inline-flex items-center gap-2 border border-ink/12 px-4 py-2 animate-rise" style={{ animationDelay: "0.45s" }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
             <span className="font-mono text-[11px] tracking-[0.15em] text-ink/55 uppercase">
-              <span className="text-ink font-semibold">{activityCount}</span> listing packs generated this week
+              3 free rewrites &middot; no account &middot; Fair Housing scanned
             </span>
           </div>
 

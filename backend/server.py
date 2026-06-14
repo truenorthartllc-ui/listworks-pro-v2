@@ -662,23 +662,41 @@ def _is_bot_request(request: Request, session_id: str) -> tuple[bool, str]:
     return False, ""
 
 
-# Hard 3-trial limit: track FREE rewrites used per session (in-memory, no DB hit)
+# Hard 3-trial limit per session, persisted to MongoDB so restarts don't reset it.
+# IP-level cap (15 total) prevents localStorage-clearing bypass.
 FREE_TRIALS_PER_SESSION = 3
+IP_TRIAL_CAP = 15
 
 
-def _check_free_trial(session_id: str) -> tuple[bool, int]:
-    """Returns (allowed, remaining). Tracks usage in-process memory."""
+async def _check_free_trial(session_id: str, ip: str = "") -> tuple[bool, int]:
+    """Returns (allowed, remaining). Persisted in MongoDB."""
     if not session_id:
-        return True, 0
-    used = _free_rewrites_per_session.get(session_id, 0)
+        return False, 0
+    doc = await db.free_trials.find_one({"session_id": session_id}, {"used": 1})
+    used = doc.get("used", 0) if doc else 0
     if used >= FREE_TRIALS_PER_SESSION:
         return False, 0
+    if ip:
+        pipeline = [{"$match": {"ip": ip}}, {"$group": {"_id": None, "total": {"$sum": "$used"}}}]
+        res = await db.free_trials.aggregate(pipeline).to_list(1)
+        if res and res[0].get("total", 0) >= IP_TRIAL_CAP:
+            return False, 0
     return True, FREE_TRIALS_PER_SESSION - used
 
 
-def _record_free_trial(session_id: str) -> None:
-    if session_id:
-        _free_rewrites_per_session[session_id] = _free_rewrites_per_session.get(session_id, 0) + 1
+async def _record_free_trial(session_id: str, ip: str = "") -> None:
+    if not session_id:
+        return
+    now = datetime.now(timezone.utc).isoformat()
+    await db.free_trials.update_one(
+        {"session_id": session_id},
+        {
+            "$inc": {"used": 1},
+            "$set": {"ip": ip, "updated_at": now},
+            "$setOnInsert": {"created_at": now},
+        },
+        upsert=True,
+    )
 
 
 # ============== OPEN HOUSE CAPTURE ==============
@@ -1411,8 +1429,9 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
     if await _is_ip_rate_limited(request, "rewrite", limit=40, window=60):
         raise HTTPException(429, "Too many requests from this IP. Slow down.")
 
-    # Hard 3-trial limit for free users
-    allowed, remaining = _check_free_trial(req.session_id or "")
+    # Hard 3-trial limit for free users (MongoDB-persisted, IP-backed)
+    client_ip = _get_client_ip(request)
+    allowed, remaining = await _check_free_trial(req.session_id or "", client_ip)
     if not allowed:
         raise HTTPException(
             status_code=402,
@@ -1435,8 +1454,8 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
     created_at = datetime.now(timezone.utc).isoformat()
 
     # Record free trial usage (runs after generation to avoid race)
-    _record_free_trial(req.session_id or "")
-    updated_allowed, updated_remaining = _check_free_trial(req.session_id or "")
+    await _record_free_trial(req.session_id or "", client_ip)
+    _, updated_remaining = await _check_free_trial(req.session_id or "", client_ip)
     usage_meta = {"trials_used": FREE_TRIALS_PER_SESSION - updated_remaining, "remaining": updated_remaining}
 
     doc = {
@@ -1478,7 +1497,7 @@ async def batch_rewrite(req: BatchRewriteRequest):
     # Trial check before processing batch
     if req.listings:
         first_session = req.listings[0].session_id or ""
-        allowed, _ = _check_free_trial(first_session)
+        allowed, _ = await _check_free_trial(first_session)
         if not allowed:
             raise HTTPException(
                 status_code=402,
