@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Header
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -870,18 +870,16 @@ async def _get_usage(session_id: Optional[str]) -> dict:
         return {"is_pro": False, "credits": 0, "free_used": 0,
                 "free_remaining": FREE_REWRITES_PER_SESSION, "paywall": False}
 
-    # Check Pro / Lifetime entitlement (unlimited)
-    pro = await db.entitlements.find_one(
-        {"lw_session_id": session_id, "kind": {"$in": ["pro", "lifetime"]}}, {"_id": 0}
+    # Run all three DB lookups in parallel — they are independent of each other
+    pro, cdoc, free_used = await asyncio.gather(
+        db.entitlements.find_one(
+            {"lw_session_id": session_id, "kind": {"$in": ["pro", "lifetime"]}}, {"_id": 0}
+        ),
+        db.credits.find_one({"lw_session_id": session_id}, {"_id": 0}),
+        db.listings.count_documents({"session_id": session_id}),
     )
     is_pro = bool(pro)
-
-    # Paid credits balance
-    cdoc = await db.credits.find_one({"lw_session_id": session_id}, {"_id": 0})
     credits = int((cdoc or {}).get("balance", 0))
-
-    # Free rewrites used (counted from listings table)
-    free_used = await db.listings.count_documents({"session_id": session_id})
     free_remaining = max(0, FREE_REWRITES_PER_SESSION - free_used)
 
     # Allowed if Pro, has credits, or has free remaining
@@ -907,10 +905,12 @@ COMMISSION_RATE = 0.30
 
 
 @api_router.get("/affiliate/{ref}")
-async def affiliate_stats(ref: str):
-    """Public dashboard for an affiliate. Anyone with the URL sees their stats.
+async def affiliate_stats(ref: str, x_admin_secret: str = Header(default="")):
+    """Protected dashboard for an affiliate. Requires X-Admin-Secret header.
     Format: GET /api/affiliate/mike → totals + recent referred sales.
     """
+    if not ADMIN_SECRET or x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(403, "Forbidden")
     ref = ref.strip().lower()
     if not ref or len(ref) > 64:
         raise HTTPException(400, "Invalid ref")
@@ -1397,6 +1397,8 @@ async def root():
 async def rewrite_listing(req: RewriteRequest, request: Request):
     if len(req.raw_listing.strip()) < 10:
         raise HTTPException(400, "Listing too short. Add at least a sentence.")
+    if len(req.raw_listing) > 8000:
+        raise HTTPException(400, "Listing description too long (max 8000 characters)")
 
     # Bot detection
     is_bot, reason = _is_bot_request(request, req.session_id or "")
@@ -2536,8 +2538,8 @@ ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "")
 
 
 @api_router.get("/admin/stats")
-async def admin_stats(secret: str = ""):
-    if not ADMIN_SECRET or secret != ADMIN_SECRET:
+async def admin_stats(x_admin_secret: str = Header(default="")):
+    if not ADMIN_SECRET or x_admin_secret != ADMIN_SECRET:
         raise HTTPException(403, "Forbidden")
 
     since_fix = datetime(2026, 6, 9, tzinfo=timezone.utc)
