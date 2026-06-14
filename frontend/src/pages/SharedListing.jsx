@@ -170,7 +170,18 @@ export default function SharedListing() {
           <div className="max-w-xl mx-auto text-center">
             <h3 className="font-display text-2xl md:text-3xl mb-3">Want to see this home?</h3>
             <p className="text-ink/60 mb-6">Book a showing or get pre-approved — we'll connect you with a local agent within 24 hours.</p>
-            <form onSubmit={(e) => { e.preventDefault(); setLeadSubmitted(true); }} className="space-y-4">
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const fd = new FormData(e.target);
+              try {
+                await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/leads/showing`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ name: fd.get("name"), email: fd.get("email"), phone: fd.get("phone"), message: fd.get("message") }),
+                });
+              } catch {}
+              setLeadSubmitted(true);
+            }} className="space-y-4">
               {leadSubmitted ? (
                 <div className="bg-coal text-oat p-6 text-center">
                   <p className="font-heading text-lg mb-2">We'll be in touch within 24 hours!</p>
@@ -178,10 +189,10 @@ export default function SharedListing() {
                 </div>
               ) : (
                 <>
-                  <input required type="text" placeholder="Your name" className="w-full px-4 py-3 border border-ink/20 font-body" />
-                  <input required type="email" placeholder="Email address" className="w-full px-4 py-3 border border-ink/20 font-body" />
-                  <input required type="tel" placeholder="Phone (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
-                  <input type="text" placeholder="Message (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input required type="text" name="name" placeholder="Your name" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input required type="email" name="email" placeholder="Email address" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input type="tel" name="phone" placeholder="Phone (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
+                  <input type="text" name="message" placeholder="Message (optional)" className="w-full px-4 py-3 border border-ink/20 font-body" />
                   <button type="submit" className="w-full btn-vermillion px-6 py-4 font-heading text-sm uppercase tracking-[0.15em]">
                     Book a Showing →
                   </button>

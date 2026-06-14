@@ -22,7 +22,7 @@ except ImportError:
     AsyncAnthropic = None
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
-from email_engine import send_guide_drip, send_pro_welcome, send_email
+from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip
 import stripe as stripe_sdk
 import httpx
 
@@ -1141,9 +1141,9 @@ async def affiliate_share_text(req: ShareTextRequest):
 
     copy = "\n\n".join(parts)
 
-    twitter_url = f"https://twitter.com/intent/tweet?text={encodeURIComponent(copy)}"
-    fb_url = f"https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(link)}"
-    li_url = f"https://www.linkedin.com/sharing/share-offsite/?url={encodeURIComponent(link)}"
+    twitter_url = f"https://twitter.com/intent/tweet?text={urllib.parse.quote(copy, safe='')}"
+    fb_url = f"https://www.facebook.com/sharer/sharer.php?u={urllib.parse.quote(link, safe='')}"
+    li_url = f"https://www.linkedin.com/sharing/share-offsite/?url={urllib.parse.quote(link, safe='')}"
 
     return {
         "copy": copy,
@@ -1285,18 +1285,12 @@ async def analyze_voice_description(req: VoiceDescriptionIn):
         except Exception:
             # Fallback to OpenRouter
             return await call_openrouter(system_prompt, user_text, model="openai/gpt-4o")
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=1024,
-        system=VOICE_POLISH_SYSTEM,
-        messages=[{"role": "user", "content": req.transcript.strip()}],
-    )
-    raw = response.content[0].text.strip()
+    raw_text = await _call_anthropic_voice(VOICE_POLISH_SYSTEM, req.transcript.strip())
     try:
-        data = json.loads(raw)
-        raw_description = data.get("raw_description", raw)
+        data = json.loads(raw_text)
+        raw_description = data.get("raw_description", raw_text)
     except Exception:
-        raw_description = raw
+        raw_description = raw_text
 
     return {"raw_description": raw_description}
 
@@ -1494,40 +1488,46 @@ async def batch_rewrite(req: BatchRewriteRequest):
                 },
             )
 
-    for listing_req in req.listings:
-        try:
-            outputs = await call_rewrite_llm(listing_req)
-            listing_id = str(uuid.uuid4())
-            created_at = datetime.now(timezone.utc).isoformat()
+    sem = asyncio.Semaphore(3)  # max 3 concurrent LLM calls
 
-            doc = {
-                "id": listing_id,
-                "session_id": listing_req.session_id,
-                "tone": listing_req.tone,
-                "raw_listing": listing_req.raw_listing,
-                "address": listing_req.address,
-                "price": listing_req.price,
-                "beds": listing_req.beds,
-                "baths": listing_req.baths,
-                "sqft": listing_req.sqft,
-                "virtual_tour_url": getattr(listing_req, "virtual_tour_url", None),
-                "created_at": created_at,
-                **outputs,
-            }
-            await db.listings.insert_one({k: v for k, v in doc.items() if v is not None})
+    async def _process_one(listing_req):
+        async with sem:
+            return await call_rewrite_llm(listing_req)
 
-            results.append(RewriteOutput(
-                id=listing_id,
-                tone=listing_req.tone,
-                raw_listing=listing_req.raw_listing,
-                virtual_tour_url=getattr(listing_req, "virtual_tour_url", None),
-                created_at=created_at,
-                **outputs,
-            ))
-            success_count += 1
-        except Exception as e:
-            logging.exception("Batch item failed")
+    tasks = [_process_one(lr) for lr in req.listings]
+    settled = await asyncio.gather(*tasks, return_exceptions=True)
+
+    for listing_req, outcome in zip(req.listings, settled):
+        if isinstance(outcome, Exception):
+            logging.exception("Batch item failed: %s", outcome)
             failed_count += 1
+            continue
+        listing_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        doc = {
+            "id": listing_id,
+            "session_id": listing_req.session_id,
+            "tone": listing_req.tone,
+            "raw_listing": listing_req.raw_listing,
+            "address": listing_req.address,
+            "price": listing_req.price,
+            "beds": listing_req.beds,
+            "baths": listing_req.baths,
+            "sqft": listing_req.sqft,
+            "virtual_tour_url": getattr(listing_req, "virtual_tour_url", None),
+            "created_at": created_at,
+            **outcome,
+        }
+        await db.listings.insert_one({k: v for k, v in doc.items() if v is not None})
+        results.append(RewriteOutput(
+            id=listing_id,
+            tone=listing_req.tone,
+            raw_listing=listing_req.raw_listing,
+            virtual_tour_url=getattr(listing_req, "virtual_tour_url", None),
+            created_at=created_at,
+            **outcome,
+        ))
+        success_count += 1
 
     return BatchRewriteResponse(results=results, success_count=success_count, failed_count=failed_count)
 
@@ -1580,11 +1580,7 @@ async def capture_email(req: EmailCaptureIn):
         }
         await db.leads.insert_one(doc)
         try:
-            from email_engine import tpl_free_trial_drip
-            subj, html, _ = tpl_free_trial_drip()
-            asyncio.create_task(asyncio.get_event_loop().run_in_executor(
-                None, lambda: resend.Emails.send({"from": os.environ.get("EMAIL_FROM", "ListWorks PRO <hello@listworks.pro>"), "to": [email], "subject": subj, "html": html})
-            ))
+            asyncio.create_task(send_free_trial_drip(email))
         except Exception:
             pass
 
@@ -1599,10 +1595,6 @@ async def capture_email(req: EmailCaptureIn):
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
 async def get_expired_scripts(req: ExpiredListingRequest):
     user_prompt = f"""PROPERTY: {req.address}
-
-META:
-{meta_str}
-
 
 Now produce the JSON object with all 4 scripts. JSON only."""
 
@@ -2099,12 +2091,11 @@ async def stripe_webhook(request: Request):
         event_type = evt.event_type if evt else None
     else:
         webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+        if not webhook_secret:
+            logger.error("STRIPE_WEBHOOK_SECRET not configured — refusing unsigned webhook")
+            raise HTTPException(500, "Webhook secret not configured")
         try:
-            if webhook_secret:
-                evt = stripe_sdk.Webhook.construct_event(body, sig, webhook_secret)
-            else:
-                import json as _json
-                evt = _json.loads(body)
+            evt = stripe_sdk.Webhook.construct_event(body, sig, webhook_secret)
         except Exception as e:
             logger.exception("Stripe webhook parse failed: %s", e)
             raise HTTPException(400, "Invalid webhook")
@@ -2521,9 +2512,11 @@ class EmailTestRequest(BaseModel):
 
 
 @api_router.post("/email/test")
-async def email_test(req: EmailTestRequest):
+async def email_test(req: EmailTestRequest, secret: str = ""):
     """Send the welcome email immediately to verify Resend is wired correctly.
     Drip emails are NOT scheduled here — this is for smoke-testing only."""
+    if not ADMIN_SECRET or secret != ADMIN_SECRET:
+        raise HTTPException(403, "Forbidden")
     if not os.environ.get("RESEND_API_KEY"):
         raise HTTPException(503, "RESEND_API_KEY not configured")
     from email_engine import _send, tpl_guide_welcome, tpl_pro_welcome
