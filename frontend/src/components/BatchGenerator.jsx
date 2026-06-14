@@ -119,7 +119,7 @@ export default function BatchGenerator({ onComplete }) {
             <div className="flex-1 space-y-1.5">
               <textarea
                 value={l.raw_listing}
-                onChange={(e) => { const u = [...listings]; u[i].raw_listing = e.target.value; setListings(u); }}
+                onChange={(e) => { const u = [...listings]; u[i] = { ...u[i], raw_listing: e.target.value }; setListings(u); }}
                 placeholder={`Listing ${i + 1} — paste draft or leave blank to skip`}
                 className="editorial-input text-sm w-full"
                 rows={2}

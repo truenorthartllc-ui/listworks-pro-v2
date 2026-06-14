@@ -14,6 +14,7 @@ export default function PaymentSuccess() {
   const [status, setStatus] = useState("polling"); // polling | paid | failed | timeout
   const [data, setData] = useState(null);
   const attemptsRef = useRef(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (!sessionId) {
@@ -37,17 +38,18 @@ export default function PaymentSuccess() {
           setStatus("timeout");
           return;
         }
-        setTimeout(poll, POLL_INTERVAL_MS);
+        timerRef.current = setTimeout(poll, POLL_INTERVAL_MS);
       } catch (e) {
         attemptsRef.current += 1;
         if (attemptsRef.current >= MAX_POLLS) {
           setStatus("failed");
           return;
         }
-        setTimeout(poll, POLL_INTERVAL_MS);
+        timerRef.current = setTimeout(poll, POLL_INTERVAL_MS);
       }
     };
     poll();
+    return () => clearTimeout(timerRef.current);
   }, [sessionId]);
 
   const isGuide = data?.package_kind === "guide";

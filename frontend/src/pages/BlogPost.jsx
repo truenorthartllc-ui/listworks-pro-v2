@@ -48,6 +48,9 @@ export default function BlogPost() {
             if (p.startsWith("## ")) {
               return <h2 key={i} className="font-display text-2xl mt-10 mb-4 tracking-tight">{p.replace("## ", "")}</h2>;
             }
+            if (p.startsWith("### ")) {
+              return <h3 key={i} className="font-display text-xl mt-8 mb-3 tracking-tight">{p.replace("### ", "")}</h3>;
+            }
             if (p.startsWith("**") && p.endsWith("**")) {
               return <p key={i} className="font-body text-lg font-semibold text-ink my-4">{p.replace(/\*\*/g, "")}</p>;
             }
@@ -67,6 +70,11 @@ export default function BlogPost() {
                   </table>
                 </div>
               );
+            }
+            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            if (linkRegex.test(p)) {
+              const html = p.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-vermillion underline hover:opacity-80 transition" target="_blank" rel="noopener noreferrer">$1</a>');
+              return <p key={i} className="font-body text-base leading-relaxed text-ink/80 mb-4" dangerouslySetInnerHTML={{ __html: html }} />;
             }
             return <p key={i} className="font-body text-base leading-relaxed text-ink/80 mb-4">{p}</p>;
           })}
