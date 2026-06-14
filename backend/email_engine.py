@@ -254,6 +254,211 @@ def tpl_free_trial_drip() -> tuple[str, str, str]:
 
 
 # ---------------------------------------------------------------------------
+# Free trial drip sequence (7 emails, Days 0/2/5/7/14/21/30)
+# ---------------------------------------------------------------------------
+
+def tpl_trial_day2_beforeafter() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "This is what 10 seconds looks like. Real before/after."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        Before vs. After — <em style="color:#ff3a1c;font-style:italic;">10 seconds.</em>
+      </h2>
+      <p style="margin:0 0 16px;">Here's what a real listing looks like before and after ListWorks PRO:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;">
+        <tr>
+          <td style="width:50%;padding:16px;background:#f0ede4;vertical-align:top;border:1px solid #e0ddd4;">
+            <p style="margin:0 0 8px;font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:0.15em;color:#9a9590;">❌ Before</p>
+            <p style="margin:0;font-size:13px;color:#555;line-height:1.6;font-style:italic;">"3 bed 2 bath ranch. Updated kitchen. Hardwood floors. Fenced yard. Near schools. Move-in ready."</p>
+          </td>
+          <td style="width:50%;padding:16px;background:#1a1a1a;vertical-align:top;border:1px solid #333;">
+            <p style="margin:0 0 8px;font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:0.15em;color:#ff3a1c;">✅ After</p>
+            <p style="margin:0;font-size:13px;color:#f4f3ef;line-height:1.6;font-style:italic;">"Every morning starts with light across gleaming hardwood floors. The updated kitchen — granite, stainless, real counter space — is where weekends happen. Three bedrooms, two baths, a fully fenced yard, and top-rated schools two blocks away. This is the one you'll stop scrolling for."</p>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:0 0 16px;color:#444;">That rewrite took 8 seconds. ListWorks also generated the Instagram caption, Facebook post, 5 headlines, and a buyer email at the same time.</p>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#playground" style="{_BTN_VERMILLION}">Rewrite Your Next Listing →</a>
+      </p>
+      <p style="margin:0;color:#666;font-size:13px;">You still have bonus rewrites available. Use them on a real listing — see the difference yourself.</p>
+    """
+    return ("This is what 10 seconds looks like", _wrap(inner, preheader), preheader)
+
+
+def tpl_trial_day5_fairhousing() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "One phrase in your listings could cost $26,262. Seriously."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        One phrase. <em style="color:#ff3a1c;font-style:italic;">$26,262 fine.</em>
+      </h2>
+      <p style="margin:0 0 16px;">HUD's minimum fine for a first Fair Housing violation is <strong>$26,262</strong>. And the most common violations aren't intentional — they're AI-generated phrases that no one caught.</p>
+      <p style="margin:0 0 12px;font-weight:600;">Phrases that have triggered Fair Housing complaints:</p>
+      <ul style="margin:0 0 24px;padding-left:22px;line-height:2.2;color:#444;">
+        <li><span style="font-family:monospace;background:#fff3f0;padding:2px 6px;color:#c0392b;">"Perfect for families"</span> — implies households without children need not apply</li>
+        <li><span style="font-family:monospace;background:#fff3f0;padding:2px 6px;color:#c0392b;">"Safe, quiet neighborhood"</span> — coded language with documented complaint history</li>
+        <li><span style="font-family:monospace;background:#fff3f0;padding:2px 6px;color:#c0392b;">"Walking distance to church"</span> — steering based on religion</li>
+        <li><span style="font-family:monospace;background:#fff3f0;padding:2px 6px;color:#c0392b;">"Great for young professionals"</span> — age discrimination</li>
+      </ul>
+      <p style="margin:0 0 16px;">ChatGPT generates these constantly. It has no real estate compliance layer. ListWorks screens every output before it reaches you.</p>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/listing-analyzer" style="{_BTN_VERMILLION}">Check Your Listings for Violations — Free →</a>
+      </p>
+      <p style="margin:0;color:#666;font-size:13px;">Paste any listing into our free analyzer. Instant Fair Housing score. No signup needed.</p>
+    """
+    return ("One phrase in your listing could cost $26,262", _wrap(inner, preheader), preheader)
+
+
+def tpl_trial_day7_socialproof() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "What 850+ agents actually said about ListWorks PRO."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        What agents are <em style="color:#ff3a1c;font-style:italic;">actually saying.</em>
+      </h2>
+      <p style="margin:0 0 20px;">We're not a big company. We don't have a Super Bowl ad. We have agents who tried it and kept coming back.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+        {"".join(f'''<tr><td style="padding:14px 18px;border-left:3px solid #ff3a1c;background:#faf9f5;margin-bottom:12px;display:block;">
+          <p style="margin:0 0 8px;font-size:15px;color:#1a1a1a;line-height:1.6;font-style:italic;">"{quote}"</p>
+          <p style="margin:0;font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:0.12em;color:#9a9590;">{author}</p>
+        </td></tr><tr><td style="height:10px;"></td></tr>''' for quote, author in [
+            ("Used it on a stale listing that had been sitting 47 days. New copy went live Monday. Showing requests by Wednesday. Offer by Friday.", "RE Agent — Phoenix AZ"),
+            ("I was skeptical. Tried it on a $2.1M listing as a test. The MLS description it wrote was genuinely better than what I would have written in an hour.", "RE Agent — Austin TX"),
+            ("The Fair Housing filter alone is worth the subscription. My broker requires compliance review on every listing. This does it automatically.", "RE Agent — Atlanta GA"),
+        ])}
+      </table>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#playground" style="{_BTN_VERMILLION}">Try Your Next Listing Free →</a>
+      </p>
+      <p style="margin:0;color:#666;font-size:13px;">Still on free rewrites. Use them — you've already paid with your email.</p>
+    """
+    return ("What 850+ agents are saying about ListWorks", _wrap(inner, preheader), preheader)
+
+
+def tpl_trial_day14_features() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "You've seen 10% of ListWorks. Here's the other 90%."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        You've only seen <em style="color:#ff3a1c;font-style:italic;">10% of this.</em>
+      </h2>
+      <p style="margin:0 0 20px;">Most agents who try ListWorks use the basic rewrite and stop. Here's what's also in there:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;">
+        {"".join(f'<tr style="border-bottom:1px solid #f0ede4;"><td style="padding:12px 0;font-size:14px;color:#1a1a1a;font-weight:600;width:35%;">{feat}</td><td style="padding:12px 0 12px 16px;font-size:13px;color:#555;line-height:1.6;">{desc}</td></tr>' for feat, desc in [
+            ("Brand Voice Memory", "Save your tone, banned words, and style once. Every rewrite sounds like you — automatically."),
+            ("Local Gems", "AI pulls nearby schools, restaurants, and transit into a neighborhood paragraph. The research agents skip."),
+            ("Address Auto-Fill", "Type an address, get beds/baths/sqft populated from public records. No manual lookup."),
+            ("Photo → Listing", "Upload a photo. AI identifies features — hardwood floors, marble counters, vaulted ceilings — and writes from them."),
+            ("Agent Bio Generator", "Short, medium, and full bios in Professional, Warm, or Bold tone. LinkedIn and Instagram ready."),
+            ("Spanish + Chinese Output", "One-click multilingual listings. Reach buyers in their language."),
+            ("Listing Strength Score", "0-100 quality score on every output. See exactly what's weak before it goes live."),
+        ])}
+      </table>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Unlock Everything — $29/mo →</a>
+      </p>
+      <p style="margin:0;color:#666;font-size:13px;">Flat rate. No credit limits. Cancel anytime. Your first listing pays for the whole month.</p>
+    """
+    return ("You've only seen 10% of what ListWorks does", _wrap(inner, preheader), preheader)
+
+
+def tpl_trial_day21_comparison() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "ChatGPT vs. ListWorks PRO for real estate — honest breakdown."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        ChatGPT vs. ListWorks — <em style="color:#ff3a1c;font-style:italic;">honest answer.</em>
+      </h2>
+      <p style="margin:0 0 16px;">Agents ask us this constantly. Here's the real answer — no spin.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;font-size:13px;">
+        <tr style="background:#1a1a1a;color:#f4f3ef;">
+          <th style="padding:10px 14px;text-align:left;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;font-weight:normal;">Feature</th>
+          <th style="padding:10px 14px;text-align:center;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;font-weight:normal;">ChatGPT</th>
+          <th style="padding:10px 14px;text-align:center;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:#ff3a1c;font-weight:normal;">ListWorks PRO</th>
+        </tr>
+        {"".join(f'<tr style="border-bottom:1px solid #f0ede4;"><td style="padding:10px 14px;color:#333;">{feat}</td><td style="padding:10px 14px;text-align:center;color:#999;">{chatgpt}</td><td style="padding:10px 14px;text-align:center;color:#1a7a4a;font-weight:600;">{lw}</td></tr>' for feat, chatgpt, lw in [
+            ("Fair Housing compliance screen", "✗ None", "✓ Built-in"),
+            ("All 5 formats in one click", "✗ One at a time", "✓ Simultaneous"),
+            ("Brand Voice Memory", "✗ Resets every chat", "✓ Saved forever"),
+            ("MLS character limits", "✗ Manual counting", "✓ Auto-enforced"),
+            ("Banned AI clichés", "✗ Generates them freely", "✓ 25+ blocked at system level"),
+            ("Local Gems neighborhood data", "✗ Hallucinated or missing", "✓ Real data pulled live"),
+            ("Cost per listing", "$20/mo general use", "$29/mo unlimited RE"),
+        ])}
+      </table>
+      <p style="margin:0 0 16px;color:#444;">ChatGPT is a great general tool. ListWorks is built for exactly one job — real estate copy that's fast, compliant, and in your voice. For agents, purpose-built wins.</p>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/vs/chatgpt" style="{_BTN_VERMILLION}">See Full Comparison →</a>
+      </p>
+    """
+    return ("ChatGPT vs. ListWorks PRO — honest breakdown", _wrap(inner, preheader), preheader)
+
+
+def tpl_trial_day30_lastoffer() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "Last email. One offer. COMEBACK29 saves you $116 today."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        Last email. <em style="color:#ff3a1c;font-style:italic;">One offer.</em>
+      </h2>
+      <p style="margin:0 0 16px;">You've been on our list for 30 days. You tried the free rewrites. You know what this does.</p>
+      <p style="margin:0 0 16px;">If you haven't upgraded yet, here's the honest version of why agents do:</p>
+      <ul style="margin:0 0 24px;padding-left:22px;line-height:2.2;color:#444;">
+        <li>One listing pays for 4 months of Pro at $29</li>
+        <li>The Fair Housing screen alone has saved agents from $26,262 fines</li>
+        <li>Flat rate means no anxiety about how many listings you run</li>
+        <li>Your first commission covers a full year of the annual plan ($290)</li>
+      </ul>
+      <p style="margin:0 0 8px;font-weight:600;">One-time offer for people who've been with us since the beginning:</p>
+      <div style="margin:0 0 24px;padding:20px;background:#fff3f0;border:2px solid #ff3a1c;text-align:center;">
+        <p style="margin:0 0 4px;font-family:monospace;font-size:22px;font-weight:700;letter-spacing:0.1em;color:#ff3a1c;">COMEBACK29</p>
+        <p style="margin:0;font-size:13px;color:#666;">$10 off your first month — apply at checkout</p>
+      </div>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Claim COMEBACK29 — $19 First Month →</a>
+      </p>
+      <p style="margin:0 0 12px;color:#666;font-size:13px;">This is the last email in this sequence. No more nudges after this — I respect your inbox.</p>
+      <p style="margin:0;color:#666;font-size:13px;">If you ever want to try Pro, the door's open at <a href="{site}" style="color:#ff3a1c;">{site}</a>.</p>
+    """
+    return ("Last email — COMEBACK29 saves you $116 today", _wrap(inner, preheader), preheader)
+
+
+async def send_free_trial_drip(email: str) -> dict:
+    """
+    Full 7-email sequence for free trial signups.
+    All emails pre-scheduled at capture time via Resend scheduled_at.
+    Day 0: bonus rewrites (already sent by capture endpoint)
+    Day 2: before/after example
+    Day 5: fair housing warning
+    Day 7: social proof
+    Day 14: feature reveal
+    Day 21: chatgpt comparison
+    Day 30: last offer + COMEBACK29
+    """
+    if not email:
+        return {}
+
+    s0, h0, _ = tpl_free_trial_drip()
+    s2, h2, _ = tpl_trial_day2_beforeafter()
+    s5, h5, _ = tpl_trial_day5_fairhousing()
+    s7, h7, _ = tpl_trial_day7_socialproof()
+    s14, h14, _ = tpl_trial_day14_features()
+    s21, h21, _ = tpl_trial_day21_comparison()
+    s30, h30, _ = tpl_trial_day30_lastoffer()
+
+    results = {}
+    results["day0"] = await _send(to=email, subject=s0, html=h0, tag="trial_day0")
+    results["day2"] = await _send(to=email, subject=s2, html=h2, scheduled_at=_iso_in(2), tag="trial_day2")
+    results["day5"] = await _send(to=email, subject=s5, html=h5, scheduled_at=_iso_in(5), tag="trial_day5")
+    results["day7"] = await _send(to=email, subject=s7, html=h7, scheduled_at=_iso_in(7), tag="trial_day7")
+    results["day14"] = await _send(to=email, subject=s14, html=h14, scheduled_at=_iso_in(14), tag="trial_day14")
+    results["day21"] = await _send(to=email, subject=s21, html=h21, scheduled_at=_iso_in(21), tag="trial_day21")
+    results["day30"] = await _send(to=email, subject=s30, html=h30, scheduled_at=_iso_in(30), tag="trial_day30")
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Sending helpers
 # ---------------------------------------------------------------------------
 
