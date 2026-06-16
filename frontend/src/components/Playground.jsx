@@ -483,6 +483,18 @@ export default function Playground() {
                     <Share2 className="w-3.5 h-3.5" />
                     Share
                   </button>
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/share/${result.id}`;
+                      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(url)}`;
+                      window.open(qrUrl, '_blank', 'width=600,height=600');
+                    }}
+                    className="bg-zinc-800 text-zinc-100 hover:bg-zinc-700 px-3.5 py-2 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition"
+                    title="Generate QR code for this listing — put it on your sign!"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/><rect x="17" y="3" width="4" height="4"/><path d="M17 17h4v4h-4z"/><path d="M11 7h2v10h-2z"/><path d="M7 11h10v2H7z"/></svg>
+                    QR
+                  </button>
                 </div>
               )}
             </div>

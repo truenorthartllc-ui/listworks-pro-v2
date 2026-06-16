@@ -2614,6 +2614,122 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ===== QR: SHOWING FEEDBACK =====
+class ShowingFeedbackCreate(BaseModel):
+    listing_title: str = ""
+    address: str = ""
+    agent_name: str = ""
+    agent_email: str = ""
+
+class ShowingFeedbackSubmit(BaseModel):
+    event_id: str
+    rating: int  # 1-5
+    comment: str = ""
+    email: str = ""
+    name: str = ""
+
+@api_router.post("/qr/showing-feedback")
+async def qr_showing_create(req: ShowingFeedbackCreate, request: Request):
+    event_id = str(uuid.uuid4())
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    event = {
+        "event_id": event_id,
+        "listing_title": req.listing_title,
+        "address": req.address,
+        "agent_name": req.agent_name,
+        "agent_email": req.agent_email,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "qr_url": f"{frontend_url}/show/{event_id}",
+        "visitors": 0,
+    }
+    await db.showing_feedback_events.insert_one(event)
+    return event
+
+@api_router.post("/qr/showing-feedback/submit")
+async def qr_showing_submit(req: ShowingFeedbackSubmit, request: Request):
+    event = await db.showing_feedback_events.find_one({"event_id": req.event_id})
+    if not event:
+        raise HTTPException(404, "Event not found")
+    feedback = {
+        "id": str(uuid.uuid4()),
+        "event_id": req.event_id,
+        "rating": req.rating,
+        "comment": req.comment,
+        "email": req.email,
+        "name": req.name,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.showing_feedback.insert_one(feedback)
+    await db.showing_feedback_events.update_one(
+        {"event_id": req.event_id}, {"$inc": {"visitors": 1}}
+    )
+    if req.email:
+        try:
+            await send_email(req.email, "Thanks for your feedback!",
+                f"Hi {req.name or 'there'},<br><br>Thanks for touring {event.get('listing_title', 'the property')}.<br><br>Your agent, {event.get('agent_name', 'your agent')}, appreciates the input.<br><br>— ListWorks PRO")
+        except: pass
+    return {"ok": True, "feedback_id": feedback["id"]}
+
+@api_router.get("/qr/showing-feedback/{event_id}")
+async def qr_showing_get(event_id: str):
+    event = await db.showing_feedback_events.find_one({"event_id": event_id})
+    if not event:
+        raise HTTPException(404, "Event not found")
+    return event
+
+# ===== QR: AGENT CARD =====
+class AgentCardCreate(BaseModel):
+    name: str
+    title: str = "Real Estate Agent"
+    brokerage: str = ""
+    phone: str = ""
+    email: str = ""
+    photo_url: str = ""
+    bio: str = ""
+
+class AgentCardUpdate(BaseModel):
+    name: str = ""
+    title: str = ""
+    brokerage: str = ""
+    phone: str = ""
+    email: str = ""
+    photo_url: str = ""
+    bio: str = ""
+
+@api_router.post("/qr/agent-card")
+async def qr_agent_card_create(req: AgentCardCreate, request: Request):
+    card_id = str(uuid.uuid4())
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    card = {
+        "card_id": card_id,
+        "name": req.name,
+        "title": req.title,
+        "brokerage": req.brokerage,
+        "phone": req.phone,
+        "email": req.email,
+        "photo_url": req.photo_url,
+        "bio": req.bio,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "qr_url": f"{frontend_url}/agent/{card_id}",
+    }
+    await db.agent_cards.insert_one(card)
+    return card
+
+@api_router.get("/qr/agent-card/{card_id}")
+async def qr_agent_card_get(card_id: str):
+    card = await db.agent_cards.find_one({"card_id": card_id})
+    if not card:
+        raise HTTPException(404, "Card not found")
+    return card
+
+@api_router.put("/qr/agent-card/{card_id}")
+async def qr_agent_card_update(card_id: str, req: AgentCardUpdate, request: Request):
+    updates = {k: v for k, v in req.dict().items() if v}
+    if not updates:
+        raise HTTPException(400, "No fields to update")
+    await db.agent_cards.update_one({"card_id": card_id}, {"$set": updates})
+    return {"ok": True}
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
