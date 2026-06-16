@@ -8,6 +8,7 @@ import BeforeAfter from "@/components/BeforeAfter";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import Features from "@/components/Features";
 import GuideUpsell from "@/components/GuideUpsell";
+import QRFeatures from "@/components/QRFeatures";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
@@ -30,9 +31,10 @@ export default function LandingPage() {
         <Playground />
         <BeforeAfter />
         <NeighborhoodInsights />
-        <GuideUpsell />
-        <Features />
-        <section className="bg-ink text-oat px-6 md:px-10 py-20">
+         <GuideUpsell />
+         <Features />
+         <QRFeatures />
+         <section className="bg-ink text-oat px-6 md:px-10 py-20">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
               <span className="h-px w-10 bg-oat/40" />
