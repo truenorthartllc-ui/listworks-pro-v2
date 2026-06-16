@@ -108,6 +108,24 @@
     <changefreq>monthly</changefreq>
     <priority>0.78</priority>
   </url>
+  <url>
+    <loc>https://listworks.pro/blog/mls-listing-description-examples</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://listworks.pro/blog/real-estate-listing-description-generator</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.87</priority>
+  </url>
+  <url>
+    <loc>https://listworks.pro/blog/fair-housing-violations-real-estate-listings-examples</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.86</priority>
+  </url>
 
   <!-- City landing pages -->
   <url>

@@ -5,6 +5,7 @@ import AIVideoShowcase from "@/components/AIVideoShowcase";
 import Playground from "@/components/Playground";
 import Marquee from "@/components/Marquee";
 import BeforeAfter from "@/components/BeforeAfter";
+import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import Features from "@/components/Features";
 import GuideUpsell from "@/components/GuideUpsell";
 import Testimonials from "@/components/Testimonials";
@@ -28,6 +29,8 @@ export default function LandingPage() {
         <Marquee />
         <Playground />
         <BeforeAfter />
+        <NeighborhoodInsights />
+        <GuideUpsell />
         <Features />
         <section className="bg-ink text-oat px-6 md:px-10 py-20">
           <div className="max-w-[1400px] mx-auto">
@@ -36,44 +39,30 @@ export default function LandingPage() {
               <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-oat/50">Fair Housing</span>
             </div>
             <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-12 lg:col-span-6">
-                <div className="inline-flex items-baseline gap-3 mb-6 border border-vermillion/40 px-5 py-3">
-                  <span className="font-display text-3xl md:text-4xl text-vermillion font-bold">$26,262</span>
-                  <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-oat/60">minimum HUD fine · first violation · 2025</span>
-                </div>
-                <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-[1.05]">
-                  Every word scanned.
-                  <br />
-                  <span className="text-vermillion">Every listing protected.</span>
-                </h2>
-                <p className="font-body text-base md:text-lg text-oat/70 mt-6 max-w-lg leading-relaxed">
-                  ChatGPT will write "perfect for families" or "walk to church" — both Fair Housing violations.
-                  ListWorks screens every word before it leaves your screen. Not a checkbox. A guarantee.
+              <div className="col-span-12 lg:col-span-7">
+                <h3 className="font-display text-3xl md:text-5xl italic leading-[1.05]">
+                  Fair Housing wasn't designed for AI.
+                </h3>
+                <p className="font-body text-lg md:text-xl text-oat/70 mt-6 leading-relaxed">
+                  But the $26,000 HUD fine for a single violation applies to whatever wrote the copy.
+                  ChatGPT doesn't scan for FHA red flags. ListWorks PRO does — every rewrite, before it reaches your MLS.
                 </p>
-                <div className="mt-8 flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-oat/50">
-                  <span>● FHA guidelines</span>
-                  <span>● Real-time scan</span>
-                  <span>● Auto-fix suggestions</span>
-                </div>
               </div>
-              <div className="col-span-12 lg:col-span-5 lg:col-start-8 flex items-center">
-                <div className="border border-oat/15 p-8 w-full">
-                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-green-400 mb-2">Protected</div>
-                  <p className="font-display italic text-xl md:text-2xl text-oat/90 leading-relaxed">
-                    "Family-friendly neighborhood near top-rated schools"   <span className="text-green-400">✓</span>
+              <aside className="col-span-12 lg:col-span-5 lg:pl-10 lg:border-l lg:border-oat/15">
+                <div className="border border-oat/25 p-8">
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-vermillion mb-3">Real example</div>
+                  <p className="font-body text-oat/90 leading-relaxed text-sm">
+                    <span className="line-through text-oat/40">"Perfect for families with kids and pets"</span><br />
+                    <span className="text-green-400 mt-2 inline-block">✓ Refreshing natural light across an open floor plan designed for everyday living.</span>
                   </p>
-                  <div className="mt-4 pt-4 border-t border-oat/10">
-                    <p className="font-display italic text-xl md:text-2xl text-ink/40 line-through leading-relaxed">
-                      "Perfect for young couples starting a family"
-                    </p>
-                    <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-red-400 mt-2">Flagged — family status discrimination</div>
-                  </div>
+                  <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-oat/40 mt-4">
+                    Same home. Same value. No violation.
+                  </p>
                 </div>
-              </div>
+              </aside>
             </div>
           </div>
         </section>
-        <GuideUpsell />
         <Testimonials />
         <Pricing />
         <FAQ />
