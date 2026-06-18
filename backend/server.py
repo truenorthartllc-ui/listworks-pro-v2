@@ -2777,29 +2777,60 @@ async def local_gems(req: LocalGemsRequest):
     if not req.address or len(req.address.strip()) < 5:
         raise HTTPException(400, "Address required")
 
-    exa_key = os.environ.get("EXA_API_KEY", "")
-    if not exa_key:
-        raise HTTPException(503, "Exa search not configured")
+    google_key = os.environ.get("GOOGLE_MAPS_API_KEY", "")
+    if not google_key:
+        raise HTTPException(503, "Google Maps not configured")
 
     address = req.address.strip()
 
-    async def exa_search(query: str) -> str:
-        async with httpx.AsyncClient(timeout=15.0) as c:
-            r = await c.post(
-                "https://api.exa.ai/search",
-                headers={"x-api-key": exa_key, "Content-Type": "application/json"},
-                json={"query": query, "numResults": 3, "contents": {"text": True}},
+    async def places_nearby(lat: float, lng: float, ptype: str, rank: str = "prominence", limit: int = 4) -> list[dict]:
+        async with httpx.AsyncClient(timeout=10.0) as c:
+            r = await c.get(
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+                params={
+                    "location": f"{lat},{lng}",
+                    "radius": 800,
+                    "type": ptype,
+                    "rankby": rank,
+                    "key": google_key,
+                },
             )
             if r.status_code != 200:
-                return ""
-            results = r.json().get("results", [])
-            return " ".join(res.get("text", "")[:300] for res in results[:3])
+                return []
+            return r.json().get("results", [])[:limit]
 
-    schools_raw, restaurants_raw, transit_raw = await asyncio.gather(
-        exa_search(f"school ratings near {address} site:greatschools.org OR site:niche.com"),
-        exa_search(f"restaurants cafes near {address} Austin"),
-        exa_search(f"walk score transit parks near {address} Austin"),
+    # Geocode address → lat/lng
+    async with httpx.AsyncClient(timeout=10.0) as c:
+        g = await c.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={"address": address, "key": google_key},
+        )
+        geo = g.json()
+        if geo.get("status") != "OK" or not geo.get("results"):
+            raise HTTPException(400, "Could not geocode that address — try a more specific address")
+        loc = geo["results"][0]["geometry"]["location"]
+        lat, lng = loc["lat"], loc["lng"]
+
+    # Fetch schools, restaurants, parks/transit in parallel
+    school_results, restaurant_results, park_results = await asyncio.gather(
+        places_nearby(lat, lng, "school"),
+        places_nearby(lat, lng, "restaurant"),
+        places_nearby(lat, lng, "park"),
     )
+
+    def fmt_places(places: list[dict]) -> str:
+        lines = []
+        for p in places:
+            name = p.get("name", "")
+            rating = p.get("rating")
+            rating_str = f" — {rating}/5" if rating else ""
+            vicinity = p.get("vicinity", "")
+            lines.append(f"  • {name}{rating_str} ({vicinity})")
+        return "\n".join(lines) if lines else "(none found nearby)"
+
+    schools_text = fmt_places(school_results)
+    restaurants_text = fmt_places(restaurant_results)
+    parks_text = fmt_places(park_results)
 
     system = (
         "You write one short, punchy paragraph (3-4 sentences) for a real estate listing "
@@ -2808,9 +2839,9 @@ async def local_gems(req: LocalGemsRequest):
     )
     user = (
         f"Property address: {address}\n\n"
-        f"Schools data: {schools_raw[:600] or 'top-rated schools nearby'}\n"
-        f"Restaurants/cafes data: {restaurants_raw[:600] or 'local dining options'}\n"
-        f"Transit/parks data: {transit_raw[:600] or 'parks and transit access'}\n\n"
+        f"Nearby schools:\n{schools_text}\n\n"
+        f"Nearby restaurants:\n{restaurants_text}\n\n"
+        f"Nearby parks & transit:\n{parks_text}\n\n"
         "Write the Local Gems paragraph."
     )
 
