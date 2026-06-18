@@ -23,6 +23,7 @@ except ImportError:
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
 from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip
+from compliance_engine import check_fair_housing_v3, overall_risk, compliance_grade
 import stripe as stripe_sdk
 import httpx
 
@@ -1251,19 +1252,182 @@ async def activate_referral(req: RefClickIn):
 # ============== FAIR HOUSING ANALYSIS ==============
 class FairHousingIn(BaseModel):
     text: str
+    session_id: Optional[str] = None
+    team_id: Optional[str] = None
+
+
+class AcknowledgeIn(BaseModel):
+    pass
 
 
 @api_router.post("/analyze/fair-housing")
 async def analyze_fair_housing(req: FairHousingIn):
     if not req.text or len(req.text.strip()) < 20:
         raise HTTPException(400, "Text too short")
-    violations = _check_fair_housing(req.text)
+    violations = check_fair_housing_v3(req.text)
+    risk = overall_risk(violations)
+    grade = compliance_grade(violations)
+    scan_id = str(uuid.uuid4())
+    # Write audit log — every scan is recorded, no exceptions
+    await db.compliance_logs.insert_one({
+        "scan_id": scan_id,
+        "session_id": req.session_id,
+        "team_id": req.team_id,
+        "listing_text": req.text,
+        "violations": violations,
+        "overall_risk": risk,
+        "grade": grade,
+        "agent_acknowledged": False,
+        "acknowledged_at": None,
+        "scanned_at": datetime.now(timezone.utc).isoformat(),
+    })
     return {
+        "scan_id": scan_id,
         "violations": violations,
         "total": len(violations),
         "clean": len(violations) == 0,
+        "overall_risk": risk,
+        "grade": grade,
     }
 
+
+@api_router.post("/compliance/acknowledge/{scan_id}")
+async def acknowledge_compliance(scan_id: str):
+    result = await db.compliance_logs.update_one(
+        {"scan_id": scan_id},
+        {"$set": {"agent_acknowledged": True, "acknowledged_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    if result.matched_count == 0:
+        raise HTTPException(404, "Scan not found")
+    return {"acknowledged": True, "scan_id": scan_id}
+
+
+
+
+
+
+# ============== COMPLIANCE PDF EXPORT ==============
+@api_router.get("/compliance/pdf/{scan_id}")
+async def compliance_pdf(scan_id: str):
+    """Generate downloadable compliance report PDF for E&O documentation."""
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    import tempfile
+
+    doc_data = await db.compliance_logs.find_one({"scan_id": scan_id}, {"_id": 0})
+    if not doc_data:
+        raise HTTPException(404, "Scan not found")
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    tmp.close()
+
+    doc = SimpleDocTemplate(tmp.name, pagesize=letter,
+                            leftMargin=0.75*inch, rightMargin=0.75*inch,
+                            topMargin=0.75*inch, bottomMargin=0.75*inch)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Header
+    header_style = ParagraphStyle("header", fontSize=18, fontName="Helvetica-Bold", spaceAfter=4)
+    sub_style = ParagraphStyle("sub", fontSize=10, fontName="Helvetica", textColor=colors.HexColor("#666666"), spaceAfter=16)
+    story.append(Paragraph("ListWorks PRO — Compliance Report", header_style))
+    story.append(Paragraph("Fair Housing E&amp;O Documentation", sub_style))
+
+    # Meta
+    meta_data = [
+        ["Scan ID:", scan_id],
+        ["Scanned:", doc_data.get("scanned_at", "")[:19].replace("T", " ")],
+        ["Overall Risk:", doc_data.get("overall_risk", "CLEAN")],
+        ["Grade:", doc_data.get("grade", "A")],
+        ["Acknowledged:", "Yes" if doc_data.get("agent_acknowledged") else "No"],
+    ]
+    meta_table = Table(meta_data, colWidths=[1.5*inch, 5*inch])
+    meta_table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
+    story.append(meta_table)
+    story.append(Spacer(1, 12))
+
+    # Listing excerpt
+    story.append(Paragraph("<b>Listing Text Scanned:</b>", styles["Normal"]))
+    excerpt = doc_data.get("listing_text", "")[:500]
+    if len(doc_data.get("listing_text", "")) > 500:
+        excerpt += "..."
+    story.append(Paragraph(excerpt, ParagraphStyle("excerpt", fontSize=9, leftIndent=12, spaceAfter=12)))
+
+    # Violations table
+    violations = doc_data.get("violations", [])
+    story.append(Paragraph(f"<b>Violations Found: {len(violations)}</b>", styles["Normal"]))
+    story.append(Spacer(1, 6))
+
+    if violations:
+        risk_colors = {"CRITICAL": "#CC0000", "HIGH": "#EF4444", "MEDIUM": "#F59E0B", "LOW": "#EAB308"}
+        for v in violations:
+            risk_color = colors.HexColor(risk_colors.get(v["risk"], "#666666"))
+            v_data = [
+                [Paragraph(f'<font color="#{risk_colors.get(v["risk"],"666666")[1:]}"><b>{v["risk"]}</b></font>',
+                           ParagraphStyle("risk", fontSize=9)),
+                 Paragraph(f'<b>{v["rule"]}</b>', ParagraphStyle("rule", fontSize=9))],
+                ["Phrase:", v.get("phrase", "")],
+                ["Citation:", v.get("hud_citation", "")],
+                ["Legal basis:", v.get("legal_basis", "")],
+                ["Recommended fix:", v.get("fix", "")],
+            ]
+            v_table = Table(v_data, colWidths=[1.3*inch, 5.2*inch])
+            v_table.setStyle(TableStyle([
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#DDDDDD")),
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#F5F5F5")),
+            ]))
+            story.append(v_table)
+            story.append(Spacer(1, 6))
+    else:
+        story.append(Paragraph("No violations detected. Listing passed Fair Housing compliance scan.", styles["Normal"]))
+
+    # Footer
+    story.append(Spacer(1, 20))
+    footer_style = ParagraphStyle("footer", fontSize=8, textColor=colors.HexColor("#999999"))
+    story.append(Paragraph("This report was generated by ListWorks PRO for E&amp;O insurance documentation purposes. "
+                           "It does not constitute legal advice. Consult a licensed real estate attorney for questions "
+                           "about Fair Housing compliance.", footer_style))
+
+    doc.build(story)
+    return FileResponse(tmp.name, media_type="application/pdf",
+                        filename=f"listworks-compliance-{scan_id[:8]}.pdf",
+                        headers={"Content-Disposition": f"attachment; filename=listworks-compliance-{scan_id[:8]}.pdf"})
+
+# ============== COLORADO AI ACT COMPLIANCE ==============
+class COActDisclosureIn(BaseModel):
+    listing_text: str
+    agent_name: str
+    brokerage_name: str
+    property_address: str
+
+
+@api_router.post("/compliance/co-act-disclosure")
+async def co_act_disclosure(req: COActDisclosureIn):
+    """Generate Colorado AI Act (SB 205) disclosure statement for an AI-generated listing."""
+    system = """You are a real estate compliance expert. Generate a Colorado AI Act (SB 24-205) 
+disclosure statement for an AI-generated property listing. The disclosure must:
+1. State that artificial intelligence was used to generate the listing description
+2. Name the AI tool used (ListWorks PRO)
+3. Confirm the licensed agent reviewed and approved the content
+4. Include the agent name, brokerage, and property address
+5. Be concise (2-3 sentences), professional, and legally appropriate
+Return only the disclosure text, no extra commentary."""
+    user = f"""Agent: {req.agent_name}
+Brokerage: {req.brokerage_name}
+Property: {req.property_address}
+Generate the CO AI Act disclosure statement."""
+    disclosure = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    return {"disclosure_text": disclosure.strip()}
 
 # ============== VOICE-TO-DESCRIPTION ==============
 class VoiceDescriptionIn(BaseModel):
