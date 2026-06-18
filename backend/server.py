@@ -2777,27 +2777,28 @@ async def local_gems(req: LocalGemsRequest):
     if not req.address or len(req.address.strip()) < 5:
         raise HTTPException(400, "Address required")
 
-    tavily_key = os.environ.get("TAVILY_API_KEY", "")
-    if not tavily_key:
-        raise HTTPException(503, "Tavily not configured")
+    exa_key = os.environ.get("EXA_API_KEY", "")
+    if not exa_key:
+        raise HTTPException(503, "Exa search not configured")
 
     address = req.address.strip()
 
-    async def tavily_search(query: str) -> str:
+    async def exa_search(query: str) -> str:
         async with httpx.AsyncClient(timeout=15.0) as c:
             r = await c.post(
-                "https://api.tavily.com/search",
-                json={"api_key": tavily_key, "query": query, "max_results": 3, "search_depth": "basic"},
+                "https://api.exa.ai/search",
+                headers={"x-api-key": exa_key, "Content-Type": "application/json"},
+                json={"query": query, "numResults": 3, "contents": {"text": True}},
             )
             if r.status_code != 200:
                 return ""
             results = r.json().get("results", [])
-            return " ".join(res.get("content", "")[:300] for res in results[:3])
+            return " ".join(res.get("text", "")[:300] for res in results[:3])
 
     schools_raw, restaurants_raw, transit_raw = await asyncio.gather(
-        tavily_search(f"top rated schools near {address}"),
-        tavily_search(f"best restaurants cafes near {address}"),
-        tavily_search(f"transit walkability parks near {address}"),
+        exa_search(f"school ratings near {address} site:greatschools.org OR site:niche.com"),
+        exa_search(f"restaurants cafes near {address} Austin"),
+        exa_search(f"walk score transit parks near {address} Austin"),
     )
 
     system = (
