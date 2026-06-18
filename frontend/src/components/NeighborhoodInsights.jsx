@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { Loader2, MapPin, GraduationCap, Utensils, TreePine } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const GOOGLE_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "AIzaSyAO3eynP_-0OoLG4jv5oyFW7LrgvgUa8z4";
 
 const EXAMPLE = {
   address: "2841 West 6th St, Austin TX 78703",
@@ -18,8 +19,10 @@ export default function NeighborhoodInsights() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const inputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     if (!address.trim() || address.trim().length < 8) return;
     setLoading(true);
     setResult(null);
@@ -35,7 +38,47 @@ export default function NeighborhoodInsights() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [address]);
+
+  // Load Google Places Autocomplete
+  useEffect(() => {
+    if (!window.google || !window.google.maps) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places&callback=Function.prototype`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
+  // Attach autocomplete to input once script is loaded
+  useEffect(() => {
+    if (!window.google?.maps?.places || !inputRef.current || autocompleteRef.current) return;
+    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
+      types: ["address"],
+      componentRestrictions: { country: "us" },
+    });
+    ac.addListener("place_changed", () => {
+      const place = ac.getPlace();
+      if (place?.formatted_address) {
+        setAddress(place.formatted_address);
+        setResult(null);
+        setError(null);
+        // Auto-fetch on selection
+        setTimeout(() => {
+          const addr = place.formatted_address;
+          setLoading(true);
+          axios.post(`${API}/local-gems`, {
+            address: addr,
+            session_id: localStorage.getItem("lw_session_id") || undefined,
+          }).then(({ data }) => setResult(data.paragraph))
+            .catch(() => setError("Couldn't fetch neighborhood data — check the address and try again."))
+            .finally(() => setLoading(false));
+        }, 100);
+      }
+    });
+    autocompleteRef.current = ac;
+  }, []);
 
   const active = result || (!loading && !error);
   const displayParagraph = result || EXAMPLE.paragraph;
@@ -95,11 +138,12 @@ export default function NeighborhoodInsights() {
                 <div className="relative flex-1">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/30" />
                   <input
+                    ref={inputRef}
                     type="text"
                     value={address}
                     onChange={(e) => { setAddress(e.target.value); setResult(null); setError(null); }}
                     onKeyDown={(e) => e.key === "Enter" && fetch()}
-                    placeholder="123 Main St, Austin TX"
+                    placeholder="Start typing any address..."
                     className="w-full pl-9 pr-3 py-3 border border-ink/20 bg-white font-body text-sm text-ink placeholder:text-ink/30 focus:border-ink/60 outline-none"
                   />
                 </div>
