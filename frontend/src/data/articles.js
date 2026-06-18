@@ -1820,6 +1820,520 @@ The fastest path: email your early users directly, ask for a review in exchange 
 
 *ListWorks PRO is listed on major directories at [listworks.pro](https://listworks.pro). Agents looking for Fair Housing-compliant AI listing tools can try it free.*`,
   },
+  // --- Draft Articles ---
+  {
+    slug: "fair-housing-compliance-practical-guide",
+    title: "Fair Housing Compliance in Real Estate Listings: A Practical Guide for Agents",
+    excerpt: "Every agent knows the Fair Housing Act exists. But between showings, offers, and paperwork, compliance can slip. Here's exactly what to watch for in your listing copy.",
+    date: "2026-06-16",
+    tags: ["Fair Housing", "compliance"],
+    readTime: "7 min",
+    content: `## Why Fair Housing Compliance Matters More Than Ever
+
+The Fair Housing Act prohibits discrimination based on race, color, national origin, religion, sex, familial status, and disability. Enforcement has tightened in recent years — HUD and state agencies actively review online listings, social media posts, and email marketing. One slip can trigger a complaint, an investigation, or a fine that starts at $26,262.
+
+Most violations aren't intentional. They come from lazy language or "helpful" descriptors that signal bias. The good news: compliance doesn't mean boring copy. It means writing listings that focus on the property — its features, location amenities, and universal appeal — without steering or excluding.
+
+## Common Violations and Compliant Fixes
+
+**Familial status and age descriptors.** "Great for empty nesters" or "perfect for a growing family" suggest the property is for one type of household. Fix: "Single-level living with no stairs" or "three bedrooms and a large backyard for extra space."
+
+**Religious references.** "Near a beautiful synagogue" or "close to the local church" implies a preference for a specific religion. Fix: "Convenient to community parks, schools, and shopping."
+
+**Race and national origin.** "In a diverse neighborhood" or "European-style kitchen" can signal preferences. Fix: "Quiet street with well-maintained homes" or "gourmet kitchen with imported tiles."
+
+## Write for the What, Not the Who
+
+Describe the home itself: square footage, natural light, recent upgrades, lot size. Instead of "great for entertaining," say "open-concept layout flows seamlessly from kitchen to living room." Instead of "ideal for a young professional," say "home office with high-speed internet."
+
+Use universal lifestyle language. Words like "spacious," "bright," "updated," "low-maintenance," and "energy-efficient" work for everyone. Mention nearby parks, walkable coffee shops, or a quiet cul-de-sac — just avoid demographics.
+
+## How ListWorks PRO Handles Compliance
+
+Every description generated in ListWorks PRO runs through a built-in Fair Housing layer before you see the output. Flagged phrases are rewritten automatically — you never publish something that could cost you $26K and your license. It's not a separate step. It's built into every rewrite.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.** Visit listworks.pro to see how AI can help you craft compliant copy in 10 seconds.`,
+  },
+  {
+    slug: "ai-tools-for-real-estate-agents-2026",
+    title: "Best AI Tools for Real Estate Agents in 2026: Save 10 Hours a Week",
+    excerpt: "The real estate market is moving faster than ever. Here are the AI tools that actually save you time without making your copy sound generic.",
+    date: "2026-06-17",
+    tags: ["AI tools", "productivity", "comparison"],
+    readTime: "8 min",
+    content: `## The 2026 Shift: Generic AI Is Dead
+
+You've probably tried ChatGPT for listing copy. The result? "Welcome to this charming 3-bedroom, 2-bath home in a desirable neighborhood." That text is toxic. In 2026, buyers have read generic AI copy so many times that they scroll right past it.
+
+The best AI tools for real estate agents have evolved past fill-in-the-blank generation. They now use contextual tone mapping — turning raw property data into narrative that feels human.
+
+**Bad copy (2014 style):** "Stunning home with modern finishes, located near excellent schools. Don't miss this chance!"
+
+**Good copy (2026 style with ListWorks PRO):** "Sunday mornings here mean coffee on the covered porch while the kids walk to the bus stop — no traffic jams required. The kitchen was renovated last year with quartz countertops that catch every bit of the afternoon light."
+
+The difference: sensory triggers. Sell a lifestyle, not square footage.
+
+## Mastering Listing Copy
+
+Your listing description is your first impression. Treat it like a landing page. Every word must either overcome an objection or create desire.
+
+**The feature dump trap:**
+"4 bed, 2 bath. Hardwood floors. Updated kitchen. Finished basement. Large yard. 2 car garage." — reads like inventory.
+
+**The ListWorks PRO approach:**
+"This is the house where the holiday dinners happen. The quartz island seats six comfortably while the chef works the gas range. Downstairs, the finished basement is wired for your home theater setup."
+
+Specific advice for 2026:
+- Lead with the hook room. If the kitchen is stunning, start there.
+- Use micro-neighborhood data. "Two blocks from La Colombe coffee" beats "close to shops."
+- Speed is a feature. You should generate a listing in under 60 seconds.
+
+## Social Media in 10 Seconds
+
+Instagram and TikTok are primary search engines for buyers under 40. The bottleneck? Captions.
+
+**Bad caption:** "Just listed! Charming 3 bed 2 bath in Springfield. Call me for a showing. #realtor"
+
+**Good caption:** "You know that feeling when you walk into a house and the light is just right? That's this living room. The seller is motivated. Why you'll love it: No carpet (all hardwood). Brand new roof (2025). Walking distance to The Rustic Tap. Drop a 📍 in the comments or DM me."
+
+Use visual emojis, specific benefit lists, and low-friction CTAs.
+
+## Email Drip Campaigns That Don't Sound Like Spam
+
+Personalized emails to your sphere outperform blast emails by 400%. Don't send "just checking in" emails. Instead, reference a specific property and a specific memory: "I was walking through 123 Oak Street today and it reminded me of the style you mentioned — black windows and white oak floors. Want a private first look?"
+
+## How to Avoid the Robot Tax
+
+Use AI for the heavy lifting (80%), but add one specific detail only you know. Read the output out loud. If it doesn't sound like you, adjust the tone.
+
+ListWorks PRO lets you set a Voice Profile — "Witty but professional," "Very formal luxury," "Neighborly and warm" — every piece of copy matches your personal brand.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "real-estate-listing-copywriting-tips",
+    title: "Real Estate Listing Copywriting Tips: Transform Listings Into Sales",
+    excerpt: "The difference between a listing that sits for 60 days and one that gets multiple offers often comes down to 150 words. Here's how to write copy that sells.",
+    date: "2026-06-18",
+    tags: ["copywriting", "MLS", "tips"],
+    readTime: "6 min",
+    content: `## Why Most Real Estate Listings Fail
+
+The average home buyer spends 8-10 seconds scanning a listing before deciding to click or scroll past. If your copy doesn't hook them in that window, you've lost them.
+
+Most agents write feature lists: "3 bedroom, 2 bathroom home with updated kitchen and hardwood floors." Features tell buyers what a home has. Benefits tell them how it makes them feel. Buyers don't buy square footage — they buy the feeling of Sunday mornings in a sunlit breakfast nook.
+
+**The fix: the "So What?" rule.** After every feature, ask yourself: so what? "New HVAC system" → "Lower utility bills and no surprise repairs." "Corner lot" → "Extra privacy and more natural light."
+
+## The 5-Part Structure
+
+**1. The Hook (first 20 words).** Your headline and first sentence are the only thing most buyers read. "Wake up to golden sunrises over the treetops in this light-drenched 3-bedroom retreat" beats "Beautiful home for sale in desirable neighborhood."
+
+**2. The Emotional Bridge (next 50 words).** Connect the best feature to an emotion. "This isn't just a house — it's where your kids will learn to ride bikes on quiet, tree-lined streets."
+
+**3. The Feature-Benefit Body (100-200 words).** List features, but pair each with a benefit. "Gourmet kitchen with quartz countertops and a waterfall island — perfect for meal prep and conversation."
+
+**4. The Neighborhood Context (50-75 words).** Buyers buy neighborhoods. Include specific local details: "Just two blocks from Mill Creek Park's walking trails and five minutes to downtown's farmers market."
+
+**5. The Call to Action (final 2 sentences).** "This home won't last long. Schedule your private showing today — before someone else claims your Sunday morning sunrises."
+
+## Emotional Triggers That Work
+
+**Scarcity:** "Only 2 similar homes sold in this neighborhood last year."
+**Aspiration:** "Picture yourself sipping morning coffee on this screened porch."
+**Safety:** "This cul-de-sac means quiet evenings and kids playing in the street."
+**Convenience:** "Walk to the grocery store, gym, and your favorite brunch spot."
+**Investment:** "Homes in this school district have appreciated 12% annually."
+
+Use 2-3 triggers per listing. Don't overdo it.
+
+## Common Mistakes
+
+**The everything approach:** Picking the top 5-7 selling points is better than listing every feature including the water heater brand.
+
+**Clichés that say nothing:** Replace "move-in ready" with "freshly painted walls, new carpet, and a deep-cleaned kitchen."
+
+**Wall of text:** Use short paragraphs of 2-3 sentences max. Online readers scan.
+
+**No personality:** Write like a human. Use contractions, occasional exclamation points, a conversational tone.
+
+## How to Write Faster
+
+Use the bullet-point-first method. Start with bullet points of the best features and benefits, arrange by importance, then flesh out into paragraphs. This cuts writing time by 50%.
+
+Or use ListWorks PRO. Paste your home's details. Get a full listing draft in 10 seconds — hook, body, benefits, neighborhood context, and CTA. Then spend 2 minutes tweaking.
+
+An agent on the beta went from 45 minutes per listing to 5 minutes. That's 40 minutes saved per property.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "how-to-write-real-estate-listing-description",
+    title: "How to Write a Real Estate Listing Description That Sells",
+    excerpt: "Every day thousands of identical listing descriptions hit the MLS. Here's how to stop the scroll, create emotional connection, and generate offers.",
+    date: "2026-06-15",
+    tags: ["copywriting", "MLS", "how-to"],
+    readTime: "7 min",
+    content: `## Why Most Real Estate Listing Copy Fails
+
+Let's look at two opening lines for the same property:
+
+**Bad:** "Beautiful 3-bedroom, 2-bath home in desirable neighborhood. Updated kitchen with granite counters. Large backyard. Must see!"
+
+**Good:** "Sunday mornings start with coffee on the screened porch, watching the deer wander through the backyard. Your kids walk to the elementary school — no carpool line needed."
+
+Same house. Completely different result. The first reads like a grocery list. The second paints a picture that makes buyers imagine themselves living there.
+
+Most agents write the first version because of fear of being wrong and time pressure. The problem is that generic copy gets generic results.
+
+## The Psychology of a Selling Description
+
+Features inform, but emotions sell. "Hardwood floors throughout" is a feature. "The sound of your footsteps echoing through sunlit rooms on a quiet Saturday morning" is an emotional benefit.
+
+Buyers don't buy houses. They buy homes. They buy the life they'll live inside those walls.
+
+**Your framework:**
+- Start with the feeling (peace, connection, pride, convenience)
+- Describe the feature that creates that feeling
+- End with the result (the buyer's life improvement)
+
+## Open Strong — The First 50 Words
+
+On the MLS, only the first 50-100 words appear before the "read more" cut-off. If those words don't grab attention, the buyer never clicks.
+
+**Three opening strategies:**
+1. **The lifestyle hook:** "You know that moment when you walk into a house and it just feels right?"
+2. **The pain-point solution:** "Tired of homes where the kitchen is closed off from everything?"
+3. **The curiosity gap:** "There's a secret room in this house. We'll get to that in a moment."
+
+## Power Words and Specificity
+
+**Power words that sell:** sanctuary, retreat, light-filled, chef's kitchen, spa-like, timeless, private.
+
+**Words to avoid:** cozy (means small), charming (means outdated), potential (means needs work), motivated seller (means desperate).
+
+Specificity is your secret weapon. "The backyard features a 100-year-old oak tree with a tire swing and stone patio" beats "Large backyard with mature trees."
+
+## Structure for Scannability and SEO
+
+Start with a paragraph that creates emotional desire. Follow with bullet points for key features — but add context. "Quartz countertops with waterfall edge — the kind that makes every dinner party feel like a magazine spread."
+
+Include a neighborhood section. Buyers buy location first. End with a strong call to action. "Come see why the current owners have called this home for 15 years. Schedule your private tour now — this one won't last."
+
+## Streamline With AI
+
+Writing great descriptions takes time. Tools like ListWorks PRO generate compelling copy from basic property details in about 10 seconds. The output reads like a professional copywriter spent an hour on it. You bring the local knowledge and authenticity. The tool handles structure, flow, emotional language, and SEO.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  // --- SEO Articles ---
+  {
+    slug: "real-estate-listing-description-examples-that-work",
+    title: "Real Estate Listing Description Examples That Actually Sell Homes",
+    excerpt: "See real before-and-after examples of listing descriptions for every property type. Learn what words make buyers call and which phrases cost you showings.",
+    date: "2026-06-14",
+    tags: ["examples", "copywriting", "MLS"],
+    readTime: "6 min",
+    content: `## What Makes a Listing Description Work
+
+A great listing description does three things: it stops the scroll, creates emotional desire, and gives buyers the facts they need to act. Most listings do none of these.
+
+Let's look at real examples for five common property types. Each before is a real-world listing description. Each after applies the principles of emotional copy, specificity, and Fair Housing compliance.
+
+## Single-Family Home
+
+**Before:** "Gorgeous home in sought-after neighborhood! Stunning 4-bedroom, 2.5-bathroom property featuring a beautiful updated kitchen with granite countertops, perfect for entertaining. Great school district! Large backyard with mature trees."
+
+**Problems:** Six cliches in one paragraph. "Great school district" is a Fair Housing flag. No hard facts — no square footage, no specific upgrades, no market context.
+
+**After:** "The primary suite being on the main floor is the kind of detail you notice the second time you tour a house. Four bedrooms, 2.5 baths, 2,100 sq ft. Kitchen was updated: granite counters, new appliances, enough prep space to actually use it. Two-car garage, backyard with established shade trees, Cedar Park ISD. Priced at $489K — Williamson County comps in this range have been closing in 8-12 days."
+
+## Condo / Urban High-Rise
+
+**Before:** "Stunning condo in the heart of Atlanta! This charming 2-bedroom, 2-bathroom unit offers breathtaking city views. Ideal for young professionals! Don't miss this incredible opportunity!"
+
+**Problems:** "Ideal for young professionals" is age discrimination. Five cliches in three sentences.
+
+**After:** "Fourteenth floor, floor-to-ceiling windows, Atlanta skyline. Two beds, two baths, 1,050 sq ft. Building has a full gym and 24-hour concierge. One deeded parking space included. HOA covers water, trash, and amenities. Priced at $365K. Midtown condos at this tier closed between $340K and $385K over the last 90 days."
+
+## Luxury Property
+
+**Before:** "Welcome to this breathtaking luxury estate in one of Scottsdale's most exclusive gated communities! This stunning masterpiece features a chef's kitchen that will delight any culinary enthusiast."
+
+**Problems:** "Exclusive" can read as exclusionary. Nine cliches in four sentences. "Culinary enthusiast" is not how agents talk.
+
+**After:** "Private pool, private spa, 3-car garage, gated lot — the property makes a case for itself before you walk inside. Five bedrooms, 4.5 baths, 4,800 sq ft in Silverleaf. Wolf range, Sub-Zero refrigeration, double islands, separate prep sink. Smart home integration runs lighting, climate, and security from a single panel. Primary suite is 900 sq ft with direct pool access. Priced at $2.15M."
+
+## Fixer-Upper
+
+**Before:** "Investor's dream! This charming fixer-upper has incredible bones and is just waiting for the right buyer. Solid construction, huge corner lot, brand-new roof."
+
+**Problems:** Steering language — implies preferred buyer type. No rehab estimates or ARV context.
+
+**After:** "Corner lot, new roof (2024), original hardwood floors throughout. Three bedrooms, one bath, 1,150 sq ft. Plumbing and electrical are functional; kitchen and bath are original and dated. Sold as-is. Priced at $189K. ARV on comparable renovated homes runs $295-320K. Rehab budgets in this range typically come in at $60-80K."
+
+## Starter Home
+
+**Before:** "Adorable starter home in a great neighborhood! Perfect for first-time homebuyers or young couples. Move-in ready! Close to everything."
+
+**Problems:** "Perfect for first-time homebuyers or young couples" is familial status and age steering. Five diminutives. "Close to everything" is zero information.
+
+**After:** "Two bedrooms, one bath, 890 sq ft with a fenced backyard and off-street parking. Bathroom updated in 2023. New water heater this year. Priced at $172K — monthly payment roughly $1,050 on a 30-year conventional. Linden neighborhood, walkable to Indianola Avenue corridor."
+
+## The Pattern
+
+Every successful rewrite follows the same principles: specificity beats adjectives, describe the home not the buyer, and market context converts curiosity into calls. Apply these to your next listing and watch the difference.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "writing-real-estate-listings-step-by-step",
+    title: "How to Write Real Estate Listing Descriptions: A Step-by-Step Guide",
+    excerpt: "A complete guide to writing real estate listing descriptions that sell. Follow this proven process for every property type.",
+    date: "2026-06-14",
+    tags: ["how-to", "copywriting", "MLS", "guide"],
+    readTime: "7 min",
+    content: `## The Step-by-Step Process
+
+Writing a listing description that sells isn't about talent. It's about process. Follow these steps in order for every property, and you'll consistently produce copy that generates showings and offers.
+
+## Step 1: Gather Your Raw Materials
+
+Before you write a single word, collect:
+- The 5 best features of the property (not all features — the top 5)
+- 3 specific neighborhood details (walkable coffee shop, park, transit stop, etc.)
+- 1 market data point (average days on market, comp range, price per sq ft)
+- The target buyer type (first-time, family, investor, luxury, downsizer)
+
+Don't skip this step. Having the raw material before you write is what separates good copy from filler.
+
+## Step 2: Write the Hook (First 50 Words)
+
+The hook is the only part most buyers read. Make it count.
+
+**Formula:** Start with the single most impressive thing about the property. Lead with feeling, not facts.
+
+**Template:** "{[emotional experience]} at {[best feature of the home]} — {[specific detail that makes it real]}."
+
+**Example:** "Saturday mornings were made for this kitchen — quartz countertops, a gas range, and enough light to remind you why you bought a house in Austin."
+
+## Step 3: Paint the Lifestyle Picture (Next 75 Words)
+
+Connect the hook to a specific lifestyle benefit.
+
+**Ask yourself:** What does a typical day look like for someone living here?
+
+**Example:** "The primary suite sits apart from the other two bedrooms, which means the house works for whatever your life looks like right now — roommates, guests, kids, or just extra space for a home gym."
+
+## Step 4: Weave in Features With Benefits (100-150 Words)
+
+Here's where most agents go wrong. They list features. Instead, pair every feature with a benefit.
+
+**Bad:** "Updated kitchen, hardwood floors, large backyard."
+**Good:** "The kitchen was renovated in 2023 — quartz countertops, gas range, and a layout that actually works for cooking, not just looking at. Hardwood floors throughout mean no carpet to replace. The backyard is fenced and big enough to matter."
+
+## Step 5: Add Neighborhood Context (50 Words)
+
+Buyers buy neighborhoods. Include specific, searchable details.
+
+**Bad:** "Great location close to everything."
+**Good:** "Walk score 88. Two blocks from Trader Joe's. One mile to the subway. Zoned for Westview Elementary (rated 9/10)."
+
+## Step 6: Close With a Call to Action
+
+Don't be passive. Tell them what to do next.
+
+**Weak:** "Schedule your showing today."
+**Strong:** "Come see why the current owners have called this home for 15 years. Open Sunday 1-3, or reach out for early access."
+
+## Putting It All Together
+
+Follow these six steps for every listing, and you'll never stare at a blank screen again. With practice, it takes 10-15 minutes per listing.
+
+With ListWorks PRO, it takes 10 seconds. Paste your notes, select the buyer type and MLS board, and get a complete description that follows this exact structure — already within character limits and Fair Housing compliant.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "real-estate-copywriting-tips-that-convert",
+    title: "Real Estate Copywriting Tips: 10 Techniques That Turn Readers Into Buyers",
+    excerpt: "Proven copywriting techniques specifically for real estate listings. Use these tips to write descriptions that generate more showings and faster offers.",
+    date: "2026-06-14",
+    tags: ["copywriting", "tips", "conversion"],
+    readTime: "5 min",
+    content: `## 1. Lead With the Best Room
+
+Don't start with "Welcome to this 3-bedroom home." Start with the room that makes the strongest impression. If the kitchen is stunning: "This is the kitchen that makes you want to host Thanksgiving." If it's the backyard: "The backyard is why people move to this neighborhood."
+
+Every listing has one hero feature. Lead with it.
+
+## 2. Use Sensory Language
+
+Engage all five senses. "Hardwood floors" becomes "the warm sound of footsteps on oak floors." "Updated kitchen" becomes "the smell of fresh coffee in a kitchen filled with morning light."
+
+Sensory language triggers emotional response. That's what creates desire.
+
+## 3. Cut Every Cliche
+
+Here are the words that have lost all meaning in real estate copy: stunning, gorgeous, beautiful, charming, spacious, must-see, won't last long, don't miss, pride of ownership, move-in ready.
+
+Replace each with a specific fact. Instead of "stunning views," say "city skyline visible from every room." Instead of "spacious," give the actual square footage.
+
+## 4. Write for One Person
+
+The biggest mistake agents make is trying to appeal to everyone. Pick one buyer persona and write specifically for them.
+
+First-time buyer? Focus on affordability, low maintenance, FHA loan eligibility. Luxury buyer? Focus on craftsmanship, privacy, high-end finishes. Investor? Focus on cap rate, ARV, and tenant quality.
+
+## 5. Use the "You" Test
+
+Read your description and count how many times you used "you" or "your." If the answer is zero, rewrite. A description that doesn't speak directly to the buyer feels like a spec sheet.
+
+**Weak:** "This home features three bedrooms and an updated kitchen."
+**Strong:** "You'll find three bedrooms upstairs and a kitchen designed for the way you actually cook."
+
+## 6. Front-Load the Value
+
+On mobile, buyers see the first 50-80 characters. Put the most compelling information there. "Walk to Barton Springs from this light-filled Austin bungalow" beats "3 bedroom, 2 bathroom home for sale."
+
+## 7. Add Scarcity Without Pressure
+
+Scarcity works, but only when it's credible. "The last three homes on this street sold in under 10 days" works. "Won't last long" doesn't.
+
+Use real market data: "Only 2 similar homes sold in this neighborhood last year." Or time-bound availability: "Open Sunday 1-3 only. No private showings before then."
+
+## 8. Include Social Proof
+
+Mention what other buyers have said or done. "Buyers have described this block as the quietest street in the neighborhood." "The previous owner raised three kids here and never wanted to leave."
+
+## 9. Format for Scanning
+
+Short paragraphs (2-3 sentences max). Bullet points for key features. Bold key numbers. White space between sections. Buyers scan, then read. Make sure the scanner gets the full picture.
+
+## 10. Edit Ruthlessly
+
+After you write it, cut 20% of the words. Every adjective that doesn't add meaning. Every sentence that doesn't create desire or provide a fact. Then read it aloud. If a sentence feels awkward when spoken, rewrite it.
+
+## The Shortcut
+
+If following all 10 tips sounds like too much work for every listing, you're right — it is. That's why ListWorks PRO applies all of them automatically. Paste your notes, get a finished description in 10 seconds.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "what-are-fair-housing-violations-real-estate",
+    title: "Fair Housing Violations in Real Estate: What Agents Get Wrong Most Often",
+    excerpt: "HUD fines start at $26,262 for first violations. Here are the most common Fair Housing mistakes agents make in listing copy and exactly how to fix them.",
+    date: "2026-06-14",
+    tags: ["Fair Housing", "compliance", "violations"],
+    readTime: "6 min",
+    content: `## The Most Common Fair Housing Violations in Listings
+
+Most agents don't knowingly violate the Fair Housing Act. They use language that's been standard in real estate for decades — language that HUD now considers discriminatory. Here are the violations that appear most frequently in listing descriptions and how to fix them.
+
+## 1. Familial Status Language
+
+This is the most common violation category. Any language that suggests the property is for people with children — or not for people with children — violates the Fair Housing Act.
+
+**Violating phrases:** "Perfect for families," "great for kids," "family-friendly neighborhood," "ideal for growing families," "starter home for young couples."
+**Compliant examples:** "Four bedrooms, two baths, fenced backyard." Describe the house, not the household.
+
+## 2. Age-Related Language
+
+Many states protect age as a protected class. Even in states that don't, HUD increasingly flags age-coded language.
+
+**Violating phrases:** "Ideal for young professionals," "perfect for empty nesters," "great for retirees," "starter home for young buyers."
+**Compliant examples:** "Two-bedroom condo, 14th floor, walk score 94." Walk score and location do the targeting without the discrimination.
+
+## 3. Neighborhood Characterization
+
+Describing a neighborhood's character or safety can constitute racial steering, even without intent.
+
+**Violating phrases:** "Safe neighborhood," "up-and-coming neighborhood," "transitional area," "desirable neighborhood," "quiet, established community."
+**Compliant examples:** Use objective data. "Crime index for the zip code: 18 (national average: 100)." "Median home price has increased 18% over 24 months."
+
+## 4. Religious References
+
+Mentioning houses of worship implies a religious preference.
+
+**Violating phrases:** "Walk to church," "close to synagogue," "near the mosque," "great for Sunday morning services."
+**Compliant examples:** List landmarks without religious affiliation. "0.4 miles to St. Michael's Parish" is acceptable as a factual distance — but not as a selling point. Better: "Near community parks and a library."
+
+## 5. Disability-Related Language
+
+Describing a property as suitable for people with disabilities — or implying it's not suitable — can violate both Fair Housing and ADA guidelines.
+
+**Violating phrases:** "Perfect for those with mobility issues," "great for an active lifestyle," "no stairs — ideal for elderly."
+**Compliant examples:** Describe the features. "Single-story. Zero-threshold entry. 36-inch doorways. Roll-in shower." Let buyers decide if it fits their needs.
+
+## 6. Coded Language About Race or National Origin
+
+Some phrases have a documented history of use as racial coding in real estate.
+
+**Violating phrases:** "Exclusive community," "private enclave," "European charm," "ethnic neighborhood," "international flair."
+**Compliant examples:** "Gated community with 24-hour security." "Imported Italian tile in the kitchen." Stick to specific, verifiable features.
+
+## How to Audit Your Listings
+
+Search every active listing for these violating phrases. Replace each with a property-focused rewrite. If you've been using ChatGPT or other generic AI tools, audit carefully — these tools reproduce violating language because they learned from contaminated training data.
+
+ListWorks PRO runs this audit automatically on every output. Flagged phrases are rewritten before you see them. No separate step. No compliance checklist you have to remember.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "how-ai-helps-real-estate-agents",
+    title: "How AI Helps Real Estate Agents Save Time and Sell More Homes",
+    excerpt: "AI isn't replacing agents — it's making good agents faster. Here's exactly how real estate professionals are using AI in 2026 to write listings, nurture leads, and close deals.",
+    date: "2026-06-14",
+    tags: ["AI", "productivity", "technology"],
+    readTime: "6 min",
+    content: `## AI in Real Estate: The 2026 Reality
+
+The narrative around AI and real estate in 2025 was fear: "Will AI replace agents?" In 2026, we have the answer. No. But AI is replacing agents who don't use it. The agents who adopt AI tools are listing more properties, writing better copy, and closing faster than those who don't.
+
+Here's exactly how real estate agents are using AI in 2026 and how you can too.
+
+## Listing Description Generation
+
+This is the most common and most impactful use case. A typical agent spends 20-45 minutes writing a single listing description. With AI tools like ListWorks PRO, that drops to 10 seconds.
+
+**The workflow:** Paste your property notes (square footage, bedrooms, standout features, neighborhood details). Select the buyer type and MLS board. Get a finished description that's already within character limits and Fair Housing compliant.
+
+Agents using AI for listing copy report saving 5-8 hours per week — time they reinvest into showings, client calls, and lead generation.
+
+## Social Media Content
+
+Instagram and TikTok are the primary search engines for buyers under 40. But writing captions for every post takes time.
+
+AI tools generate platform-optimized captions from the same property notes used for listing copy. One input, multiple outputs: an MLS description, an Instagram caption, a Facebook post, and a LinkedIn update.
+
+## Email Campaigns
+
+Personalized email outreach outperforms blast emails by 400%. AI can help segment your list by neighborhood interest, generate personalized property recommendations, and draft follow-up sequences.
+
+The key is specificity. Instead of "I have a new listing you might like," AI can generate: "I was walking through 123 Oak Street and it reminded me of the style you mentioned — black windows and white oak floors. Want a private first look?"
+
+## Market Reports and CMAs
+
+Turning MLS data into readable market updates is one of the most time-consuming tasks agents face. AI tools can ingest raw data and produce client-ready market reports with narrative context — not just numbers, but what the numbers mean for the reader.
+
+## Lead Response
+
+First-response speed is one of the strongest predictors of lead conversion. AI-powered autoresponders can qualify incoming leads, answer common questions, and schedule showings within seconds of an inquiry.
+
+## What AI Can't Do
+
+AI can't replace your market knowledge, your relationships, or your judgment. It can't build trust with clients. It can't negotiate offers. It can't walk through a home and notice the signs of deferred maintenance.
+
+The best agents in 2026 will be those who use AI for the tasks it excels at — writing, analyzing, generating — while focusing their human skills where they matter most: relationships, negotiation, and trust.
+
+## Start With One Tool
+
+The fastest path to AI adoption is to start with one tool that solves your biggest time drain. For most agents, that's listing copy.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.** Experience what it's like to generate a compliant, ready-to-publish listing description in 10 seconds.`,
+  },
 ];
 
 export default ARTICLES;
