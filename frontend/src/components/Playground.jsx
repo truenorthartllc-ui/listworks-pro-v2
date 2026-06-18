@@ -28,6 +28,7 @@ import ReferralPanel from "@/components/ReferralPanel";
 import BrandVoicePanel from "@/components/BrandVoicePanel";
 import AgentPageSetup from "@/components/AgentPageSetup";
 import CMAPanel from "@/components/CMAPanel";
+import VirtualStagingPanel from "@/components/VirtualStagingPanel";
 import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
@@ -255,6 +256,7 @@ export default function Playground() {
               <button onClick={() => setMode("bio")} data-active={mode === "bio"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Box className="w-4 h-4" />Agent Bio</button>
               <button onClick={() => setMode("agentpage")} data-active={mode === "agentpage"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Globe className="w-4 h-4" />Agent Page</button>
               <button onClick={() => setMode("cma")} data-active={mode === "cma"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />CMA Report</button>
+              <button onClick={() => setMode("staging")} data-active={mode === "staging"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Virtual Staging</button>
               <button onClick={() => setMode("photo")} data-active={mode === "photo"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Photo → Listing</button>
               <button onClick={() => handleProMode("batch")} data-active={mode === "batch"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Layers className="w-4 h-4" />Bulk CSV<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
@@ -853,6 +855,12 @@ export default function Playground() {
       {mode === "cma" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
           <CMAPanel />
+        </div>
+      )}
+
+      {mode === "staging" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <VirtualStagingPanel />
         </div>
       )}
 

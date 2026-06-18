@@ -24,6 +24,7 @@ except ImportError:
 from video_engine import generate_listing_video, MUSIC_TRACKS
 from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip
 from compliance_engine import check_fair_housing_v3, overall_risk, compliance_grade
+import base64
 import stripe as stripe_sdk
 import httpx
 
@@ -1964,6 +1965,82 @@ async def analyze_photo(req: PhotoAnalyzeRequest, request: Request):
         suggested_headline=str(data.get("suggested_headline", "")).strip(),
     )
 
+
+# ===== Virtual Staging =====
+STABILITY_API_KEY = os.environ.get("STABILITY_API_KEY", "")
+STAGING_STYLES = {
+    "modern": "Modern interior design with clean lines, neutral colors, contemporary furniture, bright natural lighting",
+    "coastal": "Coastal/beach style with light blue and white tones, natural textures, airy curtains, casual elegant furniture",
+    "luxury": "Luxury interior design with rich textures, statement lighting, premium furniture, sophisticated color palette, elegant decor",
+    "midcentury": "Mid-century modern with warm wood tones, iconic furniture pieces, geometric patterns, organic shapes",
+    "farmhouse": "Modern farmhouse style with shiplap accents, rustic-modern furniture, warm neutral palette, cozy inviting atmosphere",
+    "minimalist": "Minimalist interior with clean spaces, minimal furniture, monochromatic palette, uncluttered zen atmosphere",
+    "boho": "Bohemian style with layered textures, plants, eclectic decor, warm earthy tones, comfortable and artistic feel",
+    "industrial": "Industrial loft style with exposed elements, metal accents, leather furniture, urban raw aesthetic",
+}
+
+class VirtualStageRequest(BaseModel):
+    image_base64: str
+    style: str = "modern"
+    room_type: str = "living room"
+
+@api_router.post("/virtual-stage")
+async def virtual_stage(req: VirtualStageRequest, request: Request):
+    if not STABILITY_API_KEY:
+        raise HTTPException(503, "Virtual staging not configured")
+    if req.style not in STAGING_STYLES:
+        raise HTTPException(400, f"Invalid style. Choose from: {', '.join(STAGING_STYLES.keys())}")
+    
+    style_desc = STAGING_STYLES[req.style]
+    prompt = f"A professionally staged {req.room_type} with {style_desc}. High-end real estate photography, natural lighting, wide angle lens, inviting atmosphere."
+    negative = "empty room, cluttered, dirty, poorly lit, distorted, unnatural, cartoonish, low quality, blurry, watermark"
+
+    img_data = req.image_base64
+    if img_data.startswith("data:"):
+        img_data = img_data.split(",", 1)[1]
+
+    img_bytes = base64.b64decode(img_data)
+    
+    async with httpx.AsyncClient(timeout=60.0) as c:
+        # Use img2img with the uploaded photo as base
+        r = await c.post(
+            "https://api.stability.ai/v2beta/stable-image/edit/search-and-replace",
+            headers={"authorization": f"Bearer {STABILITY_API_KEY}", "accept": "application/json"},
+            files={"image": ("input.png", img_bytes, "image/png")},
+            data={
+                "prompt": f"{style_desc}. High-end interior photography.",
+                "select": "furniture, decor, walls, flooring, ceiling",
+                "negative_prompt": negative,
+                "output_format": "png",
+            },
+        )
+        if r.status_code == 200:
+            result = r.json()
+            image_b64 = result["image"]
+        else:
+            # Fallback: use generate via core with guidance
+            r2 = await c.post(
+                "https://api.stability.ai/v2beta/stable-image/generate/sd3",
+                headers={"authorization": f"Bearer {STABILITY_API_KEY}", "accept": "application/json"},
+                files={"image": ("input.png", img_bytes, "image/png")},
+                data={
+                    "prompt": prompt,
+                    "negative_prompt": negative,
+                    "mode": "image-to-image",
+                    "strength": 0.75,
+                    "output_format": "png",
+                },
+            )
+            if r2.status_code != 200:
+                raise HTTPException(502, f"Staging generation failed")
+            result = r2.json()
+            image_b64 = result["image"]
+    
+    return {
+        "image_base64": f"data:image/png;base64,{image_b64}",
+        "style": req.style,
+        "prompt": prompt,
+    }
 
 # ===== AI Advisor (chat) =====
 ADVISOR_SYSTEM = """You are the ListWorks AI Coach — a senior real estate marketing
