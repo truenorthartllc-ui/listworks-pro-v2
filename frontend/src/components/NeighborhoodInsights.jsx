@@ -17,19 +17,20 @@ const EXAMPLE = {
 export default function NeighborhoodInsights() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mapsReady, setMapsReady] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const inputRef = useRef(null);
-  const autocompleteRef = useRef(null);
 
-  const fetch = useCallback(async () => {
-    if (!address.trim() || address.trim().length < 8) return;
+  const fetch = useCallback(async (addr) => {
+    const a = addr || address;
+    if (!a || a.trim().length < 8) return;
     setLoading(true);
     setResult(null);
     setError(null);
     try {
       const { data } = await axios.post(`${API}/local-gems`, {
-        address: address.trim(),
+        address: a.trim(),
         session_id: localStorage.getItem("lw_session_id") || undefined,
       });
       setResult(data.paragraph);
@@ -40,20 +41,22 @@ export default function NeighborhoodInsights() {
     }
   }, [address]);
 
-  // Load Google Places Autocomplete
+  // Load Google Maps Places API once
   useEffect(() => {
-    if (!window.google || !window.google.maps) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places&callback=Function.prototype`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-    }
+    if (window.google?.maps?.places) { setMapsReady(true); return; }
+    if (document.getElementById("gmaps-script")) return;
+    window.initMapsAutocomplete = () => setMapsReady(true);
+    const script = document.createElement("script");
+    script.id = "gmaps-script";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places&callback=initMapsAutocomplete`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
   }, []);
 
-  // Attach autocomplete to input once script is loaded
+  // Attach autocomplete when maps is ready
   useEffect(() => {
-    if (!window.google?.maps?.places || !inputRef.current || autocompleteRef.current) return;
+    if (!mapsReady || !inputRef.current) return;
     const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
       types: ["address"],
       componentRestrictions: { country: "us" },
@@ -61,24 +64,14 @@ export default function NeighborhoodInsights() {
     ac.addListener("place_changed", () => {
       const place = ac.getPlace();
       if (place?.formatted_address) {
-        setAddress(place.formatted_address);
+        const addr = place.formatted_address;
+        setAddress(addr);
         setResult(null);
         setError(null);
-        // Auto-fetch on selection
-        setTimeout(() => {
-          const addr = place.formatted_address;
-          setLoading(true);
-          axios.post(`${API}/local-gems`, {
-            address: addr,
-            session_id: localStorage.getItem("lw_session_id") || undefined,
-          }).then(({ data }) => setResult(data.paragraph))
-            .catch(() => setError("Couldn't fetch neighborhood data — check the address and try again."))
-            .finally(() => setLoading(false));
-        }, 100);
+        fetch(addr);
       }
     });
-    autocompleteRef.current = ac;
-  }, []);
+  }, [mapsReady, fetch]);
 
   const active = result || (!loading && !error);
   const displayParagraph = result || EXAMPLE.paragraph;
