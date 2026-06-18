@@ -1742,14 +1742,32 @@ async def lookup_address(req: AddressLookupRequest, request: Request):
 async def get_shared_listing(listing_id: str):
     """Public share endpoint — returns the before/after for a listing.
     Anyone can view via /share/{id} on the frontend (no auth)."""
-    listing = await db.listings.find_one({"id": listing_id}, {"_id": 0, "session_id": 0})
+    listing = await db.listings.find_one({"id": listing_id})
     if not listing:
         raise HTTPException(404, "Listing not found")
+    listing.pop("_id", None)
+    session_id = listing.pop("session_id", None)
     # Track shares for analytics
     await db.share_views.insert_one({
         "listing_id": listing_id,
         "viewed_at": datetime.now(timezone.utc).isoformat(),
     })
+    # Attach agent info if available
+    agent_info = None
+    if session_id:
+        profile = await db.agent_profiles.find_one({"session_id": session_id})
+        if profile:
+            profile.pop("_id", None)
+            agent_info = {
+                "name": profile.get("name"),
+                "slug": profile.get("slug"),
+                "brokerage": profile.get("brokerage"),
+                "photo_url": profile.get("photo_url"),
+                "phone": profile.get("phone"),
+                "email": profile.get("email"),
+                "public_url": profile.get("public_url"),
+            }
+    listing["agent"] = agent_info
     return listing
 
 
@@ -1784,15 +1802,16 @@ async def analyze_photo(req: PhotoAnalyzeRequest, request: Request):
 
 
 # ===== AI Advisor (chat) =====
-ADVISOR_SYSTEM = """You are the ListWorks AI Advisor — a senior real estate marketing
-strategist trained on the ListWorks framework (5-part structure, Feature → Benefit → Feeling,
-4 buyer triggers). You give concise, opinionated, actionable advice on listing copy,
-photos, video strategy, and buyer psychology.
+ADVISOR_SYSTEM = """You are the ListWorks AI Coach — a senior real estate marketing
+strategist with 20 years experience. You've trained thousands of agents. You give
+concise, opinionated, actionable advice on listing copy, photos, video strategy,
+buyer psychology, lead generation, open houses, scripts, and CRM strategy.
 
-Keep responses under 180 words. Use plain text, short paragraphs, no markdown headers.
-When the user shares listing copy, critique it against the framework: point to specific
-banned-word offenders, missing FBF translations, weak hooks, and dead CTAs. Suggest
-exact rewrites — don't just describe."""
+Keep responses under 200 words. Use plain text, short paragraphs, no markdown headers.
+Be direct and opinionated — don't hedge. When the user shares listing copy, critique
+it against the ListWorks framework: point to specific banned-word offenders,
+missing FBF translations, weak hooks, and dead CTAs. Suggest exact rewrites.
+When they ask about strategy, give specific tactics they can use today."""
 
 
 @api_router.post("/advisor", response_model=AdvisorResponse)
@@ -1820,6 +1839,96 @@ async def advisor(req: AdvisorRequest, request: Request):
     raw = await call_openrouter(ADVISOR_SYSTEM, user_text)
     reply = raw.strip()
     return AdvisorResponse(reply=reply)
+
+# ===== CMA / Market Report =====
+class CMARequest(BaseModel):
+    address: str
+    price: Optional[str] = None
+    beds: Optional[str] = None
+    baths: Optional[str] = None
+    sqft: Optional[str] = None
+    property_type: Optional[str] = None
+
+CMA_SYSTEM = """You are a senior real estate CMA analyst. Generate a professional Comparative Market Analysis report.
+
+Based on the comparable properties data provided, create a report with these sections:
+1. **Subject Property Summary** — address, specs, estimated value
+2. **Comparable Properties** — 3-5 comps with address, price, beds/baths/sqft, and days on market
+3. **Market Analysis** — current trends, average days on market, price per sqft analysis
+4. **Pricing Recommendation** — suggested list price range with rationale
+5. **Market Positioning** — how this property compares to active listings
+
+Rules:
+- Be specific and data-driven. Use the actual comp data provided.
+- If specific comp data is limited, explain what additional data would strengthen the analysis.
+- Never give legal or appraisal advice — this is a market analysis tool.
+- Format with clear section headers and clean HTML.
+
+OUTPUT — STRICT JSON ONLY:
+{
+  "subject": { "address": "", "estimated_value": "", "confidence": "" },
+  "comps": [{"address": "", "price": "", "beds": "", "baths": "", "sqft": "", "dom": "", "notes": ""}],
+  "market_summary": "",
+  "price_per_sqft_avg": "",
+  "days_on_market_avg": "",
+  "recommendation": "",
+  "html_report": "<full HTML report with styling>"
+}"""
+
+@api_router.post("/cma/report")
+async def cma_report(req: CMARequest, request: Request):
+    if await _is_ip_rate_limited(request, "cma", limit=5, window=60):
+        raise HTTPException(429, "Too many requests. Slow down.")
+    address = req.address.strip()
+    if len(address) < 5:
+        raise HTTPException(400, "Enter a full street address.")
+    tavily_key = os.environ.get("TAVILY_API_KEY", "")
+    if not tavily_key:
+        raise HTTPException(503, "CMA not available — Tavily not configured.")
+
+    # Search for comps in the area
+    queries = [
+        f"sold homes near {address} last 6 months",
+        f"comparable listings {address} real estate",
+        f"similar homes for sale near {address}",
+    ]
+    all_results = []
+    async with httpx.AsyncClient(timeout=20.0) as c:
+        for query in queries:
+            try:
+                r = await c.post("https://api.tavily.com/search", json={
+                    "api_key": tavily_key, "query": query, "max_results": 4, "search_depth": "basic",
+                    "include_domains": ["zillow.com", "redfin.com", "realtor.com", "trulia.com"],
+                })
+                if r.status_code == 200:
+                    all_results.extend(r.json().get("results", []))
+            except: pass
+
+    all_results = all_results[:10]
+    if not all_results:
+        raise HTTPException(404, "No comparable data found. Try a different address.")
+
+    snippets = "\n\n".join(
+        f"Source: {res.get('url', '')}\n{res.get('content', '')[:600]}"
+        for res in all_results
+    )
+    subject_info = f"Address: {address}"
+    if req.price: subject_info += f"\nList Price: {req.price}"
+    if req.beds: subject_info += f"\nBeds: {req.beds}"
+    if req.baths: subject_info += f"\nBaths: {req.baths}"
+    if req.sqft: subject_info += f"\nSqFt: {req.sqft}"
+    if req.property_type: subject_info += f"\nType: {req.property_type}"
+
+    user_prompt = f"{subject_info}\n\nComparable properties data:\n{snippets}\n\nGenerate a professional CMA report as JSON."
+
+    raw = await call_openrouter(CMA_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    cleaned = _strip_json(raw)
+    try:
+        data = json.loads(cleaned)
+    except Exception:
+        raise HTTPException(500, "Could not generate CMA report. Try again.")
+
+    return data
 
 # ===== Video Generation =====
 @api_router.post("/video/generate", response_model=VideoGenerateResponse)
@@ -2676,6 +2785,145 @@ async def qr_showing_get(event_id: str):
     if not event:
         raise HTTPException(404, "Event not found")
     return event
+
+# ===== AGENT PROFILE (Landing Page) =====
+class AgentProfileCreate(BaseModel):
+    name: str
+    slug: str = ""
+    title: str = "Real Estate Agent"
+    brokerage: str = ""
+    phone: str = ""
+    email: str = ""
+    photo_url: str = ""
+    bio: str = ""
+    specialties: str = ""
+    social_linkedin: str = ""
+    social_instagram: str = ""
+    social_facebook: str = ""
+    website: str = ""
+
+class AgentProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    title: Optional[str] = None
+    brokerage: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    photo_url: Optional[str] = None
+    bio: Optional[str] = None
+    specialties: Optional[str] = None
+    social_linkedin: Optional[str] = None
+    social_instagram: Optional[str] = None
+    social_facebook: Optional[str] = None
+    website: Optional[str] = None
+
+@api_router.post("/agent/profile")
+async def agent_profile_create(req: AgentProfileCreate, request: Request):
+    session_id = (await request.json()).get("session_id", "") if request.headers.get("content-type") == "application/json" else ""
+    slug = req.slug or re.sub(r'[^a-z0-9-]', '', req.name.lower().replace(" ", "-"))
+    existing = await db.agent_profiles.find_one({"slug": slug})
+    if existing:
+        slug = slug + "-" + str(uuid.uuid4())[:6]
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    profile = {
+        "profile_id": str(uuid.uuid4()),
+        "session_id": session_id,
+        "slug": slug,
+        "name": req.name,
+        "title": req.title,
+        "brokerage": req.brokerage,
+        "phone": req.phone,
+        "email": req.email,
+        "photo_url": req.photo_url,
+        "bio": req.bio,
+        "specialties": req.specialties,
+        "social_linkedin": req.social_linkedin,
+        "social_instagram": req.social_instagram,
+        "social_facebook": req.social_facebook,
+        "website": req.website,
+        "public_url": f"{frontend_url}/a/{slug}",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.agent_profiles.insert_one(profile)
+    return profile
+
+@api_router.get("/agent/profile/{session_id}")
+async def agent_profile_get(session_id: str):
+    profile = await db.agent_profiles.find_one({"session_id": session_id})
+    if not profile:
+        return None
+    profile["_id"] = str(profile["_id"])
+    return profile
+
+@api_router.put("/agent/profile/{session_id}")
+async def agent_profile_update(session_id: str, req: AgentProfileUpdate):
+    updates = {k: v for k, v in req.dict(exclude_unset=True).items() if v is not None}
+    if not updates:
+        raise HTTPException(400, "No fields to update")
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    if "slug" in updates:
+        existing = await db.agent_profiles.find_one({"slug": updates["slug"], "session_id": {"$ne": session_id}})
+        if existing:
+            raise HTTPException(400, "Slug already taken")
+    await db.agent_profiles.update_one({"session_id": session_id}, {"$set": updates})
+    return {"ok": True}
+
+@api_router.get("/agent/public/{slug}")
+async def agent_profile_public(slug: str):
+    profile = await db.agent_profiles.find_one({"slug": slug})
+    if not profile:
+        raise HTTPException(404, "Agent not found")
+    profile["_id"] = str(profile["_id"])
+    # Get their recent listings
+    listings_cursor = db.listings.find({"session_id": profile.get("session_id", "")}).sort("created_at", -1).limit(6)
+    listings = await listings_cursor.to_list(length=6)
+    for l in listings:
+        l["_id"] = str(l["_id"])
+    profile["listings"] = listings
+    return profile
+
+# ===== PDF EXPORT =====
+@api_router.post("/export/pdf")
+async def export_pdf(request: Request):
+    body = await request.json()
+    content = body.get("content", "")
+    title = body.get("title", "Listing")
+    agent = body.get("agent", "")
+    brokerage = body.get("brokerage", "")
+    html_content = f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>{title}</title>
+<style>
+  @page {{ margin: 0.75in; }}
+  body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.6; color: #222; max-width: 6.5in; margin: auto; }}
+  h1 {{ font-size: 18pt; font-weight: 700; margin-bottom: 4pt; }}
+  .meta {{ font-size: 10pt; color: #666; margin-bottom: 16pt; }}
+  hr {{ border: none; border-top: 1px solid #ddd; margin: 16pt 0; }}
+  .content {{ white-space: pre-wrap; }}
+  .footer {{ margin-top: 24pt; font-size: 9pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 12pt; }}
+</style></head><body>
+  <h1>{title}</h1>
+  <div class="meta">{agent}{' · ' + brokerage if brokerage else ''}</div>
+  <hr>
+  <div class="content">{content}</div>
+  <div class="footer">Generated by ListWorks PRO — listworks.pro</div>
+</body></html>"""
+    return {"html": html_content, "filename": f"{title.replace(' ', '-').lower()[:40]}.pdf"}
+
+# ===== FIX SOCIAL AUTO-POST =====
+@api_router.post("/social/post-direct")
+async def social_post_direct(request: Request):
+    body = await request.json()
+    text = body.get("text", "")
+    platform = body.get("platform", "facebook")  # "facebook", "twitter", "linkedin"
+    post = {
+        "id": str(uuid.uuid4()),
+        "platform": platform,
+        "text": text,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.social_posts.insert_one(post)
+    return post
 
 # ===== QR: AGENT CARD =====
 class AgentCardCreate(BaseModel):

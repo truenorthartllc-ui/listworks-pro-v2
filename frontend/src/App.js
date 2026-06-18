@@ -12,6 +12,7 @@ import Waitlist from "@/pages/Waitlist";
 import OpenHouseCheckin from "@/pages/OpenHouseCheckin";
 import ShowingFeedback from "@/pages/ShowingFeedback";
 import AgentCard from "@/pages/AgentCard";
+import AgentProfilePage from "@/pages/AgentProfilePage";
 import Unsubscribe from "@/pages/Unsubscribe";
 import ComparePage from "@/pages/ComparePage";
 import VsPage from "@/pages/VsPage";
@@ -43,12 +44,14 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/share/:id" element={<SharedListing />} />
+          <Route path="/p/:id" element={<SharedListing />} />
           <Route path="/a/:ref" element={<AffiliateDashboard />} />
           <Route path="/affiliate/signup" element={<AffiliateSignup />} />
           <Route path="/affiliate/demo" element={<AffiliateSignup />} />
           <Route path="/openhouse/:eventId" element={<OpenHouseCheckin />} />
           <Route path="/show/:eventId" element={<ShowingFeedback />} />
           <Route path="/agent/:cardId" element={<AgentCard />} />
+          <Route path="/a/:slug" element={<AgentProfilePage />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/compare" element={<ComparePage />} />

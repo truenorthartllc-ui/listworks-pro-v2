@@ -6,10 +6,14 @@ import { X, Send, Bot, Loader2 } from "lucide-react";
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const STARTERS = [
+  "Give me 3 hooks for a luxury lakefront listing.",
+  "What's the most common mistake agents make in MLS copy?",
+  "Write a price-drop script that keeps buyer interest.",
+  "How do I handle a stubborn seller who overpriced?",
+  "Suggest 5 listing presentation talking points.",
+  "What should I say at an open house to get leads?",
+  "Write a follow-up email to a cold lead from 6 months ago.",
   "Critique my MLS copy against the framework.",
-  "What banned words am I using?",
-  "Strengthen my opening hook.",
-  "Suggest 3 alternate headlines I'd never think of.",
 ];
 
 export default function AdvisorPanel({ listingId, onClose }) {

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
-  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock, Gift, Fingerprint,
+  Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock, Gift, Fingerprint, Globe, MapPin,
 } from "lucide-react";
 import VideoBuilder from "@/components/VideoBuilder";
 import AdvisorPanel from "@/components/AdvisorPanel";
@@ -26,6 +26,8 @@ import AgentBioPanel from "@/components/AgentBioPanel";
 import PhotoToListing from "@/components/PhotoToListing";
 import ReferralPanel from "@/components/ReferralPanel";
 import BrandVoicePanel from "@/components/BrandVoicePanel";
+import AgentPageSetup from "@/components/AgentPageSetup";
+import CMAPanel from "@/components/CMAPanel";
 import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
@@ -251,6 +253,8 @@ export default function Playground() {
             <div className="flex flex-wrap gap-3 mt-6">
               <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
               <button onClick={() => setMode("bio")} data-active={mode === "bio"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Box className="w-4 h-4" />Agent Bio</button>
+              <button onClick={() => setMode("agentpage")} data-active={mode === "agentpage"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Globe className="w-4 h-4" />Agent Page</button>
+              <button onClick={() => setMode("cma")} data-active={mode === "cma"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />CMA Report</button>
               <button onClick={() => setMode("photo")} data-active={mode === "photo"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Photo → Listing</button>
               <button onClick={() => handleProMode("batch")} data-active={mode === "batch"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Layers className="w-4 h-4" />Bulk CSV<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
@@ -634,19 +638,40 @@ export default function Playground() {
                     data-testid="auto-post-btn"
                     onClick={async () => {
                       try {
-                        const session_id = localStorage.getItem("lw_session_id");
-                        await axios.post(`${API}/social/post`, {
-                          listing_id: result.id,
-                          platforms: ["facebook"],
+                        await axios.post(`${API}/social/post-direct`, {
+                          text: result?.facebook || result?.mls || "",
+                          platform: "facebook",
                         });
-                        toast.success("Sent to Facebook auto-poster ✓");
-                      } catch (e) {
-                        toast.error(e?.response?.data?.detail || "Auto-post not configured. Add MAKE_WEBHOOK_URL.");
+                        toast.success("Saved to social queue ✓");
+                      } catch {
+                        toast.error("Couldn't save post.");
                       }
                     }}
                     className="border border-ink/30 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
                   >
-                    <Share2 className="w-3.5 h-3.5" /> Auto-Post to FB
+                    <Share2 className="w-3.5 h-3.5" /> Save to Social
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const { data } = await axios.post(`${API}/export/pdf`, {
+                          content: result?.mls || "",
+                          title: "Listing Description",
+                        });
+                        const win = window.open();
+                        if (win) {
+                          win.document.write(data.html);
+                          win.document.close();
+                          win.print();
+                        }
+                        toast.success("PDF opened in print preview ✓");
+                      } catch {
+                        toast.error("PDF export failed.");
+                      }
+                    }}
+                    className="border border-ink/30 hover:bg-ink hover:text-oat px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.12em] flex items-center gap-2 transition hover:-translate-y-0.5"
+                  >
+                    <Box className="w-3.5 h-3.5" /> Export PDF
                   </button>
                   <button
                     data-testid="make-10-btn"
@@ -816,6 +841,18 @@ export default function Playground() {
       {mode === "brandvoice" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
           <BrandVoicePanel />
+        </div>
+      )}
+
+      {mode === "agentpage" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <AgentPageSetup />
+        </div>
+      )}
+
+      {mode === "cma" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <CMAPanel />
         </div>
       )}
 
