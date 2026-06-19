@@ -2782,7 +2782,7 @@ async def autocomplete(q: str = ""):
     async with httpx.AsyncClient(timeout=8.0) as c:
         r = await c.get(
             "https://maps.googleapis.com/maps/api/place/autocomplete/json",
-            params={"input": q.strip(), "types": "address", "key": google_key},
+            params={"input": q.strip(), "types": "address", "components": "country:us", "key": google_key},
         )
         if r.status_code != 200:
             return {"predictions": []}
