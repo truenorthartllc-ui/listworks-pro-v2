@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { Loader2, MapPin, GraduationCap, Utensils, TreePine } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const GOOGLE_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "AIzaSyAO3eynP_-0OoLG4jv5oyFW7LrgvgUa8z4";
 
 const EXAMPLE = {
   address: "2841 West 6th St, Austin TX 78703",
@@ -17,20 +16,22 @@ const EXAMPLE = {
 export default function NeighborhoodInsights() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mapsReady, setMapsReady] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const inputRef = useRef(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const timerRef = useRef(null);
+  const wrapperRef = useRef(null);
 
-  const fetch = useCallback(async (addr) => {
-    const a = addr || address;
-    if (!a || a.trim().length < 8) return;
+  const fetchNeighborhood = useCallback(async (addr) => {
+    if (!addr || addr.trim().length < 8) return;
     setLoading(true);
     setResult(null);
     setError(null);
+    setShowSuggestions(false);
     try {
       const { data } = await axios.post(`${API}/local-gems`, {
-        address: a.trim(),
+        address: addr.trim(),
         session_id: localStorage.getItem("lw_session_id") || undefined,
       });
       setResult(data.paragraph);
@@ -39,39 +40,29 @@ export default function NeighborhoodInsights() {
     } finally {
       setLoading(false);
     }
-  }, [address]);
-
-  // Load Google Maps Places API once
-  useEffect(() => {
-    if (window.google?.maps?.places) { setMapsReady(true); return; }
-    if (document.getElementById("gmaps-script")) return;
-    window.initMapsAutocomplete = () => setMapsReady(true);
-    const script = document.createElement("script");
-    script.id = "gmaps-script";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places&callback=initMapsAutocomplete`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
   }, []);
 
-  // Attach autocomplete when maps is ready
-  useEffect(() => {
-    if (!mapsReady || !inputRef.current) return;
-    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
-      types: ["address"],
-      componentRestrictions: { country: "us" },
-    });
-    ac.addListener("place_changed", () => {
-      const place = ac.getPlace();
-      if (place?.formatted_address) {
-        const addr = place.formatted_address;
-        setAddress(addr);
-        setResult(null);
-        setError(null);
-        fetch(addr);
-      }
-    });
-  }, [mapsReady, fetch]);
+  const handleInput = (value) => {
+    setAddress(value);
+    setResult(null);
+    setError(null);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (value.trim().length < 3) { setSuggestions([]); setShowSuggestions(false); return; }
+    timerRef.current = setTimeout(async () => {
+      try {
+        const { data } = await axios.get(`${API}/autocomplete`, { params: { q: value } });
+        setSuggestions(data.predictions || []);
+        setShowSuggestions(true);
+      } catch { /* ignore autocomplete failures */ }
+    }, 300);
+  };
+
+  const pickSuggestion = (s) => {
+    setAddress(s.description);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    fetchNeighborhood(s.description);
+  };
 
   const active = result || (!loading && !error);
   const displayParagraph = result || EXAMPLE.paragraph;
@@ -131,14 +122,30 @@ export default function NeighborhoodInsights() {
                 <div className="relative flex-1">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/30" />
                   <input
-                    ref={inputRef}
+                    ref={wrapperRef}
                     type="text"
                     value={address}
-                    onChange={(e) => { setAddress(e.target.value); setResult(null); setError(null); }}
-                    onKeyDown={(e) => e.key === "Enter" && fetch()}
+                    onChange={(e) => handleInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && (suggestions.length > 0 ? pickSuggestion(suggestions[0]) : fetchNeighborhood(address))}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                     placeholder="Start typing any address..."
                     className="w-full pl-9 pr-3 py-3 border border-ink/20 bg-white font-body text-sm text-ink placeholder:text-ink/30 focus:border-ink/60 outline-none"
                   />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-ink/15 shadow-lg z-50 max-h-60 overflow-y-auto">
+                      {suggestions.map((s, i) => (
+                        <button
+                          key={s.place_id || i}
+                          onMouseDown={() => pickSuggestion(s)}
+                          className="w-full text-left px-4 py-3 font-body text-sm text-ink hover:bg-oat border-b border-ink/5 last:border-0 transition"
+                        >
+                          <MapPin className="inline w-3 h-3 mr-2 text-ink/30 flex-shrink-0" />
+                          {s.description}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={fetch}

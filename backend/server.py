@@ -2772,6 +2772,23 @@ class LocalGemsRequest(BaseModel):
     session_id: Optional[str] = None
 
 
+@api_router.get("/autocomplete")
+async def autocomplete(q: str = ""):
+    if not q or len(q.strip()) < 2:
+        return {"predictions": []}
+    google_key = os.environ.get("GOOGLE_MAPS_API_KEY", "")
+    if not google_key:
+        return {"predictions": []}
+    async with httpx.AsyncClient(timeout=8.0) as c:
+        r = await c.get(
+            "https://maps.googleapis.com/maps/api/place/autocomplete/json",
+            params={"input": q.strip(), "types": "address", "key": google_key},
+        )
+        if r.status_code != 200:
+            return {"predictions": []}
+        return r.json()
+
+
 @api_router.post("/local-gems")
 async def local_gems(req: LocalGemsRequest):
     if not req.address or len(req.address.strip()) < 5:
