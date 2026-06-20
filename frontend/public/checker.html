@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Fair Housing Checker — ListWorks PRO</title>
+  <meta name="description" content="Scan your real estate listing copy for Fair Housing Act violations before you publish. Free compliance checker for agents.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1a2e;
+      background: #f6f7f9;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Header ─── */
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    header .logo span { color: #e85d3a; }
+    header nav a {
+      color: rgba(255,255,255,.7);
+      text-decoration: none;
+      font-size: .875rem;
+      transition: color .2s;
+    }
+    header nav a:hover { color: #fff; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d2d4a 100%);
+      color: #fff;
+      text-align: center;
+      padding: 3.5rem 1.5rem 3rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.15;
+      margin-bottom: .65rem;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,.7);
+      max-width: 560px;
+      margin: 0 auto 1.75rem;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(232,93,58,.18);
+      color: #e85d3a;
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: .35rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    /* ─── Main ─── */
+    main { flex: 1; max-width: 780px; margin: 0 auto; width: 100%; padding: 0 1.5rem; }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 1.75rem;
+      margin-top: -1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    label {
+      display: block;
+      font-size: .9rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: .5rem;
+    }
+    label .sub { font-weight: 400; color: #6b7280; font-size: .8rem; }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 1rem;
+      font-family: inherit;
+      font-size: .95rem;
+      line-height: 1.7;
+      border: 1.5px solid #e0e2e7;
+      border-radius: 8px;
+      resize: vertical;
+      transition: border-color .2s, box-shadow .2s;
+      color: #1a1a2e;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #e85d3a;
+      box-shadow: 0 0 0 3px rgba(232,93,58,.15);
+    }
+    textarea::placeholder { color: #9ca3af; }
+
+    .char-count {
+      text-align: right;
+      font-size: .78rem;
+      color: #9ca3af;
+      margin-top: .35rem;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      background: #e85d3a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: .85rem 2.25rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    button:hover { background: #d04d2a; }
+    button:active { transform: scale(.98); }
+    button:disabled { background: #b0b4be; cursor: not-allowed; transform: none; }
+    button .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+    button.loading .spinner { display: inline-block; }
+    button.loading .btn-text { opacity: .7; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Results ─── */
+    .results { display: none; margin-top: 1.75rem; }
+
+    .results.visible { display: block; }
+
+    .grade-box {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .grade-box.grade-clean { background: #ecfdf5; border: 1px solid #a7f3d0; }
+    .grade-box.grade-warn  { background: #fef2f2; border: 1px solid #fecaca; }
+
+    .grade-letter {
+      width: 56px; height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .grade-clean .grade-letter { background: #10b981; color: #fff; }
+    .grade-warn .grade-letter  { background: #ef4444; color: #fff; }
+
+    .grade-info h3 { font-size: 1.05rem; margin-bottom: .15rem; }
+    .grade-info p { font-size: .85rem; color: #4b5563; }
+    .grade-clean .grade-info p { color: #065f46; }
+    .grade-warn .grade-info p  { color: #7f1d1d; }
+
+    .violations-title {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+      margin-bottom: .75rem;
+    }
+
+    .violation {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: .75rem;
+    }
+    .violation:last-child { margin-bottom: 0; }
+
+    .violation-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: .45rem;
+    }
+    .risk-badge {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: .2rem .6rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .risk-CRITICAL { background: #fef2f2; color: #991b1b; }
+    .risk-HIGH      { background: #fff7ed; color: #9a3412; }
+    .risk-MEDIUM    { background: #fffbeb; color: #92400e; }
+    .risk-LOW       { background: #f0f9ff; color: #075985; }
+
+    .violation-category {
+      font-size: .85rem;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .violation-text {
+      font-size: .85rem;
+      color: #374151;
+      margin-bottom: .3rem;
+    }
+    .violation-text strong {
+      background: #fef2f2;
+      padding: .05rem .25rem;
+      border-radius: 3px;
+    }
+
+    .violation-fix {
+      font-size: .82rem;
+      color: #059669;
+      margin-top: .35rem;
+    }
+    .violation-fix::before { content: "→ "; }
+
+    .violation-suggestion {
+      font-size: .82rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-top: .15rem;
+    }
+
+    /* ─── Error ─── */
+    .error-box {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      color: #991b1b;
+      font-size: .88rem;
+    }
+    .error-box.visible { display: block; }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+      text-align: center;
+      padding: 2.25rem 1rem 1rem;
+      color: #9ca3af;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: .75rem; opacity: .4; }
+    .empty-state p { font-size: .9rem; }
+
+    /* ─── Sample ─── */
+    .sample-row {
+      display: flex;
+      gap: .75rem;
+      margin-top: .75rem;
+      flex-wrap: wrap;
+    }
+    .sample-btn {
+      background: none;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 6px;
+      padding: .5rem .9rem;
+      font-size: .78rem;
+      color: #6b7280;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+      width: auto;
+      margin: 0;
+      font-weight: 400;
+    }
+    .sample-btn:hover {
+      border-color: #e85d3a;
+      color: #e85d3a;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .8rem;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 2.5rem;
+    }
+    footer strong { color: #6b7280; }
+    footer a { color: #e85d3a; text-decoration: none; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .hero { padding: 2.5rem 1.25rem 2.25rem; }
+      .card { padding: 1.25rem; margin-top: -1rem; }
+      .grade-box { flex-direction: column; text-align: center; }
+      header { padding: .6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">ListWorks <span>PRO</span></div>
+    <nav><a href="https://listworks.pro" target="_blank">Back to App</a></nav>
+  </header>
+
+  <section class="hero">
+    <div class="badge">Free Tool</div>
+    <h1>Free Fair Housing Checker</h1>
+    <p>Scan your listing copy for FHA violations before you publish. Catch discriminatory language, stay compliant, and build trust with every listing.</p>
+  </section>
+
+  <main>
+    <div class="card">
+      <label for="listing-text">
+        Paste your listing copy
+        <span class="sub">— we'll scan it against Fair Housing guidelines</span>
+      </label>
+      <textarea id="listing-text" placeholder="Paste your listing description here…&#10;&#10;Example: &quot;Beautiful family home in quiet, family-friendly neighborhood near top-rated schools.&quot;">Beautiful family home in quiet, family-friendly neighborhood near top-rated schools. Perfect for couples and young professionals. Master bedroom features his-and-her closets. Walk to local church and community center. MUST SEE!</textarea>
+      <div class="char-count"><span id="char-count">0</span> characters</div>
+
+      <div class="sample-row">
+        <button class="sample-btn" data-sample="1">📋 Sample 1 — Subtle</button>
+        <button class="sample-btn" data-sample="2">📋 Sample 2 — Obvious</button>
+      </div>
+
+      <button id="scan-btn" type="button">
+        <span class="spinner"></span>
+        <span class="btn-text">Scan for Violations</span>
+      </button>
+
+      <div class="error-box" id="error-box"></div>
+
+      <div class="results" id="results">
+        <div class="grade-box" id="grade-box">
+          <div class="grade-letter" id="grade-letter">A</div>
+          <div class="grade-info">
+            <h3 id="grade-title">No violations found</h3>
+            <p id="grade-desc">Your listing copy looks compliant. Always consult a real estate attorney for legal advice.</p>
+          </div>
+        </div>
+
+        <div class="violations-title" id="violations-title">Violations Found</div>
+        <div id="violations-list"></div>
+
+        <div class="empty-state" id="empty-state">
+          <div class="icon">&#10003;</div>
+          <p>No Fair Housing issues detected. Your listing is clean.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Powered by <strong>ListWorks PRO</strong> — AI listing copy with built-in Fair Housing compliance.
+    <br>
+    <a href="https://listworks.pro" target="_blank">listworks.pro</a>
+  </footer>
+
+  <script>
+    (function() {
+      const textarea = document.getElementById('listing-text');
+      const charCount = document.getElementById('char-count');
+      const scanBtn = document.getElementById('scan-btn');
+      const results = document.getElementById('results');
+      const errorBox = document.getElementById('error-box');
+      const gradeBox = document.getElementById('grade-box');
+      const gradeLetter = document.getElementById('grade-letter');
+      const gradeTitle = document.getElementById('grade-title');
+      const gradeDesc = document.getElementById('grade-desc');
+      const violationsTitle = document.getElementById('violations-title');
+      const violationsList = document.getElementById('violations-list');
+      const emptyState = document.getElementById('empty-state');
+
+      // ─── Character counter ───
+      function updateCount() {
+        charCount.textContent = textarea.value.length;
+      }
+      textarea.addEventListener('input', updateCount);
+      updateCount();
+
+      // ─── Sample buttons ───
+      const samples = {
+        1: 'Charming 3-bedroom home in a quiet, safe neighborhood within walking distance to the local church. Perfect for a growing family. Close to community center and park. Must see!',
+        2: 'Beautiful home in an exclusive, gated community. Perfect for Christian families. Walking distance to church and synagogue. Ideal for empty-nesters. NO SECTION 8. Credit check required. Perfect for married couples with children.'
+      };
+      document.querySelectorAll('.sample-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          textarea.value = samples[this.dataset.sample] || '';
+          updateCount();
+          results.classList.remove('visible');
+          errorBox.classList.remove('visible');
+        });
+      });
+
+      // ─── Grade helpers ───
+      function riskScore(level) {
+        switch(level.toUpperCase()) {
+          case 'CRITICAL': return 5;
+          case 'HIGH': return 4;
+          case 'MEDIUM': return 3;
+          case 'LOW': return 1;
+          default: return 0;
+        }
+      }
+
+      function computeGrade(violations) {
+        if (!violations || violations.length === 0) return { letter: 'A', label: 'Clean' };
+        const total = violations.reduce((sum, v) => sum + riskScore(v.risk_level || v.level || ''), 0);
+        const max = violations.length * 5;
+        const ratio = total / max;
+        if (violations.some(v => (v.risk_level || v.level || '').toUpperCase() === 'CRITICAL')) return { letter: 'F', label: 'Critical issues found' };
+        if (ratio > 0.7) return { letter: 'D', label: 'Multiple issues found' };
+        if (ratio > 0.45) return { letter: 'C', label: 'Some issues found' };
+        if (ratio > 0.2) return { letter: 'B', label: 'Minor issues found' };
+        return { letter: 'A', label: 'Clean' };
+      }
+
+      // ─── Scan ───
+      scanBtn.addEventListener('click', async function() {
+        const text = textarea.value.trim();
+        if (!text) {
+          errorBox.textContent = 'Please paste some listing copy first.';
+          errorBox.classList.add('visible');
+          return;
+        }
+        if (text.length < 20) {
+          errorBox.textContent = 'Listing copy is too short. Please paste at least 20 characters.';
+          errorBox.classList.add('visible');
+          return;
+        }
+
+        // Reset
+        errorBox.classList.remove('visible');
+        results.classList.remove('visible');
+        scanBtn.classList.add('loading');
+        scanBtn.disabled = true;
+
+        try {
+          const res = await fetch('https://listworks-pro-v2-production.up.railway.app/api/analyze/fair-housing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+          });
+
+          if (!res.ok) {
+            let msg = `Server error (${res.status})`;
+            try {
+              const err = await res.json();
+              if (err.detail) msg = err.detail;
+            } catch(_) {}
+            throw new Error(msg);
+          }
+
+          const data = await res.json();
+
+          // API returns either { violations: [...] } or { results: [...] }
+          const violations = data.violations || data.results || data.issues || [];
+
+          // ─── Render ───
+          results.classList.add('visible');
+          results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          const grade = computeGrade(violations);
+
+          if (violations.length === 0) {
+            gradeBox.className = 'grade-box grade-clean';
+            gradeLetter.textContent = grade.letter;
+            gradeLetter.className = 'grade-letter';
+            gradeTitle.textContent = 'No violations found';
+            gradeDesc.textContent = 'Your listing copy looks compliant. Always consult a real estate attorney for legal advice.';
+            violationsTitle.style.display = 'none';
+            violationsList.innerHTML = '';
+            emptyState.style.display = 'block';
+          } else {
+            gradeBox.className = 'grade-box grade-warn';
+            gradeLetter.textContent = grade.letter;
+            gradeLetter.className = 'grade-letter';
+            const count = violations.length;
+            gradeTitle.textContent = `${count} violation${count > 1 ? 's' : ''} found (grade ${grade.letter})`;
+            gradeDesc.textContent = 'Review each flagged item below and fix your copy before publishing.';
+            violationsTitle.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            violationsList.innerHTML = violations.map(v => {
+              const level = (v.risk_level || v.level || 'MEDIUM').toUpperCase();
+              const phrase = v.flagged_text || v.flagged_phrase || v.text || '';
+              const suggestion = v.suggested_fix || v.suggestion || v.replacement || '';
+              const category = v.category || v.type || '';
+              const explanation = v.explanation || v.reason || '';
+
+              return `<div class="violation">
+                <div class="violation-header">
+                  <span class="risk-badge risk-${level}">${level}</span>
+                  ${category ? `<span class="violation-category">${esc(category)}</span>` : ''}
+                </div>
+                ${phrase ? `<div class="violation-text">Flagged: <strong>${esc(phrase)}</strong></div>` : ''}
+                ${explanation ? `<div class="violation-fix">${esc(explanation)}</div>` : ''}
+                ${suggestion ? `<div class="violation-suggestion">Suggested fix: ${esc(suggestion)}</div>` : ''}
+              </div>`;
+            }).join('');
+          }
+
+        } catch (err) {
+          errorBox.textContent = err.message || 'Something went wrong. Please try again.';
+          errorBox.classList.add('visible');
+        } finally {
+          scanBtn.classList.remove('loading');
+          scanBtn.disabled = false;
+        }
+      });
+
+      function esc(s) {
+        if (!s) return '';
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+    })();
+  </script>
+</body>
+</html>
