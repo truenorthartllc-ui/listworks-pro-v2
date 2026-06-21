@@ -28,6 +28,7 @@ import ReferralPanel from "@/components/ReferralPanel";
 import BrandVoicePanel from "@/components/BrandVoicePanel";
 import TemplatesPanel from "@/components/TemplatesPanel";
 import ContentCalendarPanel from "@/components/ContentCalendarPanel";
+import MarketUpdatePanel from "@/components/MarketUpdatePanel";
 import AgentPageSetup from "@/components/AgentPageSetup";
 import CMAPanel from "@/components/CMAPanel";
 import VirtualStagingPanel from "@/components/VirtualStagingPanel";
@@ -299,6 +300,7 @@ export default function Playground() {
               <button onClick={() => setMode("brandvoice")} data-active={mode === "brandvoice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Fingerprint className="w-4 h-4" />Brand Voice</button>
               <button onClick={() => setMode("templates")} data-active={mode === "templates"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><LayoutGrid className="w-4 h-4" />Social Templates</button>
               <button onClick={() => setMode("calendar")} data-active={mode === "calendar"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Content Calendar</button>
+              <button onClick={() => setMode("marketupdate")} data-active={mode === "marketupdate"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Market Update</button>
             </div>
           </div>
         </div>
@@ -915,6 +917,12 @@ export default function Playground() {
       {mode === "calendar" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
           <ContentCalendarPanel />
+        </div>
+      )}
+
+      {mode === "marketupdate" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <MarketUpdatePanel />
         </div>
       )}
 

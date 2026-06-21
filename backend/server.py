@@ -3619,6 +3619,91 @@ async def qr_agent_card_update(card_id: str, req: AgentCardUpdate, request: Requ
     await db.agent_cards.update_one({"card_id": card_id}, {"$set": updates})
     return {"ok": True}
 
+# ============== MARKET UPDATE GENERATOR ==============
+
+class MarketUpdateRequest(BaseModel):
+    location: str         # city, ZIP, or neighborhood
+    session_id: Optional[str] = None
+
+
+MARKET_UPDATE_SYSTEM = """You are a real estate market analyst and social media copywriter.
+Given real estate market data snippets for a location, generate 3 ready-to-post social media updates.
+
+Return ONLY a JSON object with exactly these fields:
+{
+  "instagram": "Instagram caption with market stats. Open with a punchy data hook. Explain what it means for buyers/sellers. 150-250 words. 3-5 relevant hashtags at end.",
+  "facebook": "Facebook post. More narrative — what story do these numbers tell? What should local buyers/sellers do right now? 200-300 words. Conversational.",
+  "email": "Email newsletter paragraph (no subject line). 100-150 words. Positions agent as the informed local expert. Professional but human tone.",
+  "summary": "2-sentence plain-English summary of current market conditions."
+}
+
+Rules:
+- Use specific numbers from the search data where available
+- If data is limited, acknowledge it honestly and focus on trends
+- Never fabricate specific numbers — use ranges or qualitative language if unsure
+- Apply agent brand voice if provided
+- JSON only, no markdown wrapper."""
+
+
+@api_router.post("/market-update")
+async def market_update(req: MarketUpdateRequest):
+    if not req.location or len(req.location.strip()) < 2:
+        raise HTTPException(400, "Please provide a city, ZIP code, or neighborhood.")
+
+    tavily_key = os.environ.get("TAVILY_API_KEY", "")
+    if not tavily_key:
+        raise HTTPException(503, "Market data search not available.")
+
+    location = req.location.strip()
+
+    # Fetch live market data via Tavily
+    queries = [
+        f"{location} real estate market stats 2026 median home price days on market",
+        f"{location} housing market trends June 2026 inventory",
+    ]
+    snippets = []
+    async with httpx.AsyncClient(timeout=20.0) as hc:
+        for q in queries:
+            try:
+                resp = await hc.post("https://api.tavily.com/search", json={
+                    "api_key": tavily_key, "query": q, "max_results": 3,
+                    "search_depth": "basic", "include_answer": True,
+                })
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("answer"):
+                        snippets.append(data["answer"])
+                    for r in data.get("results", [])[:2]:
+                        if r.get("content"):
+                            snippets.append(r["content"][:400])
+            except Exception:
+                pass
+
+    bv: dict = {}
+    if req.session_id:
+        bv_doc = await db.brand_voices.find_one({"session_id": req.session_id})
+        if bv_doc:
+            bv = {k: v for k, v in bv_doc.items() if k != "_id"}
+
+    system = MARKET_UPDATE_SYSTEM + _build_brand_voice_block(bv)
+    market_data = "\n\n".join(snippets) if snippets else f"General market context for {location} — use current knowledge."
+    user_text = f"Location: {location}\n\nMarket data:\n{market_data[:3000]}\n\nGenerate 3 social posts. JSON only."
+
+    try:
+        raw = await call_g0dm0d3(system, user_text, tier="smart")
+    except Exception:
+        raw = await call_openrouter(system, user_text)
+
+    cleaned = _strip_json(raw)
+    try:
+        result = json.loads(cleaned)
+    except Exception as e:
+        logging.exception("Market update parse failed")
+        raise HTTPException(500, f"AI returned invalid data: {str(e)[:120]}")
+
+    return {"location": location, **result}
+
+
 # ============== CONTENT CALENDAR ==============
 
 class ContentCalendarRequest(BaseModel):
