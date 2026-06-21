@@ -823,11 +823,13 @@ async def agent_signup(req: AgentSignupIn):
             "brokerage": req.brokerage,
             "phone": req.phone,
             "branding": {"logo_url": "", "primary_color": "#1a1a2e", "secondary_color": "#d63b1e"},
+            "tier": "free",
+            "content_packs_used": 0,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
         await db.agents.insert_one(agent)
         token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
-        return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+        return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"], "tier": "free"}}
     except HTTPException:
         raise
     except Exception as e:
@@ -841,7 +843,7 @@ async def agent_login(req: AgentLoginIn):
     if not agent or not _bcrypt.checkpw(req.password.encode(), agent["password"].encode()):
         raise HTTPException(401, "Invalid email or password")
     token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
-    return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+    return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"], "tier": agent.get("tier", "free")}}
 
 @api_router.get("/auth/me")
 async def get_me(authorization: str = Header(None)):
@@ -877,6 +879,48 @@ async def update_branding(req: BrandingIn, authorization: str = Header(None)):
         {"email": payload["sub"]},
         {"$set": {"branding": req.model_dump(), "brokerage": req.brokerage, "name": req.agent_name}}
     )
+    return {"ok": True}
+
+
+# ══════════════ ACCOUNT / TIER ENDPOINTS ══════════════
+def _get_agent_from_token(authorization):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Missing token")
+    try:
+        payload = jwt.decode(authorization.split(" ")[1], JWT_SECRET, algorithms=[JWT_ALGO])
+    except:
+        raise HTTPException(401, "Invalid token")
+    return payload["sub"]
+
+@api_router.get("/account/status")
+async def account_status(authorization: str = Header(None)):
+    email = _get_agent_from_token(authorization)
+    agent = await db.agents.find_one({"email": email})
+    if not agent: raise HTTPException(404, "Agent not found")
+    return {
+        "tier": agent.get("tier", "free"),
+        "content_packs_used": agent.get("content_packs_used", 0),
+        "content_packs_limit": 999 if agent.get("tier") == "pro" else 1,
+        "can_generate": agent.get("tier") == "pro" or agent.get("content_packs_used", 0) < 1,
+        "can_download_pdf": agent.get("tier") == "pro",
+    }
+
+@api_router.post("/account/upgrade")
+async def upgrade_account(authorization: str = Header(None)):
+    email = _get_agent_from_token(authorization)
+    await db.agents.update_one({"email": email}, {"$set": {"tier": "pro"}})
+    return {"tier": "pro", "message": "Upgraded to Pro!"}
+
+@api_router.post("/account/use-content-pack")
+async def use_content_pack(authorization: str = Header(None)):
+    email = _get_agent_from_token(authorization)
+    agent = await db.agents.find_one({"email": email})
+    if agent.get("tier") != "pro":
+        used = agent.get("content_packs_used", 0)
+        limit = 1
+        if used >= limit:
+            raise HTTPException(402, "Free limit reached. Upgrade to Pro.")
+        await db.agents.update_one({"email": email}, {"$inc": {"content_packs_used": 1}})
     return {"ok": True}
 
 
@@ -1933,8 +1977,15 @@ class ContentGenerateIn(BaseModel):
     email: str = ""
 
 @api_router.post("/content/generate")
-async def generate_content_for_lead(req: ContentGenerateIn):
-    """Generate a content pack on demand for a lead."""
+async def generate_content_for_lead(req: ContentGenerateIn, authorization: str = Header(None)):
+    """Generate a content pack on demand for a lead. Gated: free users get 1/month."""
+    email = _get_agent_from_token(authorization)
+    agent = await db.agents.find_one({"email": email})
+    if agent.get("tier") != "pro" and agent.get("content_packs_used", 0) >= 1:
+        raise HTTPException(402, "Free limit reached. Upgrade to Pro for unlimited generation.")
+    if agent.get("tier") != "pro":
+        await db.agents.update_one({"email": email}, {"$inc": {"content_packs_used": 1}})
+
     import subprocess, tempfile, random
     # Build a mock lead and run the generator
     features_list = [f.strip() for f in req.features.split(",") if f.strip()] or ["natural light", "updated finishes", "open layout"]
@@ -1975,8 +2026,13 @@ async def get_form_detail(form_id: str):
     return form
 
 @api_router.post("/forms/{form_id}/pdf")
-async def generate_form_pdf(form_id: str, req: Request):
-    """Generate a branded fillable PDF for a contract form."""
+async def generate_form_pdf(form_id: str, req: Request, authorization: str = Header(None)):
+    """Generate a branded fillable PDF for a contract form. Pro only."""
+    email = _get_agent_from_token(authorization)
+    agent = await db.agents.find_one({"email": email})
+    if agent.get("tier") != "pro":
+        raise HTTPException(402, "PDF download requires Pro. Upgrade at listworks.pro/dashboard")
+
     form = get_form(form_id)
     if not form:
         raise HTTPException(404, "Form not found")
