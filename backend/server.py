@@ -4027,6 +4027,51 @@ async def template_generate(req: TemplateGenerateRequest):
     return {"output": output.strip(), "template_id": req.template_id}
 
 
+@app.on_event("startup")
+async def start_scheduler():
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+    async def _fire_due_posts():
+        now = datetime.now(timezone.utc)
+        due = await db.scheduled_posts.find(
+            {"status": "pending", "scheduled_at": {"$lte": now.isoformat()}},
+            {"_id": 0}
+        ).to_list(100)
+        if not due:
+            return
+        from email_engine import send_email
+        for post in due:
+            try:
+                platform = post.get("platform", "Social")
+                note = post.get("note", "")
+                body = f"""<p>⏰ Time to post on <strong>{platform}</strong>!</p>
+{"<p><em>" + note + "</em></p>" if note else ""}
+<p>Copy the content below and paste it into {platform}:</p>
+<hr>
+<pre style="background:#f5f5f5;padding:16px;border-radius:4px;white-space:pre-wrap;">{post['content']}</pre>
+<p style="color:#999;font-size:12px;">Scheduled via ListWorks PRO</p>"""
+                await send_email(
+                    to=post["email"],
+                    subject=f"Post time! Your {platform} content is ready",
+                    body=body,
+                )
+                await db.scheduled_posts.update_one(
+                    {"id": post["id"]},
+                    {"$set": {"status": "reminder_sent", "fired_at": now.isoformat()}}
+                )
+                logging.info(f"[scheduler] Reminder sent for post {post['id']}")
+            except Exception as e:
+                logging.warning(f"[scheduler] Failed reminder for {post.get('id')}: {e}")
+
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(_fire_due_posts, "interval", minutes=15, id="post_reminders")
+    scheduler.start()
+    app.state.scheduler = scheduler
+    logging.info("[scheduler] Post reminder scheduler started (15-min interval)")
+
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    if hasattr(app.state, "scheduler"):
+        app.state.scheduler.shutdown(wait=False)
     client.close()
