@@ -911,6 +911,28 @@ async def upgrade_account(authorization: str = Header(None)):
     await db.agents.update_one({"email": email}, {"$set": {"tier": "pro"}})
     return {"tier": "pro", "message": "Upgraded to Pro!"}
 
+@api_router.post("/account/create-checkout")
+async def create_checkout_session(authorization: str = Header(None)):
+    """Create a Stripe checkout session for Pro upgrade, with agent email attached."""
+    if not STRIPE_API_KEY:
+        raise HTTPException(500, "Stripe not configured")
+    email = _get_agent_from_token(authorization)
+    frontend_url = os.environ.get("FRONTEND_URL", "https://listworks.pro")
+    try:
+        session = await asyncio.to_thread(
+            stripe_sdk.checkout.Session.create,
+            success_url=f"{frontend_url}/dashboard?upgrade=success",
+            cancel_url=f"{frontend_url}/dashboard",
+            mode="subscription",
+            line_items=[{"price": "price_1QhqLlP39YDnKXkS0BcYQr2A", "quantity": 1}],
+            customer_email=email,
+            metadata={"agent_email": email},
+        )
+        return {"url": session.url}
+    except Exception as e:
+        logger.error(f"Stripe checkout creation failed: {e}")
+        raise HTTPException(500, "Failed to create checkout session")
+
 @api_router.post("/account/use-content-pack")
 async def use_content_pack(authorization: str = Header(None)):
     email = _get_agent_from_token(authorization)
@@ -2918,13 +2940,30 @@ async def stripe_webhook(request: Request):
                     {"lw_session_id": txn["lw_session_id"], "kind": txn.get("package_kind")},
                     {"$set": {
                         "lw_session_id": txn["lw_session_id"],
-                        "kind": txn.get("package_kind"),
                         "package_id": txn.get("package_id"),
                         "stripe_session_id": session_id,
                         "granted_at": datetime.now(timezone.utc).isoformat(),
                     }},
                     upsert=True,
                 )
+            # Auto-upgrade agent to Pro on successful payment (match by email)
+            if payment_status == "paid":
+                try:
+                    sess = await asyncio.to_thread(
+                        stripe_sdk.checkout.Session.retrieve,
+                        session_id,
+                        expand=["customer_details"],
+                    )
+                    customer_email = (sess.get("customer_details") or {}).get("email") or sess.get("customer_email") or ""
+                    if customer_email:
+                        agent_result = await db.agents.update_one(
+                            {"email": customer_email.lower()},
+                            {"$set": {"tier": "pro"}}
+                        )
+                        if agent_result.modified_count:
+                            logger.info(f"Stripe webhook: upgraded agent {customer_email} to Pro")
+                except Exception as e:
+                    logger.warning(f"Stripe webhook: could not upgrade agent: {e}")
             # Fire drip emails — idempotent via drip_sent flag
             if txn:
                 await _trigger_drip_for_txn(session_id, txn)

@@ -131,7 +131,13 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
-  async function saveBranding(e) {
+  async function upgrade() {
+    try {
+      const r = await fetch(apiUrl('/account/create-checkout'), { method: 'POST', headers: authHeaders() });
+      const d = await r.json();
+      if (d.url) window.location.href = d.url;
+    } catch {}
+  }
     e.preventDefault();
     const fd = new FormData(e.target);
     const body = Object.fromEntries(fd.entries());
@@ -180,7 +186,7 @@ export default function DashboardPage() {
         {navItem('branding', 'Branding')}
         <div style={{ flex: 1 }} />
         {account?.tier !== 'pro' && (
-          <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer"
+          <a href="#" onClick={e => { e.preventDefault(); upgrade(); }}
             style={{ background: '#d63b1e', color: '#fff', padding: '6px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 12, fontWeight: 600, marginRight: 8 }}>
             ⬆ Upgrade $29/mo
           </a>
@@ -192,7 +198,7 @@ export default function DashboardPage() {
         {account?.tier !== 'pro' && (
           <div style={{ background: '#2a1a1a', border: '1px solid #d63b1e', borderRadius: 8, padding: '12px 16px', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, color: '#ff8a6a' }}>🔒 Free tier — {account?.content_packs_used || 0}/{account?.content_packs_limit || 1} content packs used</span>
-            <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '8px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>⬆ Upgrade to Pro $29/mo</a>
+            <a href="#" onClick={e => { e.preventDefault(); upgrade(); }} style={{ background: '#d63b1e', color: '#fff', padding: '8px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>⬆ Upgrade to Pro $29/mo</a>
           </div>
         )}
         {page === 'packs' && <ContentPacks packs={packs} previewFile={previewFile} previewLead={previewLead} onPreview={preview} />}
@@ -283,7 +289,7 @@ function FormDetail({ form, values, setValues, onDownload, onBack, isPro }) {
       {isPro ? (
         <button onClick={() => onDownload(form.id)} style={{ background: '#d63b1e', color: '#fff', border: 'none', padding: '10px 0', borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 600, width: '100%' }}>📄 Download Branded PDF</button>
       ) : (
-        <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '10px 0', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'block', textAlign: 'center' }}>⬆ Upgrade to Download PDF</a>
+        <a href="#" onClick={e => { e.preventDefault(); upgrade(); }} style={{ background: '#d63b1e', color: '#fff', padding: '10px 0', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'block', textAlign: 'center' }}>⬆ Upgrade to Download PDF</a>
       )}
     </div>
   );
@@ -304,7 +310,7 @@ function GenerateForm({ onGenerate, loading, isPro }) {
       ) : (
         <div style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a', textAlign: 'center' }}>
           <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>🔒 Free tier includes 1 content pack. Upgrade to generate unlimited.</p>
-          <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '10px 24px', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'inline-block' }}>⬆ Upgrade to Pro $29/mo</a>
+          <a href="#" onClick={e => { e.preventDefault(); upgrade(); }} style={{ background: '#d63b1e', color: '#fff', padding: '10px 24px', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'inline-block' }}>⬆ Upgrade to Pro $29/mo</a>
         </div>
       )}
     </div>
