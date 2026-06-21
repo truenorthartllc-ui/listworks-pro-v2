@@ -1938,6 +1938,13 @@ async def save_template(session_id: str, req: TemplateSaveRequest):
     return doc
 
 
+@api_router.get("/dashboard")
+async def serve_dashboard():
+    """Main agent dashboard — content packs + contracts + generator."""
+    with open(ROOT_DIR / "static" / "dashboard.html") as f:
+        return HTMLResponse(f.read())
+
+
 @api_router.delete("/templates/{session_id}/{template_id}")
 async def delete_template(session_id: str, template_id: str):
     await db.templates.delete_one({"id": template_id, "session_id": session_id})
@@ -3465,6 +3472,153 @@ async def qr_agent_card_update(card_id: str, req: AgentCardUpdate, request: Requ
         raise HTTPException(400, "No fields to update")
     await db.agent_cards.update_one({"card_id": card_id}, {"$set": updates})
     return {"ok": True}
+
+# ============== SOCIAL TEMPLATE LIBRARY ==============
+
+TEMPLATE_CONFIGS = [
+    # Just Listed
+    {"id": "just-listed-instagram", "category": "just_listed", "category_label": "Just Listed", "platform": "Instagram", "label": "Instagram Caption",
+     "prompt": "Write an Instagram caption (max 2,200 chars, 3-5 relevant hashtags at end) announcing a new listing. Open with a hook that creates curiosity or desire. Highlight 2-3 standout features. End with a call to action (DM for details, link in bio, etc.)."},
+    {"id": "just-listed-facebook", "category": "just_listed", "category_label": "Just Listed", "platform": "Facebook", "label": "Facebook Post",
+     "prompt": "Write a Facebook post announcing a new listing. Can be longer than Instagram (up to 400 words). Include property highlights, what makes the neighborhood special, and a clear call to action. Conversational and shareable."},
+    {"id": "just-listed-reel", "category": "just_listed", "category_label": "Just Listed", "platform": "Reel", "label": "Reel Caption",
+     "prompt": "Write a short Reel caption (max 150 chars) for a just-listed property video. Punchy, hook-first, ends with a CTA or cliffhanger. No hashtags needed."},
+    {"id": "just-listed-email", "category": "just_listed", "category_label": "Just Listed", "platform": "Email", "label": "Email Blast",
+     "prompt": "Write a short email blast (subject line + body) announcing a new listing to the agent's sphere of influence. Subject under 60 chars. Body 100-150 words. Personal, not corporate. End with a direct offer to schedule a showing. Format as: SUBJECT: [subject line]\n\n[body]"},
+    {"id": "just-listed-stories", "category": "just_listed", "category_label": "Just Listed", "platform": "Stories", "label": "Stories (3 Slides)",
+     "prompt": "Write 3 Instagram/Facebook Stories slide captions for a new listing. Each slide max 15 words. Slide 1: hook/tease. Slide 2: key features. Slide 3: CTA. Return as exactly 3 lines separated by '|||'."},
+    # Just Sold
+    {"id": "just-sold-instagram", "category": "just_sold", "category_label": "Just Sold", "platform": "Instagram", "label": "Instagram Caption",
+     "prompt": "Write an Instagram caption celebrating a just-sold property. Acknowledge the clients (without naming them). Highlight what made this sale special (speed, price, competition, etc.). Social proof angle — builds credibility. 3-5 hashtags at end."},
+    {"id": "just-sold-facebook", "category": "just_sold", "category_label": "Just Sold", "platform": "Facebook", "label": "Facebook Post",
+     "prompt": "Write a Facebook post celebrating a just-sold property. Tell the brief story: the clients, the challenge, the win. Make it feel like a celebration, not a brag. 150-250 words. Ends with a soft CTA (thinking of selling?)."},
+    {"id": "just-sold-linkedin", "category": "just_sold", "category_label": "Just Sold", "platform": "LinkedIn", "label": "LinkedIn Announcement",
+     "prompt": "Write a professional LinkedIn post announcing a just-sold property. Frame it as a business accomplishment. Mention market conditions, strategy, or negotiation wins (generic, not client-specific). 100-200 words. Professional but not stuffy."},
+    {"id": "just-sold-story", "category": "just_sold", "category_label": "Just Sold", "platform": "Instagram", "label": "Client Story Tease",
+     "prompt": "Write a short Instagram caption that teases the story behind a just-sold property without giving everything away. Hook-first style ('The buyers almost walked away. Here's why they didn't.'). Under 100 words. Ends with 'Full story in bio' or similar."},
+    # Market Update
+    {"id": "market-monthly-stats", "category": "market_update", "category_label": "Market Update", "platform": "Instagram", "label": "Monthly Market Stats",
+     "prompt": "Write an Instagram caption sharing monthly real estate market stats. Use [STAT] placeholders the agent can fill in. Educational, easy to understand, positions the agent as the local expert. Frame the data with context. 3-4 hashtags."},
+    {"id": "market-buyers-market", "category": "market_update", "category_label": "Market Update", "platform": "Facebook", "label": "Buyer's Market Update",
+     "prompt": "Write a Facebook post explaining current buyer's market conditions in real estate. What does it mean for buyers? What opportunities exist right now? Actionable, educational, not alarmist. 150-200 words. Soft CTA at end."},
+    {"id": "market-sellers-market", "category": "market_update", "category_label": "Market Update", "platform": "Facebook", "label": "Seller's Market Update",
+     "prompt": "Write a Facebook post explaining current seller's market conditions. Why is NOW a great time to list? What can sellers expect? Motivating but honest. 150-200 words. Soft CTA."},
+    {"id": "market-rate-update", "category": "market_update", "category_label": "Market Update", "platform": "Instagram", "label": "Interest Rate Update",
+     "prompt": "Write an Instagram caption commenting on recent interest rate movements and what it means for buyers and sellers. Approachable, not financial advice. Under 200 words. Positions agent as informed and helpful. 3 hashtags."},
+    # Testimonial
+    {"id": "testimonial-share-review", "category": "testimonial", "category_label": "Testimonial", "platform": "Instagram", "label": "Share a Review",
+     "prompt": "Write an Instagram caption to accompany a client review/testimonial screenshot. Frame the review with context. Brief, lets the review speak. Thank the client without being sycophantic. Under 100 words. 2-3 hashtags."},
+    {"id": "testimonial-client-story", "category": "testimonial", "category_label": "Testimonial", "platform": "Facebook", "label": "Client Story",
+     "prompt": "Write a Facebook post telling a client success story (no identifying details). What was their goal? What challenges came up? How did it resolve? Narrative arc, 200-300 words. Human and warm. Ends with a soft CTA."},
+    {"id": "testimonial-referral-ask", "category": "testimonial", "category_label": "Testimonial", "platform": "Instagram", "label": "Referral Ask",
+     "prompt": "Write an Instagram caption asking for referrals in a non-pushy, authentic way. Acknowledge the agent's referral-based business. Make it easy and specific ('know anyone thinking of buying or selling?'). Under 100 words. Conversational."},
+    # Open House
+    {"id": "open-house-invite", "category": "open_house", "category_label": "Open House", "platform": "Instagram", "label": "Open House Invite",
+     "prompt": "Write an Instagram caption inviting followers to an open house. Include [DATE], [TIME], [ADDRESS] placeholders. Create excitement about the property. Call out the best feature as the hook. Under 200 words. 3-4 hashtags."},
+    {"id": "open-house-reminder", "category": "open_house", "category_label": "Open House", "platform": "Instagram", "label": "Day-Of Reminder",
+     "prompt": "Write a short Instagram caption for an open house day-of reminder. Urgent, casual, feels like a friend texting you. Under 80 words. Include [TIME] and [ADDRESS] placeholders."},
+    {"id": "open-house-followup", "category": "open_house", "category_label": "Open House", "platform": "Instagram", "label": "Post-Open House Follow-Up",
+     "prompt": "Write an Instagram caption for the day after an open house. Thank everyone who came. Create FOMO for those who didn't. If there's still availability, mention it. Under 150 words. Warm and genuine."},
+    # Education / Tips
+    {"id": "edu-buyer-tips", "category": "education", "category_label": "Education / Tips", "platform": "Instagram", "label": "Buyer Tips (Carousel)",
+     "prompt": "Write a 5-tip Instagram carousel caption for first-time homebuyers. Each tip is one punchy sentence (numbered 1-5). Intro hook + 5 tips + CTA to DM for a free buyer consultation. Under 400 words. Educational, not salesy."},
+    {"id": "edu-seller-tips", "category": "education", "category_label": "Education / Tips", "platform": "Instagram", "label": "Seller Tips (Carousel)",
+     "prompt": "Write a 5-tip Instagram carousel caption for homeowners thinking about selling. Focus on practical prep tips (staging, pricing, timing). Hook + 5 numbered tips + CTA. Under 400 words. Practical and actionable."},
+    {"id": "edu-staging-tip", "category": "education", "category_label": "Education / Tips", "platform": "Facebook", "label": "Home Staging Tip",
+     "prompt": "Write a Facebook post sharing one high-impact staging tip that helps homes sell faster. Practical, specific, actionable. 100-150 words. Ends with a CTA (free staging consultation, etc.)."},
+    {"id": "edu-mortgage-faq", "category": "education", "category_label": "Education / Tips", "platform": "Instagram", "label": "Mortgage FAQ",
+     "prompt": "Write an Instagram caption busting one common mortgage myth or answering one common mortgage question. Educational, approachable, positions agent as a knowledgeable guide. Under 200 words. 2-3 hashtags."},
+    {"id": "edu-neighborhood", "category": "education", "category_label": "Education / Tips", "platform": "Instagram", "label": "Neighborhood Spotlight",
+     "prompt": "Write an Instagram caption spotlighting a neighborhood. What makes it special? Restaurants, vibe, walkability, schools, hidden gems. Local expert voice. Under 250 words. 3-4 hashtags including the neighborhood name."},
+    {"id": "edu-negotiation-tip", "category": "education", "category_label": "Education / Tips", "platform": "Facebook", "label": "Negotiation Tip",
+     "prompt": "Write a Facebook post sharing one practical real estate negotiation tip for buyers or sellers. Insider knowledge angle — something they wouldn't know without an agent. 100-150 words. Builds trust and authority."},
+    # Seasonal
+    {"id": "seasonal-spring", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "Spring Market",
+     "prompt": "Write an Instagram caption for the spring real estate market. Spring is the busiest season — what should buyers and sellers know? Energetic, optimistic tone. Under 200 words. 3-4 hashtags."},
+    {"id": "seasonal-summer", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "Summer Market",
+     "prompt": "Write an Instagram caption about summer real estate market conditions. Acknowledge the slower pace and frame it as an opportunity for serious buyers/sellers. Under 200 words. Casual summer vibe."},
+    {"id": "seasonal-fall", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "Fall Market",
+     "prompt": "Write an Instagram caption for the fall real estate market. Motivated buyers/sellers, less competition. Warm, cozy fall tone. Under 200 words. 3-4 hashtags."},
+    {"id": "seasonal-holiday", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "Holiday Warmth",
+     "prompt": "Write a warm Instagram caption for the holiday season from the agent. Personal, grateful, human. NOT salesy. Acknowledge clients who closed this year. Under 150 words. Ends with a warm closing, not a CTA."},
+    {"id": "seasonal-new-year", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "New Year Market Outlook",
+     "prompt": "Write an Instagram caption for a new year real estate market outlook. What's the agent excited about? Goals, market predictions, encouragement. Inspiring tone. Under 200 words. 3-4 hashtags."},
+    {"id": "seasonal-year-end", "category": "seasonal", "category_label": "Seasonal", "platform": "Instagram", "label": "Year-End Recap",
+     "prompt": "Write an Instagram caption recapping the agent's year in real estate. Homes sold, milestones, grateful to clients. Celebratory but humble. Under 200 words. Personal and genuine."},
+]
+
+TEMPLATE_CATEGORY_ORDER = ["just_listed", "just_sold", "market_update", "testimonial", "open_house", "education", "seasonal"]
+_TEMPLATE_MAP = {t["id"]: t for t in TEMPLATE_CONFIGS}
+
+
+def _build_brand_voice_block(bv: dict) -> str:
+    parts = []
+    if bv.get("agent_name"): parts.append(f"Agent name: {bv['agent_name']}")
+    if bv.get("brokerage"): parts.append(f"Brokerage: {bv['brokerage']}")
+    if bv.get("market"): parts.append(f"Market area: {bv['market']}")
+    if bv.get("style"): parts.append(f"Writing style: {bv['style']}")
+    if bv.get("avoid_words"): parts.append(f"NEVER use these words or phrases: {bv['avoid_words']}")
+    if bv.get("favorite_phrases"): parts.append(f"Naturally weave in these phrases when relevant: {bv['favorite_phrases']}")
+    if bv.get("tagline"): parts.append(f"Agent tagline: {bv['tagline']}")
+    if bv.get("font"): parts.append(f"Brand feel: {bv['font']} — Modern Sans=clean/direct, Classic Serif=elevated/formal, Friendly Script=warm/approachable")
+    if bv.get("extra"): parts.append(f"Additional brand notes: {bv['extra']}")
+    if not parts:
+        return ""
+    return "\n\n═══ AGENT BRAND VOICE ═══\n" + "\n".join(parts) + "\n═════════════════════════"
+
+
+class TemplateGenerateRequest(BaseModel):
+    template_id: str
+    listing_notes: Optional[str] = None
+    session_id: Optional[str] = None
+
+
+@api_router.get("/templates")
+async def list_templates():
+    by_category: Dict[str, Any] = {}
+    for t in TEMPLATE_CONFIGS:
+        cat = t["category"]
+        if cat not in by_category:
+            by_category[cat] = {"id": cat, "label": t["category_label"], "templates": []}
+        by_category[cat]["templates"].append({"id": t["id"], "platform": t["platform"], "label": t["label"]})
+    ordered = [by_category[c] for c in TEMPLATE_CATEGORY_ORDER if c in by_category]
+    return {"categories": ordered}
+
+
+@api_router.post("/template/generate")
+async def template_generate(req: TemplateGenerateRequest):
+    tmpl = _TEMPLATE_MAP.get(req.template_id)
+    if not tmpl:
+        raise HTTPException(404, f"Unknown template id: {req.template_id}")
+
+    system = (
+        "You are a real estate marketing copywriter. Write compelling, authentic social media content "
+        "for real estate agents. Avoid clichés like 'nestled', 'charming', 'motivated seller', 'priced to sell'. "
+        "Be specific, human, and platform-appropriate. Follow Fair Housing guidelines — never suggest preference "
+        "for or against any protected class."
+    )
+
+    bv: dict = {}
+    if req.session_id:
+        bv_doc = await db.brand_voices.find_one({"session_id": req.session_id})
+        if bv_doc:
+            bv = {k: v for k, v in bv_doc.items() if k != "_id"}
+
+    system += _build_brand_voice_block(bv)
+
+    user_parts = [tmpl["prompt"]]
+    if req.listing_notes and req.listing_notes.strip():
+        user_parts.append(f"\nContext about this listing/situation:\n{req.listing_notes.strip()}")
+    if bv.get("market"):
+        user_parts.append(f"\nMarket context: {bv['market']}")
+
+    try:
+        output = await call_g0dm0d3(system, "\n".join(user_parts), tier="smart")
+    except Exception:
+        output = await call_openrouter(system, "\n".join(user_parts))
+
+    return {"output": output.strip(), "template_id": req.template_id}
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

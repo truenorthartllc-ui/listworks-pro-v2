@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — ListWorks PRO</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;color:#e0e0e0}
+.nav{background:#1a1a2e;display:flex;gap:0;padding:0 24px;border-bottom:1px solid #2a2a4a}
+.nav a{padding:16px 20px;color:#888;text-decoration:none;font-size:14px;border-bottom:2px solid transparent;transition:.2s}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav a.active{color:#fff;border-bottom-color:#d63b1e}
+.container{max-width:960px;margin:0 auto;padding:24px}
+.page{display:none}
+.page.active{display:block}
+h1{font-size:22px;margin-bottom:4px;color:#fff}
+.sub{color:#888;font-size:13px;margin-bottom:20px}
+
+/* Cards */
+.card{background:#1a1a2e;border-radius:10px;padding:20px;margin-bottom:14px;border:1px solid #2a2a4a}
+.card h2{font-size:16px;color:#fff;margin-bottom:4px}
+.card .meta{color:#888;font-size:12px;margin-bottom:10px}
+.card p{font-size:13px;line-height:1.5;color:#aaa}
+
+/* Buttons */
+.btn{background:#d63b1e;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn:hover{background:#b83218}
+.btn-outline{background:transparent;border:1px solid #333;color:#aaa}
+.btn-outline:hover{border-color:#555;color:#fff}
+.btn-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* Forms page */
+.form-card{cursor:pointer}
+.form-card:hover{border-color:#d63b1e}
+.badge{background:#2a2a4a;padding:2px 8px;border-radius:4px;font-size:11px;color:#888}
+.preview-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:100;overflow-y:auto}
+.preview-content{background:#1a1a2e;max-width:700px;margin:40px auto;border-radius:12px;padding:32px;position:relative}
+.preview-content .close{position:absolute;top:16px;right:20px;background:none;border:none;color:#888;font-size:24px;cursor:pointer}
+.preview-content .close:hover{color:#fff}
+
+.field-group{margin-bottom:12px;padding:12px 16px;background:#15152a;border-radius:6px}
+.field-group label{font-size:13px;font-weight:600;display:block;margin-bottom:2px}
+.field-group .explain{font-size:11px;color:#888;line-height:1.4;margin-bottom:6px}
+.field-group input,.field-group select,.field-group textarea{width:100%;padding:8px 10px;background:#0f0f0f;border:1px solid #333;border-radius:4px;color:#fff;font-size:13px}
+.field-group textarea{resize:vertical;min-height:60px}
+
+/* Content packs */
+.pack-files{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.file-tag{background:#15152a;padding:3px 8px;border-radius:3px;font-size:11px;color:#888}
+.preview-pane{display:none;background:#15152a;border-radius:6px;padding:16px;margin-top:10px;white-space:pre-wrap;font-size:12px;line-height:1.5;max-height:350px;overflow-y:auto;color:#ccc}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-state h2{color:#555;font-size:18px;margin-bottom:6px}
+.empty-state p{color:#444;font-size:13px}
+
+#loading{text-align:center;padding:60px;color:#555}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav">
+  <a href="#" class="active" onclick="showPage('packs')">Content Packs</a>
+  <a href="#" onclick="showPage('forms')">Contracts</a>
+  <a href="#" onclick="showPage('generate')">Generate</a>
+</div>
+
+<div class="container">
+  <!-- Content Packs -->
+  <div id="page-packs" class="page active">
+    <h1>📦 Content Packs</h1>
+    <p class="sub">Auto-generated social content + market reports for every lead</p>
+    <div id="packs-list"><div id="loading">Loading content packs...</div></div>
+  </div>
+
+  <!-- Contracts -->
+  <div id="page-forms" class="page">
+    <h1>📄 Contracts & Forms</h1>
+    <p class="sub">Fillable real estate forms with field-by-field explanations + branded PDF download</p>
+    <div id="forms-list"><div id="loading">Loading forms...</div></div>
+  </div>
+
+  <!-- Generate -->
+  <div id="page-generate" class="page">
+    <h1>⚡ Generate Content</h1>
+    <p class="sub">Type a listing once → get everything: copy, social, market report, Canva links</p>
+    <div class="card" style="padding:24px">
+      <div class="field-group">
+        <label>City</label>
+        <input id="gen-city" placeholder="e.g. Denver">
+      </div>
+      <div class="field-group">
+        <label>Price</label>
+        <input id="gen-price" placeholder="e.g. $575,000">
+      </div>
+      <div class="field-group">
+        <label>Features (comma separated)</label>
+        <input id="gen-features" placeholder="updated kitchen, natural light, fenced yard">
+      </div>
+      <button class="btn" onclick="generateContent()">🚀 Generate Full Pack</button>
+      <div id="gen-result" style="margin-top:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Preview Overlay -->
+<div id="form-overlay" class="preview-overlay" onclick="if(event.target===this)closeForm()">
+  <div class="preview-content" id="form-content"></div>
+</div>
+
+<script>
+// ── Navigation ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Content Packs ──
+async function loadPacks() {
+  try {
+    const res = await fetch('/api/content/packs');
+    const data = await res.json();
+    const el = document.getElementById('packs-list');
+    if (!data.packs || !data.packs.length) {
+      el.innerHTML = `<div class="empty-state"><h2>No content packs yet</h2><p>They appear here automatically when cold emails are sent. Or generate one now.</p><div style="margin-top:16px"><button class="btn" onclick="showPage('generate')">⚡ Generate Now</button></div></div>`;
+      return;
+    }
+    let html = `<p style="color:#666;margin-bottom:16px">${data.packs.length} packs</p>`;
+    for (const p of data.packs) {
+      const files = ['content-pack.json','instagram-caption.txt','facebook-post.txt','reel-script.txt','carousel.txt','weekly-calendar.md','market-report-post.txt','canva-templates.json','image-prompts.json'];
+      html += `<div class="card">
+        <h2>${p.name || 'Lead #'+p.leadId}</h2>
+        <div class="meta">${p.city || ''} · ${p.generatedAt ? new Date(p.generatedAt).toLocaleDateString() : ''}</div>
+        <div class="pack-files">${files.map(f => `<span class="file-tag">${f}</span>`).join('')}</div>
+        <div class="btn-group">
+          <button class="btn" onclick="previewPack(${p.leadId},'reel-script.txt','🎬 Reel Script')">🎬 Reel</button>
+          <button class="btn btn-outline" onclick="previewPack(${p.leadId},'instagram-caption.txt','📸 Instagram')">📸 IG</button>
+          <button class="btn btn-outline" onclick="previewPack(${p.leadId},'weekly-calendar.md','📅 Calendar')">📅 Calendar</button>
+          <button class="btn btn-outline" onclick="previewPack(${p.leadId},'market-report-post.txt','📊 Market')">📊 Market</button>
+          <button class="btn btn-outline" onclick="previewPack(${p.leadId},'canva-templates.json','🎨 Canva')">🎨 Canva</button>
+        </div>
+        <div class="preview-pane" id="preview-${p.leadId}"></div>
+      </div>`;
+    }
+    el.innerHTML = html;
+  } catch(e) {
+    document.getElementById('packs-list').innerHTML = `<div class="empty-state"><h2>Error loading packs</h2><p>${e.message}</p></div>`;
+  }
+}
+
+async function previewPack(id, file, label) {
+  const el = document.getElementById('preview-' + id);
+  const visible = el.style.display === 'block';
+  if (visible && el.dataset.file === file) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.textContent = 'Loading...';
+  el.dataset.file = file;
+  try {
+    const res = await fetch(`/api/content/${id}/${file}`);
+    if (!res.ok) throw Error('Not found');
+    const text = await res.text();
+    if (file.endsWith('.json') && file === 'canva-templates.json') {
+      try {
+        const data = JSON.parse(text);
+        const links = [];
+        function walk(obj, prefix='') {
+          for (const [k,v] of Object.entries(obj)) {
+            if (typeof v === 'string' && v.startsWith('http')) links.push(`<a href="${v}" target="_blank" style="display:block;padding:3px 0;color:#d63b1e">🎨 ${prefix}${k}</a>`);
+            else if (typeof v === 'object') walk(v, prefix + k + ' › ');
+          }
+        }
+        walk(data);
+        el.innerHTML = `<strong style="display:block;margin-bottom:8px;font-size:13px">${label}</strong>${links.join('')}`;
+        return;
+      } catch(e) {}
+    }
+    el.innerHTML = `<strong style="display:block;margin-bottom:8px;font-size:13px">${label}</strong>${text}`;
+  } catch(e) {
+    el.textContent = 'Could not load file';
+  }
+}
+
+// ── Forms ──
+async function loadForms() {
+  try {
+    const res = await fetch('/api/forms');
+    const data = await res.json();
+    const el = document.getElementById('forms-list');
+    if (!data.forms || !data.forms.length) {
+      el.innerHTML = `<div class="empty-state"><h2>No forms available</h2></div>`;
+      return;
+    }
+    let html = '';
+    for (const f of data.forms) {
+      const fields = f.sections.reduce((a,s) => a + s.fields.length, 0);
+      html += `<div class="card form-card" onclick="openForm('${f.id}')">
+        <h2>${f.name}</h2>
+        <div class="meta">${f.category} · ${fields} fields · <span class="badge">${f.id}</span></div>
+        <p>${f.description}</p>
+      </div>`;
+    }
+    el.innerHTML = html;
+  } catch(e) {
+    document.getElementById('forms-list').innerHTML = `<div class="empty-state"><h2>Error loading forms</h2><p>${e.message}</p></div>`;
+  }
+}
+
+async function openForm(formId) {
+  const overlay = document.getElementById('form-overlay');
+  const content = document.getElementById('form-content');
+  overlay.style.display = 'block';
+  content.innerHTML = '<div id="loading">Loading form...</div>';
+
+  try {
+    const res = await fetch(`/api/forms/${formId}`);
+    const form = await res.json();
+    let html = `<h2 style="margin:0 0 4px">${form.name}</h2>
+      <p style="color:#888;font-size:13px;margin-bottom:20px">${form.description}</p>
+      <form id="form-fields" onsubmit="downloadPDF(event,'${formId}')">`;
+
+    for (const section of form.sections) {
+      html += `<h3 style="color:#d63b1e;font-size:13px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #2a2a4a">${section.title}</h3>`;
+      for (const field of section.fields) {
+        const req = field.required ? ' <span style="color:#c00">*</span>' : '';
+        html += `<div class="field-group">
+          <label>${field.label}${req}</label>
+          <div class="explain">${field.explanation || ''}</div>`;
+
+        if (field.type === 'textarea') {
+          html += `<textarea name="${field.id}" placeholder="${field.label}"></textarea>`;
+        } else if (field.type === 'select') {
+          html += `<select name="${field.id}">${field.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+        } else if (field.type === 'checkbox') {
+          html += `<input type="checkbox" name="${field.id}" value="yes"> Yes`;
+        } else {
+          html += `<input type="${field.type === 'currency' ? 'text' : field.type}" name="${field.id}" placeholder="${field.label}">`;
+        }
+        html += `</div>`;
+      }
+    }
+    html += `<div style="text-align:center;margin-top:20px">
+      <button type="submit" class="btn">📄 Download Branded PDF</button>
+    </div></form>`;
+    content.innerHTML = html;
+  } catch(e) {
+    content.innerHTML = `<p style="color:#c00">Error: ${e.message}</p>`;
+  }
+}
+
+async function downloadPDF(event, formId) {
+  event.preventDefault();
+  const form = document.getElementById('form-fields');
+  const data = new FormData(form);
+  const values = {};
+  for (const [key, val] of data.entries()) values[key] = val;
+
+  try {
+    const res = await fetch(`/api/forms/${formId}/pdf`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ values, brand: { agent_name: 'Agent', brokerage: 'ListWorks PRO' } })
+    });
+    if (!res.ok) throw Error('Failed to generate PDF');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+function closeForm() {
+  document.getElementById('form-overlay').style.display = 'none';
+}
+
+// ── Generate ──
+async function generateContent() {
+  const city = document.getElementById('gen-city').value || 'Denver';
+  const price = document.getElementById('gen-price').value || '$575,000';
+  const features = document.getElementById('gen-features').value || 'updated kitchen, natural light, fenced yard';
+
+  const result = document.getElementById('gen-result');
+  result.innerHTML = '<p style="color:#888">Generating...</p>';
+
+  try {
+    const res = await fetch('/api/content/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ first_name: 'Test', city, price, features })
+    });
+    const data = await res.json();
+    const reel = data.social?.reelScript?.substring(0, 200) || 'Generated successfully';
+    result.innerHTML = `
+      <div class="card" style="margin-top:12px">
+        <h2>✅ Content Generated</h2>
+        <div class="meta">Check the Content Packs tab to see all files</div>
+        <div style="background:#0f0f0f;padding:12px;border-radius:6px;font-size:12px;color:#aaa;white-space:pre-wrap">${reel}</div>
+        <div style="margin-top:10px"><a href="#" class="btn-outline btn" onclick="showPage('packs');return false">📦 View All Packs</a></div>
+      </div>`;
+  } catch(e) {
+    result.innerHTML = `<p style="color:#c00">Error: ${e.message}</p>`;
+  }
+}
+
+// ── Init ──
+loadPacks();
+loadForms();
+</script>
+</body>
+</html>
