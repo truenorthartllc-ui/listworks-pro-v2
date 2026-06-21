@@ -124,6 +124,18 @@ class BrandVoiceModel(BaseModel):
     avoid_words: Optional[str] = None    # comma-separated
     favorite_phrases: Optional[str] = None
     extra: Optional[str] = None          # free-form notes
+    # Brand Kit visual fields
+    logo_url: Optional[str] = None
+    primary_color: Optional[str] = None  # hex e.g. "#d63b1e"
+    secondary_color: Optional[str] = None
+    font: Optional[str] = None           # "Modern Sans", "Classic Serif", "Friendly Script"
+    tagline: Optional[str] = None        # agent/brokerage tagline
+
+
+class PrintFlyerOutput(BaseModel):
+    headline: str
+    bullets: List[str]
+    tagline: str
 
 
 class RewriteOutput(BaseModel):
@@ -133,6 +145,9 @@ class RewriteOutput(BaseModel):
     facebook: str
     headlines: List[str]
     email: str
+    reel_script: str = ""
+    stories: List[str] = []
+    print_flyer: Optional[PrintFlyerOutput] = None
     listing_strength: float
     strength_reasons: List[str]
     tone: str
@@ -316,6 +331,23 @@ HEADLINES (3 variations):
 - Variation 3: URGENCY-led (creates FOMO without being pushy)
 - Each under 10 words. Each could stand alone as a social post.
 
+REEL / SHORT-FORM VIDEO SCRIPT (15-20 seconds when read aloud, ~55-70 words):
+- Line 1 — THE HOOK (3-5 words, on its own line): The single most scroll-stopping thing about this property. Blunt. Visual. Unexpected.
+- Lines 2-4 — THE PUNCHES (one line each): Three specific, visual features that pop on camera. Not descriptions — punches. "White oak floors. No carpet anywhere." "A kitchen that costs more than most cars."
+- Line 5 — THE CTA (one line): Confident, low-pressure. Assumes interest. "Link in bio. Come see it." or "DM TOUR and I'll get you in."
+- Write for voice. Short sentences. Natural pauses. No emojis.
+
+INSTAGRAM STORIES (exactly 3 slides, each line is one slide):
+- Slide 1 — HOOK: Bold claim or contrast. 10 words max. Grabs attention before they swipe. "This is the one your friends are going to be jealous of."
+- Slide 2 — PROOF: 2-3 specific features separated by line breaks. With relevant emojis. "🏠 4 beds · 3 baths\n✨ Renovated kitchen — quartz, gas range\n🌿 Fenced backyard — no HOA"
+- Slide 3 — CTA: One action. "👆 Swipe up for full tour" or "💬 DM me TOUR for showing times"
+- Each slide 15 words max.
+
+PRINT FLYER (headline + 3 bullets + tagline):
+- headline: Under 8 words. Emotion or specificity. Could print at 48pt. Makes you stop.
+- bullets: Array of exactly 3 strings. Each starts with the KEY feature as a bold anchor (2-3 words), followed by " — " then the "so what" in 10 words max. Example: "Chef's Kitchen — quartz counters, gas range, zero compromise on cooking."
+- tagline: 6-8 words. Confident, not desperate. The last thing they read before they call.
+
 ═══════════════════════════════════════════════════════════════
 PSYCHOLOGICAL TRIGGERS — ACTIVATE AT LEAST 2 PER ASSET
 ═══════════════════════════════════════════════════════════════
@@ -384,6 +416,13 @@ OUTPUT — STRICT JSON ONLY (no markdown, no commentary)
   "facebook": "Story-driven Facebook post.",
   "headlines": ["Emotion-led headline", "Specificity-led headline", "Urgency-led headline"],
   "email": "Subject line on first line, then body.",
+  "reel_script": "HOOK LINE\n\nPunch feature 1\nPunch feature 2\nPunch feature 3\n\nCTA line",
+  "stories": ["Slide 1 hook — 10 words max", "Slide 2 features with emojis\nFeature 2\nFeature 3", "Slide 3 CTA"],
+  "print_flyer": {
+    "headline": "Attention-stopping headline under 8 words",
+    "bullets": ["Key Feature — the so what in 10 words.", "Key Feature — the so what in 10 words.", "Key Feature — the so what in 10 words."],
+    "tagline": "Confident 6-8 word closing line"
+  },
   "listing_strength": 7.4,
   "strength_reasons": ["3-4 specific reasons for the score, citing real elements from the copy"]
 }
@@ -555,6 +594,8 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         if bv.get("style"): parts.append(f"Writing style: {bv['style']}")
         if bv.get("avoid_words"): parts.append(f"NEVER use these words or phrases: {bv['avoid_words']}")
         if bv.get("favorite_phrases"): parts.append(f"Naturally weave in these phrases when relevant: {bv['favorite_phrases']}")
+        if bv.get("tagline"): parts.append(f"Agent tagline (weave into Reel CTA or print flyer tagline when natural): {bv['tagline']}")
+        if bv.get("font"): parts.append(f"Brand feel/font aesthetic: {bv['font']} — let this inform tone (Modern Sans = clean/direct, Classic Serif = elevated/formal, Friendly Script = warm/approachable)")
         if bv.get("extra"): parts.append(f"Additional brand notes: {bv['extra']}")
         if parts:
             system += "\n\n═══ AGENT BRAND VOICE (apply to ALL outputs) ═══\n" + "\n".join(parts) + "\n═══════════════════════════════════════════════"
@@ -590,12 +631,34 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         strength = 7.0
     strength = max(0.0, min(10.0, round(strength, 1)))
 
+    # Parse print_flyer — can be dict or missing
+    raw_flyer = data.get("print_flyer", {})
+    print_flyer = None
+    if isinstance(raw_flyer, dict) and raw_flyer.get("headline"):
+        bullets = raw_flyer.get("bullets", [])
+        if isinstance(bullets, str):
+            bullets = [b.strip() for b in bullets.split("\n") if b.strip()]
+        print_flyer = {
+            "headline": raw_flyer.get("headline", "").strip(),
+            "bullets": [b.strip() for b in bullets if b.strip()][:3],
+            "tagline": raw_flyer.get("tagline", "").strip(),
+        }
+
+    # Parse stories — array of 3 slide strings
+    raw_stories = data.get("stories", [])
+    if isinstance(raw_stories, str):
+        raw_stories = [s.strip() for s in raw_stories.split("|||") if s.strip()]
+    stories = [str(s).strip() for s in raw_stories if s][:3]
+
     return {
         "mls": data.get("mls", "").strip(),
         "instagram": data.get("instagram", "").strip(),
         "facebook": data.get("facebook", "").strip(),
         "headlines": headlines,
         "email": data.get("email", "").strip(),
+        "reel_script": data.get("reel_script", "").strip(),
+        "stories": stories,
+        "print_flyer": print_flyer,
         "listing_strength": strength,
         "strength_reasons": [r for r in reasons if isinstance(r, str)][:5],
     }

@@ -51,10 +51,13 @@ const MLS_PRESETS = [
 ];
 const TABS = [
   { key: "mls", label: "MLS Description", icon: "🏡" },
-  { key: "instagram", label: "Instagram Caption", icon: "📸" },
-  { key: "facebook", label: "Facebook Post", icon: "📘" },
-  { key: "headlines", label: "Scroll-Stopping Headlines", icon: "✏️" },
+  { key: "instagram", label: "Instagram", icon: "📸" },
+  { key: "facebook", label: "Facebook", icon: "📘" },
+  { key: "headlines", label: "Headlines", icon: "✏️" },
   { key: "email", label: "Email", icon: "✉️" },
+  { key: "reel_script", label: "Reel Script", icon: "🎬" },
+  { key: "stories", label: "Stories", icon: "⚡" },
+  { key: "print_flyer", label: "Print Flyer", icon: "🖨️" },
 ];
 
 const DEMO_RESULT = {
@@ -89,6 +92,21 @@ This is that call.
 3 bed, 2 bath ranch. Updated kitchen, hardwood throughout, fenced backyard, top-rated schools walking distance. Move-in ready — genuinely, not just listing-speak.
 
 I've got showings filling up fast. Let me know if you want in before the weekend crowd.`,
+  reel_script: `Three bedrooms. Two baths. Fenced backyard.\n\nHardwood throughout — no carpet anywhere.\nUpdated kitchen. Natural light from every angle.\nTop-rated schools two blocks out.\n\nLink in bio. Come see it this weekend.`,
+  stories: [
+    "Move-in ready means exactly that. No projects. No compromises.",
+    "🏠 3 bed · 2 bath · fenced backyard\n✨ Updated kitchen — granite, stainless\n🌳 Top-rated schools 2 blocks away",
+    "💬 DM me TOUR and I'll get you in this week",
+  ],
+  print_flyer: {
+    headline: "Move-In Ready. No Compromises.",
+    bullets: [
+      "Updated Kitchen — granite counters, stainless appliances, zero renovation needed.",
+      "Fenced Backyard — private outdoor space ready from day one.",
+      "Top Schools Nearby — two blocks to district's highest-rated elementary.",
+    ],
+    tagline: "Come see why this one won't last.",
+  },
   listing_strength: 8.7,
   strength_reasons: ["Strong lifestyle-first narrative", "Urgency without desperation", "Specific features woven into story"],
   tone: "Modern",
@@ -232,8 +250,13 @@ export default function Playground() {
   };
 
   const headlinesAsText = (h) => (h || []).map((x, i) => `${i + 1}. ${x}`).join("\n");
+  const storiesToText = (s) => (s || []).map((slide, i) => `Slide ${i + 1}:\n${slide}`).join("\n\n");
+  const flyerToText = (f) => f ? `${f.headline}\n\n${(f.bullets || []).join("\n")}\n\n${f.tagline}` : "";
   const currentText = result
-    ? activeTab === "headlines" ? headlinesAsText(result.headlines) : result[activeTab]
+    ? activeTab === "headlines" ? headlinesAsText(result.headlines)
+    : activeTab === "stories" ? storiesToText(result.stories)
+    : activeTab === "print_flyer" ? flyerToText(result.print_flyer)
+    : result[activeTab]
     : "";
 
   const strengthColor = (s) => s >= 8.5 ? "text-emerald-700" : s >= 7 ? "text-vermillion" : "text-amber-600";
@@ -558,6 +581,39 @@ export default function Playground() {
                       </li>
                     ))}
                   </ol>
+                ) : activeTab === "stories" ? (
+                  <div data-testid="output-stories" className="space-y-3">
+                    {(result.stories || []).map((slide, i) => (
+                      <div key={i} className="border border-ink/15 p-4 relative">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/30 absolute top-2 left-3">Slide {i + 1}</span>
+                        <pre className="whitespace-pre-wrap font-mono text-[13px] leading-[1.7] text-ink mt-4">{slide}</pre>
+                        <button onClick={() => copyText(`story-${i}`, slide)}
+                          className="mt-2 inline-flex items-center gap-1 font-body text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-vermillion transition">
+                          {copiedKey === `story-${i}` ? <><Check className="w-3 h-3" />Copied</> : <><Copy className="w-3 h-3" />Copy slide</>}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : activeTab === "print_flyer" && result.print_flyer ? (
+                  <div data-testid="output-print-flyer" className="space-y-5">
+                    <div className="border-l-4 border-vermillion pl-4">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/30 block mb-1">Headline</span>
+                      <p className="font-display text-2xl md:text-3xl leading-tight">{result.print_flyer.headline}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/30 block">Bullet Points</span>
+                      {(result.print_flyer.bullets || []).map((b, i) => (
+                        <div key={i} className="flex gap-3 items-start">
+                          <span className="text-vermillion mt-1 text-xs">▪</span>
+                          <p className="font-body text-sm leading-relaxed text-ink">{b}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-ink/10 pt-4">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/30 block mb-1">Tagline</span>
+                      <p className="font-body text-base italic text-ink/70">{result.print_flyer.tagline}</p>
+                    </div>
+                  </div>
                 ) : (
                   <pre data-testid={`output-${activeTab}`} className="whitespace-pre-wrap font-mono text-[13px] leading-[1.7] text-ink">
                     {result[activeTab]}
