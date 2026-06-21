@@ -135,7 +135,7 @@ export default function DashboardPage() {
           </>}
           <Field label="Email" name="email" type="email" />
           <Field label="Password" name="password" type="password" />
-          <button className="btn-primary" style={{ width: '100%', marginTop: 12 }}>{authMode === 'login' ? 'Log In' : 'Create Account'}</button>
+          <button style={{ width: '100%', marginTop: 12, background: '#d63b1e', color: '#fff', border: 'none', padding: '10px 0', borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>{authMode === 'login' ? 'Log In' : 'Create Account'}</button>
         </form>
         <p style={{ textAlign: 'center', color: '#888', fontSize: 13, marginTop: 16 }}>
           {authMode === 'login' ? <>Don't have one? <a href="#" onClick={e => { e.preventDefault(); setAuthMode('signup'); setAuthErr(''); }} style={{ color: '#d63b1e' }}>Sign up</a></> : <>Already have one? <a href="#" onClick={e => { e.preventDefault(); setAuthMode('login'); setAuthErr(''); }} style={{ color: '#d63b1e' }}>Log in</a></>}
