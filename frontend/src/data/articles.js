@@ -2465,6 +2465,141 @@ ListWorks PRO generates Instagram captions for every listing alongside your MLS 
 
 [Try it free — listworks.pro](https://listworks.pro)`,
   },
+  {
+    slug: "how-to-write-mls-descriptions-that-sell",
+    title: "How to Write MLS Descriptions That Sell: The Agent's Copywriting Playbook",
+    excerpt: "Most MLS descriptions read like inventory lists. Here's the actual framework top agents use to turn browsers into buyers.",
+    date: "2026-06-21",
+    tags: ["MLS", "copywriting"],
+    readTime: "6 min",
+    content: `## The problem with most MLS descriptions
+
+They list features. They don't sell outcomes.
+
+"3 bed, 2 bath, updated kitchen, fenced yard" — that's not a description. That's a spec sheet. Buyers don't fall in love with spec sheets.
+
+The difference between a listing that sits for 60 days and one that gets multiple offers is rarely the house. It's the story.
+
+## The 5-part MLS structure that works
+
+Every great listing description follows this pattern:
+
+**Hook (1 sentence):** Stop the scroll. "The kind of morning coffee routine you didn't know you were missing."
+
+**Location (2-3 sentences):** Describe the life, not the address. "Walk to the coffee shop that knows your order. The park where your dog makes friends."
+
+**Interior (3-4 sentences):** Feature → Benefit → Feeling. "Marble counters that never stain. Hardwood floors that glow in the afternoon light. A kitchen that becomes the center of every holiday."
+
+**Outdoor (1-2 sentences):** "A backyard that earns its keep — room for the grill, the garden, and the hammock you've been meaning to buy."
+
+**Close (1 sentence):** "This is the one. Come see it before the listing goes live."
+
+## Common mistakes that kill MLS descriptions
+
+**The laundry list.** "3 bed, 2 bath, 1,800 sq ft, updated kitchen, hardwood floors, fenced yard." That's not copy. That's a spreadsheet.
+
+**The ChatGPT special.** "Welcome to this stunning home featuring beautiful hardwood floors and an open concept layout perfect for modern living." Generic. Boring. Sounds like every other listing.
+
+**The Fair Housing violation.** "Perfect for families," "walk to church," "master bedroom." These phrases can trigger HUD fines starting at $26,262.
+
+## How ListWorks PRO fixes this
+
+Paste any MLS draft. Get 5 publish-ready descriptions in 10 seconds. Every one Fair Housing screened. Every one following the structure above.
+
+[Try it free — listworks.pro](https://listworks.pro)`,
+  },
+  {
+    slug: "best-ai-tools-for-real-estate-agents-2025",
+    title: "The Best AI Tools for Real Estate Agents in 2025: Ranked and Compared",
+    excerpt: "From listing copy to lead gen to virtual tours — here's what actually works and what's overhyped, ranked by an agent who tested them all.",
+    date: "2026-06-21",
+    tags: ["AI", "tools"],
+    readTime: "7 min",
+    content: `## The AI tool landscape for agents in 2025
+
+Every week there's a new AI tool claiming to revolutionize real estate. Most don't. Here's what I've actually tested and what I'd recommend.
+
+## AI listing copy tools
+
+**ListWorks PRO** — Best for listing descriptions, social captions, and Fair Housing compliance. Generates 5 assets in 10 seconds. Screens every word for violations. Free tier available. listworks.pro
+
+**ChatGPT** — Good for brainstorming, dangerous for final copy. Will write Fair Housing violations without warning. Use for ideas, not publish-ready content.
+
+**Jasper AI** — Solid general copywriting. Expensive ($49-99/mo). No real estate specialization. No compliance scanning.
+
+**Copy.ai** — Affordable but generic. No real estate focus. Output requires heavy editing.
+
+## AI photo and video tools
+
+**ListWorks PRO** — Photo recognition that identifies features (marble, hardwood, vaulted ceilings) and translates them into emotional copy. 30-second virtual tour videos from 10 photos.
+
+**Box Brownie** — Professional virtual staging, $35/image. High quality but slow turnaround.
+
+**Canva AI** — Good for social graphics. Free tier available. No real estate specialization.
+
+## AI lead gen and CRM
+
+**Follow Up Boss** — Best CRM for teams. AI lead scoring is decent. $89/mo.
+
+**BoomTown** — Full platform with AI-powered lead gen. Expensive ($1,000+/mo).
+
+**Chime** — CRM with AI lead routing. Good for high-volume teams.
+
+## The verdict
+
+For listing copy specifically: ListWorks PRO is the only tool that combines speed (10 seconds), compliance (Fair Housing scanning), and multi-format output (MLS, Instagram, Facebook, headlines, email). Everything else either takes too long, lacks compliance, or produces generic output.
+
+[Try it free — listworks.pro](https://listworks.pro)`,
+  },
+  {
+    slug: "how-to-avoid-fair-housing-violations",
+    title: "How to Avoid Fair Housing Violations in Real Estate Listings: 2025 Guide",
+    excerpt: "The complete guide to keeping your listings compliant. Includes a checklist you can use before every publish, plus the automated solution 850+ agents trust.",
+    date: "2026-06-21",
+    tags: ["compliance", "Fair Housing"],
+    readTime: "8 min",
+    content: `## Why most agents don't know they're violating Fair Housing
+
+The Fair Housing Act makes it illegal to discriminate based on race, color, religion, sex, disability, familial status, or national origin. This applies to every listing description, every social media post, every email campaign.
+
+The problem? Most violations happen by accident. An agent writes "perfect for families" trying to sound warm. Another writes "walk to church" trying to highlight location. Both are violations.
+
+HUD's first-time fines start at $26,262. Repeat violations cost more.
+
+## The most common violations and how to fix them
+
+| Violation | Why it's illegal | Safe alternative |
+|-----------|-----------------|------------------|
+| "Perfect for families" | Implies familial status preference | "Generous living spaces for any household" |
+| "Master bedroom" | Discriminatory history | "Primary bedroom" |
+| "Walk to church" | Religious preference | "Close to community amenities" |
+| "Great for retirees" | Age discrimination | "Single-level living" |
+| "Quiet neighborhood" | Implies no children allowed | "Peaceful setting" |
+| "Ideal for couples" | Marital/familial status | "Flexible layout" |
+
+## What about photos?
+
+Photos can violate Fair Housing too. Avoid images that show only one type of person. Include diverse representations in any marketing materials. Avoid neighborhood shots that imply exclusivity.
+
+## Social media posts count
+
+Instagram captions, Facebook posts, and TikTok scripts are all subject to Fair Housing. The same rules apply. A post that says "perfect for young families" is still a violation even if it's just a caption.
+
+## How to audit your listings
+
+Before every publish, check for:
+- Familial status language ("families," "couples," "singles")
+- Religious references ("church," "synagogue," "mosque")
+- Age references ("retirees," "young," "empty nester")
+- Disability references ("wheelchair accessible" — use "single-level" instead)
+- Race or national origin references ("Italian neighborhood," "Little Italy")
+
+## The automated solution
+
+850+ agents use ListWorks PRO to scan every listing before publish. It flags violations, explains why they're illegal, and suggests compliant rewrites. In 10 seconds.
+
+[Try it free — listworks.pro](https://listworks.pro)`,
+  },
 ];
 
 export default ARTICLES;
