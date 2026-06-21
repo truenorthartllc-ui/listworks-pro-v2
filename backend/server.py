@@ -809,15 +809,16 @@ class BrandingIn(BaseModel):
 
 @api_router.post("/auth/signup")
 async def agent_signup(req: AgentSignupIn):
-    from passlib.hash import bcrypt
+    import bcrypt as _bcrypt
     import traceback
     try:
         existing = await db.agents.find_one({"email": req.email.lower()})
         if existing:
             raise HTTPException(400, "Email already registered")
+        pw_hash = _bcrypt.hashpw(req.password.encode(), _bcrypt.gensalt()).decode()
         agent = {
             "email": req.email.lower(),
-            "password": bcrypt.hash(req.password),
+            "password": pw_hash,
             "name": req.name,
             "brokerage": req.brokerage,
             "phone": req.phone,
@@ -835,9 +836,9 @@ async def agent_signup(req: AgentSignupIn):
 
 @api_router.post("/auth/login")
 async def agent_login(req: AgentLoginIn):
-    from passlib.hash import bcrypt
+    import bcrypt as _bcrypt
     agent = await db.agents.find_one({"email": req.email.lower()})
-    if not agent or not bcrypt.verify(req.password, agent["password"]):
+    if not agent or not _bcrypt.checkpw(req.password.encode(), agent["password"].encode()):
         raise HTTPException(401, "Invalid email or password")
     token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
     return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
