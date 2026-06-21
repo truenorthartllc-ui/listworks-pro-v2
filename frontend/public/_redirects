@@ -1,4 +1,5 @@
 /umami/*  http://72.60.64.183:3031/:splat  200
+/api/*  https://listworks-pro-v2-production.up.railway.app/api/:splat  200
 /*  /index.html  200
 /affiliate/signup  /index.html  200
 /affiliate/demo  /index.html  200
