@@ -12,7 +12,11 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+import jwt
+
+JWT_SECRET = os.environ.get("JWT_SECRET", "listworks-jwt-secret-change-in-prod")
+JWT_ALGO = "HS256"
 
 try:
     from anthropic import AsyncAnthropic
@@ -781,6 +785,81 @@ class OpenHouseVisitorIn(BaseModel):
     visitor_email: Optional[str] = None
     message: Optional[str] = None
     source: Optional[str] = "qr"  # qr | text | manual
+
+
+# ══════════════ AUTH ENDPOINTS ══════════════
+class AgentSignupIn(BaseModel):
+    email: str
+    password: str
+    name: str
+    brokerage: str = ""
+    phone: str = ""
+
+class AgentLoginIn(BaseModel):
+    email: str
+    password: str
+
+class BrandingIn(BaseModel):
+    logo_url: str = ""
+    primary_color: str = "#1a1a2e"
+    secondary_color: str = "#d63b1e"
+    brokerage: str = ""
+    agent_name: str = ""
+
+@api_router.post("/auth/signup")
+async def agent_signup(req: AgentSignupIn):
+    from passlib.hash import bcrypt
+    existing = await db.agents.find_one({"email": req.email.lower()})
+    if existing:
+        raise HTTPException(400, "Email already registered")
+    agent = {
+        "email": req.email.lower(),
+        "password": bcrypt.hash(req.password),
+        "name": req.name,
+        "brokerage": req.brokerage,
+        "phone": req.phone,
+        "branding": {"logo_url": "", "primary_color": "#1a1a2e", "secondary_color": "#d63b1e"},
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.agents.insert_one(agent)
+    token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
+    return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+
+@api_router.post("/auth/login")
+async def agent_login(req: AgentLoginIn):
+    from passlib.hash import bcrypt
+    agent = await db.agents.find_one({"email": req.email.lower()})
+    if not agent or not bcrypt.verify(req.password, agent["password"]):
+        raise HTTPException(401, "Invalid email or password")
+    token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
+    return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+
+@api_router.get("/auth/me")
+async def get_me(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Missing token")
+    try:
+        payload = jwt.decode(authorization.split(" ")[1], JWT_SECRET, algorithms=[JWT_ALGO])
+    except:
+        raise HTTPException(401, "Invalid token")
+    agent = await db.agents.find_one({"email": payload["sub"]}, {"password": 0})
+    if not agent:
+        raise HTTPException(404, "Agent not found")
+    return {"agent": agent}
+
+@api_router.put("/auth/branding")
+async def update_branding(req: BrandingIn, authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Missing token")
+    try:
+        payload = jwt.decode(authorization.split(" ")[1], JWT_SECRET, algorithms=[JWT_ALGO])
+    except:
+        raise HTTPException(401, "Invalid token")
+    await db.agents.update_one(
+        {"email": payload["sub"]},
+        {"$set": {"branding": req.dict(), "brokerage": req.brokerage, "name": req.agent_name}}
+    )
+    return {"ok": True}
 
 
 @api_router.post("/openhouse/create")
