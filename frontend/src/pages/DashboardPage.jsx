@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const [page, setPage] = useState('packs');
   const [token, setToken] = useState(localStorage.getItem('lw_token'));
   const [agent, setAgent] = useState(null);
+  const [tier, setTier] = useState(null);
   const [packs, setPacks] = useState([]);
   const [forms, setForms] = useState([]);
   const [selectedForm, setSelectedForm] = useState(null);
@@ -25,8 +26,19 @@ export default function DashboardPage() {
   const [authMode, setAuthMode] = useState('login');
   const [authErr, setAuthErr] = useState('');
   const [brMsg, setBrMsg] = useState('');
+  const [account, setAccount] = useState(null);
 
-  useEffect(() => { if (token) { fetchAgent(); fetchPacks(); fetchForms(); } }, [token]);
+  useEffect(() => { if (token) { fetchAgent(); fetchPacks(); fetchForms(); fetchAccount(); } }, [token]);
+
+  // Check if returning from Stripe checkout
+  useEffect(() => {
+    if (token && window.location.search.includes('upgrade=success')) {
+      fetch(apiUrl('/account/upgrade'), { method: 'POST', headers: authHeaders() }).then(() => {
+        fetchAccount();
+        window.history.replaceState({}, '', window.location.pathname);
+      });
+    }
+  }, [token]);
 
   async function fetchAgent() {
     try {
@@ -34,6 +46,13 @@ export default function DashboardPage() {
       if (!r.ok) { setToken(null); localStorage.removeItem('lw_token'); return; }
       const d = await r.json();
       setAgent(d.agent);
+    } catch {}
+  }
+
+  async function fetchAccount() {
+    try {
+      const r = await fetch(apiUrl('/account/status'), { headers: authHeaders() });
+      if (r.ok) setAccount(await r.json());
     } catch {}
   }
 
@@ -160,14 +179,26 @@ export default function DashboardPage() {
         {navItem('generate', 'Generate')}
         {navItem('branding', 'Branding')}
         <div style={{ flex: 1 }} />
+        {account?.tier !== 'pro' && (
+          <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer"
+            style={{ background: '#d63b1e', color: '#fff', padding: '6px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 12, fontWeight: 600, marginRight: 8 }}>
+            ⬆ Upgrade $29/mo
+          </a>
+        )}
         <span style={{ color: '#888', fontSize: 12, cursor: 'pointer', padding: '8px' }} onClick={logout}>{agent?.name || 'Agent'} ⏻</span>
       </div>
 
       <div style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
+        {account?.tier !== 'pro' && (
+          <div style={{ background: '#2a1a1a', border: '1px solid #d63b1e', borderRadius: 8, padding: '12px 16px', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: '#ff8a6a' }}>🔒 Free tier — {account?.content_packs_used || 0}/{account?.content_packs_limit || 1} content packs used</span>
+            <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '8px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>⬆ Upgrade to Pro $29/mo</a>
+          </div>
+        )}
         {page === 'packs' && <ContentPacks packs={packs} previewFile={previewFile} previewLead={previewLead} onPreview={preview} />}
         {page === 'forms' && !selectedForm && <FormsList forms={forms} onSelect={loadFormDetail} />}
-        {page === 'forms' && selectedForm && <FormDetail form={selectedForm} values={formValues} setValues={setFormValues} onDownload={downloadPdf} onBack={() => setSelectedForm(null)} />}
-        {page === 'generate' && <GenerateForm onGenerate={generateContent} loading={loading} />}
+        {page === 'forms' && selectedForm && <FormDetail form={selectedForm} values={formValues} setValues={setFormValues} onDownload={downloadPdf} onBack={() => setSelectedForm(null)} isPro={account?.tier === 'pro'} />}
+        {page === 'generate' && <GenerateForm onGenerate={generateContent} loading={loading} isPro={account?.tier === 'pro'} />}
         {page === 'branding' && <BrandingForm agent={agent} onSave={saveBranding} msg={brMsg} setMsg={setBrMsg} />}
       </div>
     </div>
@@ -229,7 +260,7 @@ function FormsList({ forms, onSelect }) {
   );
 }
 
-function FormDetail({ form, values, setValues, onDownload, onBack }) {
+function FormDetail({ form, values, setValues, onDownload, onBack, isPro }) {
   return (
     <div>
       <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#d63b1e', cursor: 'pointer', fontSize: 13, marginBottom: 12, display: 'block' }}>← Back to contracts</button>
@@ -249,22 +280,33 @@ function FormDetail({ form, values, setValues, onDownload, onBack }) {
           ))}
         </div>
       ))}
-      <button onClick={() => onDownload(form.id)} className="btn-primary" style={{ width: '100%' }}>📄 Download Branded PDF</button>
+      {isPro ? (
+        <button onClick={() => onDownload(form.id)} style={{ background: '#d63b1e', color: '#fff', border: 'none', padding: '10px 0', borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 600, width: '100%' }}>📄 Download Branded PDF</button>
+      ) : (
+        <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '10px 0', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'block', textAlign: 'center' }}>⬆ Upgrade to Download PDF</a>
+      )}
     </div>
   );
 }
 
-function GenerateForm({ onGenerate, loading }) {
+function GenerateForm({ onGenerate, loading, isPro }) {
   return (
     <div>
       <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>⚡ Generate</h1>
       <p style={{ color: '#aaa', fontSize: 13, marginBottom: 20 }}>One input → full content pack</p>
-      <form onSubmit={onGenerate} style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a' }}>
-        <Field label="City" name="city" />
-        <Field label="Price" name="price" />
-        <Field label="Features (comma separated)" name="features" />
-        <button className="btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={loading}>{loading ? 'Generating...' : '🚀 Generate Full Pack'}</button>
-      </form>
+      {isPro ? (
+        <form onSubmit={onGenerate} style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a' }}>
+          <Field label="City" name="city" />
+          <Field label="Price" name="price" />
+          <Field label="Features (comma separated)" name="features" />
+          <button style={{ width: '100%', marginTop: 8, background: '#d63b1e', color: '#fff', border: 'none', padding: '10px 0', borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 600 }} disabled={loading}>{loading ? 'Generating...' : '🚀 Generate Full Pack'}</button>
+        </form>
+      ) : (
+        <div style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a', textAlign: 'center' }}>
+          <p style={{ color: '#888', fontSize: 14, marginBottom: 16 }}>🔒 Free tier includes 1 content pack. Upgrade to generate unlimited.</p>
+          <a href="https://buy.stripe.com/00w00lgeI2dI8vB86rafS04" target="_blank" rel="noreferrer" style={{ background: '#d63b1e', color: '#fff', padding: '10px 24px', borderRadius: 6, textDecoration: 'none', fontSize: 14, fontWeight: 600, display: 'inline-block' }}>⬆ Upgrade to Pro $29/mo</a>
+        </div>
+      )}
     </div>
   );
 }
