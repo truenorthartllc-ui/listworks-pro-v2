@@ -9,6 +9,9 @@ import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import Features from "@/components/Features";
 import GuideUpsell from "@/components/GuideUpsell";
 import QRFeatures from "@/components/QRFeatures";
+import ContentEngineFeatures from "@/components/ContentEngineFeatures";
+import ContractsShowcase from "@/components/ContractsShowcase";
+import DashboardPreview from "@/components/DashboardPreview";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
@@ -34,6 +37,9 @@ export default function LandingPage() {
          <GuideUpsell />
          <Features />
          <QRFeatures />
+         <ContentEngineFeatures />
+         <ContractsShowcase />
+         <DashboardPreview />
          <section className="bg-ink text-oat px-6 md:px-10 py-20">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
