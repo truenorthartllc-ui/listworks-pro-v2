@@ -2334,6 +2334,137 @@ The fastest path to AI adoption is to start with one tool that solves your bigge
 
 **Try ListWorks PRO free — 3 free rewrites, no card needed.** Experience what it's like to generate a compliant, ready-to-publish listing description in 10 seconds.`,
   },
+  {
+    slug: "fair-housing-compliance-real-estate-listings",
+    title: "Fair Housing Compliance for Listings: What Every Agent Needs to Know",
+    excerpt: "ChatGPT writes Fair Housing violations in your listings without knowing it. Here's how to catch them before they cost you $26,262.",
+    date: "2026-06-21",
+    tags: ["compliance", "Fair Housing"],
+    readTime: "5 min",
+    content: `## If you use AI to write listing copy, you're probably writing violations right now
+
+The Fair Housing Act prohibits discrimination in housing based on race, color, religion, sex, disability, familial status, and national origin. This applies to everything: MLS descriptions, Instagram captions, Facebook posts.
+
+HUD issued $26,262 in fines for first-time violations in 2024.
+
+## The most common violations agents write
+
+**Familial status.** "Perfect for families," "great for couples," "ideal for retirees" — these imply a preference about who should live there. Violations.
+
+**Religious references.** "Walk to church" or "near synagogue" implies religious preference. Avoid all religious references.
+
+**Disability references.** "Great for wheelchair access" sounds helpful but is steering. Say "single-level living" instead.
+
+**"Master bedroom."** The industry has moved to "primary bedroom" because "master" has discriminatory connotations.
+
+## Simple swaps to make your listings compliant
+
+| Instead of | Use |
+|------------|-----|
+| Perfect for families | Generous living spaces |
+| Master bedroom | Primary bedroom |
+| Walk to church | Close to community amenities |
+| Great for retirees | Single-level living |
+| Quiet neighborhood | Peaceful setting |
+| Ideal for couples | Flexible layout |
+
+## Why ChatGPT is a compliance risk
+
+ChatGPT writes violations on command because it's trained on general web content — including old real estate listings with discriminatory language. It doesn't know Fair Housing law.
+
+A quick test: ask ChatGPT to write a listing description for a "family home in a quiet neighborhood near a church." It will happily write "perfect for a growing family" and "walk to Sunday service" — both violations.
+
+## How ListWorks PRO handles it
+
+ListWorks PRO screens every word before it leaves your screen. It flags violations, explains why they're illegal, and suggests compliant alternatives. In 10 seconds.
+
+850+ agents use it. 24,000+ listings rewritten. 4.9/5 rating.
+
+Try your first rewrite free — [listworks.pro](https://listworks.pro)
+
+*Disclaimer: This is not legal advice. Consult your brokerage's compliance officer for specific guidance.*`,
+  },
+  {
+    slug: "instagram-captions-for-real-estate-listings",
+    title: "Instagram Captions for Real Estate Listings: 10 Templates That Work",
+    excerpt: "Stop posting 'Just listed!' with no hook. Here are 10 proven caption templates that get DMs from qualified buyers.",
+    date: "2026-06-21",
+    tags: ["social media", "Instagram"],
+    readTime: "4 min",
+    content: `## Your Instagram captions are why nobody is DMing you
+
+Posting a photo of a living room with "Just listed! DM for details 🏡" isn't marketing. It's noise.
+
+Buyers scroll past 300 posts in 60 seconds. If your caption doesn't stop them in the first line and a half (where the cut-off hits), you've lost them.
+
+Here are 10 caption templates that actually generate DMs.
+
+## 1. The curiosity gap
+
+"Wait until you see the kitchen. (Slide 2 will make you hungry.)"
+
+Works best with carousel posts. The first slide should be an exterior shot. Slide 2 should be the kitchen. The caption makes them swipe.
+
+## 2. The feature flip
+
+"You've seen 100 listings with 'granite counters.' Here's what that actually means for your morning coffee routine."
+
+Flip a generic feature into a specific experience. Instead of listing materials, describe the morning ritual.
+
+## 3. The neighborhood angle
+
+"This street has a secret: the best coffee in [City] is 2 blocks away. And the owner leaves a welcome guide for new buyers."
+
+Most agents describe the house. The best agents describe the life.
+
+## 4. The bold claim
+
+"This is the most private backyard in [Neighborhood]. No, really. Go check the GIS map."
+
+A specific, auditable claim builds trust. Bonus points if you back it up with data.
+
+## 5. The question hook
+
+"What's the first thing you'd change about your current home?"
+
+Ask a question that gets people thinking about what they want. Then show how your listing delivers it.
+
+## 6. The before/after
+
+"The 'before' was dark, cramped, and had 80s wallpaper. The 'after' is why we love what we do."
+
+Show transformation. People love progress.
+
+## 7. The market data drop
+
+"2 comparable homes sold in this neighborhood last month. Average days on market: 12. This one hits the market tomorrow."
+
+Buyers want data. Give it to them. Position yourself as the informed expert.
+
+## 8. The objection killer
+
+"Yes, it's a ranch. No, you won't miss having a second floor. Here's why."
+
+Address the most common objection head-on before anyone asks.
+
+## 9. The listing appointment story
+
+"I walked into this one expecting a tear-down. Then I opened the back door."
+
+Tell the story of discovering the property. Make the buyer feel like they're in on the secret.
+
+## 10. The straight CTA
+
+"3 beds, 2 baths, 1,800 sq ft. Updated kitchen. Fenced yard. Walkable to downtown. DM for the full gallery."
+
+Sometimes the direct approach works best — especially for price-conscious buyers who want facts fast.
+
+## How to generate 30 days of captions in 10 minutes
+
+ListWorks PRO generates Instagram captions for every listing alongside your MLS description, Facebook post, and buyer email. One paste, 10 seconds, all platforms covered.
+
+[Try it free — listworks.pro](https://listworks.pro)`,
+  },
 ];
 
 export default ARTICLES;
