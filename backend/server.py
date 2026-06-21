@@ -3619,6 +3619,112 @@ async def qr_agent_card_update(card_id: str, req: AgentCardUpdate, request: Requ
     await db.agent_cards.update_one({"card_id": card_id}, {"$set": updates})
     return {"ok": True}
 
+# ============== POST SCHEDULER ==============
+
+class SchedulePostRequest(BaseModel):
+    session_id: Optional[str] = None
+    email: str                        # reminder destination
+    platform: str                     # Instagram | Facebook | LinkedIn | Stories
+    content: str                      # the caption/copy to post
+    scheduled_at: str                 # ISO-8601 UTC: "2026-07-01T14:00:00Z"
+    note: Optional[str] = None        # agent's own note (e.g. "Just Listed — 123 Elm")
+
+
+@api_router.post("/schedule/post")
+async def schedule_post(req: SchedulePostRequest):
+    if not req.email or "@" not in req.email:
+        raise HTTPException(400, "Valid email required for reminder")
+    if not req.content or not req.content.strip():
+        raise HTTPException(400, "Content cannot be empty")
+    try:
+        fire_dt = datetime.fromisoformat(req.scheduled_at.replace("Z", "+00:00"))
+    except ValueError:
+        raise HTTPException(400, "Invalid scheduled_at — use ISO-8601 format e.g. 2026-07-01T14:00:00Z")
+
+    post_id = str(uuid.uuid4())
+    await db.scheduled_posts.insert_one({
+        "id": post_id,
+        "session_id": req.session_id,
+        "email": req.email.lower().strip(),
+        "platform": req.platform,
+        "content": req.content.strip(),
+        "note": req.note or "",
+        "scheduled_at": fire_dt.isoformat(),
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+
+    # Confirmation email immediately
+    from email_engine import send_email
+    confirm_body = f"""<p>Your post is scheduled for <strong>{fire_dt.strftime("%B %-d, %Y at %-I:%M %p UTC")}</strong> on <strong>{req.platform}</strong>.</p>
+{"<p><em>" + req.note + "</em></p>" if req.note else ""}
+<p>We'll send you a reminder with the content ready to copy when it's time.</p>
+<hr>
+<pre style="background:#f5f5f5;padding:16px;border-radius:4px;white-space:pre-wrap;">{req.content}</pre>"""
+
+    await send_email(to=req.email, subject=f"Scheduled: {req.platform} post for {fire_dt.strftime('%b %-d')}", body=confirm_body)
+    return {"id": post_id, "scheduled_at": fire_dt.isoformat(), "status": "pending"}
+
+
+@api_router.get("/schedule/list/{session_id}")
+async def schedule_list(session_id: str):
+    posts = await db.scheduled_posts.find(
+        {"session_id": session_id, "status": {"$in": ["pending", "reminder_sent"]}},
+        {"_id": 0}
+    ).sort("scheduled_at", 1).to_list(50)
+    return {"posts": posts}
+
+
+@api_router.delete("/schedule/{post_id}")
+async def schedule_delete(post_id: str):
+    result = await db.scheduled_posts.delete_one({"id": post_id})
+    if result.deleted_count == 0:
+        raise HTTPException(404, "Scheduled post not found")
+    return {"deleted": True}
+
+
+@api_router.post("/schedule/check")
+async def schedule_check(x_admin_secret: str = Header(default="")):
+    """Railway cron calls this every 15 min to fire due reminders."""
+    if x_admin_secret != os.environ.get("ADMIN_SECRET", ""):
+        raise HTTPException(403, "Forbidden")
+
+    now = datetime.now(timezone.utc)
+    due = await db.scheduled_posts.find(
+        {"status": "pending", "scheduled_at": {"$lte": now.isoformat()}},
+        {"_id": 0}
+    ).to_list(100)
+
+    fired = 0
+    from email_engine import send_email
+    for post in due:
+        try:
+            platform = post.get("platform", "Social")
+            note = post.get("note", "")
+            fire_dt_str = post.get("scheduled_at", "")
+            body = f"""<p>⏰ It's time to post on <strong>{platform}</strong>!</p>
+{"<p><em>" + note + "</em></p>" if note else ""}
+<p>Copy the content below and paste it into {platform}:</p>
+<hr>
+<pre style="background:#f5f5f5;padding:16px;border-radius:4px;white-space:pre-wrap;">{post['content']}</pre>
+<p style="color:#999;font-size:12px;">Scheduled at {fire_dt_str} via ListWorks PRO</p>"""
+
+            await send_email(
+                to=post["email"],
+                subject=f"Post time! Your {platform} content is ready",
+                body=body,
+            )
+            await db.scheduled_posts.update_one(
+                {"id": post["id"]},
+                {"$set": {"status": "reminder_sent", "fired_at": now.isoformat()}}
+            )
+            fired += 1
+        except Exception as e:
+            logging.warning(f"Scheduler: failed to send reminder for {post.get('id')}: {e}")
+
+    return {"checked": len(due), "fired": fired}
+
+
 # ============== MARKET UPDATE GENERATOR ==============
 
 class MarketUpdateRequest(BaseModel):
