@@ -299,10 +299,10 @@ export default function Playground() {
               <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => setMode("referral")} data-active={mode === "referral"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Gift className="w-4 h-4" />Refer & Earn</button>
               <button onClick={() => setMode("brandvoice")} data-active={mode === "brandvoice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Fingerprint className="w-4 h-4" />Brand Voice</button>
-              <button onClick={() => setMode("templates")} data-active={mode === "templates"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><LayoutGrid className="w-4 h-4" />Social Templates</button>
-              <button onClick={() => setMode("calendar")} data-active={mode === "calendar"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Content Calendar</button>
-              <button onClick={() => setMode("marketupdate")} data-active={mode === "marketupdate"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Market Update</button>
-              <button onClick={() => setMode("scheduler")} data-active={mode === "scheduler"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Clock className="w-4 h-4" />Schedule Posts</button>
+              <button onClick={() => handleProMode("templates")} data-active={mode === "templates"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><LayoutGrid className="w-4 h-4" />Social Templates<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("calendar")} data-active={mode === "calendar"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Content Calendar<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("marketupdate")} data-active={mode === "marketupdate"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Market Update<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => handleProMode("scheduler")} data-active={mode === "scheduler"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Clock className="w-4 h-4" />Schedule Posts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
             </div>
           </div>
         </div>
@@ -910,29 +910,21 @@ export default function Playground() {
         </div>
       )}
 
-      {mode === "templates" && (
-        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
-          <TemplatesPanel />
-        </div>
-      )}
+      {mode === "templates" && (isPro ? (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><TemplatesPanel /></div>
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="templates" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "calendar" && (
-        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
-          <ContentCalendarPanel />
-        </div>
-      )}
+      {mode === "calendar" && (isPro ? (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ContentCalendarPanel /></div>
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="calendar" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "marketupdate" && (
-        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
-          <MarketUpdatePanel />
-        </div>
-      )}
+      {mode === "marketupdate" && (isPro ? (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><MarketUpdatePanel /></div>
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="marketupdate" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
-      {mode === "scheduler" && (
-        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
-          <SchedulerPanel />
-        </div>
-      )}
+      {mode === "scheduler" && (isPro ? (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><SchedulerPanel /></div>
+      ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="scheduler" onUnlock={() => setPaywallOpen(true)} /></div>))}
 
       {mode === "agentpage" && (
         <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">

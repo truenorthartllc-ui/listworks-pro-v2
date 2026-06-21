@@ -225,6 +225,96 @@ const EXAMPLES = {
       </div>
     ),
   },
+  templates: {
+    label: "Social Template Library",
+    desc: "31 done-for-you social templates — Just Listed, market updates, testimonials, and more — all written in your exact brand voice.",
+    preview: (
+      <div className="space-y-4">
+        <div className="border border-ink/10 p-4">
+          <div className="font-mono text-[9px] uppercase tracking-wider text-pink-600 mb-2">Instagram · Just Listed</div>
+          <p className="font-body text-sm leading-relaxed italic">"New to market and it's already turning heads. 🔑 4 beds, 3 baths, and a backyard that means business. 4123 Ridgeline Dr — priced to move at $589K. DM me or hit the link in bio for the full tour. This one won't last the weekend."</p>
+          <p className="font-mono text-[9px] text-ink/40 mt-2">— Sarah Chen · The Chen Group · Denver</p>
+        </div>
+        <div className="border border-ink/10 p-4">
+          <div className="font-mono text-[9px] uppercase tracking-wider text-blue-600 mb-2">Facebook · Market Update</div>
+          <p className="font-body text-sm leading-relaxed italic">"Denver's June market snapshot: Median list price up 4.2% YoY. Days on market: 9. If you've been waiting to list — this is your window. Reply 'REPORT' and I'll send your neighborhood's full breakdown."</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
+          {["Just Listed","Just Sold","Open House","Testimonial","Market Update","Tips & Education"].map(c => (
+            <div key={c} className="border border-ink/10 px-2 py-1.5 text-ink/50">{c}</div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  calendar: {
+    label: "30-Day Content Calendar",
+    desc: "One click. A full month of social posts — platform, caption, hook — built around your brand voice and active listings.",
+    preview: (
+      <div className="space-y-2">
+        {[
+          { day: "Jul 1", platform: "Instagram", hook: "The kitchen alone is worth the showing." },
+          { day: "Jul 3", platform: "Facebook", hook: "Denver inventory hits 6-week low — here's what that means for you." },
+          { day: "Jul 5", platform: "LinkedIn", hook: "3 things buyers always overlook at open houses." },
+          { day: "Jul 7", platform: "Stories", hook: "Behind the scenes: my Saturday morning showing prep." },
+          { day: "Jul 9", platform: "Instagram", hook: "\"We didn't think we could afford it. We were wrong.\"" },
+        ].map(r => (
+          <div key={r.day} className="flex items-center gap-3 px-3 py-2 border border-ink/10 text-sm">
+            <span className="font-mono text-[10px] text-ink/40 w-12 shrink-0">{r.day}</span>
+            <span className="font-mono text-[9px] uppercase tracking-wider border border-ink/15 px-2 py-0.5 text-ink/50 shrink-0">{r.platform}</span>
+            <span className="font-body text-ink/70 truncate">{r.hook}</span>
+          </div>
+        ))}
+        <p className="font-mono text-[9px] text-ink/35 pt-1">30 posts · 5 platforms · export to .txt</p>
+      </div>
+    ),
+  },
+  marketupdate: {
+    label: "Market Update Generator",
+    desc: "Type any ZIP or city — get 3 ready-to-post market updates backed by live data in seconds.",
+    preview: (
+      <div className="space-y-4">
+        <div className="border border-pink-200 bg-pink-50 p-4">
+          <div className="font-mono text-[9px] uppercase tracking-wider text-pink-600 mb-2">Instagram</div>
+          <p className="font-body text-sm italic leading-relaxed">"Austin market update 📊 — Median sale price: $578K (+3.1%). Avg days on market: 11. Inventory is tight and buyers are moving fast. Drop a 🏡 if you want a free home value estimate."</p>
+        </div>
+        <div className="border border-blue-200 bg-blue-50 p-4">
+          <div className="font-mono text-[9px] uppercase tracking-wider text-blue-600 mb-2">Facebook</div>
+          <p className="font-body text-sm italic leading-relaxed">"June Austin Snapshot: 847 homes sold, up 6% from May. 63% of listings closed above ask. Now is your moment. DM me for your neighborhood breakdown."</p>
+        </div>
+      </div>
+    ),
+  },
+  scheduler: {
+    label: "Post Scheduler",
+    desc: "Schedule any post for later — we'll email you a reminder with the caption ready to copy at exactly the right time.",
+    preview: (
+      <div className="space-y-4">
+        <div className="border border-ink/10 p-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div><div className="font-mono text-[9px] uppercase tracking-wider text-ink/40 mb-1">Platform</div>Instagram</div>
+            <div><div className="font-mono text-[9px] uppercase tracking-wider text-ink/40 mb-1">Scheduled For</div>Jul 1, 9:00 AM</div>
+          </div>
+          <div className="text-sm"><div className="font-mono text-[9px] uppercase tracking-wider text-ink/40 mb-1">Note</div>Just Listed — 4123 Ridgeline Dr</div>
+        </div>
+        <div className="space-y-2">
+          {[
+            { platform: "Instagram", note: "Just Listed — Ridgeline Dr", time: "Jul 1, 9:00 AM", sent: false },
+            { platform: "Facebook", note: "June Market Update", time: "Jul 3, 11:00 AM", sent: false },
+            { platform: "Stories", note: "Open House Reminder", time: "Jul 6, 8:30 AM", sent: true },
+          ].map(p => (
+            <div key={p.note} className="flex items-center gap-3 px-4 py-2.5 border border-ink/10 text-sm">
+              <span className="font-mono text-[9px] border border-ink/15 px-2 py-0.5 text-ink/50 shrink-0">{p.platform}</span>
+              <span className="font-body text-ink/70 flex-1 truncate">{p.note}</span>
+              <span className="font-mono text-[9px] text-ink/35 shrink-0">{p.time}</span>
+              {p.sent && <span className="font-mono text-[9px] text-emerald-600">sent</span>}
+            </div>
+          ))}
+        </div>
+        <p className="font-mono text-[9px] text-ink/35">Confirmation email now · reminder at post time</p>
+      </div>
+    ),
+  },
   report: {
     label: "Post-Sale Report",
     desc: "Send a branded closing summary that gets you referrals before the ink dries.",
