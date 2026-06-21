@@ -1,12 +1,17 @@
-import { Wand2, ScanLine, Mic, Zap, Layers, ShieldCheck, Box } from "lucide-react";
+import { Wand2, ScanLine, Mic, Zap, Layers, ShieldCheck, Box, LayoutGrid, CalendarDays, BarChart3, Clock, Link } from "lucide-react";
 
 const features = [
   { icon: Wand2, title: "Five-format rewrite", body: "MLS, Instagram, Facebook, headlines, email — all in one pass. Your boring draft becomes five publish-ready assets." },
   { icon: ScanLine, title: "Photo recognition", body: "Upload listing photos. We surface marble, hardwood, vaulted ceilings — and translate them into feelings." },
   { icon: Mic, title: "Five tone modes", body: "Luxury. Cozy. Modern. Family. Investor. The same property, dialed for the buyer who's actually shopping." },
+  { icon: LayoutGrid, title: "31 social templates", body: "Just Listed, Just Sold, Open House, Market Update, Testimonial, Tips — all generated in your brand voice, ready to post." },
+  { icon: Link, title: "Paste any listing URL", body: "Drop a Zillow, Redfin, or Realtor.com link. We scrape it, extract the details, and pre-fill your rewrite in seconds." },
+  { icon: CalendarDays, title: "30-day content calendar", body: "One click. A full month of social posts — platform, hook, caption — built around your active listings and brand voice." },
+  { icon: BarChart3, title: "Live market updates", body: "Enter any ZIP or city. Get three ready-to-post market update captions — Instagram, Facebook, and email — backed by live data." },
+  { icon: Clock, title: "Post scheduler", body: "Schedule any caption for later. We email you a reminder with the content ready to copy at exactly the right time." },
+  { icon: ShieldCheck, title: "Fair Housing + CO Act compliance", body: "Scans every listing for HUD-cited violations, auto-generates your Colorado AI Act disclosure, and exports a compliance PDF for your E&O file." },
   { icon: Zap, title: "10-second turnaround", body: "Average generation: ten seconds. Beats your average MLS upload form by a country mile." },
   { icon: Layers, title: "Saved listing history", body: "Every rewrite saved to your session. Revisit, refine, regenerate without re-typing a single word." },
-  { icon: ShieldCheck, title: "MLS-compliant by default", body: "Trained on the Feature → Benefit → Feeling framework. No clichés, no fluff, no fair-housing landmines." },
   { icon: Box, title: "360° Virtual Tour embeds", body: "Plug in any Matterport, Kuula, or CloudPano link. Buyers explore the home in immersive 3D right from your listing." },
 ];
 
@@ -29,7 +34,11 @@ export default function Features() {
         <div className="grid grid-cols-12 gap-px bg-ink/15 border border-ink/15">
           {features.map((f, i) => {
             const Icon = f.icon;
-            const span = i === 0 ? "col-span-12 md:col-span-6 lg:col-span-5" : i === 1 ? "col-span-12 md:col-span-6 lg:col-span-4" : i === 2 ? "col-span-12 md:col-span-12 lg:col-span-3" : "col-span-12 md:col-span-6 lg:col-span-4";
+            const span =
+              i === 0 ? "col-span-12 md:col-span-6 lg:col-span-5" :
+              i === 1 ? "col-span-12 md:col-span-6 lg:col-span-4" :
+              i === 2 ? "col-span-12 md:col-span-12 lg:col-span-3" :
+              "col-span-12 md:col-span-6 lg:col-span-4";
             return (
               <div key={f.title} data-testid={`feature-${i}`} className={`${span} bg-oat p-7 md:p-9 hover-rise`}>
                 <Icon className="w-6 h-6 text-vermillion mb-6" strokeWidth={1.5} />

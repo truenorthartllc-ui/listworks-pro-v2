@@ -372,7 +372,7 @@ export default function ProToolPreview({ tool, onUnlock }) {
           </div>
           <p className="font-display italic text-xl text-ink mb-1">Unlock this on your listings.</p>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/50 mb-5">
-            Pro includes all 12 tools · unlimited rewrites · no watermark
+            Pro includes all 16 tools · unlimited rewrites · no watermark
           </p>
           <button
             onClick={onUnlock}
