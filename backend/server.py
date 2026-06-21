@@ -845,16 +845,25 @@ async def agent_login(req: AgentLoginIn):
 
 @api_router.get("/auth/me")
 async def get_me(authorization: str = Header(None)):
+    import traceback
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Missing token")
     try:
         payload = jwt.decode(authorization.split(" ")[1], JWT_SECRET, algorithms=[JWT_ALGO])
     except:
         raise HTTPException(401, "Invalid token")
-    agent = await db.agents.find_one({"email": payload["sub"]}, {"password": 0})
-    if not agent:
-        raise HTTPException(404, "Agent not found")
-    return {"agent": agent}
+    try:
+        agent = await db.agents.find_one({"email": payload["sub"]})
+        if not agent:
+            raise HTTPException(404, "Agent not found")
+        agent.pop("password", None)
+        agent.pop("_id", None)
+        return {"agent": agent}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Auth/me failed: {traceback.format_exc()}")
+        raise HTTPException(500, f"Error: {str(e)}")
 
 @api_router.put("/auth/branding")
 async def update_branding(req: BrandingIn, authorization: str = Header(None)):
@@ -866,7 +875,7 @@ async def update_branding(req: BrandingIn, authorization: str = Header(None)):
         raise HTTPException(401, "Invalid token")
     await db.agents.update_one(
         {"email": payload["sub"]},
-        {"$set": {"branding": req.dict(), "brokerage": req.brokerage, "name": req.agent_name}}
+        {"$set": {"branding": req.model_dump(), "brokerage": req.brokerage, "name": req.agent_name}}
     )
     return {"ok": True}
 
