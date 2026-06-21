@@ -3459,8 +3459,6 @@ async def admin_stats(x_admin_secret: str = Header(default="")):
     }
 
 
-app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -4137,6 +4135,11 @@ async def template_generate(req: TemplateGenerateRequest):
         output = await call_openrouter(system, "\n".join(user_parts))
 
     return {"output": output.strip(), "template_id": req.template_id}
+
+
+# Register all api_router routes with the app — placed AFTER all @api_router decorators
+# so FastAPI's include_router snapshot captures every route defined above.
+app.include_router(api_router)
 
 
 @app.on_event("startup")
