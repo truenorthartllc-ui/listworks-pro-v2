@@ -810,21 +810,28 @@ class BrandingIn(BaseModel):
 @api_router.post("/auth/signup")
 async def agent_signup(req: AgentSignupIn):
     from passlib.hash import bcrypt
-    existing = await db.agents.find_one({"email": req.email.lower()})
-    if existing:
-        raise HTTPException(400, "Email already registered")
-    agent = {
-        "email": req.email.lower(),
-        "password": bcrypt.hash(req.password),
-        "name": req.name,
-        "brokerage": req.brokerage,
-        "phone": req.phone,
-        "branding": {"logo_url": "", "primary_color": "#1a1a2e", "secondary_color": "#d63b1e"},
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.agents.insert_one(agent)
-    token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
-    return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+    import traceback
+    try:
+        existing = await db.agents.find_one({"email": req.email.lower()})
+        if existing:
+            raise HTTPException(400, "Email already registered")
+        agent = {
+            "email": req.email.lower(),
+            "password": bcrypt.hash(req.password),
+            "name": req.name,
+            "brokerage": req.brokerage,
+            "phone": req.phone,
+            "branding": {"logo_url": "", "primary_color": "#1a1a2e", "secondary_color": "#d63b1e"},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.agents.insert_one(agent)
+        token = jwt.encode({"sub": req.email.lower(), "iat": datetime.now(timezone.utc)}, JWT_SECRET, algorithm=JWT_ALGO)
+        return {"token": token, "agent": {"email": agent["email"], "name": agent["name"], "brokerage": agent["brokerage"]}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Signup failed: {traceback.format_exc()}")
+        raise HTTPException(500, f"Signup error: {str(e)}")
 
 @api_router.post("/auth/login")
 async def agent_login(req: AgentLoginIn):
