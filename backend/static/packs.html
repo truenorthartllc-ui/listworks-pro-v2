@@ -51,7 +51,7 @@ async function load() {
 
     let html = `<p style="margin-bottom:16px;color:#666">${data.packs.length} packs generated</p>`;
     for (const pack of data.packs) {
-      const files = ['content-pack.json','instagram-caption.txt','facebook-post.txt','reel-script.txt','carousel.txt','weekly-calendar.md','market-report-post.txt','market-report.json'];
+      const files = ['content-pack.json','instagram-caption.txt','facebook-post.txt','reel-script.txt','carousel.txt','weekly-calendar.md','market-report-post.txt','market-report.json','canva-templates.json','image-prompts.json','hashtags.txt'];
       html += `<div class="pack-card">
         <h2>${pack.name}</h2>
         <div class="meta">${pack.city ? '📍 ' + pack.city + ' · ' : ''}${pack.generatedAt ? new Date(pack.generatedAt).toLocaleDateString() : ''} ${pack.hasMarketReport ? '<span class="market-badge">📊 Market Report</span>' : ''}</div>
@@ -61,6 +61,8 @@ async function load() {
           <button class="btn" onclick="preview(${pack.leadId},'instagram-caption.txt','Instagram Caption')">📸 IG</button>
           <button class="btn btn-outline" onclick="preview(${pack.leadId},'weekly-calendar.md','7-Day Calendar')">📅 Calendar</button>
           <button class="btn btn-outline" onclick="preview(${pack.leadId},'market-report-post.txt','Market Post')">📊 Market</button>
+          <button class="btn btn-outline" onclick="preview(${pack.leadId},'canva-templates.json','Canva Templates')">🎨 Canva</button>
+          <button class="btn btn-outline" onclick="preview(${pack.leadId},'image-prompts.json','Image Prompts')">🖼️ Prompts</button>
         </div>
         <div class="content-preview" id="preview-${pack.leadId}"></div>
       </div>`;
@@ -84,6 +86,21 @@ async function preview(leadId, file, label) {
     const res = await fetch(`/api/content/${leadId}/${file}`);
     if (!res.ok) throw new Error('Not found');
     const text = await res.text();
+    if (file.endsWith('.json') && file === 'canva-templates.json') {
+      try {
+        const data = JSON.parse(text);
+        const links = [];
+        function walk(obj, prefix = '') {
+          for (const [k, v] of Object.entries(obj)) {
+            if (typeof v === 'string' && v.startsWith('http')) links.push(`<a href="${v}" target="_blank" style="display:block;padding:4px 0;color:#d63b1e">🎨 ${prefix}${k}</a>`);
+            else if (typeof v === 'object') walk(v, prefix + k + ' → ');
+          }
+        }
+        walk(data);
+        el.innerHTML = `<strong style="display:block;margin-bottom:8px;font-size:14px">${label}</strong>${links.join('')}`;
+        return;
+      } catch(e) {}
+    }
     el.innerHTML = `<strong style="display:block;margin-bottom:8px;font-size:14px">${label}</strong>${text}`;
   } catch(e) {
     el.textContent = 'Could not load file';
