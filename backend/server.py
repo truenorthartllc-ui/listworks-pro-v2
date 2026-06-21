@@ -43,6 +43,7 @@ OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
+FIRECRAWL_API_KEY = os.environ.get('FIRECRAWL_API_KEY', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 DEFAULT_PROVIDER = "openrouter"
 DEFAULT_MODEL = "openai/gpt-4o"
@@ -2084,24 +2085,84 @@ Now produce the JSON object with all 4 scripts. JSON only."""
     )
 
 
-@api_router.post("/import/redfin", response_model=RedfinPropertyData)
-async def import_redfin(req: RedfinImportRequest):
-    if not req.redfin_url or "redfin.com" not in req.redfin_url.lower():
-        raise HTTPException(400, "Invalid Redfin URL. Please provide a valid Redfin listing URL.")
+LISTING_EXTRACT_SYSTEM = """You extract structured property data from real estate listing page content.
+Return ONLY a valid JSON object with these exact fields (use null for any field not found):
+{
+  "address": "Full street address including city, state, zip",
+  "price": "$XXX,XXX",
+  "beds": "3",
+  "baths": "2",
+  "sqft": "1,850",
+  "year_built": "1998",
+  "property_type": "Single Family",
+  "lot_size": "0.25 acres",
+  "parking": "2-car garage",
+  "description": "The full MLS or public remarks description text, verbatim if possible"
+}
+Rules: Extract only what is explicitly present in the content. No guessing or fabrication. JSON only."""
 
-    user_prompt = f"""Extract property data from this Redfin listing:
 
-URL: {req.redfin_url}
+async def _scrape_listing_url(url: str) -> str:
+    """Scrape a listing URL with Firecrawl, fall back to httpx+basic parse."""
+    if FIRECRAWL_API_KEY:
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as hc:
+                resp = await hc.post(
+                    "https://api.firecrawl.dev/v1/scrape",
+                    headers={"Authorization": f"Bearer {FIRECRAWL_API_KEY}", "Content-Type": "application/json"},
+                    json={"url": url, "formats": ["markdown"], "onlyMainContent": True},
+                )
+                if resp.status_code == 200:
+                    result = resp.json()
+                    md = result.get("data", {}).get("markdown", "")
+                    if md and len(md) > 100:
+                        return md[:8000]
+        except Exception as e:
+            logging.warning(f"Firecrawl scrape failed: {e}")
 
-Return the JSON object with all available property details. JSON only."""
+    # Fallback: raw httpx fetch, strip tags
+    try:
+        async with httpx.AsyncClient(timeout=20.0, headers={"User-Agent": "Mozilla/5.0 (compatible; ListWorksPRO/1.0)"}) as hc:
+            resp = await hc.get(url)
+            text = resp.text
+            # Crude strip — remove scripts/styles, keep visible text
+            import re as _re
+            text = _re.sub(r"<script[^>]*>.*?</script>", " ", text, flags=_re.DOTALL | _re.IGNORECASE)
+            text = _re.sub(r"<style[^>]*>.*?</style>", " ", text, flags=_re.DOTALL | _re.IGNORECASE)
+            text = _re.sub(r"<[^>]+>", " ", text)
+            text = _re.sub(r"\s+", " ", text).strip()
+            return text[:8000]
+    except Exception as e:
+        raise HTTPException(502, f"Could not fetch listing page: {str(e)[:120]}")
 
-    raw = await call_openrouter(REDFIN_IMPORT_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+
+class ListingImportRequest(BaseModel):
+    url: str
+
+
+SUPPORTED_LISTING_DOMAINS = [
+    "redfin.com", "zillow.com", "realtor.com", "trulia.com",
+    "homes.com", "compass.com", "coldwellbanker.com", "century21.com",
+    "kw.com", "bhgrealestate.com", "homesnap.com", "movoto.com",
+]
+
+
+@api_router.post("/import/listing", response_model=RedfinPropertyData)
+async def import_listing(req: ListingImportRequest):
+    url = req.url.strip()
+    if not url.startswith("http"):
+        raise HTTPException(400, "Please provide a full URL starting with http:// or https://")
+
+    page_content = await _scrape_listing_url(url)
+
+    user_prompt = f"Extract all property data from this listing page content:\n\n{page_content}\n\nJSON only."
+    raw = await call_openrouter(LISTING_EXTRACT_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception as e:
-        logging.exception("JSON parse failed for Redfin import")
-        raise HTTPException(500, f"Failed to parse Redfin data: {str(e)[:120]}")
+        logging.exception("JSON parse failed for listing import")
+        raise HTTPException(500, f"Failed to extract listing data: {str(e)[:120]}")
 
     return RedfinPropertyData(
         address=data.get("address", "").strip(),
@@ -2115,6 +2176,12 @@ Return the JSON object with all available property details. JSON only."""
         parking=data.get("parking"),
         description=data.get("description"),
     )
+
+
+# Keep legacy endpoint alive so existing RedfinImport.jsx calls still work
+@api_router.post("/import/redfin", response_model=RedfinPropertyData)
+async def import_redfin(req: RedfinImportRequest):
+    return await import_listing(ListingImportRequest(url=req.redfin_url))
 
 
 ADDRESS_LOOKUP_SYSTEM = """You extract real estate property data from web search snippets.
