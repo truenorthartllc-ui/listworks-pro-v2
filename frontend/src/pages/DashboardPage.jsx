@@ -1,11 +1,289 @@
+import { useState, useEffect } from 'react';
+
+const API = process.env.REACT_APP_BACKEND_URL || '';
+
+function apiUrl(path) {
+  return API + '/api' + path;
+}
+
+function authHeaders() {
+  const t = localStorage.getItem('lw_token');
+  return t ? { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+}
+
 export default function DashboardPage() {
+  const [page, setPage] = useState('packs');
+  const [token, setToken] = useState(localStorage.getItem('lw_token'));
+  const [agent, setAgent] = useState(null);
+  const [packs, setPacks] = useState([]);
+  const [forms, setForms] = useState([]);
+  const [selectedForm, setSelectedForm] = useState(null);
+  const [formValues, setFormValues] = useState({});
+  const [previewFile, setPreviewFile] = useState(null);
+  const [previewLead, setPreviewLead] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [authErr, setAuthErr] = useState('');
+  const [brMsg, setBrMsg] = useState('');
+
+  useEffect(() => { if (token) { fetchAgent(); fetchPacks(); fetchForms(); } }, [token]);
+
+  async function fetchAgent() {
+    try {
+      const r = await fetch(apiUrl('/auth/me'), { headers: authHeaders() });
+      if (!r.ok) { setToken(null); localStorage.removeItem('lw_token'); return; }
+      const d = await r.json();
+      setAgent(d.agent);
+    } catch {}
+  }
+
+  async function fetchPacks() {
+    try {
+      const r = await fetch(apiUrl('/content/packs'), { headers: authHeaders() });
+      if (r.ok) setPacks((await r.json()).packs || []);
+    } catch {}
+    setLoading(false);
+  }
+
+  async function fetchForms() {
+    try {
+      const r = await fetch(apiUrl('/forms'), { headers: authHeaders() });
+      if (r.ok) setForms((await r.json()).forms || []);
+    } catch {}
+  }
+
+  // Auth
+  async function handleAuth(e) {
+    e.preventDefault();
+    setAuthErr('');
+    const fd = new FormData(e.target);
+    const body = Object.fromEntries(fd.entries());
+    try {
+      const r = await fetch(apiUrl(authMode === 'login' ? '/auth/login' : '/auth/signup'), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+      const d = await r.json();
+      if (!r.ok) { setAuthErr(d.detail || 'Failed'); return; }
+      setToken(d.token); localStorage.setItem('lw_token', d.token);
+      setAgent(d.agent);
+    } catch (e) { setAuthErr(e.message); }
+  }
+
+  function logout() { setToken(null); localStorage.removeItem('lw_token'); setAgent(null); setPacks([]); setForms([]); }
+
+  // Preview content
+  async function preview(leadId, file) {
+    if (previewLead === leadId && previewFile === file) { setPreviewLead(null); setPreviewFile(null); return; }
+    setPreviewLead(leadId); setPreviewFile(file);
+  }
+
+  async function loadFormDetail(formId) {
+    try {
+      setLoading(true);
+      const r = await fetch(apiUrl('/forms/' + formId), { headers: authHeaders() });
+      setSelectedForm(await r.json());
+      setFormValues({});
+      setLoading(false);
+    } catch {}
+  }
+
+  async function downloadPdf(formId) {
+    const brand = agent?.branding || {};
+    try {
+      const r = await fetch(apiUrl('/forms/' + formId + '/pdf'), {
+        method: 'POST', headers: authHeaders(), body: JSON.stringify({ values: formValues, brand })
+      });
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = formId + '.pdf'; a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) { alert('Download failed'); }
+  }
+
+  async function generateContent(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = Object.fromEntries(fd.entries());
+    setLoading(true);
+    try {
+      await fetch(apiUrl('/content/generate'), { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      fetchPacks();
+    } catch {}
+    setLoading(false);
+  }
+
+  async function saveBranding(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = Object.fromEntries(fd.entries());
+    try {
+      const r = await fetch(apiUrl('/auth/branding'), { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+      if (r.ok) { setBrMsg('✅ Saved'); setAgent(a => ({ ...a, branding: body })); } else setBrMsg('❌ Failed');
+    } catch { setBrMsg('❌ Failed'); }
+  }
+
+  if (!token) {
+    const s = { maxWidth: 400, margin: '60px auto', padding: 24 };
+    return (
+      <div style={s}>
+        <h1 style={{ fontSize: 24, color: '#fff', textAlign: 'center', marginBottom: 24 }}>🔑 Agent Dashboard</h1>
+        {authErr && <p style={{ color: '#c00', fontSize: 13, marginBottom: 8 }}>{authErr}</p>}
+        <form onSubmit={handleAuth}>
+          {authMode === 'signup' && <>
+            <Field label="Name" name="name" />
+            <Field label="Brokerage" name="brokerage" />
+          </>}
+          <Field label="Email" name="email" type="email" />
+          <Field label="Password" name="password" type="password" />
+          <button className="btn-primary" style={{ width: '100%', marginTop: 12 }}>{authMode === 'login' ? 'Log In' : 'Create Account'}</button>
+        </form>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: 13, marginTop: 16 }}>
+          {authMode === 'login' ? <>Don't have one? <a href="#" onClick={e => { e.preventDefault(); setAuthMode('signup'); setAuthErr(''); }} style={{ color: '#d63b1e' }}>Sign up</a></> : <>Already have one? <a href="#" onClick={e => { e.preventDefault(); setAuthMode('login'); setAuthErr(''); }} style={{ color: '#d63b1e' }}>Log in</a></>}
+        </p>
+      </div>
+    );
+  }
+
+  const navItem = (id, label) => (
+    <button onClick={() => { setPage(id); setSelectedForm(null); }}
+      style={{ padding: '10px 20px', background: page === id ? '#d63b1e' : 'transparent', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13, fontWeight: page === id ? 600 : 400 }}>
+      {label}
+    </button>
+  );
+
   return (
-    <div style={{width:'100%',height:'100vh',border:0}}>
-      <iframe
-        src="/api/dashboard"
-        style={{width:'100%',height:'100vh',border:'none'}}
-        title="Dashboard"
-      />
+    <div style={{ background: '#0f0f0f', minHeight: '100vh', color: '#e0e0e0', fontFamily: '-apple-system,BlinkMacSystemFont,sans-serif' }}>
+      <div style={{ background: '#1a1a2e', display: 'flex', alignItems: 'center', padding: '0 24px', gap: 8, borderBottom: '1px solid #2a2a4a' }}>
+        <span style={{ color: '#fff', fontWeight: 700, marginRight: 16, fontSize: 14 }}>ListWorks PRO</span>
+        {navItem('packs', 'Content')}
+        {navItem('forms', 'Contracts')}
+        {navItem('generate', 'Generate')}
+        {navItem('branding', 'Branding')}
+        <div style={{ flex: 1 }} />
+        <span style={{ color: '#888', fontSize: 12, cursor: 'pointer', padding: '8px' }} onClick={logout}>{agent?.name || 'Agent'} ⏻</span>
+      </div>
+
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
+        {page === 'packs' && <ContentPacks packs={packs} previewFile={previewFile} previewLead={previewLead} onPreview={preview} />}
+        {page === 'forms' && !selectedForm && <FormsList forms={forms} onSelect={loadFormDetail} />}
+        {page === 'forms' && selectedForm && <FormDetail form={selectedForm} values={formValues} setValues={setFormValues} onDownload={downloadPdf} onBack={() => setSelectedForm(null)} />}
+        {page === 'generate' && <GenerateForm onGenerate={generateContent} loading={loading} />}
+        {page === 'branding' && <BrandingForm agent={agent} onSave={saveBranding} msg={brMsg} setMsg={setBrMsg} />}
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, name, type = 'text' }) {
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4, color: '#ccc' }}>{label}</label>
+      <input name={name} type={type} required style={{ width: '100%', padding: '8px 10px', background: '#15152a', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 13 }} />
+    </div>
+  );
+}
+
+function ContentPacks({ packs, previewFile, previewLead, onPreview }) {
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>📦 Content Packs</h1>
+      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>{packs.length} packs</p>
+      {packs.length === 0 && <p style={{ color: '#555', textAlign: 'center', padding: 40 }}>No packs yet. Generate one to see it here.</p>}
+      {packs.map(p => (
+        <div key={p.leadId} style={{ background: '#1a1a2e', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #2a2a4a' }}>
+          <h2 style={{ fontSize: 16, color: '#fff', margin: 0 }}>{p.name}</h2>
+          <div style={{ color: '#888', fontSize: 12, margin: '4px 0 12px' }}>{p.city || ''} · {p.generatedAt ? new Date(p.generatedAt).toLocaleDateString() : ''}</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {['reel-script.txt','instagram-caption.txt','carousel.txt','weekly-calendar.md','market-report-post.txt'].map(f => (
+              <button key={f} onClick={() => onPreview(p.leadId, f)} style={{ background: previewLead === p.leadId && previewFile === f ? '#d63b1e' : '#15152a', color: '#ccc', border: '1px solid #333', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>{f}</button>
+            ))}
+          </div>
+          {previewLead === p.leadId && previewFile && <PreviewContent leadId={p.leadId} file={previewFile} />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PreviewContent({ leadId, file }) {
+  const [text, setText] = useState('Loading...');
+  useEffect(() => {
+    fetch(apiUrl('/content/' + leadId + '/' + file), { headers: authHeaders() }).then(r => r.text()).then(setText).catch(() => setText('Unavailable'));
+  }, [leadId, file]);
+  return <div style={{ background: '#0f0f0f', borderRadius: 6, padding: 16, marginTop: 10, whiteSpace: 'pre-wrap', fontSize: 12, color: '#aaa', maxHeight: 300, overflowY: 'auto' }}>{text}</div>;
+}
+
+function FormsList({ forms, onSelect }) {
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>📄 Contracts</h1>
+      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>Fillable forms with field-by-field explanations</p>
+      {forms.map(f => (
+        <div key={f.id} onClick={() => onSelect(f.id)} style={{ background: '#1a1a2e', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #2a2a4a', cursor: 'pointer' }}>
+          <h2 style={{ fontSize: 16, color: '#fff', margin: 0 }}>{f.name}</h2>
+          <div style={{ color: '#888', fontSize: 12, margin: '4px 0' }}>{f.sections?.reduce((a,s) => a + s.fields.length, 0)} fields · {f.category}</div>
+          <p style={{ color: '#aaa', fontSize: 13, margin: 0 }}>{f.description}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FormDetail({ form, values, setValues, onDownload, onBack }) {
+  return (
+    <div>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#d63b1e', cursor: 'pointer', fontSize: 13, marginBottom: 12, display: 'block' }}>← Back to contracts</button>
+      <h1 style={{ fontSize: 20, color: '#fff', marginBottom: 4 }}>{form.name}</h1>
+      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>{form.description}</p>
+      {form.sections?.map(section => (
+        <div key={section.title} style={{ marginBottom: 20 }}>
+          <h3 style={{ color: '#d63b1e', fontSize: 13, margin: '0 0 8px', paddingBottom: 4, borderBottom: '1px solid #2a2a4a' }}>{section.title}</h3>
+          {section.fields.map(field => (
+            <div key={field.id} style={{ marginBottom: 10, padding: '10px 14px', background: '#15152a', borderRadius: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#fff', display: 'block', marginBottom: 2 }}>{field.label}{field.required && <span style={{ color: '#c00' }}>*</span>}</label>
+              <p style={{ fontSize: 11, color: '#888', margin: '0 0 6px', lineHeight: 1.4 }}>{field.explanation}</p>
+              {field.type === 'textarea' ? <textarea name={field.id} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }} /> :
+               field.type === 'select' ? <select name={field.id} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }}>{field.options?.map(o => <option key={o}>{o}</option>)}</select> :
+               <input name={field.id} type={field.type === 'currency' ? 'text' : field.type || 'text'} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }} />}
+            </div>
+          ))}
+        </div>
+      ))}
+      <button onClick={() => onDownload(form.id)} className="btn-primary" style={{ width: '100%' }}>📄 Download Branded PDF</button>
+    </div>
+  );
+}
+
+function GenerateForm({ onGenerate, loading }) {
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>⚡ Generate</h1>
+      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>One input → full content pack</p>
+      <form onSubmit={onGenerate} style={{ background: '#1a1a2e', borderRadius: 10, padding: 24, border: '1px solid #2a2a4a' }}>
+        <Field label="City" name="city" />
+        <Field label="Price" name="price" />
+        <Field label="Features (comma separated)" name="features" />
+        <button className="btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={loading}>{loading ? 'Generating...' : '🚀 Generate Full Pack'}</button>
+      </form>
+    </div>
+  );
+}
+
+function BrandingForm({ agent, onSave, msg, setMsg }) {
+  const b = agent?.branding || {};
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>🎨 Branding</h1>
+      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>Appears on every contract PDF you download</p>
+      <form onSubmit={onSave} style={{ background: '#1a1a2e', borderRadius: 10, padding: 24, border: '1px solid #2a2a4a' }}>
+        <Field label="Your Name" name="agent_name" />
+        <Field label="Brokerage" name="brokerage" />
+        <Field label="Logo URL" name="logo_url" />
+        <Field label="Primary Color" name="primary_color" />
+        <Field label="Accent Color" name="secondary_color" />
+        <button className="btn-primary" style={{ width: '100%', marginTop: 8 }}>💾 Save Branding</button>
+        {msg && <p style={{ color: msg.startsWith('✅') ? '#4caf50' : '#c00', fontSize: 12, marginTop: 8 }}>{msg}</p>}
+      </form>
     </div>
   );
 }
