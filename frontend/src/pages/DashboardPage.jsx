@@ -125,7 +125,7 @@ export default function DashboardPage() {
   if (!token) {
     const s = { maxWidth: 400, margin: '60px auto', padding: 24 };
     return (
-      <div style={s}>
+      <div style={{ ...s, background: '#1a1a2e', minHeight: '100vh' }}>
         <h1 style={{ fontSize: 24, color: '#fff', textAlign: 'center', marginBottom: 24 }}>🔑 Agent Dashboard</h1>
         {authErr && <p style={{ color: '#c00', fontSize: 13, marginBottom: 8 }}>{authErr}</p>}
         <form onSubmit={handleAuth}>
@@ -152,8 +152,8 @@ export default function DashboardPage() {
   );
 
   return (
-    <div style={{ background: '#0f0f0f', minHeight: '100vh', color: '#e0e0e0', fontFamily: '-apple-system,BlinkMacSystemFont,sans-serif' }}>
-      <div style={{ background: '#1a1a2e', display: 'flex', alignItems: 'center', padding: '0 24px', gap: 8, borderBottom: '1px solid #2a2a4a' }}>
+    <div style={{ background: '#1a1a2e', minHeight: '100vh', color: '#f0f0f0', fontFamily: '-apple-system,BlinkMacSystemFont,sans-serif' }}>
+      <div style={{ background: '#0f0f24', display: 'flex', alignItems: 'center', padding: '0 24px', gap: 8, borderBottom: '1px solid #3a3a5a' }}>
         <span style={{ color: '#fff', fontWeight: 700, marginRight: 16, fontSize: 14 }}>ListWorks PRO</span>
         {navItem('packs', 'Content')}
         {navItem('forms', 'Contracts')}
@@ -177,8 +177,8 @@ export default function DashboardPage() {
 function Field({ label, name, type = 'text' }) {
   return (
     <div style={{ marginBottom: 12 }}>
-      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4, color: '#ccc' }}>{label}</label>
-      <input name={name} type={type} required style={{ width: '100%', padding: '8px 10px', background: '#15152a', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 13 }} />
+      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4, color: '#d0d0d0' }}>{label}</label>
+      <input name={name} type={type} required style={{ width: '100%', padding: '8px 10px', background: '#1e1e3a', border: '1px solid #4a4a6a', borderRadius: 4, color: '#fff', fontSize: 13 }} />
     </div>
   );
 }
@@ -186,16 +186,16 @@ function Field({ label, name, type = 'text' }) {
 function ContentPacks({ packs, previewFile, previewLead, onPreview }) {
   return (
     <div>
-      <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>📦 Content Packs</h1>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>{packs.length} packs</p>
-      {packs.length === 0 && <p style={{ color: '#555', textAlign: 'center', padding: 40 }}>No packs yet. Generate one to see it here.</p>}
+        <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>📦 Content Packs</h1>
+      <p style={{ color: '#aaa', fontSize: 13, marginBottom: 20 }}>{packs.length} packs</p>
+      {packs.length === 0 && <p style={{ color: '#888', textAlign: 'center', padding: 40 }}>No packs yet. Generate one to see it here.</p>}
       {packs.map(p => (
-        <div key={p.leadId} style={{ background: '#1a1a2e', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #2a2a4a' }}>
+        <div key={p.leadId} style={{ background: '#252540', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #3a3a5a' }}>
           <h2 style={{ fontSize: 16, color: '#fff', margin: 0 }}>{p.name}</h2>
-          <div style={{ color: '#888', fontSize: 12, margin: '4px 0 12px' }}>{p.city || ''} · {p.generatedAt ? new Date(p.generatedAt).toLocaleDateString() : ''}</div>
+          <div style={{ color: '#aaa', fontSize: 12, margin: '4px 0 12px' }}>{p.city || ''} · {p.generatedAt ? new Date(p.generatedAt).toLocaleDateString() : ''}</div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {['reel-script.txt','instagram-caption.txt','carousel.txt','weekly-calendar.md','market-report-post.txt'].map(f => (
-              <button key={f} onClick={() => onPreview(p.leadId, f)} style={{ background: previewLead === p.leadId && previewFile === f ? '#d63b1e' : '#15152a', color: '#ccc', border: '1px solid #333', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>{f}</button>
+              <button key={f} onClick={() => onPreview(p.leadId, f)} style={{ background: previewLead === p.leadId && previewFile === f ? '#d63b1e' : '#1e1e3a', color: '#d0d0d0', border: '1px solid #4a4a6a', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>{f}</button>
             ))}
           </div>
           {previewLead === p.leadId && previewFile && <PreviewContent leadId={p.leadId} file={previewFile} />}
@@ -210,19 +210,19 @@ function PreviewContent({ leadId, file }) {
   useEffect(() => {
     fetch(apiUrl('/content/' + leadId + '/' + file), { headers: authHeaders() }).then(r => r.text()).then(setText).catch(() => setText('Unavailable'));
   }, [leadId, file]);
-  return <div style={{ background: '#0f0f0f', borderRadius: 6, padding: 16, marginTop: 10, whiteSpace: 'pre-wrap', fontSize: 12, color: '#aaa', maxHeight: 300, overflowY: 'auto' }}>{text}</div>;
+  return <div style={{ background: '#1a1a35', borderRadius: 6, padding: 16, marginTop: 10, whiteSpace: 'pre-wrap', fontSize: 12, color: '#d0d0d0', maxHeight: 300, overflowY: 'auto' }}>{text}</div>;
 }
 
 function FormsList({ forms, onSelect }) {
   return (
     <div>
       <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>📄 Contracts</h1>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>Fillable forms with field-by-field explanations</p>
+      <p style={{ color: '#aaa', fontSize: 13, marginBottom: 20 }}>Fillable forms with field-by-field explanations</p>
       {forms.map(f => (
-        <div key={f.id} onClick={() => onSelect(f.id)} style={{ background: '#1a1a2e', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #2a2a4a', cursor: 'pointer' }}>
+        <div key={f.id} onClick={() => onSelect(f.id)} style={{ background: '#252540', borderRadius: 10, padding: 20, marginBottom: 14, border: '1px solid #3a3a5a', cursor: 'pointer' }}>
           <h2 style={{ fontSize: 16, color: '#fff', margin: 0 }}>{f.name}</h2>
-          <div style={{ color: '#888', fontSize: 12, margin: '4px 0' }}>{f.sections?.reduce((a,s) => a + s.fields.length, 0)} fields · {f.category}</div>
-          <p style={{ color: '#aaa', fontSize: 13, margin: 0 }}>{f.description}</p>
+          <div style={{ color: '#aaa', fontSize: 12, margin: '4px 0' }}>{f.sections?.reduce((a,s) => a + s.fields.length, 0)} fields · {f.category}</div>
+          <p style={{ color: '#ccc', fontSize: 13, margin: 0 }}>{f.description}</p>
         </div>
       ))}
     </div>
@@ -237,14 +237,14 @@ function FormDetail({ form, values, setValues, onDownload, onBack }) {
       <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>{form.description}</p>
       {form.sections?.map(section => (
         <div key={section.title} style={{ marginBottom: 20 }}>
-          <h3 style={{ color: '#d63b1e', fontSize: 13, margin: '0 0 8px', paddingBottom: 4, borderBottom: '1px solid #2a2a4a' }}>{section.title}</h3>
+          <h3 style={{ color: '#ff6b4a', fontSize: 13, margin: '0 0 8px', paddingBottom: 4, borderBottom: '1px solid #3a3a5a' }}>{section.title}</h3>
           {section.fields.map(field => (
-            <div key={field.id} style={{ marginBottom: 10, padding: '10px 14px', background: '#15152a', borderRadius: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#fff', display: 'block', marginBottom: 2 }}>{field.label}{field.required && <span style={{ color: '#c00' }}>*</span>}</label>
-              <p style={{ fontSize: 11, color: '#888', margin: '0 0 6px', lineHeight: 1.4 }}>{field.explanation}</p>
-              {field.type === 'textarea' ? <textarea name={field.id} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }} /> :
-               field.type === 'select' ? <select name={field.id} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }}>{field.options?.map(o => <option key={o}>{o}</option>)}</select> :
-               <input name={field.id} type={field.type === 'currency' ? 'text' : field.type || 'text'} style={{ width: '100%', padding: 6, background: '#0f0f0f', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 12 }} />}
+            <div key={field.id} style={{ marginBottom: 10, padding: '10px 14px', background: '#1e1e3a', borderRadius: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#fff', display: 'block', marginBottom: 2 }}>{field.label}{field.required && <span style={{ color: '#ff4444' }}>*</span>}</label>
+              <p style={{ fontSize: 11, color: '#aaa', margin: '0 0 6px', lineHeight: 1.4 }}>{field.explanation}</p>
+              {field.type === 'textarea' ? <textarea name={field.id} style={{ width: '100%', padding: 6, background: '#1a1a35', border: '1px solid #4a4a6a', borderRadius: 4, color: '#fff', fontSize: 12 }} /> :
+               field.type === 'select' ? <select name={field.id} style={{ width: '100%', padding: 6, background: '#1a1a35', border: '1px solid #4a4a6a', borderRadius: 4, color: '#fff', fontSize: 12 }}>{field.options?.map(o => <option key={o}>{o}</option>)}</select> :
+               <input name={field.id} type={field.type === 'currency' ? 'text' : field.type || 'text'} style={{ width: '100%', padding: 6, background: '#1a1a35', border: '1px solid #4a4a6a', borderRadius: 4, color: '#fff', fontSize: 12 }} />}
             </div>
           ))}
         </div>
@@ -258,8 +258,8 @@ function GenerateForm({ onGenerate, loading }) {
   return (
     <div>
       <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>⚡ Generate</h1>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>One input → full content pack</p>
-      <form onSubmit={onGenerate} style={{ background: '#1a1a2e', borderRadius: 10, padding: 24, border: '1px solid #2a2a4a' }}>
+      <p style={{ color: '#aaa', fontSize: 13, marginBottom: 20 }}>One input → full content pack</p>
+      <form onSubmit={onGenerate} style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a' }}>
         <Field label="City" name="city" />
         <Field label="Price" name="price" />
         <Field label="Features (comma separated)" name="features" />
@@ -274,8 +274,8 @@ function BrandingForm({ agent, onSave, msg, setMsg }) {
   return (
     <div>
       <h1 style={{ fontSize: 22, color: '#fff', marginBottom: 4 }}>🎨 Branding</h1>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 20 }}>Appears on every contract PDF you download</p>
-      <form onSubmit={onSave} style={{ background: '#1a1a2e', borderRadius: 10, padding: 24, border: '1px solid #2a2a4a' }}>
+      <p style={{ color: '#aaa', fontSize: 13, marginBottom: 20 }}>Appears on every contract PDF you download</p>
+      <form onSubmit={onSave} style={{ background: '#252540', borderRadius: 10, padding: 24, border: '1px solid #3a3a5a' }}>
         <Field label="Your Name" name="agent_name" />
         <Field label="Brokerage" name="brokerage" />
         <Field label="Logo URL" name="logo_url" />
