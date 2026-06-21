@@ -1859,6 +1859,56 @@ async def generate_content_for_lead(req: ContentGenerateIn):
     return json.loads(result.stdout)
 
 
+# ══════════════ CONTRACTS & FORMS ENDPOINTS ══════════════
+from contracts_engine import FORMS_CATALOG, get_form, get_forms_by_category, get_categories, generate_fillable_pdf, generate_form_preview
+
+@api_router.get("/forms")
+async def list_forms(category: str = None):
+    """List all available contract forms."""
+    if category:
+        return {"forms": get_forms_by_category(category)}
+    return {"forms": FORMS_CATALOG, "categories": get_categories()}
+
+@api_router.get("/forms/{form_id}")
+async def get_form_detail(form_id: str):
+    """Get full form definition with field explanations."""
+    form = get_form(form_id)
+    if not form:
+        raise HTTPException(404, "Form not found")
+    return form
+
+@api_router.post("/forms/{form_id}/pdf")
+async def generate_form_pdf(form_id: str, req: Request):
+    """Generate a branded fillable PDF for a contract form."""
+    form = get_form(form_id)
+    if not form:
+        raise HTTPException(404, "Form not found")
+    
+    body = await req.json() if req.headers.get("content-type") == "application/json" else {}
+    field_values = body.get("values", {})
+    brand = body.get("brand", {"agent_name": "", "brokerage": "ListWorks PRO"})
+    
+    pdf_bytes = generate_fillable_pdf(form_id, field_values, brand)
+    if not pdf_bytes:
+        raise HTTPException(500, "PDF generation failed (reportlab not available)")
+    
+    from fastapi.responses import Response
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{form_id}.pdf"'}
+    )
+
+@api_router.get("/forms/{form_id}/preview")
+async def preview_form(form_id: str):
+    """HTML preview of a form with field explanations."""
+    form = get_form(form_id)
+    if not form:
+        raise HTTPException(404, "Form not found")
+    from fastapi.responses import HTMLResponse
+    return HTMLResponse(generate_form_preview(form_id))
+
+
 @api_router.get("/content-packs")
 async def content_packs_page():
     """Serve the content packs dashboard page."""
