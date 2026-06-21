@@ -3619,6 +3619,76 @@ async def qr_agent_card_update(card_id: str, req: AgentCardUpdate, request: Requ
     await db.agent_cards.update_one({"card_id": card_id}, {"$set": updates})
     return {"ok": True}
 
+# ============== CONTENT CALENDAR ==============
+
+class ContentCalendarRequest(BaseModel):
+    session_id: Optional[str] = None
+    specialty: Optional[str] = None       # "luxury", "first-time buyers", "investors", etc.
+    active_listing: Optional[str] = None  # brief listing description to weave in
+    market: Optional[str] = None          # city/area override
+    month: Optional[str] = None           # "July 2026" — defaults to current month
+
+
+CONTENT_CALENDAR_SYSTEM = """You are a real estate social media strategist. Generate a 30-day content calendar for a real estate agent.
+
+Return ONLY a JSON array of exactly 30 objects, one per day. Each object:
+{
+  "day": 1,
+  "date": "Mon Jul 1",
+  "platform": "Instagram",
+  "category": "Just Listed|Market Update|Tips|Testimonial|Personal|Open House|Seasonal|Engagement",
+  "hook": "One-sentence post hook (the first line)",
+  "caption": "Full draft caption (platform-appropriate length, include hashtags if Instagram/Facebook)"
+}
+
+Rules:
+- Vary platforms (Instagram, Facebook, LinkedIn, Stories) — don't stack the same platform 3+ days in a row
+- Vary categories — mix promotional and educational (max 30% promotional)
+- Weave in any active listing naturally on 4-6 days, not every day
+- Apply brand voice if provided
+- Make every hook scroll-stopping — specific, human, curiosity-driving
+- Return ONLY the JSON array. No markdown, no explanation."""
+
+
+@api_router.post("/content-calendar")
+async def content_calendar(req: ContentCalendarRequest):
+    bv: dict = {}
+    if req.session_id:
+        bv_doc = await db.brand_voices.find_one({"session_id": req.session_id})
+        if bv_doc:
+            bv = {k: v for k, v in bv_doc.items() if k != "_id"}
+
+    market = req.market or bv.get("market") or "your local market"
+    specialty = req.specialty or "general real estate"
+    month = req.month or datetime.now(timezone.utc).strftime("%B %Y")
+
+    system = CONTENT_CALENDAR_SYSTEM + _build_brand_voice_block(bv)
+
+    user_parts = [
+        f"Generate a 30-day content calendar for {month}.",
+        f"Agent specialty: {specialty}",
+        f"Market: {market}",
+    ]
+    if req.active_listing:
+        user_parts.append(f"Active listing to weave in (use naturally on 4-6 days): {req.active_listing}")
+
+    try:
+        raw = await call_g0dm0d3(system, "\n".join(user_parts), tier="smart")
+    except Exception:
+        raw = await call_openrouter(system, "\n".join(user_parts))
+
+    cleaned = _strip_json(raw)
+    try:
+        days = json.loads(cleaned)
+        if not isinstance(days, list):
+            raise ValueError("Expected array")
+    except Exception as e:
+        logging.exception("Content calendar parse failed")
+        raise HTTPException(500, f"AI returned invalid calendar data: {str(e)[:120]}")
+
+    return {"month": month, "days": days}
+
+
 # ============== SOCIAL TEMPLATE LIBRARY ==============
 
 TEMPLATE_CONFIGS = [
