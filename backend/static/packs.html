@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Content Packs — ListWorks PRO</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#1a1a1a}
+.header{background:#1a1a1a;color:#fff;padding:24px 32px}
+.header h1{font-size:24px;margin-bottom:4px}
+.header p{color:#999;font-size:14px}
+.container{max-width:960px;margin:0 auto;padding:24px}
+.pack-card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.pack-card h2{font-size:18px;margin-bottom:4px}
+.pack-card .meta{color:#666;font-size:13px;margin-bottom:12px}
+.files{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.file-tag{background:#f0f0f0;padding:4px 10px;border-radius:4px;font-size:12px;color:#555}
+.actions{display:flex;gap:8px}
+.btn{background:#d63b1e;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;text-decoration:none;display:inline-block}
+.btn:hover{background:#b83218}
+.btn-outline{background:transparent;border:1px solid #ddd;color:#555}
+.btn-outline:hover{background:#f0f0f0}
+.content-preview{background:#f9f9f9;border-radius:8px;padding:16px;margin-top:12px;white-space:pre-wrap;font-size:13px;line-height:1.6;display:none;max-height:400px;overflow-y:auto}
+.empty{text-align:center;padding:60px 20px;color:#888}
+.empty h2{font-size:20px;margin-bottom:8px;color:#333}
+.market-badge{background:#e8f4e8;color:#2a7a2a;padding:2px 8px;border-radius:4px;font-size:11px}
+#loading{text-align:center;padding:60px;color:#888}
+.error{text-align:center;padding:60px;color:#c00}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📦 Content Packs</h1>
+  <p>Auto-generated social content + market reports for every outreach lead</p>
+</div>
+<div class="container" id="app">
+  <div id="loading">Loading content packs...</div>
+</div>
+<script>
+async function load() {
+  try {
+    const res = await fetch('/api/content/packs');
+    const data = await res.json();
+    const app = document.getElementById('app');
+
+    if (!data.packs || data.packs.length === 0) {
+      app.innerHTML = `<div class="empty"><h2>No content packs yet</h2><p>They'll appear here automatically after cold emails are sent.</p></div>`;
+      return;
+    }
+
+    let html = `<p style="margin-bottom:16px;color:#666">${data.packs.length} packs generated</p>`;
+    for (const pack of data.packs) {
+      const files = ['content-pack.json','instagram-caption.txt','facebook-post.txt','reel-script.txt','carousel.txt','weekly-calendar.md','market-report-post.txt','market-report.json'];
+      html += `<div class="pack-card">
+        <h2>${pack.name}</h2>
+        <div class="meta">${pack.city ? '📍 ' + pack.city + ' · ' : ''}${pack.generatedAt ? new Date(pack.generatedAt).toLocaleDateString() : ''} ${pack.hasMarketReport ? '<span class="market-badge">📊 Market Report</span>' : ''}</div>
+        <div class="files">${files.map(f => `<span class="file-tag">${f}</span>`).join('')}</div>
+        <div class="actions">
+          <button class="btn" onclick="preview(${pack.leadId},'reel-script.txt','Reel Script')">🎬 Reel</button>
+          <button class="btn" onclick="preview(${pack.leadId},'instagram-caption.txt','Instagram Caption')">📸 IG</button>
+          <button class="btn btn-outline" onclick="preview(${pack.leadId},'weekly-calendar.md','7-Day Calendar')">📅 Calendar</button>
+          <button class="btn btn-outline" onclick="preview(${pack.leadId},'market-report-post.txt','Market Post')">📊 Market</button>
+        </div>
+        <div class="content-preview" id="preview-${pack.leadId}"></div>
+      </div>`;
+    }
+    app.innerHTML = html;
+  } catch(e) {
+    document.getElementById('app').innerHTML = `<div class="error">Error loading packs: ${e.message}</div>`;
+  }
+}
+
+async function preview(leadId, file, label) {
+  const el = document.getElementById('preview-' + leadId);
+  const isVisible = el.style.display === 'block';
+  if (isVisible && el.dataset.file === file) { el.style.display = 'none'; return; }
+
+  el.style.display = 'block';
+  el.textContent = 'Loading...';
+  el.dataset.file = file;
+
+  try {
+    const res = await fetch(`/api/content/${leadId}/${file}`);
+    if (!res.ok) throw new Error('Not found');
+    const text = await res.text();
+    el.innerHTML = `<strong style="display:block;margin-bottom:8px;font-size:14px">${label}</strong>${text}`;
+  } catch(e) {
+    el.textContent = 'Could not load file';
+  }
+}
+
+load();
+</script>
+</body>
+</html>

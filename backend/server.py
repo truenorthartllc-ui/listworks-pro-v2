@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Header
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -1779,6 +1779,91 @@ async def batch_rewrite(req: BatchRewriteRequest):
         success_count += 1
 
     return BatchRewriteResponse(results=results, success_count=success_count, failed_count=failed_count)
+
+
+# ══════════════ CONTENT PACK ENDPOINTS ══════════════
+CONTENT_PACK_DIR = "/root/listworks-outreach/content-packs"
+
+@api_router.get("/content/packs")
+async def list_content_packs():
+    """List all generated content packs."""
+    import glob as g
+    packs = []
+    for d in g.glob(f"{CONTENT_PACK_DIR}/*/"):
+        lead_id = d.strip("/").split("/")[-1]
+        json_path = f"{d}content-pack.json"
+        if os.path.exists(json_path):
+            try:
+                with open(json_path) as f:
+                    data = json.load(f)
+                packs.append({"leadId": lead_id, "name": data.get("leadName","?"), "city": data.get("leadCity",""), "generatedAt": data.get("generatedAt",""),"hasMarketReport": os.path.exists(f"{d}market-report.json")})
+            except: pass
+    return {"packs": sorted(packs, key=lambda p: p.get("generatedAt",""), reverse=True)}
+
+@api_router.get("/content/pack/{lead_id}")
+async def get_content_pack(lead_id: str):
+    """Get full content pack for a lead."""
+    path = f"{CONTENT_PACK_DIR}/{lead_id}/content-pack.json"
+    if not os.path.exists(path):
+        raise HTTPException(404, "No content pack found")
+    with open(path) as f:
+        return json.load(f)
+
+@api_router.get("/content/{lead_id}/{file_name}")
+async def get_content_file(lead_id: str, file_name: str):
+    """Get specific file from a content pack (e.g. reel-script.txt, market-report-post.txt)."""
+    path = f"{CONTENT_PACK_DIR}/{lead_id}/{file_name}"
+    if not os.path.exists(path):
+        raise HTTPException(404, "File not found")
+    from fastapi.responses import PlainTextResponse
+    with open(path) as f:
+        return PlainTextResponse(f.read())
+
+@api_router.get("/content/{lead_id}/market-report")
+async def get_market_report(lead_id: str):
+    """Get market report for a lead."""
+    path = f"{CONTENT_PACK_DIR}/{lead_id}/market-report.json"
+    if not os.path.exists(path):
+        raise HTTPException(404, "No market report")
+    with open(path) as f:
+        return json.load(f)
+
+class ContentGenerateIn(BaseModel):
+    first_name: str = ""
+    city: str = ""
+    price: str = ""
+    features: str = ""
+    email: str = ""
+
+@api_router.post("/content/generate")
+async def generate_content_for_lead(req: ContentGenerateIn):
+    """Generate a content pack on demand for a lead."""
+    import subprocess, tempfile, random
+    # Build a mock lead and run the generator
+    features_list = [f.strip() for f in req.features.split(",") if f.strip()] or ["natural light", "updated finishes", "open layout"]
+    lead = {"id": random.randint(1000, 9999), "first_name": req.first_name or "Client", "city": req.city or "Your City", "email": req.email or "client@example.com"}
+    listing = {"price": req.price or "$500,000", "features": features_list}
+
+    js_code = f"""
+    import {{ generateAll }} from '/root/listworks-outreach/templates/social-content.js';
+    import {{ generateWeeklyPlan }} from '/root/listworks-outreach/templates/content-calendar.js';
+    const social = generateAll({json.dumps(lead)}, {json.dumps(listing)});
+    const cal = generateWeeklyPlan({json.dumps(lead)});
+    process.stdout.write(JSON.stringify({{ social, cal }}));
+    """
+    result = subprocess.run(["node", "--input-type=module", "-r", "dotenv/config", "-e", js_code],
+                          capture_output=True, text=True, timeout=30,
+                          cwd="/root/listworks-outreach")
+    if result.returncode != 0:
+        raise HTTPException(500, f"Generator failed: {result.stderr}")
+    return json.loads(result.stdout)
+
+
+@api_router.get("/content-packs")
+async def content_packs_page():
+    """Serve the content packs dashboard page."""
+    with open(ROOT_DIR / "static" / "packs.html") as f:
+        return HTMLResponse(f.read())
 
 
 @api_router.get("/templates/{session_id}")
