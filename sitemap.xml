@@ -127,84 +127,90 @@
     <priority>0.86</priority>
   </url>
 
-  <!-- City landing pages -->
-  <url>
-    <loc>https://listworks.pro/city/austin</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/miami</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/dallas</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/denver</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/los-angeles</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/phoenix</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/tampa</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/houston</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/atlanta</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/nashville</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.68</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/charlotte</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.68</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/san-antonio</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.68</priority>
-  </url>
-  <url>
-    <loc>https://listworks.pro/city/orlando</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.68</priority>
-  </url>
+  <!-- City landing pages (75 cities — updated 2026-06-22) -->
+  <url><loc>https://listworks.pro/city/austin</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/miami</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/denver</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/dallas</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/los-angeles</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/new-york</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/nashville</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/phoenix</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/chicago</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/seattle</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/san-diego</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/orlando</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/houston</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/atlanta</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/portland</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/tampa</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/charlotte</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/san-antonio</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/las-vegas</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/raleigh</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <!-- Colorado AI Act cities (priority boosted — June 30 deadline) -->
+  <url><loc>https://listworks.pro/city/colorado-springs</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://listworks.pro/city/boulder</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://listworks.pro/city/fort-collins</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://listworks.pro/city/aurora</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://listworks.pro/city/pueblo</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/greeley</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <!-- High-growth markets -->
+  <url><loc>https://listworks.pro/city/boise</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/salt-lake-city</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/bozeman</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/sacramento</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/san-francisco</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/washington-dc</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/boston</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/philadelphia</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/minneapolis</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <!-- Florida -->
+  <url><loc>https://listworks.pro/city/fort-lauderdale</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/sarasota</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/naples</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/jacksonville</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/west-palm-beach</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <!-- Texas -->
+  <url><loc>https://listworks.pro/city/fort-worth</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/plano</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <!-- Arizona -->
+  <url><loc>https://listworks.pro/city/scottsdale</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://listworks.pro/city/tempe</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/tucson</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <!-- Southeast -->
+  <url><loc>https://listworks.pro/city/charleston</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/savannah</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/birmingham</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/richmond</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/new-orleans</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <!-- Midwest -->
+  <url><loc>https://listworks.pro/city/columbus</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.70</priority></url>
+  <url><loc>https://listworks.pro/city/indianapolis</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/kansas-city</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/st-louis</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/omaha</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/milwaukee</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/cincinnati</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/memphis</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/louisville</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/des-moines</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/madison</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/ann-arbor</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/grand-rapids</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <!-- Pacific Northwest -->
+  <url><loc>https://listworks.pro/city/spokane</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/tacoma</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <!-- Northeast -->
+  <url><loc>https://listworks.pro/city/baltimore</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://listworks.pro/city/buffalo</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/hartford</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/providence</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/pittsburgh</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <!-- Mountain / Plains -->
+  <url><loc>https://listworks.pro/city/albuquerque</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/reno</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/oklahoma-city</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://listworks.pro/city/tulsa</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
 
 </urlset>
