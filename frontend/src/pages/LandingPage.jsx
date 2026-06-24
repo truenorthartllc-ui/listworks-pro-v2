@@ -28,17 +28,6 @@ export default function LandingPage() {
       <ViralNotifications />
       <Header />
       <main>
-        {/* Video Hero — ambient background + main video */}
-        <section className="relative w-full border-b border-ink/10 overflow-hidden" style={{ height: "30vh", minHeight: "220px" }}>
-          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-15 pointer-events-none" style={{ zIndex: 0 }}>
-            <source src="/ad1-v1-ambient.mp4" type="video/mp4" />
-          </video>
-          <div className="relative z-10 w-full h-full bg-ink/70 flex items-center justify-center">
-            <video autoPlay muted loop playsInline className="w-full h-full object-contain max-h-[30vh]">
-              <source src="/listworks-fh-ad.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </section>
         <ComplianceHero />
         <Hero />
         <TrustBar />
@@ -47,31 +36,40 @@ export default function LandingPage() {
         <Playground />
         <BeforeAfter />
         <NeighborhoodInsights />
-        <GuideUpsell />
-        <Features />
-        <QRFeatures />
-        <ContentEngineFeatures />
-        <ContractsShowcase />
-        <DashboardPreview />
-        <section className="bg-ink text-oat px-6 md:px-10 py-8">
-          <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-7">
-              <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-oat/40 mb-2 block">Fair Housing</span>
-              <h3 className="font-display text-xl md:text-2xl italic leading-[1.15]">
-                Your AI wrote the listing. Did it check for violations?
-              </h3>
-              <p className="font-body text-sm text-oat/60 mt-2 leading-relaxed">
-                The $26,262 HUD fine applies to whatever wrote the copy — including ChatGPT. ListWorks PRO scans every rewrite before it reaches your MLS.
-              </p>
+         <GuideUpsell />
+         <Features />
+         <QRFeatures />
+         <ContentEngineFeatures />
+         <ContractsShowcase />
+         <DashboardPreview />
+         <section className="bg-ink text-oat px-6 md:px-10 py-20">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="h-px w-10 bg-oat/40" />
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-oat/50">Fair Housing</span>
             </div>
-            <div className="lg:col-span-5 lg:pl-8 lg:border-l lg:border-oat/15">
-              <div className="border border-oat/25 p-5">
-                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion mb-2">Real example</div>
-                <p className="font-body text-oat/80 text-sm leading-relaxed">
-                  <span className="line-through text-oat/30">"Perfect for families with kids"</span> → <span className="text-green-400">Open floor plan with natural light for everyday living.</span>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 lg:col-span-7">
+                <h3 className="font-display text-3xl md:text-5xl italic leading-[1.05]">
+                  Fair Housing wasn't designed for AI.
+                </h3>
+                <p className="font-body text-lg md:text-xl text-oat/70 mt-6 leading-relaxed">
+                  But the $26,000 HUD fine for a single violation applies to whatever wrote the copy.
+                  ChatGPT doesn't scan for FHA red flags. ListWorks PRO does — every rewrite, before it reaches your MLS.
                 </p>
-                <p className="font-mono text-[9px] tracking-[0.15em] uppercase text-oat/40 mt-2">Same home. Same value. No violation.</p>
               </div>
+              <aside className="col-span-12 lg:col-span-5 lg:pl-10 lg:border-l lg:border-oat/15">
+                <div className="border border-oat/25 p-8">
+                  <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-vermillion mb-3">Real example</div>
+                  <p className="font-body text-oat/90 leading-relaxed text-sm">
+                    <span className="line-through text-oat/40">"Perfect for families with kids and pets"</span><br />
+                    <span className="text-green-400 mt-2 inline-block">✓ Refreshing natural light across an open floor plan designed for everyday living.</span>
+                  </p>
+                  <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-oat/40 mt-4">
+                    Same home. Same value. No violation.
+                  </p>
+                </div>
+              </aside>
             </div>
           </div>
         </section>
