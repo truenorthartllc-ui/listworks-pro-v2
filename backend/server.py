@@ -3507,73 +3507,83 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
     if not stripe_session_id:
         raise HTTPException(400, "stripe_session_id required")
 
-    # Fetch from Stripe directly
+    step = "stripe_fetch"
     try:
         sess = await asyncio.to_thread(stripe_sdk.checkout.Session.retrieve, stripe_session_id)
-    except Exception as e:
-        raise HTTPException(502, f"Stripe fetch failed: {e}")
 
-    if sess.get("payment_status") != "paid":
-        raise HTTPException(400, f"Session not paid — status: {sess.get('payment_status')}")
+        step = "check_paid"
+        payment_status = sess.get("payment_status") if hasattr(sess, "get") else getattr(sess, "payment_status", None)
+        if payment_status != "paid":
+            raise HTTPException(400, f"Session not paid — status: {payment_status}")
 
-    meta = sess.get("metadata") or {}
-    lw_session_id = meta.get("lw_session_id", "")
-    package_id = meta.get("package_id", "")
-    package_kind = meta.get("package_kind", "")
-    pkg = PACKAGES.get(package_id, {})
+        step = "extract_meta"
+        raw_meta = sess.get("metadata") if hasattr(sess, "get") else getattr(sess, "metadata", {})
+        meta = dict(raw_meta) if raw_meta else {}
+        lw_session_id = meta.get("lw_session_id", "")
+        package_id = meta.get("package_id", "")
+        package_kind = meta.get("package_kind", "")
+        pkg = PACKAGES.get(package_id, {})
 
-    # Upsert transaction as paid
-    await db.payment_transactions.update_one(
-        {"stripe_session_id": stripe_session_id},
-        {"$set": {
-            "status": "complete",
-            "payment_status": "paid",
-            "lw_session_id": lw_session_id,
-            "package_id": package_id,
-            "package_kind": package_kind,
-            "amount": pkg.get("amount", 0),
-            "paid_at": datetime.now(timezone.utc).isoformat(),
-        }},
-        upsert=True,
-    )
-
-    granted = {}
-
-    # Grant entitlement (pro/lifetime/guide)
-    if lw_session_id and package_kind in ("pro", "lifetime", "guide"):
-        ent = {
-            "lw_session_id": lw_session_id,
-            "kind": package_kind,
-            "package_id": package_id,
-            "stripe_session_id": stripe_session_id,
-            "granted_at": datetime.now(timezone.utc).isoformat(),
-        }
-        await db.entitlements.update_one(
-            {"lw_session_id": lw_session_id, "kind": package_kind},
-            {"$set": ent},
+        step = "txn_upsert"
+        await db.payment_transactions.update_one(
+            {"stripe_session_id": stripe_session_id},
+            {"$set": {
+                "status": "complete",
+                "payment_status": "paid",
+                "lw_session_id": lw_session_id,
+                "package_id": package_id,
+                "package_kind": package_kind,
+                "amount": pkg.get("amount", 0),
+                "paid_at": datetime.now(timezone.utc).isoformat(),
+            }},
             upsert=True,
         )
-        granted["entitlement"] = package_kind
 
-    # Grant credits
-    if lw_session_id and pkg.get("kind") == "credits":
-        credit_amount = int(pkg.get("credits", 0))
-        if credit_amount > 0:
-            await db.credits.update_one(
-                {"lw_session_id": lw_session_id},
-                {"$inc": {"balance": credit_amount},
-                 "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}},
+        granted = {}
+
+        step = "grant_entitlement"
+        if lw_session_id and package_kind in ("pro", "lifetime", "guide"):
+            ent = {
+                "lw_session_id": lw_session_id,
+                "kind": package_kind,
+                "package_id": package_id,
+                "stripe_session_id": stripe_session_id,
+                "granted_at": datetime.now(timezone.utc).isoformat(),
+            }
+            await db.entitlements.update_one(
+                {"lw_session_id": lw_session_id, "kind": package_kind},
+                {"$set": ent},
                 upsert=True,
             )
-            granted["credits"] = credit_amount
+            granted["entitlement"] = package_kind
 
-    return {
-        "ok": True,
-        "stripe_session_id": stripe_session_id,
-        "lw_session_id": lw_session_id,
-        "package_id": package_id,
-        "granted": granted,
-    }
+        step = "grant_credits"
+        if lw_session_id and pkg.get("kind") == "credits":
+            credit_amount = int(pkg.get("credits", 0))
+            if credit_amount > 0:
+                await db.credits.update_one(
+                    {"lw_session_id": lw_session_id},
+                    {"$inc": {"balance": credit_amount},
+                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}},
+                    upsert=True,
+                )
+                granted["credits"] = credit_amount
+
+        return {
+            "ok": True,
+            "stripe_session_id": stripe_session_id,
+            "lw_session_id": lw_session_id,
+            "package_id": package_id,
+            "meta": meta,
+            "pkg": pkg,
+            "granted": granted,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        raise HTTPException(500, f"Failed at step '{step}': {type(e).__name__}: {e}\n{traceback.format_exc()}")
 
 
 @api_router.post("/admin/reset-trial")
