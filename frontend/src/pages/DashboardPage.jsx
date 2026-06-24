@@ -138,6 +138,8 @@ export default function DashboardPage() {
       if (d.url) window.location.href = d.url;
     } catch {}
   }
+
+  async function saveBranding(e) {
     e.preventDefault();
     const fd = new FormData(e.target);
     const body = Object.fromEntries(fd.entries());
