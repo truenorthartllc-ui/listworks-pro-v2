@@ -4,8 +4,8 @@ import axios from "axios";
 import { CheckCircle2, Loader2, Download, ArrowLeft } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const POLL_INTERVAL_MS = 2000;
-const MAX_POLLS = 6;
+const POLL_INTERVAL_MS = 3000;
+const MAX_POLLS = 15;
 
 export default function PaymentSuccess() {
   const [params] = useSearchParams();
