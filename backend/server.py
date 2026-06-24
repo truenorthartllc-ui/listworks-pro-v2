@@ -3489,11 +3489,10 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
 
         step = "extract_meta"
         raw_meta = getattr(sess, "metadata", None)
-        # StripeObject doesn't have .get() — iterate keys like a dict
-        meta = {k: raw_meta[k] for k in raw_meta} if raw_meta else {}
-        lw_session_id = meta.get("lw_session_id", "")
-        package_id = meta.get("package_id", "")
-        package_kind = meta.get("package_kind", "")
+        # StripeObject uses __getattr__ for key lookup; getattr with default safely handles missing keys
+        lw_session_id = str(getattr(raw_meta, "lw_session_id", "") or "")
+        package_id = str(getattr(raw_meta, "package_id", "") or "")
+        package_kind = str(getattr(raw_meta, "package_kind", "") or "")
         pkg = PACKAGES.get(package_id, {})
 
         step = "txn_upsert"
