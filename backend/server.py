@@ -735,10 +735,15 @@ FREE_TRIALS_PER_SESSION = 3
 IP_TRIAL_CAP = 15
 
 
+UNLIMITED_SESSIONS = set(filter(None, os.environ.get("UNLIMITED_SESSIONS", "").split(",")))
+
+
 async def _check_free_trial(session_id: str, ip: str = "") -> tuple[bool, int]:
     """Returns (allowed, remaining). Persisted in MongoDB."""
     if not session_id:
         return False, 0
+    if session_id in UNLIMITED_SESSIONS:
+        return True, 999
     doc = await db.free_trials.find_one({"session_id": session_id}, {"used": 1})
     used = doc.get("used", 0) if doc else 0
     if used >= FREE_TRIALS_PER_SESSION:
@@ -3461,6 +3466,12 @@ async def admin_stats(x_admin_secret: str = Header(default="")):
         {"session_id": 1, "created_at": 1, "_id": 0}
     ).sort("created_at", -1).limit(5).to_list(5)
 
+    total_visits = await db.visits.count_documents({})
+    visits_today = await db.visits.count_documents({
+        "ts": {"$gte": datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)}
+    })
+    unique_visitors = len(await db.visits.distinct("session_id"))
+
     return {
         "all_time": {
             "total_rewrites": total_rewrites,
@@ -3468,6 +3479,11 @@ async def admin_stats(x_admin_secret: str = Header(default="")):
             "pro_or_lifetime_users": pro_users,
             "credit_holders": credit_holders,
             "total_purchases": total_purchases,
+            "page_views": total_visits,
+            "unique_visitors": unique_visitors,
+        },
+        "today": {
+            "page_views": visits_today,
         },
         "since_free_trial_fix_jun9": {
             "rewrites": rewrites_since_fix,
@@ -3476,6 +3492,36 @@ async def admin_stats(x_admin_secret: str = Header(default="")):
         },
         "recent_sessions": recent,
     }
+
+
+@api_router.post("/admin/reset-trial")
+async def reset_trial(request: Request, x_admin_secret: str = Header(default="")):
+    if not ADMIN_SECRET or x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(403, "Forbidden")
+    body = await request.json()
+    session_id = body.get("session_id", "").strip()
+    if not session_id:
+        raise HTTPException(400, "session_id required")
+    await db.free_trials.delete_one({"session_id": session_id})
+    return {"ok": True, "session_id": session_id, "message": "Trial reset — 3 rewrites restored"}
+
+
+@api_router.post("/visit")
+async def track_visit(request: Request):
+    """Called by the frontend on every page load. Lightweight visit counter."""
+    session_id = request.headers.get("x-session-id", "")
+    referrer = request.headers.get("referer", "")
+    ua = request.headers.get("user-agent", "")
+    # Skip bots
+    if any(b in ua.lower() for b in ["bot", "crawler", "spider", "lighthouse", "curl", "python"]):
+        return {"ok": True}
+    await db.visits.insert_one({
+        "session_id": session_id,
+        "referrer": referrer,
+        "ua": ua[:120],
+        "ts": datetime.now(timezone.utc),
+    })
+    return {"ok": True}
 
 
 app.add_middleware(
