@@ -3545,7 +3545,6 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
             "stripe_session_id": stripe_session_id,
             "lw_session_id": lw_session_id,
             "package_id": package_id,
-            "meta": meta,
             "pkg": pkg,
             "granted": granted,
         }
