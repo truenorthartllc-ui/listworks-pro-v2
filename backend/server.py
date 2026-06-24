@@ -3517,12 +3517,13 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
             raise HTTPException(400, f"Session not paid — status: {payment_status}")
 
         step = "extract_meta"
-        raw_meta = sess.get("metadata") if hasattr(sess, "get") else getattr(sess, "metadata", {})
-        meta = dict(raw_meta) if raw_meta else {}
-        lw_session_id = meta.get("lw_session_id", "")
-        package_id = meta.get("package_id", "")
-        package_kind = meta.get("package_kind", "")
+        raw_meta = getattr(sess, "metadata", None) or {}
+        # Stripe StripeObject doesn't support dict() — access via .get() directly
+        lw_session_id = raw_meta.get("lw_session_id", "") if hasattr(raw_meta, "get") else raw_meta.get("lw_session_id", "")
+        package_id = raw_meta.get("package_id", "") if hasattr(raw_meta, "get") else ""
+        package_kind = raw_meta.get("package_kind", "") if hasattr(raw_meta, "get") else ""
         pkg = PACKAGES.get(package_id, {})
+        meta = {"lw_session_id": lw_session_id, "package_id": package_id, "package_kind": package_kind}
 
         step = "txn_upsert"
         await db.payment_transactions.update_one(
