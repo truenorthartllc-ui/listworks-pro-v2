@@ -610,11 +610,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         system += f"\n\n⚠️ MLS CHARACTER LIMIT: The MLS field MUST NOT exceed {req.mls_char_limit} characters (including spaces). Count carefully. If your draft exceeds {req.mls_char_limit} chars, shorten it. This is a hard requirement."
     if req.language and req.language.lower() not in ("english", "en"):
         system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, and email — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
-    try:
-        raw = await call_g0dm0d3(system, user_text, tier="smart")
-    except Exception as g_err:
-        logging.warning(f"G0DM0D3 unavailable ({g_err}), falling back to OpenRouter")
-        raw = await call_openrouter(system, user_text)
+    raw = await call_openrouter(system, user_text, model="anthropic/claude-opus-4-8")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -1800,7 +1796,7 @@ async def waitlist_join(req: WaitlistJoin):
 # ============== ROUTES ==============
 @api_router.get("/")
 async def root():
-    return {"app": "ListWorks PRO", "status": "live", "engine": "Claude Sonnet 4.5"}
+    return {"app": "ListWorks PRO", "status": "live", "engine": "Claude Opus 4.8"}
 
 
 @api_router.post("/rewrite", response_model=RewriteOutput)
