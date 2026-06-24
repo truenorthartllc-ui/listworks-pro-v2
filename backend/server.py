@@ -2896,8 +2896,11 @@ async def checkout_status(stripe_session_id: str, request: Request):
                 upsert=True,
             )
 
-        # Fire drip emails (idempotent — only first time payment_status flips to paid)
-        await _trigger_drip_for_txn(stripe_session_id, txn)
+        # Fire drip emails — non-fatal: a failed email must never block credit grant
+        try:
+            await _trigger_drip_for_txn(stripe_session_id, txn)
+        except Exception as drip_err:
+            logger.exception("Drip/credit grant failed for %s: %s", stripe_session_id, drip_err)
 
     return {
         "status": cs_status,
@@ -3491,6 +3494,85 @@ async def admin_stats(x_admin_secret: str = Header(default="")):
             "purchases": purchases_since_fix,
         },
         "recent_sessions": recent,
+    }
+
+
+@api_router.post("/admin/grant-paid-session")
+async def admin_grant_paid_session(request: Request, x_admin_secret: str = Header(default="")):
+    """Force-process a paid Stripe session — grants credits/entitlements that failed to land."""
+    if not ADMIN_SECRET or x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(403, "Forbidden")
+    body = await request.json()
+    stripe_session_id = body.get("stripe_session_id", "").strip()
+    if not stripe_session_id:
+        raise HTTPException(400, "stripe_session_id required")
+
+    # Fetch from Stripe directly
+    try:
+        sess = await asyncio.to_thread(stripe_sdk.checkout.Session.retrieve, stripe_session_id)
+    except Exception as e:
+        raise HTTPException(502, f"Stripe fetch failed: {e}")
+
+    if sess.get("payment_status") != "paid":
+        raise HTTPException(400, f"Session not paid — status: {sess.get('payment_status')}")
+
+    meta = sess.get("metadata") or {}
+    lw_session_id = meta.get("lw_session_id", "")
+    package_id = meta.get("package_id", "")
+    package_kind = meta.get("package_kind", "")
+    pkg = PACKAGES.get(package_id, {})
+
+    # Upsert transaction as paid
+    await db.payment_transactions.update_one(
+        {"stripe_session_id": stripe_session_id},
+        {"$set": {
+            "status": "complete",
+            "payment_status": "paid",
+            "lw_session_id": lw_session_id,
+            "package_id": package_id,
+            "package_kind": package_kind,
+            "amount": pkg.get("amount", 0),
+            "paid_at": datetime.now(timezone.utc).isoformat(),
+        }},
+        upsert=True,
+    )
+
+    granted = {}
+
+    # Grant entitlement (pro/lifetime/guide)
+    if lw_session_id and package_kind in ("pro", "lifetime", "guide"):
+        ent = {
+            "lw_session_id": lw_session_id,
+            "kind": package_kind,
+            "package_id": package_id,
+            "stripe_session_id": stripe_session_id,
+            "granted_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.entitlements.update_one(
+            {"lw_session_id": lw_session_id, "kind": package_kind},
+            {"$set": ent},
+            upsert=True,
+        )
+        granted["entitlement"] = package_kind
+
+    # Grant credits
+    if lw_session_id and pkg.get("kind") == "credits":
+        credit_amount = int(pkg.get("credits", 0))
+        if credit_amount > 0:
+            await db.credits.update_one(
+                {"lw_session_id": lw_session_id},
+                {"$inc": {"balance": credit_amount},
+                 "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}},
+                upsert=True,
+            )
+            granted["credits"] = credit_amount
+
+    return {
+        "ok": True,
+        "stripe_session_id": stripe_session_id,
+        "lw_session_id": lw_session_id,
+        "package_id": package_id,
+        "granted": granted,
     }
 
 
