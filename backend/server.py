@@ -836,7 +836,7 @@ async def agent_signup(req: AgentSignupIn):
         raise
     except Exception as e:
         logger.error(f"Signup failed: {traceback.format_exc()}")
-        raise HTTPException(500, f"Signup error: {str(e)}")
+        raise HTTPException(500, "Account creation failed. Please try again.")
 
 @api_router.post("/auth/login")
 async def agent_login(req: AgentLoginIn):
@@ -867,7 +867,7 @@ async def get_me(authorization: str = Header(None)):
         raise
     except Exception as e:
         logger.error(f"Auth/me failed: {traceback.format_exc()}")
-        raise HTTPException(500, f"Error: {str(e)}")
+        raise HTTPException(500, "Authentication error. Please try again.")
 
 @api_router.put("/auth/branding")
 async def update_branding(req: BrandingIn, authorization: str = Header(None)):
@@ -1490,9 +1490,13 @@ class AcknowledgeIn(BaseModel):
 
 
 @api_router.post("/analyze/fair-housing")
-async def analyze_fair_housing(req: FairHousingIn):
+async def analyze_fair_housing(req: FairHousingIn, request: Request):
     if not req.text or len(req.text.strip()) < 20:
         raise HTTPException(400, "Text too short")
+    if len(req.text) > 8000:
+        raise HTTPException(400, "Text too long (max 8000 characters)")
+    if await _is_ip_rate_limited(request, "fair-housing", limit=20, window=60):
+        raise HTTPException(429, "Too many requests. Try again shortly.")
     violations = check_fair_housing_v3(req.text)
     risk = overall_risk(violations)
     grade = compliance_grade(violations)
@@ -2760,6 +2764,8 @@ class CheckoutCreateRequest(BaseModel):
 async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
+    if await _is_ip_rate_limited(request, "checkout", limit=10, window=60):
+        raise HTTPException(429, "Too many checkout attempts. Try again shortly.")
     if req.package_id not in PACKAGES:
         raise HTTPException(400, "Invalid package")
     pkg = PACKAGES[req.package_id]
@@ -2779,9 +2785,6 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
 
     # Subscription mode for monthly/annual Pro; one-time for everything else
     is_subscription = req.package_id in ("pro_month", "pro_annual")
-
-    # Use raw Stripe SDK for everything (skip emergent wrapper)
-    is_emergent_test = False
 
     line_item = {
         "price_data": {
@@ -2838,33 +2841,16 @@ async def checkout_status(stripe_session_id: str, request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
 
-    is_emergent_test = False  # skip emergent wrapper
-    if is_emergent_test:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout
-        host_url = str(request.base_url).rstrip("/")
-        webhook_url = f"{host_url}/api/webhook/stripe"
-        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        try:
-            cs = await sc.get_checkout_status(stripe_session_id)
-        except Exception as e:
-            logger.warning("Stripe status (emergent) failed: %s", e)
-            raise HTTPException(404, "Session not found")
-        cs_status = cs.status
-        cs_payment_status = cs.payment_status
-        cs_amount_total = cs.amount_total
-        cs_currency = cs.currency
-        cs_metadata = cs.metadata
-    else:
-        try:
-            sess = await asyncio.to_thread(stripe_sdk.checkout.Session.retrieve, stripe_session_id)
-        except Exception as e:
-            logger.warning("Stripe checkout status failed for %s: %s", stripe_session_id, e)
-            raise HTTPException(404, "Session not found or unavailable")
-        cs_status = sess.get("status")
-        cs_payment_status = sess.get("payment_status")
-        cs_amount_total = sess.get("amount_total")
-        cs_currency = sess.get("currency")
-        cs_metadata = sess.get("metadata") or {}
+    try:
+        sess = await asyncio.to_thread(stripe_sdk.checkout.Session.retrieve, stripe_session_id)
+    except Exception as e:
+        logger.warning("Stripe checkout status failed for %s: %s", stripe_session_id, e)
+        raise HTTPException(404, "Session not found or unavailable")
+    cs_status = sess.get("status")
+    cs_payment_status = sess.get("payment_status")
+    cs_amount_total = sess.get("amount_total")
+    cs_currency = sess.get("currency")
+    cs_metadata = sess.get("metadata") or {}
 
     txn = await db.payment_transactions.find_one(
         {"stripe_session_id": stripe_session_id}, {"_id": 0}
@@ -2919,34 +2905,19 @@ async def stripe_webhook(request: Request):
     body = await request.body()
     sig = request.headers.get("Stripe-Signature", "")
 
-    is_emergent_test = False  # skip emergent wrapper
-    if is_emergent_test:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout
-        host_url = str(request.base_url)
-        webhook_url = f"{host_url}api/webhook/stripe".replace("//api", "/api")
-        sc = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        try:
-            evt = await sc.handle_webhook(body, sig)
-        except Exception as e:
-            logger.exception("Stripe webhook (emergent) failed: %s", e)
-            raise HTTPException(400, "Invalid webhook")
-        session_id = evt.session_id if evt else None
-        payment_status = evt.payment_status if evt else None
-        event_type = evt.event_type if evt else None
-    else:
-        webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
-        if not webhook_secret:
-            logger.error("STRIPE_WEBHOOK_SECRET not configured — refusing unsigned webhook")
-            raise HTTPException(500, "Webhook secret not configured")
-        try:
-            evt = stripe_sdk.Webhook.construct_event(body, sig, webhook_secret)
-        except Exception as e:
-            logger.exception("Stripe webhook parse failed: %s", e)
-            raise HTTPException(400, "Invalid webhook")
-        event_type = evt.get("type") if isinstance(evt, dict) else getattr(evt, "type", None)
-        data_object = (evt.get("data") if isinstance(evt, dict) else evt.get("data", {})).get("object", {})
-        session_id = data_object.get("id") if event_type == "checkout.session.completed" else None
-        payment_status = data_object.get("payment_status")
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    if not webhook_secret:
+        logger.error("STRIPE_WEBHOOK_SECRET not configured — refusing unsigned webhook")
+        raise HTTPException(500, "Webhook secret not configured")
+    try:
+        evt = stripe_sdk.Webhook.construct_event(body, sig, webhook_secret)
+    except Exception as e:
+        logger.exception("Stripe webhook parse failed: %s", e)
+        raise HTTPException(400, "Invalid webhook")
+    event_type = evt.get("type") if isinstance(evt, dict) else getattr(evt, "type", None)
+    data_object = (evt.get("data") if isinstance(evt, dict) else evt.get("data", {})).get("object", {})
+    session_id = data_object.get("id") if event_type == "checkout.session.completed" else None
+    payment_status = data_object.get("payment_status")
 
     if session_id:
         await db.payment_transactions.update_one(
@@ -3517,13 +3488,13 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
             raise HTTPException(400, f"Session not paid — status: {payment_status}")
 
         step = "extract_meta"
-        raw_meta = getattr(sess, "metadata", None) or {}
-        # Stripe StripeObject doesn't support dict() — access via .get() directly
-        lw_session_id = raw_meta.get("lw_session_id", "") if hasattr(raw_meta, "get") else raw_meta.get("lw_session_id", "")
-        package_id = raw_meta.get("package_id", "") if hasattr(raw_meta, "get") else ""
-        package_kind = raw_meta.get("package_kind", "") if hasattr(raw_meta, "get") else ""
+        raw_meta = getattr(sess, "metadata", None)
+        # StripeObject doesn't have .get() — iterate keys like a dict
+        meta = {k: raw_meta[k] for k in raw_meta} if raw_meta else {}
+        lw_session_id = meta.get("lw_session_id", "")
+        package_id = meta.get("package_id", "")
+        package_kind = meta.get("package_kind", "")
         pkg = PACKAGES.get(package_id, {})
-        meta = {"lw_session_id": lw_session_id, "package_id": package_id, "package_kind": package_kind}
 
         step = "txn_upsert"
         await db.payment_transactions.update_one(
@@ -3583,8 +3554,9 @@ async def admin_grant_paid_session(request: Request, x_admin_secret: str = Heade
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-        raise HTTPException(500, f"Failed at step '{step}': {type(e).__name__}: {e}\n{traceback.format_exc()}")
+        import traceback as _tb
+        logger.exception("grant-paid-session failed at step '%s': %s", step, e)
+        raise HTTPException(500, f"Failed at step '{step}': {type(e).__name__}: {e}")
 
 
 @api_router.post("/admin/reset-trial")
