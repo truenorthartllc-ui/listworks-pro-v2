@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LandingPage from "@/pages/LandingPage";
-import LandingPageV3 from "@/pages/LandingPageV3";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import SharedListing from "@/pages/SharedListing";
 import AffiliateDashboard from "@/pages/AffiliateDashboard";
@@ -43,8 +42,7 @@ function App() {
       <Toaster position="bottom-right" theme="light" />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPageV3 />} />
-          <Route path="/old" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/share/:id" element={<SharedListing />} />
           <Route path="/p/:id" element={<SharedListing />} />
