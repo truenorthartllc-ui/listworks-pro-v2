@@ -159,6 +159,7 @@ class RewriteOutput(BaseModel):
     raw_listing: str
     virtual_tour_url: Optional[str] = None
     created_at: str
+    output_compliance: Optional[Dict[str, Any]] = None  # post-gen scan of AI output
 
 
 class BatchRewriteRequest(BaseModel):
@@ -1844,6 +1845,26 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
     listing_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
 
+    # Scan AI output for Fair Housing violations — system prompt forbids them but verify
+    _scan_text = " ".join(filter(None, [
+        outputs.get("mls", ""),
+        outputs.get("instagram", ""),
+        outputs.get("facebook", ""),
+        outputs.get("email", ""),
+    ]))
+    _output_violations = check_fair_housing_v3(_scan_text)
+    output_compliance = {
+        "clean": len(_output_violations) == 0,
+        "grade": compliance_grade(_output_violations),
+        "risk": overall_risk(_output_violations),
+        "violations": _output_violations,
+    }
+    if not output_compliance["clean"]:
+        logging.warning(
+            f"[compliance] Output violations detected for session {req.session_id}: "
+            f"{[v['rule'] for v in _output_violations]}"
+        )
+
     # Record free trial usage (runs after generation to avoid race)
     await _record_free_trial(req.session_id or "", client_ip)
     _, updated_remaining = await _check_free_trial(req.session_id or "", client_ip)
@@ -1861,6 +1882,7 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
         "sqft": req.sqft,
         "virtual_tour_url": req.virtual_tour_url,
         "created_at": created_at,
+        "output_compliance": output_compliance,
         **outputs,
     }
     await db.listings.insert_one({k: v for k, v in doc.items() if v is not None})
@@ -1872,6 +1894,7 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
             raw_listing=req.raw_listing,
             virtual_tour_url=req.virtual_tour_url,
             created_at=created_at,
+            output_compliance=output_compliance,
             **outputs,
         ).model_dump(),
         "trial_remaining": updated_remaining,
