@@ -2914,12 +2914,36 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         logger.exception("Stripe webhook parse failed: %s", e)
         raise HTTPException(400, "Invalid webhook")
-    event_type = evt.get("type") if isinstance(evt, dict) else getattr(evt, "type", None)
-    data_object = (evt.get("data") if isinstance(evt, dict) else evt.get("data", {})).get("object", {})
-    session_id = data_object.get("id") if event_type == "checkout.session.completed" else None
-    payment_status = data_object.get("payment_status")
 
-    if session_id:
+    # Safe access for both dict-style and typed Stripe SDK objects
+    if isinstance(evt, dict):
+        event_type = evt.get("type")
+        raw_data = evt.get("data", {})
+        data_object = raw_data.get("object", {}) if isinstance(raw_data, dict) else getattr(raw_data, "object", {}) or {}
+    else:
+        event_type = getattr(evt, "type", None)
+        raw_data = getattr(evt, "data", None)
+        if raw_data is None:
+            data_object = {}
+        elif isinstance(raw_data, dict):
+            data_object = raw_data.get("object", {})
+        else:
+            data_object = getattr(raw_data, "object", None) or {}
+
+    logger.info("Stripe webhook received: %s", event_type)
+
+    # Only process checkout completion — acknowledge everything else immediately
+    if event_type != "checkout.session.completed":
+        return {"received": True}
+
+    session_id = data_object.get("id") if isinstance(data_object, dict) else getattr(data_object, "id", None)
+    payment_status = data_object.get("payment_status") if isinstance(data_object, dict) else getattr(data_object, "payment_status", None)
+
+    if not session_id:
+        logger.warning("checkout.session.completed missing session id")
+        return {"received": True}
+
+    try:
         await db.payment_transactions.update_one(
             {"stripe_session_id": session_id},
             {"$set": {
@@ -2944,27 +2968,30 @@ async def stripe_webhook(request: Request):
                     }},
                     upsert=True,
                 )
-            # Auto-upgrade agent to Pro on successful payment (match by email)
-            if payment_status == "paid":
-                try:
-                    sess = await asyncio.to_thread(
-                        stripe_sdk.checkout.Session.retrieve,
-                        session_id,
-                        expand=["customer_details"],
+            # Auto-upgrade agent to Pro on successful payment
+            try:
+                sess = await asyncio.to_thread(
+                    stripe_sdk.checkout.Session.retrieve,
+                    session_id,
+                    expand=["customer_details"],
+                )
+                cd = getattr(sess, "customer_details", None) or (sess.get("customer_details") if isinstance(sess, dict) else None)
+                customer_email = (getattr(cd, "email", None) or (cd.get("email") if isinstance(cd, dict) else None) or
+                                  getattr(sess, "customer_email", None) or (sess.get("customer_email") if isinstance(sess, dict) else None) or "")
+                if customer_email:
+                    result = await db.agents.update_one(
+                        {"email": customer_email.lower()},
+                        {"$set": {"tier": "pro"}}
                     )
-                    customer_email = (sess.get("customer_details") or {}).get("email") or sess.get("customer_email") or ""
-                    if customer_email:
-                        agent_result = await db.agents.update_one(
-                            {"email": customer_email.lower()},
-                            {"$set": {"tier": "pro"}}
-                        )
-                        if agent_result.modified_count:
-                            logger.info(f"Stripe webhook: upgraded agent {customer_email} to Pro")
-                except Exception as e:
-                    logger.warning(f"Stripe webhook: could not upgrade agent: {e}")
-            # Fire drip emails — idempotent via drip_sent flag
+                    if result.modified_count:
+                        logger.info("Stripe webhook: upgraded agent %s to Pro", customer_email)
+            except Exception as e:
+                logger.warning("Stripe webhook: could not upgrade agent: %s", e)
             if txn:
                 await _trigger_drip_for_txn(session_id, txn)
+    except Exception as e:
+        logger.exception("Stripe webhook processing error for %s: %s", session_id, e)
+        # Still return 200 so Stripe doesn't retry — log for manual review
     return {"received": True}
 
 
