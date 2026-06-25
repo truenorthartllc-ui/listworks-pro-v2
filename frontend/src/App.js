@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LandingPage from "@/pages/LandingPage";
+import LandingPageV4 from "@/pages/LandingPageV4";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import SharedListing from "@/pages/SharedListing";
 import AffiliateDashboard from "@/pages/AffiliateDashboard";
@@ -28,6 +29,7 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 
 function App() {
   useEffect(() => {
+    window.history.scrollRestoration = "manual";
     if (!localStorage.getItem("lw_session_id")) {
       localStorage.setItem(
         "lw_session_id",
@@ -42,7 +44,8 @@ function App() {
       <Toaster position="bottom-right" theme="light" />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<LandingPageV4 />} />
+          <Route path="/old" element={<LandingPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/share/:id" element={<SharedListing />} />
           <Route path="/p/:id" element={<SharedListing />} />

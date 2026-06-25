@@ -108,50 +108,26 @@ export default function Pricing() {
 
   return (
     <section id="pricing" data-testid="pricing-section" className="border-b border-ink/15">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
-        <div className="grid grid-cols-12 gap-6 mb-12">
-          <div className="col-span-12 md:col-span-3">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Pricing</span>
-          </div>
-          <div className="col-span-12 md:col-span-9">
-            <h2 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05]">
-              <span className="font-light">Start free.</span>{" "}
-              <span className="italic">Scale to unlimited.</span>
-            </h2>
-          </div>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
+        <div className="flex items-baseline gap-6 mb-6">
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Pricing</span>
+          <div className="flex-1 h-px bg-ink/10" />
+          <span className="font-display italic text-lg text-ink shrink-0">Start free. Scale to unlimited.</span>
         </div>
 
-        {/* Flash sale promo banner */}
-        <div className="mb-8 bg-vermillion text-oat px-6 py-4 flex flex-wrap items-center gap-3 justify-between">
-          <div className="flex items-center gap-3">
-            <Flame className="w-4 h-4 flex-shrink-0" />
-            <span className="font-heading text-sm uppercase tracking-[0.15em]">Flash Sale — 29% off your first month.</span>
-            <span className="font-mono text-sm">Use code <strong>COMEBACK29</strong> at checkout.</span>
+        {/* Flash sale + flat rate — single compact row */}
+        <div className="mb-5 flex flex-wrap items-center gap-px">
+          <div className="bg-vermillion text-oat px-4 py-2.5 flex items-center gap-2 flex-1">
+            <Flame className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">COMEBACK29 — 29% off · Ends Jun 25 — <PromoCountdown /></span>
           </div>
-          <div className="font-mono text-xs uppercase tracking-wider opacity-80 flex items-center gap-2">
-            Ends Jun 25 — <PromoCountdown />
+          <div className="bg-oat border border-ink/15 px-4 py-2.5 flex flex-wrap items-center gap-4">
+            {["No credit limits","Flat rate","Unlimited rewrites"].map(label => (
+              <span key={label} className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/70">
+                <Check className="w-3 h-3 text-vermillion" strokeWidth={2.5} />{label}
+              </span>
+            ))}
           </div>
-        </div>
-
-        {/* Flat rate callout */}
-        <div className="mb-6 border border-ink/20 px-6 py-4 flex flex-wrap items-center gap-4 justify-between bg-oat">
-          <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.18em] uppercase">
-            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />No credit limits</span>
-            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />Flat rate — one price, always</span>
-            <span className="flex items-center gap-2 text-ink"><Check className="w-3.5 h-3.5 text-vermillion" strokeWidth={2.5} />Unlimited rewrites — every listing</span>
-          </div>
-          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">No surprises. No overage fees. Ever.</span>
-        </div>
-
-        {/* Social proof bar */}
-        <div className="mb-10 flex flex-wrap items-center gap-6 font-mono text-[11px] tracking-[0.15em] uppercase text-ink/50">
-          <span>★ 4.9 / 5 agent rating</span>
-          <span>·</span>
-          <span>850+ agents trust us</span>
-          <span>·</span>
-          <span>24,000+ listings rewritten</span>
-          <span>·</span>
-          <span className="text-vermillion">Join 850+ agents using it weekly</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
@@ -159,7 +135,7 @@ export default function Pricing() {
             <div
               key={t.name}
               data-testid={`pricing-tier-${t.name.toLowerCase()}`}
-              className={`p-8 md:p-10 ${t.highlight ? "bg-coal text-oat" : "bg-oat text-ink"} flex flex-col`}
+              className={`p-6 ${t.highlight ? "bg-coal text-oat" : "bg-oat text-ink"} flex flex-col`}
             >
               <div className="flex items-center justify-between">
                 <span className={`font-mono text-[11px] tracking-[0.2em] uppercase ${t.highlight ? "text-vermillion" : "text-ink/50"}`}>
@@ -177,18 +153,18 @@ export default function Pricing() {
                   </div>
                 )}
               </div>
-              <h3 className="mt-5 font-display text-4xl md:text-5xl tracking-tight">{t.name}</h3>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-display text-5xl md:text-6xl">{t.price}</span>
+              <h3 className="mt-4 font-display text-3xl tracking-tight">{t.name}</h3>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="font-display text-4xl md:text-5xl">{t.price}</span>
                 <span className={`font-mono text-xs uppercase tracking-[0.15em] ${t.highlight ? "text-oat/60" : "text-ink/50"}`}>{t.period}</span>
               </div>
-              <p className={`mt-4 font-body ${t.highlight ? "text-oat/80" : "text-ink/70"}`}>{t.blurb}</p>
+              <p className={`mt-3 font-body text-sm ${t.highlight ? "text-oat/80" : "text-ink/70"}`}>{t.blurb}</p>
 
-              <ul className="mt-7 space-y-3 flex-1">
+              <ul className="mt-5 space-y-2 flex-1">
                 {t.features.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <Check className={`w-4 h-4 mt-1 shrink-0 ${t.highlight ? "text-vermillion" : "text-ink"}`} strokeWidth={2} />
-                    <span className={`${t.highlight ? "text-oat/85" : "text-ink/85"}`}>{f}</span>
+                    <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${t.highlight ? "text-vermillion" : "text-ink"}`} strokeWidth={2} />
+                    <span className={`text-sm ${t.highlight ? "text-oat/85" : "text-ink/85"}`}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -196,7 +172,7 @@ export default function Pricing() {
               <button
                 onClick={() => onCta(t.action)}
                 data-testid={`pricing-cta-${t.name.toLowerCase()}`}
-                className={`mt-9 inline-flex items-center justify-center px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition-all hover:-translate-y-1 ${
+                className={`mt-6 inline-flex items-center justify-center px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] transition-all hover:-translate-y-0.5 ${
                   t.highlight ? "bg-vermillion text-oat hover:bg-[#ff2a0e]" : "btn-ghost-ink"
                 }`}
               >
@@ -216,18 +192,12 @@ export default function Pricing() {
         </p>
 
         {/* Pay-as-you-go credit packs */}
-        <div className="mt-20 md:mt-24">
-          <div className="flex items-baseline gap-3 mb-8">
-            <Zap className="w-5 h-5 text-vermillion" strokeWidth={2} />
+        <div className="mt-8 border-t border-ink/15 pt-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Zap className="w-4 h-4 text-vermillion" strokeWidth={2} />
             <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Credits — pay as you go</span>
+            <span className="font-mono text-[10px] text-ink/40 uppercase tracking-wider">· Each credit = one full rewrite · never expire</span>
           </div>
-          <h3 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.05] mb-3 max-w-2xl">
-            <span className="font-light">Just need a few?</span>{" "}
-            <span className="italic">Buy credits, no subscription.</span>
-          </h3>
-          <p className="font-body text-ink/65 max-w-xl mb-10">
-            Each credit = one full AI rewrite (MLS + IG + FB + 5 headlines + email). Credits never expire.
-          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15 max-w-3xl">
             {credits.map((c) => (

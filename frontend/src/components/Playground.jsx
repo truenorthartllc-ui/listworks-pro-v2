@@ -121,7 +121,7 @@ const SAMPLE = `Welcome home to single-level living where every morning starts w
 
 const FREE_TRIALS_PER_SESSION = 3;
 
-export default function Playground() {
+export default function Playground({ landing = false }) {
   const [raw, setRaw] = useState("");
   const [tone, setTone] = useState("Modern");
   const [meta, setMeta] = useState({ address: "", price: "", beds: "", baths: "", sqft: "" });
@@ -159,10 +159,15 @@ export default function Playground() {
   };
 
   useEffect(() => {
-    if (result && outputRef.current) {
+    if (result && outputRef.current && !landing) {
       outputRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [result]);
+  }, [result, landing]);
+
+  useEffect(() => {
+    if (landing) handleSample();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [landing]);
 
   useEffect(() => {
     const sid = localStorage.getItem("lw_session_id");
@@ -267,7 +272,7 @@ export default function Playground() {
 
   return (
     <section id="playground" data-testid="playground-section" className="border-b border-ink/15">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-3">
             <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ The Tool</span>
@@ -468,11 +473,11 @@ export default function Playground() {
 
             <button
               data-testid="generate-btn"
-              onClick={() => generate()}
+              onClick={() => landing ? setPaywallOpen(true) : generate()}
               disabled={loading}
               className="btn-vermillion w-full px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
+              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : landing ? (<><Sparkles className="w-4 h-4" />Start Free — Rewrite This Listing</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
             </button>
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
               Pro — 9/mo · cancel anytime
