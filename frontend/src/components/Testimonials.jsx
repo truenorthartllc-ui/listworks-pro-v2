@@ -4,24 +4,28 @@ const testimonials = [
     name: "Jessica Martinez",
     role: "RE/MAX · Los Angeles",
     sold: "12 homes in 90 days",
+    img: "https://images.unsplash.com/photo-1609371497456-3a55a205d5eb?w=100&h=100&fit=crop&crop=face",
   },
   {
     quote: "I was paying $200/mo for a copywriter. This does it better in 10 seconds.",
     name: "Priya Nair",
     role: "Compass · Chicago",
     sold: "ROI in week 1",
+    img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=face",
   },
   {
     quote: "The expired scripts alone paid for a year of Pro. 3 FSBO listings from 8 calls.",
     name: "Derek Okafor",
     role: "eXp Realty · Atlanta",
     sold: "3 FSBOs in 30 days",
+    img: "https://images.unsplash.com/photo-1531891437562-4301cf35b7e7?w=100&h=100&fit=crop&crop=face",
   },
   {
     quote: "IG captions stop the scroll. MLS sounds like me but 10x better. Only tool I pay for.",
     name: "Marcus Chen",
     role: "Keller Williams · Denver",
     sold: "9 homes since Jan",
+    img: "https://images.unsplash.com/photo-1624435707004-1e84d9ecbfcf?w=100&h=100&fit=crop&crop=face",
   },
 ];
 
