@@ -47,12 +47,21 @@ export default function Testimonials() {
               <blockquote className="font-display italic text-base leading-snug text-ink flex-1">
                 "{t.quote}"
               </blockquote>
-              <figcaption className="border-t border-ink/8 pt-3 flex items-center justify-between">
-                <div>
-                  <div className="font-heading text-[11px] uppercase tracking-[0.1em] text-ink">{t.name}</div>
-                  <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-ink/40 mt-0.5">{t.role}</div>
+              <figcaption className="border-t border-ink/8 pt-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-vermillion/10 flex items-center justify-center shrink-0 overflow-hidden">
+                  {t.image ? (
+                    <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-heading text-sm font-semibold text-vermillion">
+                      {t.name.split(" ").map(n => n[0]).join("")}
+                    </span>
+                  )}
                 </div>
-                <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-vermillion border border-vermillion/30 px-2 py-1 shrink-0 ml-3">{t.sold}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-heading text-[11px] uppercase tracking-[0.1em] text-ink truncate">{t.name}</div>
+                  <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-ink/40 mt-0.5 truncate">{t.role}</div>
+                </div>
+                <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-vermillion border border-vermillion/30 px-2 py-1 shrink-0">{t.sold}</span>
               </figcaption>
             </figure>
           ))}
