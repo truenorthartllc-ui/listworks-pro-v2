@@ -53,8 +53,8 @@ export default function Testimonials() {
               </blockquote>
               <figcaption className="border-t border-ink/8 pt-3 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-vermillion/10 flex items-center justify-center shrink-0 overflow-hidden">
-                  {t.image ? (
-                    <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+                  {t.img ? (
+                    <img src={t.img} alt={t.name} className="w-full h-full object-cover" />
                   ) : (
                     <span className="font-heading text-sm font-semibold text-vermillion">
                       {t.name.split(" ").map(n => n[0]).join("")}
