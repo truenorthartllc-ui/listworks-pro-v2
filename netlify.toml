@@ -9,3 +9,4 @@
 
 [[build.hooks.post_build]]
 command = "cp frontend/public/index-seo.html frontend/build/index.html"
+# netlify build trigger Wed Jun 24 22:10:08 MDT 2026
