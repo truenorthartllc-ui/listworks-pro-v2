@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Estate Listing Guide - ListWorks PRO</title>
+<style>
+  @page { margin: 18mm 14mm 18mm 14mm; size: A4; }
+  @page :first { margin-top: 0; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; font-size: 11pt; max-width: 800px; margin: 0 auto; padding: 20px; }
+  h1, h2, h3, h4 { font-family: 'Helvetica Neue', 'Arial', sans-serif; font-weight: 700; color: #0a0a0a; page-break-after: avoid; }
+  h1 { font-size: 28pt; letter-spacing: -0.5px; }
+  h2 { font-size: 18pt; margin-top: 36px; border-bottom: 3px solid #1a1a1a; padding-bottom: 6px; }
+  h3 { font-size: 14pt; margin-top: 28px; }
+  h4 { font-size: 12pt; margin-top: 20px; color: #333; }
+  p { margin: 0 0 12px 0; }
+  .page-break { page-break-before: always; }
+  blockquote { border-left: 4px solid #c0392b; margin: 16px 0; padding: 12px 20px; background: #fdf2f2; font-style: italic; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 14px 18px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #333; margin: 14px 0; line-height: 1.45; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+  .callout { background: #eef6ff; border-left: 4px solid #2980b9; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-warning { background: #fff8e6; border-left: 4px solid #f39c12; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-danger { background: #fdf2f2; border-left: 4px solid #c0392b; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-success { background: #f0faf0; border-left: 4px solid #27ae60; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .two-col { display: flex; gap: 20px; margin: 16px 0; }
+  .two-col > div { flex: 1; }
+  .col-bad { background: #fdf2f2; padding: 12px 16px; border-radius: 4px; border: 1px solid #e8c8c8; }
+  .col-good { background: #f0faf0; padding: 12px 16px; border-radius: 4px; border: 1px solid #b8d8b8; }
+  .col-bad h4 { color: #c0392b; margin-top: 0; }
+  .col-good h4 { color: #27ae60; margin-top: 0; }
+  .prompt-box { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 6px; margin: 14px 0; font-size: 9.5pt; line-height: 1.5; font-family: 'Courier New', monospace; }
+  .cover { text-align: center; padding-top: 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; margin-bottom: 10px; line-height: 1.15; }
+  .cover .subtitle { font-size: 16pt; color: #555; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; }
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom: none; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 6px 0; font-size: 11pt; border-bottom: 1px dotted #ccc; }
+  .toc .toc-h2 { font-weight: 700; padding-top: 12px; }
+  .framework-box { border: 2px solid #2980b9; border-radius: 8px; padding: 18px 20px; margin: 18px 0; background: #f8fbff; }
+  .framework-box h4 { margin-top: 0; color: #2980b9; }
+  .subhead { font-size: 13pt; font-family: 'Helvetica Neue', sans-serif; color: #555; margin-top: -8px; font-weight: 300; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9pt; color: #888; text-align: center; }
+  @media print { body { padding: 0; } .page-break { page-break-before: always; } }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+  th { background: #1a1a2e; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  .data-badge { display: inline-block; background: #1a1a2e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; }
+  .pullquote { font-size: 14pt; line-height: 1.5; color: #c0392b; font-style: italic; text-align: center; padding: 20px 40px; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; margin: 24px 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>The Real Estate<br>Listing Guide</h1>
+  <p class="subtitle">Write listings that sell, stay compliant, and do it in 90 seconds.</p>
+  <p style="font-size:13pt;color:#555;margin-top:30px;">With 15 AI-powered prompts, Fair Housing guardrails,<br>and the complete ListWorks PRO system</p>
+  <div style="margin-top:80px;">
+    <p style="font-size:9pt;color:#888;letter-spacing:2px;text-transform:uppercase;">Second Edition &mdash; Fully Revised</p>
+    <p style="font-size:9pt;color:#aaa;">ListWorks PRO &mdash; listworks.pro &mdash; 2026</p>
+  </div>
+</div>
+
+<div class="toc">
+  <h2>Contents</h2>
+  <ul>
+    <li class="toc-h2">Foreword: The $26,262 Sentence</li>
+    <li class="toc-h2">Chapter 1: Buyers Don't Buy Houses. They Buy Feelings.</li>
+    <li style="padding-left:20px;">The FBF Framework, Five Tones, Seven Psychological Triggers, Data-Backed Word Guide</li>
+    <li class="toc-h2">Chapter 2: The Anatomy of a High-Converting Listing</li>
+    <li style="padding-left:20px;">The 5-Part Structure, Weak vs. Strong Openings, Complete Annotated Example</li>
+    <li class="toc-h2">Chapter 3: Buyer Psychology by Property Type</li>
+    <li style="padding-left:20px;">Six Buyer Personas, Emotional Drivers, Language That Works</li>
+    <li class="toc-h2">Chapter 4: Setting Up Your AI Writing Engine</li>
+    <li style="padding-left:20px;">System Prompt, Tone Selection, Brand Voice Training, MLS Limits</li>
+    <li class="toc-h2">Chapter 5: The 15 Prompts That Write Your Listings</li>
+    <li style="padding-left:20px;">Full Prompt Library with Copy-Paste Examples</li>
+    <li class="toc-h2">Chapter 6: The 10-Point Pre-Publish Checklist</li>
+    <li class="toc-h2">Chapter 7: Fair Housing — The Landmine Nobody Talks About</li>
+    <li style="padding-left:20px;">Real Cases, Real Fines, CO AI Act, E&O Protection Checklist</li>
+    <li class="toc-h2">Chapter 8: Before & After — 10 Real Listings Rewritten</li>
+    <li style="padding-left:20px;">Annotated Transformations with Psychological Breakdowns</li>
+    <li class="toc-h2">Chapter 9: Beyond the MLS</li>
+    <li style="padding-left:20px;">Multi-Platform Repurposing, 30-Day Content Calendar, Viral Playbook</li>
+    <li class="toc-h2">Chapter 10: The 90-Second Workflow</li>
+    <li style="padding-left:20px;">Complete End-to-End Process, Quick-Reference Card</li>
+    <li class="toc-h2">Bonuses</li>
+    <li style="padding-left:20px;">Banned Words Checklist, Property Input Sheet, Agent Bio Generator, CO AI Act Compliance Guide, Zillow Data-Backed Word Reference</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Foreword: The $26,262 Sentence</h2>
+<p class="subhead">Why this guide exists and why every agent needs it.</p>
+
+<p>In June 2025, the Department of Housing and Urban Development quietly updated its civil penalty schedule. The maximum fine for a first Fair Housing Act violation went up to <strong>$26,262</strong>.</p>
+
+<p>That's the price of one bad sentence.</p>
+
+<p>Not a pattern of discrimination. Not a years-long investigation. One sentence in a listing description that a buyer, a tester, or a competitor screenshots and reports. The phrase "perfect for families." The word "safe" in a neighborhood description. An AI-generated line you didn't think twice about because ChatGPT wrote it, so it must be fine.</p>
+
+<p><strong>It is not fine.</strong> Every piece of content you publish carries your license, your livelihood, and potentially $26,262 of exposure per violation. Repeat offenses hit $131,308. And with AI-generated content flooding the MLS, enforcement is accelerating. The DOJ's $115,054 settlement with Meta over algorithmic ad targeting proved that AI doesn't shield liability. It amplifies it.</p>
+
+<p>This guide exists for one reason: <strong>to make you dangerous in the right way.</strong> Dangerous to your competition because your listings will sell faster and for more money. And safe from the landmines that are taking down agents who don't know what they don't know.</p>
+
+<h3>What the Research Says</h3>
+
+<p>This is not theory. Every claim in this guide is backed by data:</p>
+
+<ul>
+  <li><strong>Goodwin, Waller &amp; Weeks (2014)</strong> — Journal of Housing Research: The specific words you choose in a listing description have a <em>measurable, independent impact</em> on days-on-market and sale price, even after controlling for location, price, and property condition.</li>
+  <li><strong>Luchtenberg, Seiler &amp; Sun (2019)</strong> — Journal of Real Estate Finance: Positive-only listing language had a <strong>higher impact</strong> on a buyer's likelihood to visit than high-quality photography did.</li>
+  <li><strong>Sing &amp; Zou (2024)</strong> — Real Estate Economics: NLP analysis of thousands of MLS listings found that higher sentiment scores and specific detail directly predicted shorter days-on-market and higher sale-to-list ratios.</li>
+  <li><strong>Zillow Talk (2014 data, repeatedly confirmed):</strong> "Barn doors" correlates with a <strong>13.4% price premium</strong> and sells 57 days faster. "Fixer" costs sellers <strong>11.1%</strong> below expected value.</li>
+</ul>
+
+<p>Most agents write listing descriptions by copying the last one and changing the address. That strategy is now actively dangerous. AI has raised the bar on volume while regulators have raised the stakes on compliance. The agent who learns to write listings that sell <em>and</em> stay compliant will dominate the next five years.</p>
+
+<h3>What You'll Get</h3>
+
+<ul>
+  <li><strong>15 copy-paste prompts</strong> extracted from the ListWorks PRO system — the same ones that power our AI rewrite engine</li>
+  <li><strong>The FBF Framework</strong> (Feature → Benefit → Feeling) that turns spec sheets into stories buyers can't resist</li>
+  <li><strong>Data-backed word choices</strong> — exact language that research shows correlates with faster sales and higher prices</li>
+  <li><strong>Fair Housing compliance that's actually useful</strong> — not theory, but exact phrases to avoid and what to say instead, with real case examples</li>
+  <li><strong>10 before/after rewrites</strong> with full psychological breakdowns</li>
+  <li><strong>The 90-second workflow</strong> — from property input sheet to published listing in under two minutes</li>
+</ul>
+
+<div class="callout-warning">
+  <strong>One note before we begin:</strong> This guide shows you how to use AI to write listings faster, better, and more compliantly. But the final review — the Fair Housing check, the accuracy verification, the voice consistency — that's on you. Always. The AI is your junior copywriter. You're still the editor-in-chief. <strong>$26,262 worth of editor-in-chief.</strong>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Chapter 1: Buyers Don't Buy Houses. They Buy Feelings.</h2>
+<p class="subhead">The FBF Framework &mdash; and why most listings get it exactly backwards.</p>
+
+<p>Nobody has ever bought a house.</p>
+
+<p>They bought the backyard where their kids finally run wild. They bought the kitchen where Sunday mornings smell like bacon and coffee, where the island becomes the buffet, where friends linger until the wine runs out. They bought the primary suite that feels like a hotel every single night, where they close the door and the rest of the world disappears.</p>
+
+<p>The house is just the container. <strong>The feeling is the product.</strong></p>
+
+<p>Every year, the National Association of Realtors surveys recent homebuyers and asks them the same question: what was the single most important factor in choosing your home? The answer, year after year, is not square footage, not price, not even location. It's <strong>"the way it made me feel."</strong></p>
+
+<p>And yet, 97% of MLS listings read like an inventory spreadsheet:</p>
+
+<blockquote>"Welcome to 123 Main Street. This 3-bedroom, 2-bath home features hardwood floors, stainless steel appliances, and a fenced backyard. Close to schools and shopping. Don't miss this one!"</blockquote>
+
+<p>That's not a listing. That's a receipt. It tells you what's there. It doesn't tell you why you should care. And when every listing looks the same, the only thing that matters is price.</p>
+
+<div class="pullquote">"Positive-only listing language had a significantly higher impact on likelihood to visit than high-quality photography did." — Luchtenberg, Seiler & Sun, Journal of Real Estate Finance, 2019</div>
+
+<h3>The FBF Framework</h3>
+
+<p>Every single feature in a home has three layers. Most agents stop at layer one. The best agents go all the way to layer three.</p>
+
+<div class="framework-box">
+  <h4>The FBF Pyramid</h4>
+  <p><strong>Layer 3 &mdash; FEELING:</strong> Why you'll love it. The emotional payoff. The reason they'll pay over asking.</p>
+  <p><strong>Layer 2 &mdash; BENEFIT:</strong> What it means for you. The practical advantage. The "so what."</p>
+  <p><strong>Layer 1 &mdash; FEATURE:</strong> What it is. The spec. The fact. The noun.</p>
+</div>
+
+<p><strong>Layer 1 &mdash; Feature:</strong> "Quartz countertops." "Fenced backyard." "Hardwood floors." These are facts. They're necessary but not sufficient. Every listing has them.</p>
+
+<p><strong>Layer 2 &mdash; Benefit:</strong> "Quartz that never stains." "A backyard where the dog can roam." "Floors that actually last." Now you're answering the question the buyer is silently asking: <em>so what?</em></p>
+
+<p><strong>Layer 3 &mdash; Feeling:</strong> "Sunday mornings around the island, coffee in hand, sauce simmering." "Watching the kids learn to ride a bike without worrying about the street." "Barefoot winters on warm wood." This is where the sale happens. This is the layer that makes a buyer pay more than they planned.</p>
+
+<h3>Why Most Listings Stop at Layer 1</h3>
+
+<p>Because Layer 1 is easy. It's objective. "Three beds, two baths, updated kitchen." You can write that in your sleep. But so can every other agent. When every listing in a buyer's search results reads the same, the only differentiator is price. And price is a race to the bottom you cannot win.</p>
+
+<p>The Zillow data proves this: listings that use specific, sensory language consistently outperform feature dumps. "Barn doors" (+13.4% price, 57 days faster) works because it signals a specific lifestyle. "Quartz" (+6%) works because it signals quality without saying "high-end." These aren't features — they're emotional shorthand.</p>
+
+<h3>The Five Tones</h3>
+
+<table>
+  <tr><th>Tone</th><th>When to Use</th><th>Language</th></tr>
+  <tr><td><strong>Luxury</strong></td><td>High-end properties</td><td>Cinematic, aspirational, status-aware. "European white oak. Hand-troweled plaster."</td></tr>
+  <tr><td><strong>Warmth</strong></td><td>Family homes, first-time buyers</td><td>Sensory, inviting, grounded. "The kitchen where Sunday dinners happen."</td></tr>
+  <tr><td><strong>Modern</strong></td><td>New construction, condos</td><td>Clean, architectural, design-forward. "Form follows function. Every square inch earned."</td></tr>
+  <tr><td><strong>Urgent</strong></td><td>Hot markets, multiple offers</td><td>Scarcity-driven, confident. "Three offers already. Seller reviewing Tuesday."</td></tr>
+  <tr><td><strong>Investor</strong></td><td>Rentals, flips, commercial</td><td>Data-forward, ROI-focused. "Cap rate 6.2%. Zero vacancy. Three-year track record."</td></tr>
+</table>
+
+<h3>The First 15 Words Are All You Get</h3>
+
+<p>Eye-tracking research (Seiler, Madhavan &amp; Liechty, 2012) shows that buyers scan listings in an F-pattern. They read the first sentence, glance at the photos, check the price, and decide whether to continue or click next. You have approximately 15 words to earn the rest of their attention.</p>
+
+<p><strong>Weak opening:</strong> "Welcome to 47 Oak Lane, a stunning 4-bedroom..." — They've seen this 400 times today. You've already lost.</p>
+
+<p><strong>Strong opening:</strong> "The best room in this house isn't on the floor plan. It's the screened porch at golden hour." — Now they have to know more.</p>
+
+<h3>Seven Psychological Triggers</h3>
+
+<p>Activate at least two per listing:</p>
+
+<table>
+  <tr><th>Trigger</th><th>Example</th><th>Why It Works</th></tr>
+  <tr><td><strong>Belonging</strong></td><td>"This is where Sunday dinners happen."</td><td>Endowment effect — they start picturing their life there</td></tr>
+  <tr><td><strong>Status</strong></td><td>"The address that says something before you do."</td><td>Social signaling — homes are identity markers</td></tr>
+  <tr><td><strong>Safety</strong></td><td>"Dead-end street. Kids still ride bikes here."</td><td>#1 buyer concern — reduces uncertainty</td></tr>
+  <tr><td><strong>Urgency</strong></td><td>"Three offers already. Seller reviewing Tuesday."</td><td>Scarcity principle — loss aversion is stronger than gain</td></tr>
+  <tr><td><strong>Novelty</strong></td><td>"First time on the market in 18 years."</td><td>FOMO — rare events feel more valuable</td></tr>
+  <tr><td><strong>Validation</strong></td><td>"The neighborhood everyone drives through."</td><td>Social proof — others already chose this</td></tr>
+  <tr><td><strong>Contrast</strong></td><td>"City energy when you want it. Tree-lined quiet when you don't."</td><td>Best of both worlds — resolves tradeoffs</td></tr>
+</table>
+
+<div class="callout-success">
+  <strong>Action for today:</strong> Pick one active listing. Run every feature through the FBF framework. Don't stop until each feature reaches Layer 3. Your first one takes 15 minutes. By listing #10, you'll do it in 90 seconds.
+</div>
+
+<div class="callout" style="border-left-color: #1a1a2e;">
+  <strong>⚡ ListWorks PRO shortcut:</strong> This entire framework — FBF analysis, tone selection, trigger mapping — is built into ListWorks. Paste your property notes, pick a tone, and get a fully structured listing in 10 seconds. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try it free →</a>
+</div>
+
+<div class="callout" style="border-left-color: #1a1a2e;">
+  <strong>⚡ ListWorks PRO shortcut:</strong> The 5-part structure above is the default output format in ListWorks. Every rewrite comes out structured as Hook → Lifestyle → Features → Neighborhood → CTA. No formatting needed. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try it free →</a>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Chapter 2: The Anatomy of a High-Converting Listing</h2>
+<p class="subhead">The 5-part structure that works for every property, every platform, every time.</p>
+
+<p>There is a structure that consistently outsells everything else. It doesn't matter whether you're selling a $200,000 starter home in Oklahoma City or an $8 million estate in Malibu. The psychology is the same. The structure is the same. Only the vocabulary changes.</p>
+
+<div class="framework-box">
+  <h4>The ListWorks 5-Part Structure</h4>
+  <ol>
+    <li><strong>The Opening Hook</strong> — Stop them in their tracks.</li>
+    <li><strong>The Lifestyle Paragraph</strong> — Sell the life, not the house.</li>
+    <li><strong>The Feature Translation Layer</strong> — FBF every spec.</li>
+    <li><strong>The Neighborhood &amp; Context</strong> — Specific beats generic. Always.</li>
+    <li><strong>The Call to Action</strong> — Confident, not desperate.</li>
+  </ol>
+</div>
+
+<h3>Part 1: The Opening Hook</h3>
+
+<p>Buyers scroll through 40 listings in about three minutes. Your listing gets about one-point-five seconds to earn their attention. If you start with "Welcome to" or the address, you have already lost.</p>
+
+<p><strong>Don't:</strong></p>
+<ul>
+  <li>"Welcome to your dream home!" — They've seen this 400 times today. It's noise.</li>
+  <li>"Stunning 4-bedroom colonial" — Every word is a cliché. "Stunning" is the most used word in real estate and the least believed.</li>
+  <li>"Motivated seller!" — You just told them they can lowball you.</li>
+</ul>
+
+<p><strong>Do:</strong></p>
+<ul>
+  <li><strong>Start with an unexpected contrast.</strong> "City energy when you want it. Tree-lined quiet when you don't."</li>
+  <li><strong>Start with a specific sensory detail.</strong> "The light in this kitchen changes everything. By 3 PM, the whole room glows."</li>
+  <li><strong>Start with a bold, specific claim.</strong> "There are 14 houses on this street. This one has the best backyard. It's not close."</li>
+  <li><strong>Start with a question they want to say yes to.</strong> "What if you could walk to coffee, dinner, and the park — all without getting in your car?"</li>
+</ul>
+
+<h3>Part 2: The Lifestyle Paragraph</h3>
+
+<p>This is where most agents fail. They list features. They should be painting pictures.</p>
+
+<p><strong>Before (specs only):</strong></p>
+<blockquote>"Spacious 4-bedroom with open floor plan, gourmet kitchen, and large backyard. Hardwood floors throughout."</blockquote>
+
+<p><strong>After (lifestyle-led):</strong></p>
+<blockquote>"The kitchen opens to the family room, so you're never isolated when you're cooking. The primary suite is tucked at the back — your own wing of the house. And the backyard? Big enough for a garden, a dog, and a trampoline. With room left for a grill."</blockquote>
+
+<p>The "after" version sells a life. The "before" version sells a floor plan. One of these gets a showing. The other gets a yawn.</p>
+
+<h3>Part 3: Feature Translation (FBF)</h3>
+
+<p>Every feature must answer "so what?" Here's a typical new-build spec sheet run through FBF:</p>
+
+<table>
+  <tr><th>Spec Sheet Bullet</th><th>FBF Copy</th><th>Layer 3 Feeling</th></tr>
+  <tr><td>Quartz countertops</td><td>Quartz that doesn't stain, doesn't seal, and makes you feel like you've got your life together.</td><td>Pride. Competence. "I made a good choice."</td></tr>
+  <tr><td>Gas range</td><td>A stove that actually responds. No waiting. No guessing.</td><td>Control. Mastery. "Cooking becomes a ritual, not a chore."</td></tr>
+  <tr><td>Under-cabinet lighting</td><td>Every surface lit. No shadows. No surprises.</td><td>Safety. Clarity. "This kitchen works as hard as I do."</td></tr>
+  <tr><td>Walk-in pantry</td><td>Never play "where's the cumin?" again.</td><td>Relief. Organization. "My life is together."</td></tr>
+  <tr><td>Fenced yard</td><td>Private. Secure. Yours.</td><td>Safety. Freedom. "Kids can roam. Dogs can chase. I can relax."</td></tr>
+</table>
+
+<h3>Part 4: Neighborhood &amp; Context</h3>
+
+<p>"Close to schools, shopping, and dining" is the default answer when you don't know what to say. Specific beats generic every single time.</p>
+
+<p><strong>Instead of "great location," prove it:</strong></p>
+<ul>
+  <li>Walk Score 94. Two blocks from the farmers market. One block from the coffee shop with the blue door.</li>
+  <li>The kind of street where neighbors still lend each other sugar. The block party is in August.</li>
+  <li>Three blocks from the elementary school — close enough to walk, far enough to not hear the bells.</li>
+  <li>I-25 access in 4 minutes. Light rail in 7. You can commute without commuting.</li>
+</ul>
+
+<div class="callout-warning">
+  <strong>Fair Housing:</strong> Never describe neighborhoods by demographics or use coded language about safety. "Quiet street" is fine. "Safe neighborhood" is a liability. Use specific, verifiable facts. We cover this in depth in Chapter 7.
+</div>
+
+<h3>Part 5: The Call to Action</h3>
+
+<p>Confident CTAs assume the buyer is already interested. Desperate CTAs ask them to decide if they are.</p>
+
+<p><strong>Weak:</strong> "Call today to schedule a showing!" — Generic. Why should they?</p>
+
+<p><strong>Strong:</strong> "Come see why 47 Elm Street won't last the weekend. Open house Saturday 1-3. I'd get there early."</p>
+
+<p><strong>Strong:</strong> "First showing is Friday. I'd book it before the weekend if I were you."</p>
+
+<p><strong>Strong:</strong> "Three offers already. Seller reviewing Tuesday at 5 PM. This is your window."</p>
+
+<h3>Putting It All Together: A Complete Example</h3>
+
+<blockquote>
+<p><strong>Hook:</strong> The best room in this house isn't on the floor plan. It's the screened porch at golden hour, when the light turns gold and the whole neighborhood goes quiet.</p>
+<p><strong>Lifestyle:</strong> This is a house built for real life, not real estate photos. The kitchen opens to the family room — you're never isolated when you're cooking. The primary suite is tucked at the back, your own private wing. The basement is finished but not fussy: movie nights, game days, a guest room for when the in-laws visit and don't want to leave.</p>
+<p><strong>Features:</strong> Solid oak hardwoods that look better with age. Quartz that doesn't stain. A gas range that responds the instant you turn the knob. A walk-in pantry that makes you wonder how you lived without one.</p>
+<p><strong>Neighborhood:</strong> Walk Score 91. Two blocks from the farmers market. One block from the coffee shop where the barista knows your order. The kind of street where the neighbors still wave.</p>
+<p><strong>CTA:</strong> Three open houses this weekend. This one will be the busiest. See you Saturday at 1.</p>
+</blockquote>
+
+<div class="page-break"></div>
+
+<h2>Chapter 3: Buyer Psychology by Property Type</h2>
+<p class="subhead">What moves a first-time buyer is different from what moves a luxury buyer. Here's how to write for each.</p>
+
+<p>The mistake most agents make is writing every listing in the same voice. A first-time buyer and a luxury buyer are not the same person. They have different fears, different dreams, and different triggers. Your copy needs to match.</p>
+
+<p>Goodwin, Waller &amp; Weeks (2014) confirmed that language effectiveness varies significantly by property type. Condo buyers respond to different triggers than single-family home buyers. The one-size-fits-all template is leaving money on the table.</p>
+
+<h3>First-Time Buyers</h3>
+<p><strong>Primary emotion:</strong> Excitement + Fear. Thrilled about owning. Terrified of making a mistake.</p>
+<p><strong>What they need:</strong> Reassurance. Simplicity. Pride of arrival.</p>
+<p><strong>Words that work:</strong> "You've been renting long enough. This is the year your money starts working for you." "No fixer-upper surprises — everything's done, just move in." "Your first home should feel like a win."</p>
+<p><strong>Avoid:</strong> "Starter home" (feels temporary, demeaning). "Cozy" (reads as small). "Great investment" (they want a home, not a portfolio play).</p>
+
+<h3>Growing Families</h3>
+<p><strong>Primary emotion:</strong> Guilt + Hope. Want more space. Worried about making the right choice for the kids.</p>
+<p><strong>What they need:</strong> Space for everyone. Room to grow. The sense that this is the house they'll make memories in.</p>
+<p><strong>Words that work:</strong> "The kind of street where kids still ride bikes and neighbors know each other's names." "Three bedrooms means everyone gets their own space. Including you." "A backyard big enough for a garden, a dog, and a trampoline."</p>
+<p><strong>Avoid:</strong> "Perfect for families" (Fair Housing risk — familial status). "Great schools" (needs specific verification).</p>
+
+<h3>Luxury Buyers</h3>
+<p><strong>Primary emotion:</strong> Status + Exclusivity. They want exceptional, not a deal.</p>
+<p><strong>What they need:</strong> Rarity. Craftsmanship. The sense that this home is not like the others.</p>
+<p><strong>Words that work:</strong> "European white oak. Hand-troweled plaster. A kitchen that costs more than most cars." "The kind of address that says something before you do." "Not pictured: the privacy."</p>
+<p><strong>Avoid:</strong> "Must see!" (desperate). "Priced to sell" (cheapens it). Any mention of price as a deal.</p>
+
+<h3>Downsizers / Empty Nesters</h3>
+<p><strong>Primary emotion:</strong> Relief + Loss. Ready to offload maintenance. Sad about leaving memories.</p>
+<p><strong>What they need:</strong> Freedom. Ease. Permission to let go.</p>
+<p><strong>Words that work:</strong> "Lock-and-leave living. Travel when you want. Come home to exactly what you love." "All the space you actually use. None of the space you don't." "The maintenance is someone else's problem now."</p>
+<p><strong>Avoid:</strong> "Perfect for retirees" (age discrimination). "Downsizer special" (feels like settling). Sell the freedom, not the shrinkage.</p>
+
+<h3>Investors</h3>
+<p><strong>Primary emotion:</strong> Greed + FOMO. They want numbers, not narratives.</p>
+<p><strong>What they need:</strong> ROI data. Cap rates. Comparable performance.</p>
+<p><strong>Words that work:</strong> "Cap rate 6.2%. Rented at $2,800/mo for 3 years with zero vacancy." "This neighborhood has appreciated 8.4% annually for the last 5 years."</p>
+<p><strong>Avoid:</strong> "Beautiful," "charming," "stunning" — they don't care. Lead with math.</p>
+
+<h3>Second-Home / Lifestyle Buyers</h3>
+<p><strong>Primary emotion:</strong> Aspiration + Escape. They're buying a fantasy of weekends.</p>
+<p><strong>Words that work:</strong> "Friday traffic disappears in the rearview. By Saturday morning, you're on the water." "This is where you go to remember what matters."</p>
+<p><strong>Avoid:</strong> "Vacation home" (sounds frivolous). Say "weekend retreat" or "escape."</p>
+
+<h3>Quick-Reference Cheat Sheet</h3>
+<table>
+  <tr><th>Buyer Type</th><th>Primary Driver</th><th>Best Opening Line</th></tr>
+  <tr><td>First-time</td><td>Pride + Fear</td><td>"You've been renting long enough."</td></tr>
+  <tr><td>Family</td><td>Guilt + Hope</td><td>"Everyone gets their own space. Including you."</td></tr>
+  <tr><td>Luxury</td><td>Status + Exclusivity</td><td>"Not pictured: the privacy."</td></tr>
+  <tr><td>Downsizer</td><td>Relief + Freedom</td><td>"Lock-and-leave. Travel when you want."</td></tr>
+  <tr><td>Investor</td><td>Greed + FOMO</td><td>"Cap rate 6.2%. Zero vacancy."</td></tr>
+  <tr><td>Second-home</td><td>Aspiration + Escape</td><td>"Friday traffic disappears in the rearview."</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<h2>Chapter 4: Setting Up Your AI Writing Engine</h2>
+<p class="subhead">Five minutes of setup that saves you hours every week.</p>
+
+<p>Here's the truth about AI listing copy: most agents are doing it wrong. They open ChatGPT, type "write a listing for 123 Main Street," and wonder why the output sounds like a robot had a stroke. The problem isn't the AI. The problem is the input.</p>
+
+<p>AI is not a writer. AI is an engine. An engine needs fuel. The fuel is <strong>context</strong> — the property details, the brand voice, the buyer persona, the emotional angle. Feed it garbage, get garbage. Feed it specifics, get copy that sells.</p>
+
+<h3>Step 1: Your Permanent System Prompt</h3>
+
+<p>This is the one-time setup that makes everything else work. Copy this into a text file, paste it before every session:</p>
+
+<div class="prompt-box">
+<strong>System Prompt:</strong><br><br>
+You are a top-tier real estate listing copywriter. Write in a warm, conversational, specific voice. Never use clichés: "stunning," "gorgeous," "immaculate," "must see," "won't last long." Instead, use sensory details, specific claims, and emotional triggers(Ebelonging, status, safety, urgency, novelty).<br><br>
+Structure every listing:<br>
+1. Opening hook that stops the scroll<br>
+2. Lifestyle paragraph (sell the life, not the features)<br>
+3. Feature translation(FBF: Feature → Benefit → Feeling)<br>
+4. Neighborhood context (specific beats generic)<br>
+5. Call to action (confident, not desperate)<br><br>
+Fair Housing rules: Never mention race, religion, national origin, familial status, disability, or use coded language about neighborhoods. No "perfect for families," "safe neighborhood," "great for couples." Use specific, verifiable facts.
+</div>
+
+<h3>Step 2: The Property Input Sheet</h3>
+
+<p>Before you write a single word, fill this out. It takes two minutes and transforms your output from generic to specific:</p>
+
+<div class="callout">
+<p><strong>Don't just tell the AI "write a listing." Tell it:</strong></p>
+<ul>
+  <li>The one thing that makes this property different (the hook)</li>
+  <li>The buyer persona (first-time, family, luxury, downsizer, investor)</li>
+  <li>The 3 best features (not all of them — the top 3)</li>
+  <li>The emotional angle (what will this home mean to them?)</li>
+  <li>Specific neighborhood details (walk scores, coffee shops, commute times)</li>
+  <li>The tone (luxury, warm, modern, urgent, investor)</li>
+  <li>MLS character limit (not all MLSs are the same — Bright is 1,800, CRMLS is 1,200)</li>
+</ul>
+</div>
+
+<h3>Step 3: Train It on Your Brand Voice</h3>
+
+<p>Feed the AI 3-4 of your best past listings (the ones that got the most showings). Tell it: "This is my voice. Match it." Most agents skip this step. It's the most important one.</p>
+
+<h3>Step 4: Set Your MLS Limits</h3>
+
+<table>
+  <tr><th>MLS</th><th>Character Limit</th><th>Strategy</th></tr>
+  <tr><td>Bright MLS</td><td>1,800</td><td>Full 5-part structure, neighborhood details</td></tr>
+  <tr><td>CRMLS</td><td>1,200</td><td>Cut features section, keep hook + lifestyle</td></tr>
+  <tr><td>GAMLS</td><td>750</td><td>Hook + CTA only. Features in bullet points.</td></tr>
+  <tr><td>MRED</td><td>2,000</td><td>Go deep on lifestyle. Add a second lifestyle paragraph.</td></tr>
+  <tr><td>REcolorado</td><td>900</td><td>Hook, one lifestyle sentence, FBF top 3 features, CTA</td></tr>
+</table>
+
+<h3>Step 5: Input Quality = Output Quality</h3>
+
+<p>The single biggest mistake agents make with AI: they give it the same lazy input they'd give a human writer. "3 bed, 2 bath, updated kitchen." The AI can't read your mind. It doesn't know about the morning light in the kitchen, the neighbors who've lived there 30 years, the fact that the seller is the original owner. Tell it the story. It will write it back.</p>
+
+<div class="callout-success">
+  <strong>Pro tip:</strong> Spend 3 minutes on the input. You'll save 15 minutes of editing the output.
+</div>
+
+<div class="callout" style="border-left-color: #1a1a2e;">
+  <strong>⚡ ListWorks PRO shortcut:</strong> This entire chapter is the manual version of what ListWorks does in one click. The system prompt, the tone training, the MLS limits — all configured once, then every rewrite uses them automatically. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Set it up in 2 minutes →</a>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Chapter 5: The 15 Prompts That Write Your Listings For You</h2>
+<p class="subhead">Copy-paste ready. Extracted from the ListWorks PRO system.</p>
+
+<p>These prompts are not generic ChatGPT queries. They are the exact prompt structures used by ListWorks PRO's AI engine — tuned over thousands of rewrites to produce listing copy that converts. Each prompt includes tone tags, structural cues, and Fair Housing guardrails.</p>
+
+<h3>Prompt 1: The Complete Rewrite</h3>
+<p><span class="data-badge">WORKHORSE</span> — Use for 80% of your listings</p>
+<div class="prompt-box">Rewrite this listing description using the 5-part structure(Hook, Lifestyle, Features, Neighborhood, CTA). Use FBF framework(Feature → Benefit → Feeling) for every feature. Tone: [TONE]. Avoid all clichés. Fair Housing compliant. Specific over generic. Total length: [CHAR_LIMIT] characters max.<br><br>
+Property details: [INPUT]</div>
+
+<h3>Prompt 2: MLS-Optimized Listing</h3>
+<p><span class="data-badge">MLS</span> — Truncation-resistant</p>
+<div class="prompt-box">Write a [CHAR_LIMIT]-character MLS description. First 2 sentences must be the strongest(they appear in search results). Use FBF framework. No clichés. Fair Housing compliant.<br><br>
+Key features: [INPUT]</div>
+
+<h3>Prompt 3: Instagram Caption</h3>
+<p><span class="data-badge">IG</span> — Scroll-stopping</p>
+<div class="prompt-box">Write an Instagram caption for this property. Hook in first line. 2-3 short paragraphs. Emoji allowed(2 max). End with a question to drive comments. Hashtags: 3-5 location-specific tags.<br><br>
+The one thing to say: [INPUT]</div>
+
+<h3>Prompt 4: Facebook Post</h3>
+<p><span class="data-badge">FB</span> — Engaging, shareable</p>
+<div class="prompt-box">Write a Facebook post for this property. Start with a question or surprising fact. 3 short paragraphs. Include a specific detail that makes it local. End with "Tag someone who needs to see this."<br><br>
+Neighborhood detail: [INPUT]</div>
+
+<h3>Prompt 5: Email Blast</h3>
+<p><span class="data-badge">EMAIL</span> — Opens your database</p>
+<div class="prompt-box">Write a short email to my database about this new listing. Subject line: [SUBJECT]. Body: 3 short paragraphs. First paragraph: the hook. Second: the best feature. Third: open house details. Signature: my name and phone number.</div>
+
+<h3>Prompt 6: Reel Script</h3>
+<p><span class="data-badge">REEL</span> — 30-60 seconds, visuals-led</p>
+<div class="prompt-box">Write a 30-second reel script for this property. Format: |Visual|Audio| per line. First 3 seconds must hook. End with a CTA to DM for details.<br><br>
+Best visual feature: [INPUT]</div>
+
+<h3>Prompt 7: Expired Listing</h3>
+<p><span class="data-badge">LISTING</span> — New angle for a stale property</p>
+<div class="prompt-box">Rewrite this expired listing with a completely new angle. The old version didn't work — don't reuse anything from it. Identify the strongest emotional hook that was missing. Restructure entirely. Fair Housing compliant.<br><br>
+Original listing: [INPUT]</div>
+
+<h3>Prompt 8: Just Sold / Market Report</h3>
+<p><span class="data-badge">SOCIAL</span> — Authority builder</p>
+<div class="prompt-box">Write a "Just Sold" or market update post. Include: sale price, days on market, one sentence about what made it sell fast. Position me as the expert. No listing details — just results.</div>
+
+<h3>Prompt 9: Testimonial Request</h3>
+<p><span class="data-badge">EMAIL</span> — Easy win</p>
+<div class="prompt-box">Write a short email asking for a testimonial. Subject: "Quick favor?" Tone: warm, grateful. Make it easy — offer 3 multiple-choice options for them to pick from. Keep it 4 sentences max.</div>
+
+<h3>Prompt 10: Open House Invite</h3>
+<p><span class="data-badge">SOCIAL</span> — FOMO-driven</p>
+<div class="prompt-box">Write an open house invitation. Create urgency without desperation. Include: date, time, one reason they can't afford to miss it, and what makes this different from every other open house they've been to.</div>
+
+<h3>Prompt 11: Neighborhood Deep Dive</h3>
+<p><span class="data-badge">BLOG</span> — SEO gold</p>
+<div class="prompt-box">Write a neighborhood guide for [NEIGHBORHOOD]. Format: 5 bullet points, each with 2-3 sentences. Cover: coffee shops, restaurants, parks, commute times, and one hidden gem. Specific names only — no "great dining options."</div>
+
+<h3>Prompt 12: Seller Tips</h3>
+<p><span class="data-badge">BLOG</span> — Lead magnet</p>
+<div class="prompt-box">Write a "5 things to do before listing your home" post. Each tip: one sentence of what to do, one sentence of why it matters. End with "Want a custom pre-listing plan? DM me."</div>
+
+<h3>Prompt 13: Compliance Check</h3>
+<p><span class="data-badge">COMPLIANCE</span> — Liability shield</p>
+<div class="prompt-box">Review this listing description for Fair Housing violations. Flag any language that could be interpreted as discriminatory(race, religion, familial status, disability, national origin, gender). Replace with compliant alternatives. Return the original, the flagged phrases, and the corrected version.<br><br>
+Listing: [INPUT]</div>
+
+<h3>Prompt 14: Brand Voice Adaptation</h3>
+<p><span class="data-badge">SETUP</span> — One-time</p>
+<div class="prompt-box">Analyze these 3 listing descriptions I've written and extract my brand voice. Identify: sentence structure preferences, vocabulary patterns, emotional themes, and formatting habits. Output a 1-paragraph "voice guide" I can use to train AI tools.</div>
+
+<h3>Prompt 15: Multi-Platform Repurpose</h3>
+<p><span class="data-badge">WORKFLOW</span> — Efficiency hack</p>
+<div class="prompt-box">Take this MLS description and adapt it for: 1) Instagram caption(2 paragraphs + 3 hashtags), 2) Facebook post(3 paragraphs, ends with question), 3) Email to my database(subject line + 3 paragraph body), 4) Reel script(30 seconds, visual/audio format). Keep the core emotional hook consistent. Adapt the voice per platform.</div>
+
+<div class="callout-warning" style="border-left-color: #1a1a2e;background:#f0f4ff;">
+  <strong>⚡ Here's the deal:</strong> These 15 prompts took months to tune. They work. But running them one at a time, every listing, every platform — that's the manual way. <strong>ListWorks PRO runs all 15 prompts simultaneously</strong> — rewrite, compliance scan, multi-platform adaptation — in 10 seconds. The manual method in this chapter is yours to keep forever. The automated version is one click away. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try 3 free rewrites →</a>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Chapter 6: The 10-Point Pre-Publish Checklist</h2>
+<p class="subhead">Run this before every listing. Takes 90 seconds. Could save you $26,262.</p>
+
+<ol>
+  <li><strong>Hook check:</strong> Would the first 15 words make you stop scrolling? If not, rewrite.</li>
+  <li><strong>FBF audit:</strong> Every feature listed must reach Layer 3 (Feeling). If any feature is stuck at Layer 1, delete it or rewrite it.</li>
+  <li><strong>Fair Housing scan:</strong> Search for: "family," "safe," "couples," "retiree," "walk to," "perfect for," "exclusive," "private" — not these words are always violations, but these are the most common trigger words that need scrutiny.</li>
+  <li><strong>Cliché purge:</strong> Search for: stunning, gorgeous, immaculate, must see, won't last, charming, cozy, one-of-a-kind, pristine, beautifully maintained. Replace with specific, verifiable language.</li>
+  <li><strong>Specificity check:</strong> Replace every generic claim with a specific one. Not "great location" but "Walk Score 94." Not "updated kitchen" but "2024 renovation, quartz counters, gas range."</li>
+  <li><strong>Sentence length variety:</strong> Read aloud. If every sentence is the same length, it's monotonous. Short sentences punch. Long sentences build. Mix them.</li>
+  <li><strong>Sensory layer:</strong> Does the listing engage at least one sense beyond sight? Sound (quiet street), smell (gardenias by the porch), feel (warm wood underfoot), taste (coffee on the deck)?</li>
+  <li><strong>CTA confidence:</strong> Would you act on this CTA? If it sounds like a question, make it a statement. "Come see" not "Would you like to see?"</li>
+  <li><strong>Platform fit:</strong> Is this optimized for where it's going? MLS gets the full version. Instagram gets the hook. Email gets the story. Cut accordingly.</li>
+  <li><strong>Character count:</strong> Fit within your MLS limit? (Bright: 1,800. CRMLS: 1,200. GAMLS: 750. REcolorado: 900.) If you're over, cut adjectives first, then adverbs, then whole sentences from the features section.</li>
+</ol>
+
+<div class="page-break"></div>
+
+<h2>Chapter 7: Fair Housing — The Landmine Nobody Talks About</h2>
+<p class="subhead">Real cases. Real fines. Real language to avoid and what to say instead.</p>
+
+<p>Every agent knows Fair Housing exists. Almost none of them know what it actually means for the words they publish every day. This chapter is going to fix that.</p>
+
+<h3>The Number That Matters</h3>
+
+<p><strong>$26,262.</strong> That is the maximum civil penalty for a first Fair Housing Act violation as of June 2025. Repeat violations cost up to $131,308. And the law is strict liability — you don't have to intend to discriminate. You just have to publish language that could be interpreted as discriminatory.</p>
+
+<p>Here's what keeps agents up at night: <strong>AI-generated content inherits your liability.</strong> If ChatGPT writes a listing that says "perfect for families," it's your license on the line, not OpenAI's. The DOJ's $115,054 settlement with Meta proved that algorithmic content doesn't shield the publisher from liability.</p>
+
+<h3>Real Cases, Real Fines</h3>
+
+<div class="callout-danger">
+  <p><strong>HUD v. Lil-1 Associates, AllPoints Realty — $24,375</strong></p>
+  <p>The listing specified "children were not permitted." The agent also verbally confirmed this to a HUD tester. Penalty: $24,375 in damages plus mandatory Fair Housing training. <strong>Flagged phrase: "No children" / "children not permitted."</strong></p>
+</div>
+
+<div class="callout-danger">
+  <p><strong>DOJ v. Meta Platforms — $115,054</strong></p>
+  <p>Meta's ad-targeting algorithm allowed housing advertisers to exclude users by age, gender, and zip code. The DOJ argued this constituted algorithmic discrimination. Meta paid the maximum civil penalty. <strong>Lesson: AI/algorithmic targeting falls under the Fair Housing Act.</strong></p>
+</div>
+
+<div class="callout-danger">
+  <p><strong>Colorado Real Estate Commission — $29,000</strong></p>
+  <p>A Colorado agent faced a 29-count administrative complaint. Penalty: $29,000 in civil penalties plus court costs. The Colorado Division of Real Estate publishes disciplinary actions — and they are not shy about using them.</p>
+</div>
+
+<h3>17 Phrases to Avoid</h3>
+
+<table>
+  <tr><th>Don't Say</th><th>Why</th><th>Say Instead</th></tr>
+  <tr><td>"Perfect for families"</td><td>Familial status preference</td><td>"Three bedrooms, open layout"</td></tr>
+  <tr><td>"Great for couples"</td><td>Familial status / marital status</td><td>"Primary suite with en suite bath"</td></tr>
+  <tr><td>"Safe neighborhood"</td><td>Racial steering (coded language)</td><td>"Walk Score 94, 2 blocks from the park"</td></tr>
+  <tr><td>"Quiet, private community"</td><td>Can imply exclusion</td><td>"Set back from the road, mature trees"</td></tr>
+  <tr><td>"Walking distance to church/synagogue"</td><td>Religious preference</td><td>"Walking distance to downtown"</td></tr>
+  <tr><td>"Master suite"</td><td>Gender-loaded terminology</td><td>"Primary suite"</td></tr>
+  <tr><td>"Man cave / she shed"</td><td>Gender stereotyping</td><td>"Flex room, bonus space"</td></tr>
+  <tr><td>"English speakers only"</td><td>National origin discrimination</td><td>Never say this. Ever.</td></tr>
+  <tr><td>"Section 8 accepted/not accepted"</td><td>Source of income (illegal in many states)</td><td>Check your state law first</td></tr>
+  <tr><td>"Retiree"</td><td>Age discrimination</td><td>"Single-level living, low maintenance"</td></tr>
+  <tr><td>"Young professional"</td><td>Age discrimination</td><td>"Home office ready"</td></tr>
+  <tr><td>"Bachelor pad"</td><td>Marital/familial status</td><td>"Urban condo, open layout"</td></tr>
+  <tr><td>"Starter home"</td><td>Can imply economic discrimination</td><td>"Move-in ready, smart investment"</td></tr>
+  <tr><td>"Exclusive area"</td><td>Racial/economic coding</td><td>"Sought-after neighborhood"</td></tr>
+  <tr><td>"Highly desired neighborhood"</td><td>Same — coded exclusion</td><td>"Consistently low days-on-market"</td></tr>
+  <tr><td>"Near temple/mosque/church"</td><td>Religious preference</td><td>Don't mention religious landmarks</td></tr>
+  <tr><td>"Adults only / 55+"</td><td>Only legal if verified HOPA community</td><td>Verify HOPA status first</td></tr>
+</table>
+
+<h3>The Colorado AI Act — What You Need to Know</h3>
+
+<p>Colorado's new AI law (SB 24-205, amended by SB 26-189) requires disclosure when AI is used to generate content that affects housing decisions. This includes listing descriptions. Effective dates and requirements:</p>
+
+<ul>
+  <li><strong>General AI disclosure required:</strong> If AI was used to generate or substantially assist in creating listing copy, buyers/browsers must be informed. Simple disclosure language: "This listing description was generated with AI assistance and reviewed by a licensed real estate professional."</li>
+  <li><strong>Housing is explicitly covered:</strong> The law lists housing as a "consequential decision" domain, meaning AI systems that influence housing eligibility, rental decisions, or mortgage qualification face additional requirements.</li>
+  <li><strong>Enforcement:</strong> Colorado Attorney General has exclusive enforcement authority. No private right of action — but the AG has made clear this is a priority.</li>
+</ul>
+
+<h3>Your E&O Protection Workflow</h3>
+
+<div class="framework-box">
+  <ol>
+    <li><strong>Write with AI, but edit like a human.</strong> Always run every AI-generated listing through your own review.</li>
+    <li><strong>Use the compliance prompt (Prompt 13)</strong> to scan every listing before publishing.</li>
+    <li><strong>Keep an audit trail.</strong> Save the original AI output and your edited version. If a complaint arises, you can show you reviewed and corrected the content.</li>
+    <li><strong>Never publish AI output unedited.</strong> If you're not willing to put your name on it, don't publish it.</li>
+    <li><strong>Train your sellers.</strong> Many Fair Housing complaints start with seller requests: "Say it's in a great neighborhood," "Mention the good schools." You are responsible for everything you publish, even if the seller asked for it.</li>
+  </ol>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Chapter 8: Before &amp; After — 10 Real Listings Rewritten</h2>
+<p class="subhead">Annotated transformations with full psychological breakdowns.</p>
+
+<h3>Example 1: The ChatGPT Special</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE (ChatGPT, unedited)</span>
+    <p>"Welcome to this stunning 3-bedroom, 2-bath home featuring stainless steel appliances, hardwood floors, and a spacious backyard. This beautiful home is perfect for families and is located in a great neighborhood close to schools, shopping, and dining. Don't miss this incredible opportunity!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER (FBF rewrite)</span>
+    <p>"The kitchen opens to the family room, so you're never isolated when you're cooking. The primary suite is tucked at the back — your own quiet corner. The backyard? Big enough for a garden, a grill, and a game of catch. Walk to coffee in under 5 minutes. Come see why 47 Elm won't last the weekend."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> The before is a template — it could describe any house in America. Zero specific details. Two Fair Housing violations ("perfect for families," "great neighborhood"). The after uses the FBF framework, adds two specific details (walk to coffee, primary suite location), and gives the buyer a reason to care. <strong>Data note:</strong> Luchtenberg et al. (2019) confirmed that positive-specific language has a higher impact on visit likelihood than photography quality.</p>
+
+<h3>Example 2: The Spec Sheet Dump</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"3 bed, 2 bath, 1,850 sq ft. Updated kitchen with quartz countertops and island. Master suite with walk-in closet. Fenced backyard. Two-car garage. Close to schools."</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Three bedrooms means everyone gets their own space. Including you. The kitchen island seats four — it's where homework happens, coffee is made, and dinner is served without anyone eating alone. The primary suite has a walk-in that actually fits your wardrobe. The garage fits your car and your hobby."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> The before is what most agents write — a laundry list. The after translates every feature through FBF to Layer 3. <strong>Data note:</strong> Sing &amp; Zou (2024) found that descriptions with specific detail had measurably higher sale-to-list ratios.</p>
+
+<h3>Example 3: The Luxury Miss</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Beautiful custom home in prestigious neighborhood. Features include hardwood floors, gourmet kitchen, and breathtaking mountain views. Priced to sell at $1,295,000."</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"European white oak floors. Hand-troweled plaster walls. A kitchen where every detail was considered — from the pot filler to the 48-inch range. The mountain views don't need a description. They need to be seen."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> "Priced to sell" cheapens a luxury listing. "Prestigious" is a cliché. The after respects the buyer's intelligence — they know what they're looking at. Show them the craftsmanship, not the price.</p>
+
+<h3>Example 4: The New Build Generic</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Brand new construction! Open floor plan, chef's kitchen, luxury vinyl plank flooring throughout. Smart home features included. Schedule your tour today!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Every surface is untouched. The kitchen has never cooked a meal. The floors have never been walked on. This is the rare chance to be the first person to live in a home — to make the marks, choose the paint, claim the space. The smart home is ready. Are you?"</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> The before sounds like every new build. The after sells the feeling of being first — novelty and ownership.</p>
+
+<h3>Example 5: The Fixer-Upper</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Handyman special! Needs TLC. Great opportunity for the right buyer. Priced below market. Bring your hammer!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"This one needs work. But the bones are good — solid framing, original hardwoods hiding under the carpet, a layout that works. You're not buying a house. You're buying the potential to make it yours. The sweat equity is real. So is the upside."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> "Handyman special" and "TLC" cost sellers 11.1% in value per Zillow data. The after is honest about the condition but frames it as opportunity, not a problem.</p>
+
+<h3>Example 6: The Condo That Blends In</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Top floor condo with city views. Open layout, updated kitchen, in-unit laundry. HOA covers everything. Great for young professionals!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Top floor. End unit. The best natural light in the building. The kitchen was designed for someone who actually cooks — induction range, pot filler, a window over the sink that looks at the skyline. No roommates. No landlord. No lawnmower."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> "Great for young professionals" is an age-discrimination risk. The after sells the lifestyle upgrade — freedom, independence, quality of life.</p>
+
+<h3>Example 7: The Investment Property</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Great investment property! Currently rented at $2,500/mo. Tenant wants to stay. Good cash flow opportunity."</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Cap rate 5.8%. Current rent $2,500/mo — $600 below market. Tenant has been in place 3 years, pays early, never complains. This is a spreadsheet play, not an emotional one. If the numbers work, make an offer."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> Investors want data, not adjectives. The after gives them specific numbers and frames it as a business decision.</p>
+
+<h3>Example 8: The Overpriced Holdout</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Price reduced! Motivated seller! Won't last at this price! Bring all offers!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"The seller is ready to move. They've already found their next home. They'd rather negotiate than wait. If you've been watching this street, this is your window."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> "Motivated seller" and "price reduced" signal desperation. The after is honest about the situation but frames it as an opportunity for the buyer, not a problem for the seller.</p>
+
+<h3>Example 9: The Relocation Rental</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Beautiful rental home in great area. 3 bedroom, 2 bath. Available immediately. No pets. First and last month required."</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Available now. 12-month lease or longer. This is a house, not an apartment — a yard, a driveway, a place to put down roots without committing to buy. The owner wants a good tenant more than they want top dollar. If you've got good credit and a steady job, let's talk."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> The before is cold and transactional. The after speaks to the renter's desire for stability and dignity.</p>
+
+<h3>Example 10: The Second Home</h3>
+<div class="two-col">
+  <div class="col-bad">
+    <span class="vlabel">❌ BEFORE</span>
+    <p>"Charming vacation home near the lake. Perfect weekend getaway. Lots of natural light and open space. Must see!"</p>
+  </div>
+  <div class="col-good">
+    <span class="vlabel">✅ AFTER</span>
+    <p>"Friday traffic disappears in the rearview. By Saturday morning, you're on the water with coffee and no agenda. This is where you go to remember what matters — slow mornings, long afternoons, evenings on the deck that stretch into night. The rest of the world can wait."</p>
+  </div>
+</div>
+<p><strong>What changed:</strong> The before is generic. The after paints a complete picture of escape.</p>
+
+<div class="page-break"></div>
+
+<h2>Chapter 9: Beyond the MLS</h2>
+<p class="subhead">One listing. Five platforms. Zero wasted time.</p>
+
+<p>Your MLS description is the foundation. But it's not the only place buyers will see your listing. A single listing needs to work across MLS, Instagram, Facebook, email, and video. Each platform has different rules, different attention spans, and different audience expectations.</p>
+
+<p>The trick is not writing five different descriptions. It's writing one great description and adapting it.</p>
+
+<h3>Platform Adaptation Matrix</h3>
+<table>
+  <tr><th>Platform</th><th>Length</th><th>Focus</th><th>Voice</th></tr>
+  <tr><td>MLS</td><td>750-1,800 chars</td><td>Complete 5-part structure</td><td>Professional, detailed</td></tr>
+  <tr><td>Instagram</td><td>150 words</td><td>Hook in first line, lifestyle focus</td><td>Conversational, visual</td></tr>
+  <tr><td>Facebook</td><td>200 words</td><td>Storytelling, shareable</td><td>Warm, community-oriented</td></tr>
+  <tr><td>Email</td><td>100 words</td><td>Best feature + open house details</td><td>Direct, personal</td></tr>
+  <tr><td>Reel/TikTok</td><td>30-60 seconds</td><td>Visual-first, hook at second 0</td><td>Energetic, punchy</td></tr>
+</table>
+
+<h3>30-Day Content Calendar</h3>
+<p>One listing. One month. Seven posts. No repeats.</p>
+<table>
+  <tr><th>Week</th><th>Post Type</th><th>Platform</th><th>Angle</th></tr>
+  <tr><td>1</td><td>New listing announcement</td><td>All</td><td>"Just listed — the best [feature] we've seen this year"</td></tr>
+  <tr><td>1</td><td>Best feature close-up</td><td>Instagram/FB</td><td>Single feature, photo-heavy</td></tr>
+  <tr><td>1</td><td>Open house reminder</td><td>FB/Email</td><td>Scarcity + specific details</td></tr>
+  <tr><td>2</td><td>Neighborhood spotlight</td><td>IG/Blog</td><td>Local coffee shop, park, walk score</td></tr>
+  <tr><td>2</td><td>Market update</td><td>FB/LinkedIn</td><td>"Homes like this are selling in X days"</td></tr>
+  <tr><td>3</td><td>Behind the scenes</td><td>Reel/IG</td><td>Showing prep, styling, neighborhood walk</td></tr>
+  <tr><td>4</td><td>Price adjustment or pending</td><td>All</td><td>"Update: under contract" or "Price improved"</td></tr>
+</table>
+
+<h3>The Viral Playbook</h3>
+<p>Three styles that consistently outperform standard listings for engagement. Use sparingly — they work because they're different.</p>
+
+<p><strong>Style 1: Brutal Honesty</strong> — For fixer-uppers or unique properties. "The roof leaks. The floor creaks. But this 3-bedroom has character you can't build in new construction." Works because everyone else is trying to hide flaws.</p>
+
+<p><strong>Style 2: The Scene-Setter</strong> — Start mid-moment. "Saturday morning. Coffee's on. The sun's hitting the kitchen just right. You've got no plans and nowhere to be. This is what this house was built for." Works because it puts the buyer in the scene before they've even visited.</p>
+
+<p><strong>Style 3: The Data Drop</strong> — Lead with numbers. "Days on market: 3. Offers received: 4. Sale price: 102% of list. This is what happens when you price right and market aggressively." Works for sellers, not buyers — use it to win listings.</p>
+
+<div class="page-break"></div>
+
+<h2>Chapter 10: The 90-Second Workflow</h2>
+<p class="subhead">From property input sheet to published listing in under two minutes.</p>
+
+<div class="framework-box">
+  <h4>The Complete Workflow</h4>
+  <ol>
+    <li><strong>:00 — Fill the input sheet.</strong> Property address, top 3 features, buyer persona, emotional angle, tone, neighborhood specifics, MLS limit. (30 seconds)</li>
+    <li><strong>:30 — Run Prompt 1 (Complete Rewrite).</strong> Paste input, get first draft. (5 seconds)</li>
+    <li><strong>:35 — Run Prompt 13 (Compliance Check).</strong> Scan for violations. Fix anything flagged. (15 seconds)</li>
+    <li><strong>:50 — Run the 10-point checklist.</strong> Hook, FBF audit, FH scan, clichés, specificity, sentence variety, sensory layer, CTA, platform fit, character count. (20 seconds)</li>
+    <li><strong>:70 — Platform adaptation.</strong> Run Prompt 15 (Multi-Platform Repurpose) for IG, FB, email, reel. (10 seconds)</li>
+    <li><strong>:80 — Final read-aloud.</strong> Does it sound like you? Would you show this to your broker? (10 seconds)</li>
+    <li><strong>:90 — Publish.</strong> MLS, social scheduler, email blast. Done.</li>
+  </ol>
+</div>
+
+<h3>Quick-Reference Card</h3>
+<table>
+  <tr><th>Step</th><th>Check</th><th>Time</th></tr>
+  <tr><td>1</td><td>Input sheet filled</td><td>30s</td></tr>
+  <tr><td>2</td><td>Hook stops the scroll</td><td>5s</td></tr>
+  <tr><td>3</td><td>Every feature reaches Layer 3</td><td>10s</td></tr>
+  <tr><td>4</td><td>No Fair Housing triggers</td><td>10s</td></tr>
+  <tr><td>5</td><td>No clichés</td><td>5s</td></tr>
+  <tr><td>6</td><td>Specific beats generic</td><td>10s</td></tr>
+  <tr><td>7</td><td>Platform adapted</td><td>10s</td></tr>
+  <tr><td>8</td><td>Character count verified</td><td>5s</td></tr>
+  <tr><td>9</td><td>Read aloud, sounds like you</td><td>5s</td></tr>
+  <tr><td>10</td><td>CTA confident, not desperate</td><td>5s</td></tr>
+</table>
+
+<div class="callout-success">
+  <strong>Total: 90 seconds.</strong> From blank page to published, compliant, multi-platform listing. This is the system that ListWorks PRO was built to automate. The prompts in this guide give you the manual version. The tool makes it one click.
+</div>
+
+<div class="page-break"></div>
+
+<h2>Bonuses</h2>
+
+<h3>Bonus 1: Banned Words Checklist</h3>
+<p>Print this. Keep it on your desk.</p>
+<table>
+  <tr><th>❌ Don't Use</th><th>✅ Use Instead</th><th>Why</th></tr>
+  <tr><td>Stunning</td><td>Specific detail about what's impressive</td><td>Cliché — zero information value</td></tr>
+  <tr><td>Gorgeous</td><td>Describes the feeling, not the look</td><td>Same — tells nothing</td></tr>
+  <tr><td>Immaculate</td><td>"Move-in ready" + specific updates</td><td>Subjective, unverifiable</td></tr>
+  <tr><td>Must see!</td><td>"The [specific feature] alone is worth the visit"</td><td>Desperate, ignored</td></tr>
+  <tr><td>Won't last</td><td>Three offers already / X days avg in this neighborhood</td><td>Boy who cried wolf</td></tr>
+  <tr><td>Charming</td><td>Specific architectural/design details</td><td>Reads as "dated" or "small"</td></tr>
+  <tr><td>Cozy</td><td>Actual dimensions or layout description</td><td>Reads as "cramped"</td></tr>
+  <tr><td>One-of-a-kind</td><td>What actually makes it unique</td><td>Almost never true</td></tr>
+  <tr><td>Perfect for families</td><td>"Three bedrooms, open layout"</td><td>Fair Housing risk — checked</td></tr>
+  <tr><td>Safe neighborhood</td><td>"Walk Score 94, 2 blocks from park"</td><td>Fair Housing risk — checked</td></tr>
+  <tr><td>Priced to sell</td><td>Price relative to comps</td><td>Cheapens the listing</td></tr>
+  <tr><td>Opportunity</td><td>What the opportunity actually is</td><td>Vague — -2% Zillow value</td></tr>
+  <tr><td>Fixer / TLC</td><td>"Needs updating" + specific scope</td><td>-11.1% Zillow value penalty</td></tr>
+  <tr><td>Potential</td><td>What it could become + what it would cost</td><td>-4.3% Zillow value penalty</td></tr>
+</table>
+
+<h3>Bonus 2: Property Input Sheet</h3>
+<p>Copy this into a notes app or text file. Fill it before every listing session.</p>
+
+<div class="callout">
+<p><strong>Property Address:</strong> _________________________________</p>
+<p><strong>The One Thing That Makes This Different:</strong> _________________________________</p>
+<p><strong>Buyer Persona:</strong> □ First-Time □ Family □ Luxury □ Downsizer □ Investor □ Second-Home</p>
+<p><strong>Top 3 Features (FBF to Layer 3):</strong></p>
+<p>1. Feature: ________ Benefit: ________ Feeling: ________</p>
+<p>2. Feature: ________ Benefit: ________ Feeling: ________</p>
+<p>3. Feature: ________ Benefit: ________ Feeling: ________</p>
+<p><strong>Emotional Angle (one sentence):</strong> _________________________________</p>
+<p><strong>Specific Neighborhood Details:</strong> _________________________________</p>
+<p><strong>Tone:</strong> □ Luxury □ Warmth □ Modern □ Urgent □ Investor</p>
+<p><strong>MLS Character Limit:</strong> ________</p>
+</div>
+
+<h3>Bonus 3: Agent Bio Generator</h3>
+<div class="prompt-box">Write a 3-sentence agent bio for me. Sentence 1: What I do differently. Sentence 2: What my clients say about me. Sentence 3: The one thing I want every potential client to know. Tone: confident but warm. No clichés: "passionate about real estate," "dedicated to my clients," "your home is my priority."<br><br>
+My name: [NAME]<br>
+My specialty: [SPECIALTY]<br>
+One thing clients say: [QUOTE]</div>
+
+<h3>Bonus 4: Colorado AI Act Compliance Statement</h3>
+<p>If you use AI tools to generate listing copy in Colorado, include this disclosure on your listings:</p>
+
+<div class="prompt-box">This listing description was generated with the assistance of artificial intelligence and reviewed by [AGENT NAME], a licensed Colorado real estate professional.</div>
+
+<p>Place it at the bottom of every AI-assisted listing. This satisfies the general disclosure requirement under Colorado's AI Act (SB 24-205 / SB 26-189).</p>
+
+<h3>Bonus 5: Zillow Data-Backed Word Reference</h3>
+<table>
+  <tr><th>Word</th><th>Price Impact</th><th>Speed Impact</th></tr>
+  <tr><td>Barn doors</td><td>+13.4%</td><td>57 days faster</td></tr>
+  <tr><td>Shaker cabinets</td><td>+9.6%</td><td>45 days faster</td></tr>
+  <tr><td>Luxurious (bottom-third homes)</td><td>+8.2%</td><td>N/A</td></tr>
+  <tr><td>Farmhouse sink</td><td>+8.0%</td><td>N/A</td></tr>
+  <tr><td>Subway tile</td><td>+7.0%</td><td>63 days faster</td></tr>
+  <tr><td>Captivating (top-third homes)</td><td>+6.5%</td><td>N/A</td></tr>
+  <tr><td>Quartz</td><td>+6.0%</td><td>N/A</td></tr>
+  <tr><td>Fixer</td><td>-11.1%</td><td>Slower</td></tr>
+  <tr><td>Potential</td><td>-4.3%</td><td>Slower</td></tr>
+  <tr><td>Opportunity</td><td>-2.0%</td><td>Slower</td></tr>
+  <tr><td>TLC</td><td>Negative</td><td>Slower</td></tr>
+</table>
+<p><em>Source: Zillow Talk (2014), repeatedly confirmed in subsequent analyses. These are correlations, not guarantees — but the signal is strong enough to inform word choice.</em></p>
+
+<div class="page-break"></div>
+
+<h2>Quick-Reference Pocket Cards</h2>
+<p class="subhead">Print this page. Keep it on your desk. Use it on every listing.</p>
+
+<h3>Card 1: The 5-Part Listing Structure</h3>
+<table>
+  <tr><th>#</th><th>Section</th><th>One-Line Rule</th></tr>
+  <tr><td>1</td><td>Hook</td><td>First 15 words decide if they keep reading. No "Welcome to."</td></tr>
+  <tr><td>2</td><td>Lifestyle</td><td>Sell the life, not the house. Paint a picture.</td></tr>
+  <tr><td>3</td><td>Features (FBF)</td><td>Every spec reaches Layer 3 — Feature → Benefit → Feeling.</td></tr>
+  <tr><td>4</td><td>Neighborhood</td><td>Specific beats generic. Walk Score, coffee shops, commute times.</td></tr>
+  <tr><td>5</td><td>CTA</td><td>Confident, not desperate. Assume they're already sold.</td></tr>
+</table>
+
+<h3>Card 2: The FBF Framework</h3>
+<table>
+  <tr><th>Layer</th><th>Question</th><th>Example</th></tr>
+  <tr><td>1 — Feature</td><td>What is it?</td><td>"Quartz countertops"</td></tr>
+  <tr><td>2 — Benefit</td><td>So what?</td><td>"Never stains. Never seals."</td></tr>
+  <tr><td>3 — Feeling</td><td>Why does that matter?</td><td>"Sunday mornings around the island, coffee in hand, mess forgotten."</td></tr>
+</table>
+
+<h3>Card 3: Banned Words → Replacements</h3>
+<table>
+  <tr><th>❌ Don't Say</th><th>✅ Say Instead</th></tr>
+  <tr><td>Stunning / Gorgeous / Immaculate</td><td>Specific detail about what's actually impressive</td></tr>
+  <tr><td>Must see / Won't last</td><td>"Three offers already" or actual data</td></tr>
+  <tr><td>Perfect for families</td><td>"Three bedrooms, open layout" (Fair Housing safe)</td></tr>
+  <tr><td>Safe neighborhood</td><td>"Walk Score 94, 2 blocks from park"</td></tr>
+  <tr><td>Cozy / Charming</td><td>Actual dimensions or layout description</td></tr>
+  <tr><td>Fixer / TLC / Potential</td><td>"Needs updating" + specific scope (-11% Zillow penalty)</td></tr>
+  <tr><td>Priced to sell / Motivated</td><td>Price relative to comps</td></tr>
+</table>
+
+<h3>Card 4: The 90-Second Workflow</h3>
+<table>
+  <tr><th>Time</th><th>Action</th></tr>
+  <tr><td>:00-:30</td><td>Fill the input sheet (address, top 3 features, persona, tone, MLS limit)</td></tr>
+  <tr><td>:30-:35</td><td>Run Prompt 1 — Complete Rewrite</td></tr>
+  <tr><td>:35-:50</td><td>Run Prompt 13 — Compliance Check. Fix violations.</td></tr>
+  <tr><td>:50-:70</td><td>Run 10-point checklist (hook, FBF, FH, clichés, specificity)</td></tr>
+  <tr><td>:70-:80</td><td>Run Prompt 15 — Multi-platform adaptation</td></tr>
+  <tr><td>:80-:90</td><td>Read aloud. Does it sound like you? Publish.</td></tr>
+</table>
+
+<h3>Card 5: Fair Housing Quick-Check</h3>
+<table>
+  <tr><th>Trigger Word</th><th>Risk</th><th>Safe Alternative</th></tr>
+  <tr><td>Perfect for ___</td><td>Familial status</td><td>Describe the actual space</td></tr>
+  <tr><td>Safe / Exclusive / Desired</td><td>Racial steering</td><td>Walk Score, verifiable data</td></tr>
+  <tr><td>Master bedroom</td><td>Gender-loaded</td><td>Primary suite</td></tr>
+  <tr><td>Retiree / Young professional</td><td>Age discrimination</td><td>Describe the home's features</td></tr>
+  <tr><td>Walking distance to church</td><td>Religious preference</td><td>Walking distance to downtown/park</td></tr>
+  <tr><td>Man cave / She shed</td><td>Gender stereotyping</td><td>Flex room, bonus space</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<div style="text-align:center;padding:40px 20px;border:3px solid #1a1a2e;border-radius:12px;margin:40px 0;">
+  <p style="font-family:'Helvetica Neue',sans-serif;font-size:10pt;letter-spacing:3px;text-transform:uppercase;color:#888;margin-bottom:10px;">You now have the system</p>
+  <h2 style="font-size:30pt;margin:10px 0;">Here's what ListWorks adds</h2>
+  <p style="font-size:13pt;color:#555;max-width:500px;margin:0 auto 30px;">Everything in this guide is manual. ListWorks makes it instant. Same framework. Same compliance. One click instead of 15 prompts.</p>
+  
+  <div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin:30px 0;text-align:left;max-width:600px;margin:30px auto;">
+    <div style="flex:1;min-width:200px;padding:16px;background:#f0faf0;border-radius:8px;border:1px solid #b8d8b8;">
+      <p style="font-weight:700;margin:0 0 4px;">✅ Fair Housing scan</p>
+      <p style="font-size:10pt;color:#555;margin:0;">Automatic. Every rewrite. Catches violations before you publish.</p>
+    </div>
+    <div style="flex:1;min-width:200px;padding:16px;background:#f0faf0;border-radius:8px;border:1px solid #b8d8b8;">
+      <p style="font-weight:700;margin:0 0 4px;">✅ One click, 5 formats</p>
+      <p style="font-size:10pt;color:#555;margin:0;">MLS + Instagram + Facebook + Email + Reel — all from one input.</p>
+    </div>
+    <div style="flex:1;min-width:200px;padding:16px;background:#f0faf0;border-radius:8px;border:1px solid #b8d8b8;">
+      <p style="font-weight:700;margin:0 0 4px;">✅ Custom voice training</p>
+      <p style="font-size:10pt;color:#555;margin:0;">Teach it your voice once. Every listing sounds like you.</p>
+    </div>
+    <div style="flex:1;min-width:200px;padding:16px;background:#f0faf0;border-radius:8px;border:1px solid #b8d8b8;">
+      <p style="font-weight:700;margin:0 0 4px;">✅ CO AI Act compliant</p>
+      <p style="font-size:10pt;color:#555;margin:0;">Disclosure built in. Colorado agents stay protected.</p>
+    </div>
+  </div>
+
+  <div style="margin:20px 0 30px;">
+    <p style="font-size:11pt;color:#888;margin-bottom:6px;">This guide = <strong style="color:#1a1a2e;">$20</strong></p>
+    <p style="font-size:11pt;color:#888;margin-bottom:6px;">One Fair Housing fine = <strong style="color:#c0392b;">$26,262</strong></p>
+    <p style="font-size:11pt;color:#888;margin-bottom:20px;">ListWorks PRO = <strong style="color:#1a1a2e;">$29/month</strong></p>
+    <a href="https://listworks.pro" style="display:inline-block;background:#1a1a2e;color:white;padding:16px 40px;border-radius:6px;text-decoration:none;font-family:'Helvetica Neue',sans-serif;font-weight:700;font-size:13pt;">Try 3 Free Rewrites — No Credit Card</a>
+    <p style="font-size:9pt;color:#aaa;margin-top:10px;">30-day money-back on Pro. No risk. No commitment.</p>
+  </div>
+</div>
+
+<footer>
+  <p><strong>ListWorks PRO</strong> &mdash; AI listing copy that's compliant by default. <a href="https://listworks.pro" style="color:#c0392b;">listworks.pro</a></p>
+  <p style="margin-top:10px;font-size:8pt;">&copy; 2026 ListWorks PRO. This guide is for educational purposes and does not constitute legal advice. Fair Housing compliance requirements vary by jurisdiction. Consult a qualified attorney for specific legal guidance.</p>
+</footer>
+
+</body>
+</html>
