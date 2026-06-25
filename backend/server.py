@@ -2898,7 +2898,7 @@ async def checkout_status(stripe_session_id: str, request: Request):
     }
 
 
-@api_router.post("/webhook/stripe")
+@api_router.post("/stripe/webhook")
 async def stripe_webhook(request: Request):
     if not STRIPE_API_KEY:
         raise HTTPException(500, "Stripe not configured")
@@ -2906,7 +2906,7 @@ async def stripe_webhook(request: Request):
     sig = request.headers.get("Stripe-Signature", "")
 
     webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
-    if not webhook_secret:
+        if not webhook_secret:
         logger.error("STRIPE_WEBHOOK_SECRET not configured — refusing unsigned webhook")
         raise HTTPException(500, "Webhook secret not configured")
     try:
