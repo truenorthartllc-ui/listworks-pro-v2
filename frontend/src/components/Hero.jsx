@@ -237,6 +237,36 @@ export default function Hero() {
             <span>● 10s per listing</span>
             <span className="text-green-600">● Fair Housing scanned</span>
           </div>
+
+          {/* $20 PDF Guide - BREAD AND BUTTER */}
+          <div className="mt-8 border-t border-ink/10 pt-8">
+            <div className="flex items-baseline gap-4 mb-3">
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">The Guide</span>
+              <span className="font-display italic text-2xl text-ink">$20</span>
+            </div>
+            <p className="font-body text-sm text-ink/70 leading-relaxed mb-4 max-w-lg">
+              85 pages. The exact framework top-1% agents use to write listings that sell. 15 copy-paste AI prompts. 5-part MLS template. Before/after rewrites. Read it in one sitting — use it on your next listing the same day.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={async () => {
+                  await startCheckout("guide_pdf");
+                }}
+                className="btn-vermillion px-6 py-3 font-heading text-xs uppercase tracking-[0.15em]"
+              >
+                Buy the Guide — $20
+              </button>
+              <a
+                href="#guide"
+                className="btn-outline px-6 py-3 font-heading text-xs uppercase tracking-[0.15em]"
+              >
+                Preview Inside
+              </a>
+            </div>
+            <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">
+              30-day money-back · Instant download · Lifetime access
+            </p>
+          </div>
         </div>
 
         <aside className="col-span-12 lg:col-span-4 relative overflow-hidden animate-rise min-h-[420px] bg-coal" style={{ animationDelay: "0.55s" }}>
