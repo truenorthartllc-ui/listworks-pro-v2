@@ -18,7 +18,7 @@ const testimonials = [
     name: "Derek Okafor",
     role: "eXp Realty · Atlanta",
     sold: "3 FSBOs in 30 days",
-    img: "https://images.unsplash.com/photo-1531891437562-4301cf35b7e7?w=100&h=100&fit=crop&crop=face",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
   },
   {
     quote: "IG captions stop the scroll. MLS sounds like me but 10x better. Only tool I pay for.",

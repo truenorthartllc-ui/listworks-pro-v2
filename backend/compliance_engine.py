@@ -137,6 +137,89 @@ def check_fair_housing_v3(text: str) -> list[dict]:
     return violations
 
 
+CO_AI_DISCLOSURE_PATTERNS = [
+    r'\bai[- ]generated\b',
+    r'\bai[- ]assisted\b',
+    r'\bartificial intelligence\b',
+    r'\bgenerated (by|with|using) (ai|artificial intelligence|listworks)\b',
+    r'\bwritten (by|with|using) (ai|artificial intelligence)\b',
+    r'\bcreated (by|with|using) (ai|artificial intelligence)\b',
+    r'\blistworks pro\b',
+    r'\bthis (listing|description|content|copy) (was |)(generated|created|written|produced) (by|with|using) (ai|artificial intelligence)\b',
+    r'\bdisclosure:.*\bai\b',
+    r'\bai disclosure\b',
+]
+
+
+def check_co_ai_act(text: str, metadata: dict) -> dict:
+    """
+    Check a listing description for Colorado SB 24-205 (AI Act) compliance.
+
+    metadata keys:
+      - human_reviewed: bool (default True)
+      - agent_name: str
+    """
+    from datetime import datetime, timezone
+
+    text_lower = text.lower()
+    agent_name = metadata.get("agent_name", "")
+    human_reviewed = metadata.get("human_reviewed", True)
+
+    disclosure_present = any(
+        re.search(pat, text_lower, re.IGNORECASE)
+        for pat in CO_AI_DISCLOSURE_PATTERNS
+    )
+
+    violations = []
+    if not disclosure_present:
+        violations.append({
+            "rule": "AI Disclosure Missing",
+            "explanation": (
+                "Colorado SB 24-205 requires disclosure whenever AI is used to generate "
+                "real estate listing copy. No disclosure phrase was detected in this text."
+            ),
+            "severity": "CRITICAL",
+        })
+    if not human_reviewed:
+        violations.append({
+            "rule": "Human Review Not Attested",
+            "explanation": (
+                "SB 24-205 requires that a licensed agent reviews and approves AI-generated "
+                "content before publication. human_reviewed was set to false."
+            ),
+            "severity": "HIGH",
+        })
+
+    agent_label = agent_name if agent_name else "[Agent Name]"
+    suggested_disclosure = (
+        f"This listing description was generated with AI assistance (ListWorks PRO) "
+        f"and reviewed by {agent_label}, a licensed Colorado real estate agent."
+    )
+
+    if not violations:
+        grade = "COMPLIANT"
+    elif any(v["severity"] == "CRITICAL" for v in violations):
+        grade = "NON_COMPLIANT"
+    else:
+        grade = "NEEDS_DISCLOSURE"
+
+    return {
+        "compliant": len(violations) == 0,
+        "disclosure_present": disclosure_present,
+        "suggested_disclosure": suggested_disclosure,
+        "violations": violations,
+        "audit_record": {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "agent_name": agent_name,
+            "listing_snippet": text[:200],
+            "ai_used": True,
+            "human_reviewed": human_reviewed,
+            "disclosure_present": disclosure_present,
+        },
+        "grade": grade,
+    }
+
+
 def overall_risk(violations: list[dict]) -> str:
     if not violations:
         return "CLEAN"

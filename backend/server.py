@@ -27,7 +27,7 @@ except ImportError:
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
 from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip
-from compliance_engine import check_fair_housing_v3, overall_risk, compliance_grade
+from compliance_engine import check_fair_housing_v3, overall_risk, compliance_grade, check_co_ai_act
 import base64
 import stripe as stripe_sdk
 import httpx
@@ -1661,6 +1661,137 @@ Property: {req.property_address}
 Generate the CO AI Act disclosure statement."""
     disclosure = await call_openrouter(system, user, model="openai/gpt-4o-mini")
     return {"disclosure_text": disclosure.strip()}
+
+# ============== COLORADO AI ACT SCANNER ==============
+class COActCheckIn(BaseModel):
+    text: str
+    agent_name: str = ""
+    human_reviewed: bool = True
+    session_id: str = ""
+
+
+@api_router.post("/compliance/co-act")
+async def check_co_act_compliance(req: COActCheckIn):
+    """Scan listing copy for Colorado SB 24-205 (AI Act) compliance."""
+    result = check_co_ai_act(req.text, {
+        "agent_name": req.agent_name,
+        "human_reviewed": req.human_reviewed,
+    })
+    scan_id = req.session_id or str(uuid.uuid4())
+    await db.co_act_scans.insert_one({
+        "scan_id": scan_id,
+        "scanned_at": datetime.now(timezone.utc).isoformat(),
+        "listing_text": req.text,
+        "agent_name": req.agent_name,
+        **result,
+    })
+    return {"scan_id": scan_id, **result}
+
+
+@api_router.get("/compliance/co-act/pdf/{scan_id}")
+async def co_act_pdf(scan_id: str):
+    """Generate a Colorado AI Act compliance certificate PDF."""
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    import tempfile
+
+    doc_data = await db.co_act_scans.find_one({"scan_id": scan_id}, {"_id": 0})
+    if not doc_data:
+        raise HTTPException(404, "CO Act scan not found")
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    tmp.close()
+
+    doc = SimpleDocTemplate(tmp.name, pagesize=letter,
+                            leftMargin=0.75*inch, rightMargin=0.75*inch,
+                            topMargin=0.75*inch, bottomMargin=0.75*inch)
+    styles = getSampleStyleSheet()
+    story = []
+
+    grade = doc_data.get("grade", "NON_COMPLIANT")
+    grade_color = "#16a34a" if grade == "COMPLIANT" else "#dc2626"
+
+    header_style = ParagraphStyle("header", fontSize=18, fontName="Helvetica-Bold", spaceAfter=4)
+    sub_style = ParagraphStyle("sub", fontSize=10, fontName="Helvetica",
+                               textColor=colors.HexColor("#666666"), spaceAfter=16)
+    story.append(Paragraph("ListWorks PRO", header_style))
+    story.append(Paragraph("Colorado AI Act Compliance Record — SB 24-205", sub_style))
+
+    grade_style = ParagraphStyle("grade", fontSize=14, fontName="Helvetica-Bold",
+                                 textColor=colors.HexColor(grade_color), spaceAfter=12)
+    story.append(Paragraph(f"Status: {grade}", grade_style))
+
+    meta_data = [
+        ["Scan ID:", scan_id[:16] + "..."],
+        ["Date / Time:", doc_data.get("scanned_at", "")[:19].replace("T", " ") + " UTC"],
+        ["Agent:", doc_data.get("agent_name", "—") or "—"],
+        ["Human Reviewed:", "Yes" if doc_data.get("human_reviewed", True) else "No"],
+        ["AI Disclosure Found:", "Yes" if doc_data.get("disclosure_present") else "No"],
+    ]
+    meta_table = Table(meta_data, colWidths=[1.8*inch, 4.7*inch])
+    meta_table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
+    story.append(meta_table)
+    story.append(Spacer(1, 12))
+
+    story.append(Paragraph("<b>Listing Excerpt Scanned:</b>", styles["Normal"]))
+    snippet = doc_data.get("listing_text", "")[:200]
+    if len(doc_data.get("listing_text", "")) > 200:
+        snippet += "..."
+    story.append(Paragraph(snippet, ParagraphStyle("excerpt", fontSize=9, leftIndent=12, spaceAfter=12)))
+
+    story.append(Paragraph("<b>Suggested Disclosure Statement:</b>", styles["Normal"]))
+    story.append(Paragraph(
+        doc_data.get("suggested_disclosure", ""),
+        ParagraphStyle("disclosure", fontSize=9, leftIndent=12, spaceAfter=12,
+                       textColor=colors.HexColor("#1d4ed8"))
+    ))
+
+    violations = doc_data.get("violations", [])
+    story.append(Paragraph(f"<b>Compliance Issues: {len(violations)}</b>", styles["Normal"]))
+    story.append(Spacer(1, 6))
+    if violations:
+        sev_colors = {"CRITICAL": "#CC0000", "HIGH": "#EF4444", "MEDIUM": "#F59E0B"}
+        for v in violations:
+            color = sev_colors.get(v.get("severity", ""), "#666666")
+            v_data = [
+                [Paragraph(f'<font color="{color}"><b>{v.get("severity","")}</b></font>',
+                           ParagraphStyle("sev", fontSize=9)),
+                 Paragraph(f'<b>{v.get("rule","")}</b>', ParagraphStyle("rule", fontSize=9))],
+                ["Detail:", v.get("explanation", "")],
+            ]
+            v_table = Table(v_data, colWidths=[1.3*inch, 5.2*inch])
+            v_table.setStyle(TableStyle([
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#DDDDDD")),
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#F5F5F5")),
+            ]))
+            story.append(v_table)
+            story.append(Spacer(1, 6))
+    else:
+        story.append(Paragraph("No compliance issues detected.", styles["Normal"]))
+
+    story.append(Spacer(1, 20))
+    footer_style = ParagraphStyle("footer", fontSize=8, textColor=colors.HexColor("#999999"))
+    story.append(Paragraph(
+        "Generated by ListWorks PRO | listworks.pro | Colorado SB 24-205 Compliance. "
+        "This record is for E&amp;O documentation purposes. Not legal advice.",
+        footer_style
+    ))
+
+    doc.build(story)
+    return FileResponse(tmp.name, media_type="application/pdf",
+                        filename=f"co-act-compliance-{scan_id[:8]}.pdf",
+                        headers={"Content-Disposition": f"attachment; filename=co-act-compliance-{scan_id[:8]}.pdf"})
+
 
 # ============== VOICE-TO-DESCRIPTION ==============
 class VoiceDescriptionIn(BaseModel):

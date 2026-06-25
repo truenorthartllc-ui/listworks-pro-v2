@@ -1,3 +1,5 @@
+import React from 'react';
+
 function QRIcon({ size = 72 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 21 21" fill="none" className="text-ink">
@@ -42,6 +44,8 @@ const tools = [
 ];
 
 export default function QRFeatures() {
+  const [expanded, setExpanded] = React.useState(null);
+
   return (
     <section className="bg-white border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
@@ -53,14 +57,18 @@ export default function QRFeatures() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/12 border border-ink/12">
-          {tools.map((t) => (
-            <div key={t.label} className="bg-white p-5 flex flex-col gap-4">
+          {tools.map((t, idx) => (
+            <button
+              key={t.label}
+              onClick={() => setExpanded(expanded === idx ? null : idx)}
+              className="bg-white p-5 flex flex-col gap-4 text-left hover:bg-oat/30 transition-colors cursor-pointer group"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <span className="font-heading text-[11px] uppercase tracking-[0.15em] text-ink block mb-1">{t.label}</span>
+                  <span className="font-heading text-[11px] uppercase tracking-[0.15em] text-ink block mb-1 group-hover:text-vermillion transition-colors">{t.label}</span>
                   <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-vermillion border border-vermillion/30 px-2 py-0.5">{t.badge}</span>
                 </div>
-                <div className="shrink-0 opacity-40">
+                <div className="shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
                   <QRIcon size={52} />
                 </div>
               </div>
@@ -72,7 +80,21 @@ export default function QRFeatures() {
                   </li>
                 ))}
               </ol>
-            </div>
+              {expanded === idx && (
+                <div className="pt-3 border-t border-ink/10 space-y-2">
+                  <p className="font-body text-xs text-vermillion font-semibold">What buyers see:</p>
+                  <p className="font-body text-xs text-ink/60 leading-relaxed">
+                    {idx === 0 && "Full listing page with photos, description, Fair Housing compliant copy, and a contact form. Your lead gets captured the moment they scan."}
+                    {idx === 1 && "A mobile-friendly check-in form. Name + email + optional phone. Takes 10 seconds. All leads go straight to your dashboard with timestamp."}
+                    {idx === 2 && "A 5-star rating form + comment box + contact capture. Buyers leave feedback anonymously OR drop their info if interested. You get both."}
+                  </p>
+                  <span className="inline-block font-mono text-[9px] uppercase tracking-[0.1em] text-ink/40 pt-1">Click to collapse ↑</span>
+                </div>
+              )}
+              {expanded !== idx && (
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink/30 pt-1">Click to see what buyers see →</span>
+              )}
+            </button>
           ))}
         </div>
 

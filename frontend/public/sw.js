@@ -1,4 +1,4 @@
-const CACHE = 'listworks-v2';
+const CACHE = 'listworks-v3';
 const STATIC = [
   '/',
   '/manifest.json',

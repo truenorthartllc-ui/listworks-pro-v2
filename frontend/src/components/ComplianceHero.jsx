@@ -55,7 +55,7 @@ export default function ComplianceHero() {
   };
 
   return (
-    <section className="relative bg-oat border-b border-ink/10 overflow-hidden">
+    <section id="compliance" className="relative bg-oat border-b border-ink/10 overflow-hidden">
       {/* Blueprint background */}
       <div className="blueprint-bg absolute inset-0 opacity-40 pointer-events-none" />
 
@@ -65,19 +65,18 @@ export default function ComplianceHero() {
         <div className="flex items-center gap-3 mb-6">
           <span className="h-px w-8 bg-ink/40" />
           <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-ink/50">
-            Free · Instant · No account needed
+            See it catch one — right now
           </span>
         </div>
 
         {/* Headline */}
-        <h1 className="font-display tracking-tight leading-[1.0] text-4xl md:text-6xl text-ink mb-4">
-          Find out if your listing will cost you{" "}
-          <span className="italic text-vermillion">$26,262</span>
-          {" "}in 10 seconds
-        </h1>
+        <h2 className="font-display tracking-tight leading-[1.0] text-4xl md:text-6xl text-ink mb-4">
+          Paste your listing.{" "}
+          <span className="italic">We'll catch what ChatGPT misses.</span>
+        </h2>
 
         <p className="font-body text-base md:text-lg text-ink/60 mb-8 max-w-xl">
-          Free Fair Housing compliance check. Paste any listing copy — get instant results before it hits MLS.
+          Real-time Fair Housing scan. Results in 5 seconds — no account, no credit card, no catch.
         </p>
 
         {/* Paste box */}
