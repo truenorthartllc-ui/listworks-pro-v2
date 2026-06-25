@@ -5,6 +5,7 @@
 [build.environment]
   NODE_VERSION = "18"
   REACT_APP_GOOGLE_MAPS_API_KEY = "AIzaSyAO3eynP_-0OoLG4jv5oyFW7LrgvgUa8z4"
+  REACT_APP_BACKEND_URL = "https://listworks-pro-v2-production.up.railway.app"
 
 [[build.hooks.post_build]]
 command = "cp frontend/public/index-seo.html frontend/build/index.html"
