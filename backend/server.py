@@ -2906,7 +2906,7 @@ async def stripe_webhook(request: Request):
     sig = request.headers.get("Stripe-Signature", "")
 
     webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
-        if not webhook_secret:
+    if not webhook_secret:
         logger.error("STRIPE_WEBHOOK_SECRET not configured — refusing unsigned webhook")
         raise HTTPException(500, "Webhook secret not configured")
     try:
