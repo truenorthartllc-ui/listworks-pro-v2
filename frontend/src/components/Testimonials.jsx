@@ -52,14 +52,11 @@ export default function Testimonials() {
                 "{t.quote}"
               </blockquote>
               <figcaption className="border-t border-ink/8 pt-3 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-vermillion/10 flex items-center justify-center shrink-0 overflow-hidden">
-                  {t.img ? (
-                    <img src={t.img} alt={t.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="font-heading text-sm font-semibold text-vermillion">
-                      {t.name.split(" ").map(n => n[0]).join("")}
-                    </span>
-                  )}
+                <div className="w-10 h-10 rounded-full bg-vermillion/10 shrink-0 overflow-hidden">
+                  <img src={t.img} alt={t.name} className="w-full h-full object-cover" onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = `<span class="font-heading text-sm font-semibold text-vermillion flex items-center justify-center w-full h-full">${t.name.split(" ").map(n => n[0]).join("")}</span>`;
+                  }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-heading text-[11px] uppercase tracking-[0.1em] text-ink truncate">{t.name}</div>
