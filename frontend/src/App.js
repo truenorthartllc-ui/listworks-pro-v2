@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import LandingPage from "@/pages/LandingPage";
 import LandingPageV4 from "@/pages/LandingPageV4";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import COCompliancePage from "@/pages/COCompliancePage";
 import SharedListing from "@/pages/SharedListing";
 import AffiliateDashboard from "@/pages/AffiliateDashboard";
 import AffiliateSignup from "@/pages/AffiliateSignup";
@@ -70,6 +71,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/city/:city" element={<CityPage />} />
           <Route path="/listing-analyzer" element={<ListingAnalyzerPage />} />
+          <Route path="/co-compliance" element={<COCompliancePage />} />
           <Route path="/prompt-library" element={<PromptLibraryPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/app/*" element={<DashboardPage />} />

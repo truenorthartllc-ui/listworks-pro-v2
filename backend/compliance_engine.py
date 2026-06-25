@@ -151,9 +151,13 @@ CO_AI_DISCLOSURE_PATTERNS = [
 ]
 
 
-def check_co_ai_act(text: str, metadata: dict) -> dict:
+def check_co_ai_act(text: str, metadata: dict, use_ai_analysis: bool = True) -> dict:
     """
     Check a listing description for Colorado SB 24-205 (AI Act) compliance.
+
+    Two-layer approach:
+    1. Deterministic regex check (fast, legally defensible)
+    2. Claude Opus 4.8 quality analysis (disclosure clarity, prominence, effectiveness)
 
     metadata keys:
       - human_reviewed: bool (default True)
@@ -165,6 +169,7 @@ def check_co_ai_act(text: str, metadata: dict) -> dict:
     agent_name = metadata.get("agent_name", "")
     human_reviewed = metadata.get("human_reviewed", True)
 
+    # Layer 1: Deterministic disclosure detection
     disclosure_present = any(
         re.search(pat, text_lower, re.IGNORECASE)
         for pat in CO_AI_DISCLOSURE_PATTERNS
@@ -190,20 +195,109 @@ def check_co_ai_act(text: str, metadata: dict) -> dict:
             "severity": "HIGH",
         })
 
+    # Layer 2: AI-powered disclosure quality analysis (if disclosure present)
+    disclosure_quality = None
+    if disclosure_present and use_ai_analysis:
+        try:
+            import asyncio
+            import os
+            import httpx
+
+            system_prompt = """You are a Colorado real estate compliance expert analyzing AI disclosure quality under SB 24-205.
+
+The law requires:
+1. Clear disclosure that AI was used to generate content
+2. Human review by a licensed agent
+3. Disclosure must be PROMINENT and TRANSPARENT (not buried in fine print)
+
+Analyze the disclosure and return JSON:
+{
+  "quality_score": 0-100,
+  "prominence": "PROMINENT" | "ADEQUATE" | "BURIED",
+  "clarity": "CLEAR" | "VAGUE" | "CONFUSING",
+  "issues": ["issue1", "issue2"],
+  "strengths": ["strength1", "strength2"],
+  "recommendation": "brief improvement suggestion or 'Disclosure meets best practices'"
+}"""
+
+            user_prompt = f"""Analyze this listing's AI disclosure for Colorado SB 24-205 compliance:
+
+LISTING TEXT:
+{text}
+
+Focus on:
+- Is the disclosure CLEAR and SPECIFIC about what AI did?
+- Is it PROMINENT (early/visible) or buried at the end?
+- Does it name the reviewing agent clearly?
+- Does it meet the SPIRIT of the law (consumer transparency)?"""
+
+            async def call_opus():
+                key = os.environ.get('OPENROUTER_API_KEY', '')
+                if not key:
+                    return None
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    resp = await client.post(
+                        "https://openrouter.ai/api/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {key}",
+                            "Content-Type": "application/json",
+                        },
+                        json={
+                            "model": "anthropic/claude-opus-4.5:beta",
+                            "messages": [
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt},
+                            ],
+                            "max_tokens": 1024,
+                            "temperature": 0.3,
+                        },
+                    )
+                    if resp.status_code != 200:
+                        return None
+                    data = resp.json()
+                    import json
+                    return json.loads(data["choices"][0]["message"]["content"])
+
+            # Run async in sync context
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            disclosure_quality = loop.run_until_complete(call_opus())
+            loop.close()
+
+            # Add quality-based violations
+            if disclosure_quality:
+                if disclosure_quality.get("prominence") == "BURIED":
+                    violations.append({
+                        "rule": "Disclosure Not Prominent",
+                        "explanation": "Disclosure is present but buried in fine print. SB 24-205 requires transparent, prominent disclosure.",
+                        "severity": "MEDIUM",
+                    })
+                if disclosure_quality.get("clarity") == "VAGUE":
+                    violations.append({
+                        "rule": "Disclosure Lacks Clarity",
+                        "explanation": "Disclosure doesn't clearly state what AI did or who reviewed it.",
+                        "severity": "MEDIUM",
+                    })
+
+        except Exception:
+            # AI analysis failed — fall back to regex-only results
+            disclosure_quality = None
+
     agent_label = agent_name if agent_name else "[Agent Name]"
     suggested_disclosure = (
         f"This listing description was generated with AI assistance (ListWorks PRO) "
         f"and reviewed by {agent_label}, a licensed Colorado real estate agent."
     )
 
+    # Grade calculation
     if not violations:
         grade = "COMPLIANT"
     elif any(v["severity"] == "CRITICAL" for v in violations):
         grade = "NON_COMPLIANT"
     else:
-        grade = "NEEDS_DISCLOSURE"
+        grade = "NEEDS_IMPROVEMENT"
 
-    return {
+    result = {
         "compliant": len(violations) == 0,
         "disclosure_present": disclosure_present,
         "suggested_disclosure": suggested_disclosure,
@@ -218,6 +312,11 @@ def check_co_ai_act(text: str, metadata: dict) -> dict:
         },
         "grade": grade,
     }
+
+    if disclosure_quality:
+        result["disclosure_quality"] = disclosure_quality
+
+    return result
 
 
 def overall_risk(violations: list[dict]) -> str:
