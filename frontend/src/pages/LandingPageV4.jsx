@@ -24,6 +24,22 @@ export default function LandingPageV4() {
     <div className="min-h-screen bg-oat text-ink font-body lp-compact">
       <ExitIntentPopup />
       <Header />
+
+      {/* Colorado AI Act Deadline Banner */}
+      <div className="bg-vermillion text-white">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
+          <span className="font-heading text-sm uppercase tracking-[0.15em]">
+            Colorado AI Act Deadline: June 30 (5 days)
+          </span>
+          <a
+            href="/co-compliance"
+            className="font-mono text-xs uppercase tracking-[0.1em] underline hover:no-underline"
+          >
+            Check Your Listings Free →
+          </a>
+        </div>
+      </div>
+
       <main>
         {/* 1. Hook — "Fair Housing violations start at $26,262" */}
         <Hero />

@@ -28,6 +28,7 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-9 font-heading text-[13px] uppercase tracking-[0.12em]">
           <a href="#playground" data-testid="nav-playground" className="hover:text-vermillion transition">Tool</a>
           <a href="#examples" data-testid="nav-examples" className="hover:text-vermillion transition">Examples</a>
+          <a href="/co-compliance" className="text-vermillion hover:underline transition">CO Compliance</a>
           <a href="#guide" data-testid="nav-guide" className="hover:text-vermillion transition">The Guide</a>
           <a href="/blog" className="hover:text-vermillion transition">Blog</a>
           <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">Pricing</a>
