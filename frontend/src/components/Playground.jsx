@@ -20,6 +20,7 @@ import LeadScore from "@/components/LeadScore";
 import TransactionTracker from "@/components/TransactionTracker";
 import OpenHousePanel from "@/components/OpenHousePanel";
 import FairHousingPanel from "@/components/FairHousingPanel";
+import COActPanel from "@/components/COActPanel";
 import VoiceDescriptionPanel from "@/components/VoiceDescriptionPanel";
 import PostSaleReportPanel from "@/components/PostSaleReportPanel";
 import AgentBioPanel from "@/components/AgentBioPanel";
@@ -300,6 +301,7 @@ export default function Playground({ landing = false }) {
               <button onClick={() => handleProMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              <button onClick={() => setMode("coact")} data-active={mode === "coact"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />CO AI Act</button>
               <button onClick={() => handleProMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => setMode("referral")} data-active={mode === "referral"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Gift className="w-4 h-4" />Refer & Earn</button>
@@ -876,6 +878,12 @@ export default function Playground({ landing = false }) {
       {mode === "fairhousing" && (isPro ? (
         <FairHousingPanel text={fhText} setText={setFhText} result={fhResult} setResult={setFhResult} loading={fhLoading} setLoading={setFhLoading} />
       ) : (<div className="bg-white border border-ink/15 p-8 md:p-10 mt-px"><ProToolPreview tool="fairhousing" onUnlock={() => setPaywallOpen(true)} /></div>))}
+
+      {mode === "coact" && (
+        <div className="bg-white border border-ink/15 p-8 md:p-10 mt-px">
+          <COActPanel listingText={output} agentName={brandVoice?.name || ""} />
+        </div>
+      )}
 
       {mode === "voice" && (isPro ? (
         <VoiceDescriptionPanel setRaw={(text) => { setRaw(text); setMode("rewrite"); }} setMode={setMode} />
