@@ -86,7 +86,7 @@ export default function PaymentSuccess() {
             {isGuide && (
               <div className="mt-6 space-y-4">
                 <p className="font-body text-ink/80">
-                  Your <strong>ListWorks Guide</strong> is unlocked. 85 pages of the framework — yours forever.
+                   Your <strong>ListWorks Guide</strong> is unlocked. 45 pages of the framework — yours forever.
                 </p>
                 <a
                   data-testid="download-guide-btn"
