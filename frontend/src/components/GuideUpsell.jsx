@@ -41,7 +41,7 @@ export default function GuideUpsell() {
             <span className="italic text-vermillion">$20.</span>
           </h2>
           <p className="mt-4 font-body text-sm text-oat/70 leading-relaxed max-w-xl">
-             45 pages of no-fluff framework. Feature → Benefit → Feeling framework. 15 copy-paste AI prompts. 5-part MLS template. 6 real before/after rewrites with full breakdowns. Read it in one sitting — use it on your next listing the same day.
+             45 pages. Feature → Benefit → Feeling framework. 15 copy-paste AI prompts. 5-part MLS template. 6 real before/after rewrites with full breakdowns. Read it in one sitting — use it on your next listing the same day.
           </p>
 
           <ul className="mt-5 space-y-2 font-body text-sm text-oat/80 max-w-xl">

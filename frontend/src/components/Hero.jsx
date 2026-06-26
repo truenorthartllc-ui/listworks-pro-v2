@@ -245,7 +245,7 @@ export default function Hero() {
               <span className="font-display italic text-2xl text-ink">$20</span>
             </div>
             <p className="font-body text-sm text-ink/70 leading-relaxed mb-4 max-w-lg">
-              45 pages of no-fluff framework — the exact system top-1% agents use to write listings that sell. 15 copy-paste AI prompts. 5-part MLS template. 6 real before/after rewrites with full breakdowns. Read it in one sitting — use it on your next listing the same day.
+              45 pages of the exact framework top-1% agents use to write listings that sell. 15 copy-paste AI prompts. 5-part MLS template. 6 real before/after rewrites with full breakdowns. Read it in one sitting — use it on your next listing the same day.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
