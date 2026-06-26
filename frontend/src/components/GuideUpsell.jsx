@@ -84,7 +84,7 @@ export default function GuideUpsell() {
               "Finally someone teaching the real <span className="text-vermillion">skill</span> — not just templates. Worth every penny."
             </p>
             <div className="mt-5 grid grid-cols-4 gap-4 pt-5 border-t border-oat/15">
-              {[["85","Pages"],["15","AI Prompts"],["5","Templates"],["$20","One-time"]].map(([n,l]) => (
+              {[["45","Pages"],["15","AI Prompts"],["6","Rewrites"],["$20","One-time"]].map(([n,l]) => (
                 <div key={l}>
                   <div className={`font-display text-2xl ${n === "$20" ? "text-vermillion" : ""}`}>{n}</div>
                   <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-oat/40 mt-0.5">{l}</div>
@@ -105,7 +105,7 @@ export default function GuideUpsell() {
           <div className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-oat/20 bg-coal shrink-0">
             <div className="flex items-baseline gap-3">
               <span className="font-display italic text-2xl text-oat">ListWorks Guide</span>
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Preview · Pages 1–3 of 85</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Preview · Pages 1–4</span>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -114,7 +114,7 @@ export default function GuideUpsell() {
                 disabled={buying}
                 className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-5 py-2.5 font-heading text-[12px] uppercase tracking-[0.15em] flex items-center gap-2 transition"
               >
-                {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><ArrowUpRight className="w-3.5 h-3.5" /> Unlock All 85 Pages — $20</>}
+                {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><ArrowUpRight className="w-3.5 h-3.5" /> Get the Full Guide — $20</>}
               </button>
               <button
                 data-testid="close-preview-btn"
@@ -131,35 +131,35 @@ export default function GuideUpsell() {
           <div className="relative flex-1 bg-[#2a2a2a] overflow-hidden">
             <iframe
               data-testid="guide-pdf-iframe"
-              src="/assets/listworks-guide.pdf#toolbar=0&navpanes=0&scrollbar=0&page=1&view=FitH"
+              src="/assets/listworks-guide.pdf#toolbar=0&navpanes=0&scrollbar=0&page=2&view=FitH"
               title="ListWorks Guide Preview"
               className="w-full h-full"
               style={{ pointerEvents: "none" }}
             />
 
-            {/* Gradient fade — bottom 55% */}
+            {/* Gradient fade — bottom 20% (shows the goods) */}
             <div
               className="absolute inset-x-0 bottom-0 pointer-events-none"
-              style={{ height: "55%", background: "linear-gradient(to bottom, transparent 0%, #1a1a1a 60%, #1a1a1a 100%)" }}
+              style={{ height: "20%", background: "linear-gradient(to bottom, transparent 0%, #1a1a1a 40%, #1a1a1a 100%)" }}
             />
 
-            {/* Paywall block */}
-            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-12 px-6 text-center">
-              <div className="flex items-center justify-center w-12 h-12 border border-oat/30 mb-4">
-                <Lock className="w-5 h-5 text-oat/60" />
+            {/* Paywall block — compact */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-8 px-6 text-center">
+              <div className="flex items-center justify-center w-10 h-10 border border-oat/30 mb-3">
+                <Lock className="w-4 h-4 text-oat/60" />
               </div>
-              <p className="font-display italic text-2xl md:text-3xl text-oat mb-2">Pages 4–85 are locked.</p>
-              <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-oat/50 mb-6">
-                15 prompts · 5 templates · buyer psychology · the full framework
+              <p className="font-display italic text-xl md:text-2xl text-oat mb-1">More inside. Worth the $20.</p>
+              <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-oat/50 mb-4">
+                Fair Housing chapter · 15 prompts · buyer psychology · pocket cards
               </p>
               <button
                 onClick={buyGuide}
                 disabled={buying}
-                className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center gap-2 transition-all hover:-translate-y-1 disabled:opacity-60"
+                className="bg-vermillion hover:bg-[#ff2a0e] text-oat px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition-all hover:-translate-y-1 disabled:opacity-60"
               >
-                {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ArrowUpRight className="w-4 h-4" /> Unlock Everything — $20</>}
+                {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ArrowUpRight className="w-4 h-4" /> Get the Full Guide — $20</>}
               </button>
-              <p className="mt-4 font-mono text-[10px] tracking-[0.18em] uppercase text-oat/40">30-day money-back · instant download</p>
+              <p className="mt-3 font-mono text-[9px] tracking-[0.18em] uppercase text-oat/40">30-day money-back · instant download</p>
             </div>
           </div>
         </div>
