@@ -57,7 +57,6 @@ export default function Testimonials() {
                     src={t.img}
                     alt={t.name}
                     className="absolute inset-0 w-full h-full object-cover"
-                    onError={(e) => { e.target.remove(); }}
                   />
                   <span className="font-heading text-sm font-semibold text-vermillion">
                     {t.name.split(" ").map(n => n[0]).join("")}
