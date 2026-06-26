@@ -1,161 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Listing Presentation Preview — 50 Pages</title>
+<title>Listing Presentation — ListWorks</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: -apple-system, system-ui, sans-serif;
-    background: #111;
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Main viewer */
-.viewer {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 1100px;
-    padding: 20px;
-    position: relative;
-}
-
-.viewer img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-    display: block;
-}
-
-/* Arrows */
-.arrow {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px; height: 48px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 50%;
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    z-index: 10;
-}
-.arrow:hover { background: #c5a880; border-color: #c5a880; }
-.arrow-left { left: 16px; }
-.arrow-right { right: 16px; }
-
-/* Bottom bar */
-.bottom-bar {
-    width: 100%;
-    max-width: 1100px;
-    padding: 12px 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
-}
-
-.counter {
-    font-size: 13px;
-    color: #888;
-    letter-spacing: 1px;
-}
-.counter span { color: #c5a880; font-weight: 600; }
-
-/* Thumbnails row */
-.thumbs {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 4px 0;
-    max-width: 100%;
-    scrollbar-width: thin;
-    scrollbar-color: #333 transparent;
-}
-.thumbs img {
-    width: 60px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 3px;
-    cursor: pointer;
-    opacity: 0.5;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-.thumbs img:hover { opacity: 0.8; }
-.thumbs img.active { opacity: 1; border-color: #c5a880; }
-
-@media (max-width: 600px) {
-    .viewer { padding: 10px; }
-    .arrow { width: 36px; height: 36px; font-size: 16px; }
-    .thumbs img { width: 40px; height: 28px; }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:#e8e6e1;color:#1a1a1a}
+.page{max-width:900px;margin:0 auto;padding:16px}
+.nav{background:white;border-bottom:1px solid #ddd;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.nav a{background:#1a1a1a;color:white;font-size:11px;font-weight:500;padding:7px 16px;border-radius:3px;text-decoration:none;letter-spacing:.03em}
+.slide{overflow:hidden;margin-bottom:4px}
+.slide-inner{width:100%;aspect-ratio:4/3;position:relative;overflow:hidden;background:#f0eeea}
+.cream{background:#f4f3ef}
+.dark{background:#1d1e22}
+.fs-img{width:100%;height:100%;object-fit:cover;display:block}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px}
+.grad-dark{background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.6))}
+.grad-light{background:linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.3))}
+.h1{font-size:28px;font-weight:300;letter-spacing:.04em;line-height:1.2}
+.h2{font-size:18px;font-weight:300;letter-spacing:.06em;line-height:1.3}
+.body{font-size:11px;line-height:1.8;color:rgba(255,255,255,0.6);letter-spacing:.02em;max-width:380px;text-align:center;font-weight:300}
+.meta{font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,0.4);text-transform:uppercase;font-weight:400}
+.rule{height:1px;background:rgba(255,255,255,0.15);width:40px;margin:12px auto}
+.tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);font-weight:400;border:1px solid rgba(255,255,255,0.2);padding:4px 10px;border-radius:2px}
+@media(max-width:600px){.h1{font-size:22px}.slide-inner{aspect-ratio:3/4}}
 </style>
 </head>
 <body>
 
-<div class="viewer">
-    <button class="arrow arrow-left" onclick="prev()">‹</button>
-    <img id="mainImg" src="" alt="Slide">
-    <button class="arrow arrow-right" onclick="next()">›</button>
+<div class="nav">
+  <span style="font-size:12px;font-weight:600;letter-spacing:.04em">LISTWORKS</span>
+  <a href="https://listworks.pro/presentations.html">Get This Template</a>
 </div>
 
-<div class="bottom-bar">
-    <div class="counter">Page <span id="pageNum">1</span> of <span id="pageTotal">50</span></div>
-    <div class="thumbs" id="thumbRow"></div>
+<div class="page">
+
+<!-- 1: Cover - full-bleed dark house photo -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/bespoke-cover/900/675" alt="" class="fs-img" style="opacity:0.85">
+    <div class="overlay grad-dark" style="align-items:flex-end;text-align:right">
+      <div style="margin-bottom:40px">
+        <p class="meta" style="color:rgba(255,255,255,0.35);margin-bottom:4px">Exclusive Listing</p>
+        <p class="h1" style="color:white;font-size:32px">1234 Oakwood Lane</p>
+        <p style="color:rgba(255,255,255,0.4);font-size:12px;letter-spacing:.05em;margin-top:2px">Austin, Texas</p>
+        <div class="rule" style="margin:10px auto 0"></div>
+        <p style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:.08em">$525,000 · 3 Bed · 2 Bath · 1,850 sq ft</p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-const total = 50;
-let current = 0;
+<!-- 2: About - full-bleed cream editorial -->
+<div class="slide">
+  <div class="slide-inner cream" style="background:#f4f3ef">
+    <img src="https://picsum.photos/seed/agent-editorial/900/675" alt="" class="fs-img" style="opacity:0.7;mix-blend-mode:multiply">
+    <div class="overlay" style="justify-content:flex-end;align-items:flex-start">
+      <div style="max-width:380px;margin-bottom:32px">
+        <p style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(0,0,0,0.3);font-weight:500">About Your Agent</p>
+        <p class="h1" style="font-size:22px;color:rgba(0,0,0,0.85);margin-top:6px;font-weight:400">Ashley Harrison</p>
+        <p style="font-size:11px;color:rgba(0,0,0,0.4);margin-top:2px;letter-spacing:.05em">Your Name Realty Group</p>
+        <p class="body" style="color:rgba(0,0,0,0.55);text-align:left;margin-top:12px;font-size:11px">Twelve years in the Austin market. Over 200 homes sold. A $12B+ portfolio approach tailored to each property.</p>
+        <div style="display:flex;gap:20px;margin-top:14px">
+          <div><p style="font-size:16px;font-weight:300;color:rgba(0,0,0,0.8)">$85M+</p><p style="font-size:8px;color:rgba(0,0,0,0.3);letter-spacing:.08em;text-transform:uppercase">Career Sales</p></div>
+          <div><p style="font-size:16px;font-weight:300;color:rgba(0,0,0,0.8)">200+</p><p style="font-size:8px;color:rgba(0,0,0,0.3);letter-spacing:.08em;text-transform:uppercase">Homes Sold</p></div>
+          <div><p style="font-size:16px;font-weight:300;color:rgba(0,0,0,0.8)">4.9★</p><p style="font-size:8px;color:rgba(0,0,0,0.3);letter-spacing:.08em;text-transform:uppercase">Client Rating</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-function show(n) {
-    current = n;
-    document.getElementById('mainImg').src = `/presentation-previews/slide_${String(n+1).padStart(2,'0')}.png`;
-    document.getElementById('pageNum').textContent = n + 1;
-    
-    document.querySelectorAll('.thumbs img').forEach((img, i) => {
-        img.classList.toggle('active', i === n);
-        if (i === n) img.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    });
-}
+<!-- 3: Full-bleed dark architectural photo -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/arch-interior-bespoke/900/675" alt="" class="fs-img" style="opacity:0.9">
+  </div>
+</div>
 
-function next() { if (current < total - 1) show(current + 1); }
-function prev() { if (current > 0) show(current - 1); }
+<!-- 4: Neighborhood - cream editorial -->
+<div class="slide">
+  <div class="slide-inner cream">
+    <img src="https://picsum.photos/seed/austin-neighborhood/900/675" alt="" class="fs-img" style="opacity:0.5;mix-blend-mode:multiply">
+    <div class="overlay" style="justify-content:flex-end;align-items:flex-start">
+      <div style="max-width:400px;margin-bottom:28px">
+        <p style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(0,0,0,0.3);font-weight:500">The Neighborhood</p>
+        <p class="h1" style="font-size:20px;color:rgba(0,0,0,0.8);margin-top:4px;font-weight:400">Austin · 78703</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div><p style="font-size:10px;color:rgba(0,0,0,0.5)">Oakwood Elementary · 0.3 mi</p><p style="font-size:10px;color:rgba(0,0,0,0.5)">Lincoln Middle · 0.8 mi</p><p style="font-size:10px;color:rgba(0,0,0,0.5)">Austin High · 1.2 mi</p></div>
+          <div><p style="font-size:10px;color:rgba(0,0,0,0.5)">Walk Score 74</p><p style="font-size:10px;color:rgba(0,0,0,0.5)">Coffee · 2 blocks</p><p style="font-size:10px;color:rgba(0,0,0,0.5)">4 parks within 0.5 mi</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-// Build thumbnails
-const thumbRow = document.getElementById('thumbRow');
-for (let i = 0; i < total; i++) {
-    const img = document.createElement('img');
-    img.src = `/presentation-previews/slide_${String(i+1).padStart(2,'0')}.png`;
-    img.alt = `Slide ${i+1}`;
-    img.onclick = () => show(i);
-    thumbRow.appendChild(img);
-}
+<!-- 5: Full-bleed kitchen photo -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/kitchen-bespoke/900/675" alt="" class="fs-img" style="opacity:0.9">
+    <div class="overlay" style="justify-content:flex-end;align-items:flex-start">
+      <div style="margin-bottom:24px">
+        <p style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:400">The Kitchen</p>
+        <p style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Quartz countertops · Island · Induction range</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-// Keyboard
-document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') next();
-    if (e.key === 'ArrowLeft') prev();
-});
+<!-- 6: Full-bleed living room -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/living-bespoke/900/675" alt="" class="fs-img">
+  </div>
+</div>
 
-show(0);
-</script>
+<!-- 7: Market / CMA - cream editorial -->
+<div class="slide">
+  <div class="slide-inner cream">
+    <img src="https://picsum.photos/seed/austin-skyline-bw/900/675" alt="" class="fs-img" style="opacity:0.35;mix-blend-mode:multiply">
+    <div class="overlay" style="justify-content:center;align-items:center">
+      <div style="text-align:center;max-width:500px">
+        <p style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(0,0,0,0.25);font-weight:500;margin-bottom:4px">Market Positioning</p>
+        <p class="h1" style="font-size:40px;color:rgba(0,0,0,0.8);font-weight:200;letter-spacing:.02em">$525,000</p>
+        <div class="rule" style="background:rgba(0,0,0,0.1);margin:8px auto"></div>
+        <div style="display:flex;justify-content:center;gap:32px;margin-top:8px">
+          <div><p style="font-size:12px;color:rgba(0,0,0,0.5)">$284/sq ft</p></div>
+          <div><p style="font-size:12px;color:rgba(0,0,0,0.5)">Avg DOM: 38 days</p></div>
+        </div>
+        <p style="font-size:10px;color:rgba(0,0,0,0.35);margin-top:12px">Comparable properties in this corridor sell within 38 days. Priced to attract qualified buyers while maximizing value.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8: Full-bleed master bedroom -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/bedroom-bespoke/900/675" alt="" class="fs-img" style="opacity:0.9">
+  </div>
+</div>
+
+<!-- 9: Backyard - cream editorial -->
+<div class="slide">
+  <div class="slide-inner cream">
+    <img src="https://picsum.photos/seed/backyard-bespoke/900/675" alt="" class="fs-img" style="opacity:0.6;mix-blend-mode:multiply">
+    <div class="overlay" style="justify-content:flex-end;align-items:flex-start">
+      <div style="margin-bottom:24px;max-width:400px">
+        <p style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,0.3);font-weight:500">The Outdoor Space</p>
+        <p style="font-size:10px;color:rgba(0,0,0,0.4);margin-top:2px">Fenced backyard · Mature trees · Private terrace</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10: NAR Settlement - dark editorial -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/legal-dark/900/675" alt="" class="fs-img" style="opacity:0.4">
+    <div class="overlay" style="justify-content:center;align-items:center">
+      <div style="text-align:center;max-width:440px">
+        <p style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:500">NAR Settlement</p>
+        <p class="h1" style="font-size:20px;color:white;margin-top:6px;font-weight:300">Transparency in Every Transaction</p>
+        <p class="body" style="margin-top:8px;font-size:10px">As of August 2024, written buyer agreements are required before showings. Commission is always negotiable. Full disclosure, no surprises.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 11: Full-bleed architectural detail -->
+<div class="slide">
+  <div class="slide-inner dark">
+    <img src="https://picsum.photos/seed/arch-detail/900/675" alt="" class="fs-img" style="opacity:0.85">
+  </div>
+</div>
+
+<!-- 12: Closing CTA -->
+<div class="slide">
+  <div class="slide-inner cream" style="background:#f4f3ef">
+    <img src="https://picsum.photos/seed/closing-editorial/900/675" alt="" class="fs-img" style="opacity:0.5;mix-blend-mode:multiply">
+    <div class="overlay" style="justify-content:center;align-items:center">
+      <div style="text-align:center">
+        <p style="font-size:20px;color:rgba(0,0,0,0.7);font-weight:300;letter-spacing:.04em">Ready to Move Forward?</p>
+        <div class="rule" style="background:rgba(0,0,0,0.1);margin:10px auto"></div>
+        <p style="font-size:10px;color:rgba(0,0,0,0.35);margin-top:6px;letter-spacing:.03em">I'll prepare the full CMA, schedule photography, and have your listing ready within 7 days.</p>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:20px">
+          <a href="#" style="background:#1a1a1a;color:white;font-size:10px;letter-spacing:.05em;padding:10px 22px;border-radius:2px;text-decoration:none;font-weight:400">Begin the Process</a>
+          <a href="#" style="border:1px solid rgba(0,0,0,0.15);color:rgba(0,0,0,0.5);font-size:10px;padding:10px 22px;border-radius:2px;text-decoration:none">Ask a Question</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:28px 0 36px">
+  <p style="font-size:11px;color:rgba(0,0,0,0.3);margin-bottom:10px;letter-spacing:.04em">Full 55-page template · Editable Canva + PDF</p>
+  <a href="https://listworks.pro/presentations.html" style="display:inline-block;background:#1a1a1a;color:white;font-size:11px;letter-spacing:.04em;font-weight:500;padding:11px 24px;border-radius:3px;text-decoration:none">Get the Presentation — $27</a>
+</div>
+
+</div>
 </body>
 </html>
