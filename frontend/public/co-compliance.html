@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CO AI Act Compliance Checker — ListWorks PRO</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.6; }
+  .header { background: #111; border-bottom: 1px solid #222; padding: 20px 0; }
+  .header-inner { max-width: 800px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { font-size: 14px; color: #c0392b; letter-spacing: 2px; text-transform: uppercase; }
+  .header a { color: #e0e0e0; text-decoration: none; font-size: 12px; letter-spacing: 1px; }
+  .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+  .badge { display: inline-block; background: #c0392b; color: white; padding: 4px 12px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+  h2 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 16px; color: white; }
+  .deadline { font-size: 18px; color: #c0392b; font-weight: 700; margin-bottom: 24px; }
+  .sub { font-size: 16px; color: #888; margin-bottom: 40px; max-width: 600px; }
+  .scan-box { background: #1a1a1a; border: 1px solid #333; padding: 30px; margin-bottom: 40px; }
+  .scan-box textarea { width: 100%; height: 150px; background: #111; border: 1px solid #333; color: #e0e0e0; padding: 16px; font-size: 14px; font-family: monospace; margin-bottom: 16px; }
+  .scan-box button { background: #c0392b; color: white; border: none; padding: 14px 32px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .scan-box button:hover { background: #e0432b; }
+  .result-box { background: #1a1a1a; border: 1px solid #333; padding: 30px; margin-bottom: 40px; display: none; }
+  .result-box h3 { color: #27ae60; margin-bottom: 12px; }
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 40px 0; }
+  .feature { background: #1a1a1a; border: 1px solid #333; padding: 24px; }
+  .feature h4 { color: white; margin-bottom: 8px; }
+  .feature p { font-size: 13px; color: #888; }
+  .fine { display: block; font-size: 42px; color: #c0392b; font-weight: 700; margin: 20px 0; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <h1>⚠ CO AI Act Compliance</h1>
+    <a href="https://listworks.pro">← Back to ListWorks</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="badge">Deadline: June 30, 2026</div>
+  <h2>Is Your Colorado Listing<br>AI Compliant?</h2>
+  <p class="deadline">⏳ 4 days until enforcement begins</p>
+  <p class="sub">Paste your listing description below. We'll check for Fair Housing violations and generate the AI disclosure statement required by Colorado law (SB 24-205 / SB 26-189).</p>
+
+  <div class="scan-box">
+    <textarea id="listingInput" placeholder="Paste your listing description here..."></textarea>
+    <button onclick="runCompliance()">Scan My Listing — Free</button>
+    <p style="color:#555;font-size:12px;margin-top:12px;">No account needed. 5 seconds. Your copy is not stored.</p>
+  </div>
+
+  <div id="result" class="result-box">
+    <h3>✅ Compliance Report</h3>
+    <div id="reportContent"></div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <h4>🔍 Fair Housing Scan</h4>
+      <p>Flags discriminatory language before it costs you $26,262 per violation.</p>
+    </div>
+    <div class="feature">
+      <h4>📋 AI Disclosure Generator</h4>
+      <p>Generates the compliant disclosure statement required by Colorado law.</p>
+    </div>
+    <div class="feature">
+      <h4>⚡ 5-Second Check</h4>
+      <p>Paste, scan, done. No account. No credit card. No stored data.</p>
+    </div>
+    <div class="feature">
+      <h4>🛡️ E&O Protection Workflow</h4>
+      <p>Save your compliance report as proof of review. Audit-ready.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:40px 0;border-top:1px solid #222;">
+    <span class="fine">$26,262</span>
+    <p style="color:#888;">Maximum civil penalty for a first Fair Housing Act violation.</p>
+    <p style="color:#555;font-size:13px;margin-top:20px;">This scanner catches the most common violations. It is not a substitute for legal review. <a href="https://listworks.pro" style="color:#c0392b;">ListWorks PRO</a> scans every listing automatically.</p>
+  </div>
+</div>
+
+<script>
+const violations = [
+  { pattern: /famil(y|ies)/i, fix: 'Describe the actual space (e.g. "three bedrooms, open layout")', cat: 'Familial Status' },
+  { pattern: /couples?/i, fix: 'Describe the home features (e.g. "primary suite with en suite bath")', cat: 'Marital Status' },
+  { pattern: /(safe|exclusive|desired)\s*(neighborhood|area|community)/i, fix: 'Use specific data: Walk Score, parks, transit times', cat: 'Racial Steering' },
+  { pattern: /perfect\s*for/i, fix: 'Describe what the space actually offers', cat: 'Familial Status' },
+  { pattern: /(retiree|retirement|55\+|active adult)/i, fix: 'Describe the home features (single-level, low maintenance)', cat: 'Age Discrimination' },
+  { pattern: /(young|recent\s*grad|bachelor)/i, fix: 'Describe the home (home office ready, urban condo)', cat: 'Age Discrimination' },
+  { pattern: /master\s*(suite|bedroom|bath)/i, fix: 'Use "primary suite/bedroom/bath"', cat: 'Gender Terminology' },
+  { pattern: /(man\s*cave|she\s*shed)/i, fix: 'Use "flex room, bonus space"', cat: 'Gender Stereotyping' },
+  { pattern: /walking\s*distance\s*to\s*(church|synagogue|mosque|temple)/i, fix: 'Use "walking distance to downtown/parks/transit"', cat: 'Religious Preference' },
+  { pattern: /(starter\s*home|first\s*time)/i, fix: 'Use "move-in ready, smart investment"', cat: 'Economic Discrimination' },
+  { pattern: /section\s*8/i, fix: 'Check state law before mentioning housing assistance', cat: 'Source of Income' },
+  { pattern: /(no\s*pets|pets?\s*ok\s*with\s*fee)/i, fix: 'Pet policies are legal but must be consistently applied', cat: 'Note' },
+];
+
+function runCompliance() {
+  const text = document.getElementById('listingInput').value;
+  const result = document.getElementById('result');
+  const content = document.getElementById('reportContent');
+  const found = violations.filter(v => v.pattern.test(text));
+  
+  let html = '';
+  
+  if (found.length === 0) {
+    html += '<p style="color:#27ae60;font-weight:600;">No common trigger phrases detected.</p>';
+    html += '<p style="color:#888;font-size:13px;margin-top:8px;">This is a good sign but not a guarantee. Always review your listings carefully.</p>';
+  } else {
+    html += '<p style="color:#c0392b;font-weight:600;">⚠ ' + found.length + ' potential issue' + (found.length > 1 ? 's' : '') + ' found:</p>';
+    html += '<table style="width:100%;margin:12px 0;font-size:13px;border-collapse:collapse;">';
+    html += '<tr style="border-bottom:1px solid #333;"><th style="text-align:left;padding:6px;">Category</th><th style="text-align:left;padding:6px;">Fix</th></tr>';
+    found.forEach(v => {
+      html += '<tr style="border-bottom:1px solid #222;"><td style="padding:8px 6px;color:#c0392b;">' + v.cat + '</td><td style="padding:8px 6px;color:#888;">' + v.fix + '</td></tr>';
+    });
+    html += '</table>';
+  }
+  
+  html += '<div style="margin-top:20px;padding:16px;background:#111;border:1px solid #333;">';
+  html += '<p style="font-size:12px;color:#888;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Required AI Disclosure — Colorado SB 24-205</p>';
+  html += '<p style="color:#e0e0e0;font-family:monospace;font-size:13px;">"This listing description was generated with the assistance of artificial intelligence and reviewed by a licensed real estate professional. [Required by Colorado AI Act, SB 24-205]"</p>';
+  html += '<p style="font-size:11px;color:#555;margin-top:8px;">Include this disclosure at the bottom of every AI-assisted listing in Colorado.</p>';
+  html += '</div>';
+  
+  content.innerHTML = html;
+  result.style.display = 'block';
+}
+</script>
+</body>
+</html>
