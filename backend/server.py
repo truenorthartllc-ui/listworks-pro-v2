@@ -387,7 +387,7 @@ INSTEAD — describe what is physically there:
 HARD RULES — VIOLATION = FAILURE
 ═══════════════════════════════════════════════════════════════
 ABSOLUTELY BANNED (AI clichés that signal robot writing):
-"Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (as a crutch), "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell", "Call for details", "Opportunity awaits", "This gem", "Check out", "Stunning", "Gorgeous", "Meticulously", "Meticulously maintained", "Breathtaking", "Incredible", "Fantastic", "Spectacular", "Magnificent", "Immaculate", "Pristine", "Amazing", "Wonderful", "Exceptional", "Outstanding", "Remarkable"
+"Welcome to", "Don't miss", "Must see", "Spacious", "Cozy" (as a crutch), "Motivated seller", "Charming", "Nestled", "Won't last", "Priced to sell", "Call for details", "Opportunity awaits", "This gem", "Check out", "Stunning", "Gorgeous", "Meticulously", "Meticulously maintained", "Breathtaking", "Incredible", "Fantastic", "Spectacular", "Magnificent", "Immaculate", "Pristine", "Amazing", "Wonderful", "Exceptional", "Outstanding", "Remarkable", "Oasis", "Boasts", "Serene", "Perfect for", "Nestled in a serene oasis", "Ideal for"
 
 TEST: If the word could appear in 10,000 other listings, do not use it. Be specific instead.
 - NOT "stunning kitchen" → YES "quartz counters under a skylight, no overhead fluorescents"
@@ -609,7 +609,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     if req.mls_char_limit and req.mls_char_limit > 0:
         system += f"\n\n⚠️ MLS CHARACTER LIMIT: The MLS field MUST NOT exceed {req.mls_char_limit} characters (including spaces). Count carefully. If your draft exceeds {req.mls_char_limit} chars, shorten it. This is a hard requirement."
     if req.language and req.language.lower() not in ("english", "en"):
-        system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, and email — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
+        system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, email, reel_script — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
     raw = await call_openrouter(system, user_text, model="anthropic/claude-opus-4-8")
     cleaned = _strip_json(raw)
     try:
