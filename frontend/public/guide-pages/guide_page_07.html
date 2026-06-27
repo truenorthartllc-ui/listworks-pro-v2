@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Estate Listing Guide - ListWorks PRO</title>
+<style>
+  @page { margin: 18mm 14mm 18mm 14mm; size: A4; }
+  @page :first { margin-top: 0; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; font-size: 11pt; max-width: 800px; margin: 0 auto; padding: 20px; }
+  h1, h2, h3, h4 { font-family: 'Helvetica Neue', 'Arial', sans-serif; font-weight: 700; color: #0a0a0a; page-break-after: avoid; }
+  h1 { font-size: 28pt; letter-spacing: -0.5px; }
+  h2 { font-size: 18pt; margin-top: 36px; border-bottom: 3px solid #1a1a1a; padding-bottom: 6px; }
+  h3 { font-size: 14pt; margin-top: 28px; }
+  h4 { font-size: 12pt; margin-top: 20px; color: #333; }
+  p { margin: 0 0 12px 0; }
+  .page-break { page-break-before: always; }
+  blockquote { border-left: 4px solid #c0392b; margin: 16px 0; padding: 12px 20px; background: #fdf2f2; font-style: italic; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 14px 18px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #333; margin: 14px 0; line-height: 1.45; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+  .callout { background: #eef6ff; border-left: 4px solid #2980b9; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-warning { background: #fff8e6; border-left: 4px solid #f39c12; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-danger { background: #fdf2f2; border-left: 4px solid #c0392b; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-success { background: #f0faf0; border-left: 4px solid #27ae60; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .two-col { display: flex; gap: 20px; margin: 16px 0; }
+  .two-col > div { flex: 1; }
+  .col-bad { background: #fdf2f2; padding: 12px 16px; border-radius: 4px; border: 1px solid #e8c8c8; }
+  .col-good { background: #f0faf0; padding: 12px 16px; border-radius: 4px; border: 1px solid #b8d8b8; }
+  .col-bad h4 { color: #c0392b; margin-top: 0; }
+  .col-good h4 { color: #27ae60; margin-top: 0; }
+  .prompt-box { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 6px; margin: 14px 0; font-size: 9.5pt; line-height: 1.5; font-family: 'Courier New', monospace; }
+  .cover { text-align: center; padding-top: 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; margin-bottom: 10px; line-height: 1.15; }
+  .cover .subtitle { font-size: 16pt; color: #555; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; }
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom: none; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 6px 0; font-size: 11pt; border-bottom: 1px dotted #ccc; }
+  .toc .toc-h2 { font-weight: 700; padding-top: 12px; }
+  .framework-box { border: 2px solid #2980b9; border-radius: 8px; padding: 18px 20px; margin: 18px 0; background: #f8fbff; }
+  .framework-box h4 { margin-top: 0; color: #2980b9; }
+  .subhead { font-size: 13pt; font-family: 'Helvetica Neue', sans-serif; color: #555; margin-top: -8px; font-weight: 300; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9pt; color: #888; text-align: center; }
+  @media print { body { padding: 0; } .page-break { page-break-before: always; } }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+  th { background: #1a1a2e; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  .data-badge { display: inline-block; background: #1a1a2e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; }
+  .pullquote { font-size: 14pt; line-height: 1.5; color: #c0392b; font-style: italic; text-align: center; padding: 20px 40px; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h2>Chapter 5: The 15 Prompts That Write Your Listings For You</h2>
+<p class="subhead">Copy-paste ready. Extracted from the ListWorks PRO system.</p>
+
+<p>These prompts are not generic ChatGPT queries. They are the exact prompt structures used by ListWorks PRO's AI engine — tuned over thousands of rewrites to produce listing copy that converts. Each prompt includes tone tags, structural cues, and Fair Housing guardrails.</p>
+
+<h3>Prompt 1: The Complete Rewrite</h3>
+<p><span class="data-badge">WORKHORSE</span> — Use for 80% of your listings</p>
+<div class="prompt-box">Rewrite this listing description using the 5-part structure(Hook, Lifestyle, Features, Neighborhood, CTA). Use FBF framework(Feature → Benefit → Feeling) for every feature. Tone: [TONE]. Avoid all clichés. Fair Housing compliant. Specific over generic. Total length: [CHAR_LIMIT] characters max.<br><br>
+Property details: [INPUT]</div>
+
+<h3>Prompt 2: MLS-Optimized Listing</h3>
+<p><span class="data-badge">MLS</span> — Truncation-resistant</p>
+<div class="prompt-box">Write a [CHAR_LIMIT]-character MLS description. First 2 sentences must be the strongest(they appear in search results). Use FBF framework. No clichés. Fair Housing compliant.<br><br>
+Key features: [INPUT]</div>
+
+<h3>Prompt 3: Instagram Caption</h3>
+<p><span class="data-badge">IG</span> — Scroll-stopping</p>
+<div class="prompt-box">Write an Instagram caption for this property. Hook in first line. 2-3 short paragraphs. Emoji allowed(2 max). End with a question to drive comments. Hashtags: 3-5 location-specific tags.<br><br>
+The one thing to say: [INPUT]</div>
+
+<h3>Prompt 4: Facebook Post</h3>
+<p><span class="data-badge">FB</span> — Engaging, shareable</p>
+<div class="prompt-box">Write a Facebook post for this property. Start with a question or surprising fact. 3 short paragraphs. Include a specific detail that makes it local. End with "Tag someone who needs to see this."<br><br>
+Neighborhood detail: [INPUT]</div>
+
+<h3>Prompt 5: Email Blast</h3>
+<p><span class="data-badge">EMAIL</span> — Opens your database</p>
+<div class="prompt-box">Write a short email to my database about this new listing. Subject line: [SUBJECT]. Body: 3 short paragraphs. First paragraph: the hook. Second: the best feature. Third: open house details. Signature: my name and phone number.</div>
+
+<h3>Prompt 6: Reel Script</h3>
+<p><span class="data-badge">REEL</span> — 30-60 seconds, visuals-led</p>
+<div class="prompt-box">Write a 30-second reel script for this property. Format: |Visual|Audio| per line. First 3 seconds must hook. End with a CTA to DM for details.<br><br>
+Best visual feature: [INPUT]</div>
+
+<h3>Prompt 7: Expired Listing</h3>
+<p><span class="data-badge">LISTING</span> — New angle for a stale property</p>
+<div class="prompt-box">Rewrite this expired listing with a completely new angle. The old version didn't work — don't reuse anything from it. Identify the strongest emotional hook that was missing. Restructure entirely. Fair Housing compliant.<br><br>
+Original listing: [INPUT]</div>
+
+<h3>Prompt 8: Just Sold / Market Report</h3>
+<p><span class="data-badge">SOCIAL</span> — Authority builder</p>
+<div class="prompt-box">Write a "Just Sold" or market update post. Include: sale price, days on market, one sentence about what made it sell fast. Position me as the expert. No listing details — just results.</div>
+
+<h3>Prompt 9: Testimonial Request</h3>
+<p><span class="data-badge">EMAIL</span> — Easy win</p>
+<div class="prompt-box">Write a short email asking for a testimonial. Subject: "Quick favor?" Tone: warm, grateful. Make it easy — offer 3 multiple-choice options for them to pick from. Keep it 4 sentences max.</div>
+
+<h3>Prompt 10: Open House Invite</h3>
+<p><span class="data-badge">SOCIAL</span> — FOMO-driven</p>
+<div class="prompt-box">Write an open house invitation. Create urgency without desperation. Include: date, time, one reason they can't afford to miss it, and what makes this different from every other open house they've been to.</div>
+
+<h3>Prompt 11: Neighborhood Deep Dive</h3>
+<p><span class="data-badge">BLOG</span> — SEO gold</p>
+<div class="prompt-box">Write a neighborhood guide for [NEIGHBORHOOD]. Format: 5 bullet points, each with 2-3 sentences. Cover: coffee shops, restaurants, parks, commute times, and one hidden gem. Specific names only — no "great dining options."</div>
+
+<h3>Prompt 12: Seller Tips</h3>
+<p><span class="data-badge">BLOG</span> — Lead magnet</p>
+<div class="prompt-box">Write a "5 things to do before listing your home" post. Each tip: one sentence of what to do, one sentence of why it matters. End with "Want a custom pre-listing plan? DM me."</div>
+
+<h3>Prompt 13: Compliance Check</h3>
+<p><span class="data-badge">COMPLIANCE</span> — Liability shield</p>
+<div class="prompt-box">Review this listing description for Fair Housing violations. Flag any language that could be interpreted as discriminatory(race, religion, familial status, disability, national origin, gender). Replace with compliant alternatives. Return the original, the flagged phrases, and the corrected version.<br><br>
+Listing: [INPUT]</div>
+
+<h3>Prompt 14: Brand Voice Adaptation</h3>
+<p><span class="data-badge">SETUP</span> — One-time</p>
+<div class="prompt-box">Analyze these 3 listing descriptions I've written and extract my brand voice. Identify: sentence structure preferences, vocabulary patterns, emotional themes, and formatting habits. Output a 1-paragraph "voice guide" I can use to train AI tools.</div>
+
+<h3>Prompt 15: Multi-Platform Repurpose</h3>
+<p><span class="data-badge">WORKFLOW</span> — Efficiency hack</p>
+<div class="prompt-box">Take this MLS description and adapt it for: 1) Instagram caption(2 paragraphs + 3 hashtags), 2) Facebook post(3 paragraphs, ends with question), 3) Email to my database(subject line + 3 paragraph body), 4) Reel script(30 seconds, visual/audio format). Keep the core emotional hook consistent. Adapt the voice per platform.</div>
+
+<div class="callout-warning" style="border-left-color: #1a1a2e;background:#f0f4ff;">
+  <strong>⚡ Here's the deal:</strong> These 15 prompts took months to tune. They work. But running them one at a time, every listing, every platform — that's the manual way. <strong>ListWorks PRO runs all 15 prompts simultaneously</strong> — rewrite, compliance scan, multi-platform adaptation — in 10 seconds. The manual method in this chapter is yours to keep forever. The automated version is one click away. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try 3 free rewrites →</a>
+</div>
+</body>
+</html>

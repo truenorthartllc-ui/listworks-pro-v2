@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Estate Listing Guide - ListWorks PRO</title>
+<style>
+  @page { margin: 18mm 14mm 18mm 14mm; size: A4; }
+  @page :first { margin-top: 0; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; font-size: 11pt; max-width: 800px; margin: 0 auto; padding: 20px; }
+  h1, h2, h3, h4 { font-family: 'Helvetica Neue', 'Arial', sans-serif; font-weight: 700; color: #0a0a0a; page-break-after: avoid; }
+  h1 { font-size: 28pt; letter-spacing: -0.5px; }
+  h2 { font-size: 18pt; margin-top: 36px; border-bottom: 3px solid #1a1a1a; padding-bottom: 6px; }
+  h3 { font-size: 14pt; margin-top: 28px; }
+  h4 { font-size: 12pt; margin-top: 20px; color: #333; }
+  p { margin: 0 0 12px 0; }
+  .page-break { page-break-before: always; }
+  blockquote { border-left: 4px solid #c0392b; margin: 16px 0; padding: 12px 20px; background: #fdf2f2; font-style: italic; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 14px 18px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #333; margin: 14px 0; line-height: 1.45; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+  .callout { background: #eef6ff; border-left: 4px solid #2980b9; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-warning { background: #fff8e6; border-left: 4px solid #f39c12; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-danger { background: #fdf2f2; border-left: 4px solid #c0392b; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-success { background: #f0faf0; border-left: 4px solid #27ae60; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .two-col { display: flex; gap: 20px; margin: 16px 0; }
+  .two-col > div { flex: 1; }
+  .col-bad { background: #fdf2f2; padding: 12px 16px; border-radius: 4px; border: 1px solid #e8c8c8; }
+  .col-good { background: #f0faf0; padding: 12px 16px; border-radius: 4px; border: 1px solid #b8d8b8; }
+  .col-bad h4 { color: #c0392b; margin-top: 0; }
+  .col-good h4 { color: #27ae60; margin-top: 0; }
+  .prompt-box { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 6px; margin: 14px 0; font-size: 9.5pt; line-height: 1.5; font-family: 'Courier New', monospace; }
+  .cover { text-align: center; padding-top: 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; margin-bottom: 10px; line-height: 1.15; }
+  .cover .subtitle { font-size: 16pt; color: #555; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; }
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom: none; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 6px 0; font-size: 11pt; border-bottom: 1px dotted #ccc; }
+  .toc .toc-h2 { font-weight: 700; padding-top: 12px; }
+  .framework-box { border: 2px solid #2980b9; border-radius: 8px; padding: 18px 20px; margin: 18px 0; background: #f8fbff; }
+  .framework-box h4 { margin-top: 0; color: #2980b9; }
+  .subhead { font-size: 13pt; font-family: 'Helvetica Neue', sans-serif; color: #555; margin-top: -8px; font-weight: 300; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9pt; color: #888; text-align: center; }
+  @media print { body { padding: 0; } .page-break { page-break-before: always; } }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+  th { background: #1a1a2e; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  .data-badge { display: inline-block; background: #1a1a2e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; }
+  .pullquote { font-size: 14pt; line-height: 1.5; color: #c0392b; font-style: italic; text-align: center; padding: 20px 40px; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h2>Chapter 9: Beyond the MLS</h2>
+<p class="subhead">One listing. Five platforms. Zero wasted time.</p>
+
+<p>Your MLS description is the foundation. But it's not the only place buyers will see your listing. A single listing needs to work across MLS, Instagram, Facebook, email, and video. Each platform has different rules, different attention spans, and different audience expectations.</p>
+
+<p>The trick is not writing five different descriptions. It's writing one great description and adapting it.</p>
+
+<h3>Platform Adaptation Matrix</h3>
+<table>
+  <tr><th>Platform</th><th>Length</th><th>Focus</th><th>Voice</th></tr>
+  <tr><td>MLS</td><td>750-1,800 chars</td><td>Complete 5-part structure</td><td>Professional, detailed</td></tr>
+  <tr><td>Instagram</td><td>150 words</td><td>Hook in first line, lifestyle focus</td><td>Conversational, visual</td></tr>
+  <tr><td>Facebook</td><td>200 words</td><td>Storytelling, shareable</td><td>Warm, community-oriented</td></tr>
+  <tr><td>Email</td><td>100 words</td><td>Best feature + open house details</td><td>Direct, personal</td></tr>
+  <tr><td>Reel/TikTok</td><td>30-60 seconds</td><td>Visual-first, hook at second 0</td><td>Energetic, punchy</td></tr>
+</table>
+
+<h3>30-Day Content Calendar</h3>
+<p>One listing. One month. Seven posts. No repeats.</p>
+<table>
+  <tr><th>Week</th><th>Post Type</th><th>Platform</th><th>Angle</th></tr>
+  <tr><td>1</td><td>New listing announcement</td><td>All</td><td>"Just listed — the best [feature] we've seen this year"</td></tr>
+  <tr><td>1</td><td>Best feature close-up</td><td>Instagram/FB</td><td>Single feature, photo-heavy</td></tr>
+  <tr><td>1</td><td>Open house reminder</td><td>FB/Email</td><td>Scarcity + specific details</td></tr>
+  <tr><td>2</td><td>Neighborhood spotlight</td><td>IG/Blog</td><td>Local coffee shop, park, walk score</td></tr>
+  <tr><td>2</td><td>Market update</td><td>FB/LinkedIn</td><td>"Homes like this are selling in X days"</td></tr>
+  <tr><td>3</td><td>Behind the scenes</td><td>Reel/IG</td><td>Showing prep, styling, neighborhood walk</td></tr>
+  <tr><td>4</td><td>Price adjustment or pending</td><td>All</td><td>"Update: under contract" or "Price improved"</td></tr>
+</table>
+
+<h3>The Viral Playbook</h3>
+<p>Three styles that consistently outperform standard listings for engagement. Use sparingly — they work because they're different.</p>
+
+<p><strong>Style 1: Brutal Honesty</strong> — For fixer-uppers or unique properties. "The roof leaks. The floor creaks. But this 3-bedroom has character you can't build in new construction." Works because everyone else is trying to hide flaws.</p>
+
+<p><strong>Style 2: The Scene-Setter</strong> — Start mid-moment. "Saturday morning. Coffee's on. The sun's hitting the kitchen just right. You've got no plans and nowhere to be. This is what this house was built for." Works because it puts the buyer in the scene before they've even visited.</p>
+
+<p><strong>Style 3: The Data Drop</strong> — Lead with numbers. "Days on market: 3. Offers received: 4. Sale price: 102% of list. This is what happens when you price right and market aggressively." Works for sellers, not buyers — use it to win listings.</p>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Estate Listing Guide - ListWorks PRO</title>
+<style>
+  @page { margin: 18mm 14mm 18mm 14mm; size: A4; }
+  @page :first { margin-top: 0; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; font-size: 11pt; max-width: 800px; margin: 0 auto; padding: 20px; }
+  h1, h2, h3, h4 { font-family: 'Helvetica Neue', 'Arial', sans-serif; font-weight: 700; color: #0a0a0a; page-break-after: avoid; }
+  h1 { font-size: 28pt; letter-spacing: -0.5px; }
+  h2 { font-size: 18pt; margin-top: 36px; border-bottom: 3px solid #1a1a1a; padding-bottom: 6px; }
+  h3 { font-size: 14pt; margin-top: 28px; }
+  h4 { font-size: 12pt; margin-top: 20px; color: #333; }
+  p { margin: 0 0 12px 0; }
+  .page-break { page-break-before: always; }
+  blockquote { border-left: 4px solid #c0392b; margin: 16px 0; padding: 12px 20px; background: #fdf2f2; font-style: italic; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 14px 18px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #333; margin: 14px 0; line-height: 1.45; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+  .callout { background: #eef6ff; border-left: 4px solid #2980b9; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-warning { background: #fff8e6; border-left: 4px solid #f39c12; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-danger { background: #fdf2f2; border-left: 4px solid #c0392b; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-success { background: #f0faf0; border-left: 4px solid #27ae60; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .two-col { display: flex; gap: 20px; margin: 16px 0; }
+  .two-col > div { flex: 1; }
+  .col-bad { background: #fdf2f2; padding: 12px 16px; border-radius: 4px; border: 1px solid #e8c8c8; }
+  .col-good { background: #f0faf0; padding: 12px 16px; border-radius: 4px; border: 1px solid #b8d8b8; }
+  .col-bad h4 { color: #c0392b; margin-top: 0; }
+  .col-good h4 { color: #27ae60; margin-top: 0; }
+  .prompt-box { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 6px; margin: 14px 0; font-size: 9.5pt; line-height: 1.5; font-family: 'Courier New', monospace; }
+  .cover { text-align: center; padding-top: 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; margin-bottom: 10px; line-height: 1.15; }
+  .cover .subtitle { font-size: 16pt; color: #555; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; }
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom: none; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 6px 0; font-size: 11pt; border-bottom: 1px dotted #ccc; }
+  .toc .toc-h2 { font-weight: 700; padding-top: 12px; }
+  .framework-box { border: 2px solid #2980b9; border-radius: 8px; padding: 18px 20px; margin: 18px 0; background: #f8fbff; }
+  .framework-box h4 { margin-top: 0; color: #2980b9; }
+  .subhead { font-size: 13pt; font-family: 'Helvetica Neue', sans-serif; color: #555; margin-top: -8px; font-weight: 300; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9pt; color: #888; text-align: center; }
+  @media print { body { padding: 0; } .page-break { page-break-before: always; } }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+  th { background: #1a1a2e; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  .data-badge { display: inline-block; background: #1a1a2e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; }
+  .pullquote { font-size: 14pt; line-height: 1.5; color: #c0392b; font-style: italic; text-align: center; padding: 20px 40px; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h2>Foreword: The $26,262 Sentence</h2>
+<p class="subhead">Why this guide exists and why every agent needs it.</p>
+
+<p>In June 2025, the Department of Housing and Urban Development quietly updated its civil penalty schedule. The maximum fine for a first Fair Housing Act violation went up to <strong>$26,262</strong>.</p>
+
+<p>That's the price of one bad sentence.</p>
+
+<p>Not a pattern of discrimination. Not a years-long investigation. One sentence in a listing description that a buyer, a tester, or a competitor screenshots and reports. The phrase "perfect for families." The word "safe" in a neighborhood description. An AI-generated line you didn't think twice about because ChatGPT wrote it, so it must be fine.</p>
+
+<p><strong>It is not fine.</strong> Every piece of content you publish carries your license, your livelihood, and potentially $26,262 of exposure per violation. Repeat offenses hit $131,308. And with AI-generated content flooding the MLS, enforcement is accelerating. The DOJ's $115,054 settlement with Meta over algorithmic ad targeting proved that AI doesn't shield liability. It amplifies it.</p>
+
+<p>This guide exists for one reason: <strong>to make you dangerous in the right way.</strong> Dangerous to your competition because your listings will sell faster and for more money. And safe from the landmines that are taking down agents who don't know what they don't know.</p>
+
+<h3>What the Research Says</h3>
+
+<p>This is not theory. Every claim in this guide is backed by data:</p>
+
+<ul>
+  <li><strong>Goodwin, Waller &amp; Weeks (2014)</strong> — Journal of Housing Research: The specific words you choose in a listing description have a <em>measurable, independent impact</em> on days-on-market and sale price, even after controlling for location, price, and property condition.</li>
+  <li><strong>Luchtenberg, Seiler &amp; Sun (2019)</strong> — Journal of Real Estate Finance: Positive-only listing language had a <strong>higher impact</strong> on a buyer's likelihood to visit than high-quality photography did.</li>
+  <li><strong>Sing &amp; Zou (2024)</strong> — Real Estate Economics: NLP analysis of thousands of MLS listings found that higher sentiment scores and specific detail directly predicted shorter days-on-market and higher sale-to-list ratios.</li>
+  <li><strong>Zillow Talk (2014 data, repeatedly confirmed):</strong> "Barn doors" correlates with a <strong>13.4% price premium</strong> and sells 57 days faster. "Fixer" costs sellers <strong>11.1%</strong> below expected value.</li>
+</ul>
+
+<p>Most agents write listing descriptions by copying the last one and changing the address. That strategy is now actively dangerous. AI has raised the bar on volume while regulators have raised the stakes on compliance. The agent who learns to write listings that sell <em>and</em> stay compliant will dominate the next five years.</p>
+
+<h3>What You'll Get</h3>
+
+<ul>
+  <li><strong>15 copy-paste prompts</strong> extracted from the ListWorks PRO system — the same ones that power our AI rewrite engine</li>
+  <li><strong>The FBF Framework</strong> (Feature → Benefit → Feeling) that turns spec sheets into stories buyers can't resist</li>
+  <li><strong>Data-backed word choices</strong> — exact language that research shows correlates with faster sales and higher prices</li>
+  <li><strong>Fair Housing compliance that's actually useful</strong> — not theory, but exact phrases to avoid and what to say instead, with real case examples</li>
+  <li><strong>10 before/after rewrites</strong> with full psychological breakdowns</li>
+  <li><strong>The 90-second workflow</strong> — from property input sheet to published listing in under two minutes</li>
+</ul>
+
+<div class="callout-warning">
+  <strong>One note before we begin:</strong> This guide shows you how to use AI to write listings faster, better, and more compliantly. But the final review — the Fair Housing check, the accuracy verification, the voice consistency — that's on you. Always. The AI is your junior copywriter. You're still the editor-in-chief. <strong>$26,262 worth of editor-in-chief.</strong>
+</div>
+</body>
+</html>

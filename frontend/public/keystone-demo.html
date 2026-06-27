@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page { size: A4 landscape; margin: 0; background-color: #0d0f12; }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: #0d0f12;
+        color: #e2e8f0;
+        -webkit-print-color-adjust: exact;
+    }
+    .slide {
+        width: 297mm; height: 210mm;
+        page-break-after: always;
+        position: relative;
+        padding: 25mm 20mm;
+        overflow: hidden;
+        background: radial-gradient(circle at 80% 20%, #1a1f26 0%, #0d0f12 60%);
+    }
+    .slide::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 20mm 20mm;
+        pointer-events: none;
+    }
+    .slide-footer {
+        position: absolute;
+        bottom: 10mm; left: 20mm; right: 20mm;
+        display: table;
+        width: calc(100% - 40mm);
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 4mm;
+        font-size: 9pt; color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .footer-left { display: table-cell; text-align: left; }
+    .footer-right { display: table-cell; text-align: right; color: #c5a880; }
+    h1.title {
+        font-family: 'Cinzel', 'Playfair Display', serif;
+        font-size: 38pt; color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 6px;
+        margin: 0 0 10mm 0;
+        line-height: 1.2;
+    }
+    h2.section-title {
+        font-family: 'Cinzel', 'Playfair Display', serif;
+        font-size: 24pt; color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        margin: 0 0 2mm 0;
+        border-left: 3px solid #c5a880;
+        padding-left: 12px;
+    }
+    .subtitle {
+        font-size: 11pt; color: #c5a880;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 12mm;
+    }
+    .grid-2 { display: table; width: 100%; table-layout: fixed; }
+    .col { display: table-cell; vertical-align: top; }
+    .col-half { width: 50%; }
+    .col-35 { width: 35%; }
+    .col-65 { width: 65%; }
+    table.premium-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5mm;
+    }
+    table.premium-table th {
+        background-color: rgba(255,255,255,0.03);
+        color: #c5a880;
+        text-transform: uppercase;
+        font-size: 9pt; letter-spacing: 1.5px;
+        padding: 4mm; text-align: left;
+        border-bottom: 1px solid rgba(197, 168, 128, 0.3);
+    }
+    table.premium-table td {
+        padding: 4mm; font-size: 11pt;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        color: #e2e8f0;
+    }
+    .stat-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.07);
+        padding: 6mm 8mm;
+        margin-right: 5mm; margin-bottom: 5mm;
+        border-radius: 4px;
+    }
+    .stat-number { font-size: 32pt; font-weight: bold; color: #ffffff; margin-bottom: 2mm; }
+    .stat-label { font-size: 10pt; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+    .feature-box {
+        background: rgba(197, 168, 128, 0.04);
+        border-left: 2px solid #c5a880;
+        padding: 5mm 6mm;
+        margin-bottom: 4mm;
+    }
+    .feature-title { font-size: 12pt; font-weight: bold; color: #ffffff; margin-bottom: 1mm; letter-spacing: 1px; }
+    .feature-desc { font-size: 10pt; color: #94a3b8; line-height: 1.4; }
+    .badge-rec {
+        background: #c5a880; color: #0d0f12;
+        font-size: 8pt; font-weight: bold;
+        padding: 1mm 3mm;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 2mm;
+    }
+    .timeline-container { margin-top: 10mm; display: table; width: 100%; }
+    .timeline-step { display: table-cell; width: 25%; position: relative; padding-right: 5mm; }
+    .step-number {
+        width: 10mm; height: 10mm;
+        background: #c5a880; color: #0d0f12;
+        font-weight: bold; font-size: 14pt;
+        text-align: center; line-height: 10mm;
+        border-radius: 50%; margin-bottom: 4mm;
+    }
+    .step-title { font-size: 12pt; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2mm; }
+    .agent-photo {
+        width: 28mm; height: 28mm;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(197,168,128,0.15), rgba(0,0,0,0.3));
+        border: 2px solid rgba(197,168,128,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8pt; color: #64748b;
+    }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: STAGING ROI -->
+<div class="slide">
+    <h2 class="section-title">Staging ROI</h2>
+    <div class="subtitle">Value Impact of Pre-Sale Preparation</div>
+    <div style="font-size: 10pt; color: #94a3b8; margin-bottom: 6mm;">
+        Data shows staged homes sell faster and for more. Here's the breakdown of key improvements.
+    </div>
+    <table class="premium-table">
+        <thead>
+            <tr>
+                <th>Improvement</th>
+                <th>Avg Cost</th>
+                <th>Avg Return</th>
+                <th>ROI</th>
+                <th>Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><strong style="color:#ffffff;">Kitchen Refresh</strong></td><td>$8,500</td><td>$18,700</td><td style="color:#c5a880;">120%</td><td>High</td></tr>
+            <tr><td><strong style="color:#ffffff;">Bathroom Update</strong></td><td>$5,200</td><td>$10,400</td><td style="color:#c5a880;">100%</td><td>High</td></tr>
+            <tr><td><strong style="color:#ffffff;">Fresh Paint (Interior)</strong></td><td>$2,800</td><td>$5,600</td><td style="color:#c5a880;">100%</td><td>Medium</td></tr>
+            <tr><td><strong style="color:#ffffff;">Curb Appeal Landscaping</strong></td><td>$3,200</td><td>$6,400</td><td style="color:#c5a880;">100%</td><td>Medium</td></tr>
+            <tr><td><strong style="color:#ffffff;">Flooring Replacement</strong></td><td>$4,500</td><td>$7,200</td><td style="color:#c5a880;">60%</td><td>Medium</td></tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 6mm; border-left: 2px solid #c5a880; padding-left: 4mm; background: rgba(197,168,128,0.03); padding: 4mm;">
+        <strong style="color:#ffffff;">Key Insight:</strong>
+        <span style="font-size: 10pt; color: #94a3b8;"> The highest-ROI improvements are kitchen refreshes and bathroom updates — recouping 100-120% of cost at sale.</span>
+    </div>
+    <div class="slide-footer">
+        <div class="footer-left">Staging ROI Analysis</div>
+        <div class="footer-right">35 Pages Editable</div>
+    </div>
+</div>
+
+<!-- SLIDE 2: MEET THE TEAM -->
+<div class="slide">
+    <h2 class="section-title">Meet the Team</h2>
+    <div class="subtitle">Your Dedicated Network of Experts</div>
+    <div style="font-size: 10pt; color: #94a3b8; margin-bottom: 6mm;">
+        Behind every successful transaction is a team of skilled professionals working together on your behalf.
+    </div>
+    <div style="display: table; width: 100%;">
+        <div style="display: table-cell; width: 25%; padding-right: 4mm; text-align: center;">
+            <div class="agent-photo" style="margin: 0 auto 3mm;">Photo</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #ffffff; letter-spacing: 1px;">[Name]</div>
+            <div style="font-size: 9pt; color: #c5a880;">Lead Agent</div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 2mm;">15+ years local market expertise</div>
+        </div>
+        <div style="display: table-cell; width: 25%; padding-right: 4mm; text-align: center;">
+            <div class="agent-photo" style="margin: 0 auto 3mm;">Photo</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #ffffff; letter-spacing: 1px;">[Name]</div>
+            <div style="font-size: 9pt; color: #c5a880;">Transaction Coordinator</div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 2mm;">Paperwork & compliance oversight</div>
+        </div>
+        <div style="display: table-cell; width: 25%; padding-right: 4mm; text-align: center;">
+            <div class="agent-photo" style="margin: 0 auto 3mm;">Photo</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #ffffff; letter-spacing: 1px;">[Name]</div>
+            <div style="font-size: 9pt; color: #c5a880;">Marketing Specialist</div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 2mm;">Photography, media, digital campaigns</div>
+        </div>
+        <div style="display: table-cell; width: 25%; text-align: center;">
+            <div class="agent-photo" style="margin: 0 auto 3mm;">Photo</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #ffffff; letter-spacing: 1px;">[Name]</div>
+            <div style="font-size: 9pt; color: #c5a880;">Buyer Specialist</div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 2mm;">Tour coordination & lead follow-up</div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <div class="footer-left">Your Dedicated Team</div>
+        <div class="footer-right">35 Pages Editable</div>
+    </div>
+</div>
+
+<!-- SLIDE 3: CO AI ACT COMPLIANCE -->
+<div class="slide">
+    <h2 class="section-title">Colorado AI Act</h2>
+    <div class="subtitle">Compliance & Disclosure — Effective June 30, 2026</div>
+    <div style="font-size: 10pt; color: #94a3b8; margin-bottom: 4mm;">
+        Colorado's new AI compliance law (SB 24-205) requires specific disclosures when AI tools are used in real estate transactions.
+    </div>
+    <div class="grid-2">
+        <div class="col col-65" style="padding-right: 8mm;">
+            <div class="feature-box" style="margin-bottom: 5mm;">
+                <div class="feature-title">⚖️ DISCLOSURE REQUIREMENTS</div>
+                <div class="feature-desc">AI-assisted content generation must be disclosed to all parties. Human review available upon request.</div>
+            </div>
+            <div class="feature-box" style="margin-bottom: 5mm;">
+                <div class="feature-title">📋 BIAS AUDIT COMPLIANCE</div>
+                <div class="feature-desc">Annual fairness evaluations required for automated pricing and listing tools.</div>
+            </div>
+            <div class="feature-box">
+                <div class="feature-title">🛡️ FAIR HOUSING ALIGNMENT</div>
+                <div class="feature-desc">All AI-generated marketing copy passes through Fair Housing compliance review before publication.</div>
+            </div>
+        </div>
+        <div class="col col-35" style="border-left: 1px solid rgba(255,255,255,0.05); padding-left: 8mm;">
+            <div style="border: 1px solid #c5a880; background: rgba(197,168,128,0.05); padding: 6mm; text-align: center; border-radius: 4px;">
+                <div style="font-size: 28pt; font-weight: bold; color: #c5a880;">30</div>
+                <div style="font-size: 10pt; color: #ffffff; letter-spacing: 1px; margin: 2mm 0;">Days Until Deadline</div>
+                <div style="font-size: 8pt; color: #64748b; line-height: 1.4;">Colorado AI Act takes effect June 30, 2026. Ensure your brokerage is prepared.</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <div class="footer-left">Colorado AI Act Compliance</div>
+        <div class="footer-right">35 Pages Editable</div>
+    </div>
+</div>
+
+<!-- SLIDE 4: WHY PRICE MATTERS -->
+<div class="slide">
+    <h2 class="section-title">Why Pricing Matters</h2>
+    <div class="subtitle">The Cost of Getting It Wrong</div>
+    <div style="font-size: 10pt; color: #94a3b8; margin-bottom: 6mm;">
+        The first 30 days on market determine the trajectory of your sale. Proper pricing from day one is critical.
+    </div>
+    <div style="display: table; width: 100%;">
+        <div style="display: table-cell; width: 33.33%; padding-right: 4mm;">
+            <div class="stat-card" style="border-top: 2px solid #c5a880; text-align: center;">
+                <div class="stat-number" style="font-size: 20pt;">-10%</div>
+                <div class="stat-label">Overpriced homes sell for 10% less on average after price reductions</div>
+            </div>
+        </div>
+        <div style="display: table-cell; width: 33.33%; padding-right: 4mm;">
+            <div class="stat-card" style="border-top: 2px solid #ffffff; text-align: center;">
+                <div class="stat-number" style="font-size: 20pt;">2.5x</div>
+                <div class="stat-label">Homes priced right from day one sell 2.5x faster</div>
+            </div>
+        </div>
+        <div style="display: table-cell; width: 33.33%;">
+            <div class="stat-card" style="border-top: 2px solid #ffffff; text-align: center;">
+                <div class="stat-number" style="font-size: 20pt;">88%</div>
+                <div class="stat-label">Of buyers search online first — accurate pricing drives clicks</div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 6mm; background: rgba(197,168,128,0.03); border: 1px solid rgba(197,168,128,0.1); padding: 4mm 6mm; border-radius: 4px;">
+        <div style="font-size: 10pt; color: #c5a880; letter-spacing: 1px; font-weight: bold; display: inline-block;">STRATEGIC PRICING</div>
+        <div style="font-size: 10pt; color: #94a3b8; margin-top: 1mm;">A price reduction after 30 days costs an average of $15,000 — more than the savings from a higher initial list price. Pricing correctly from the start is the single most important decision we'll make together.</div>
+    </div>
+    <div class="slide-footer">
+        <div class="footer-left">Strategic Pricing Analysis</div>
+        <div class="footer-right">35 Pages Editable</div>
+    </div>
+</div>
+
+<!-- SLIDE 5: FIRST 30 DAYS TIMELINE -->
+<div class="slide">
+    <h2 class="section-title">The First 30 Days</h2>
+    <div class="subtitle">Critical Milestones for Maximum Impact</div>
+    <div class="timeline-container" style="margin-top: 5mm;">
+        <div class="timeline-step">
+            <div class="step-number">1</div>
+            <div class="step-title">Week 1</div>
+            <div style="font-size: 9pt; color: #94a3b8; line-height: 1.4;">
+                <strong style="color:#c5a880;">List & Launch</strong><br>
+                Professional photos, MLS syndication, social campaigns go live.
+            </div>
+        </div>
+        <div class="timeline-step">
+            <div class="step-number" style="background:#ffffff; color:#0d0f12;">2</div>
+            <div class="step-title">Week 2</div>
+            <div style="font-size: 9pt; color: #94a3b8; line-height: 1.4;">
+                <strong style="color:#c5a880;">Open House</strong><br>
+                Broker caravan, public open house, social retargeting begins.
+            </div>
+        </div>
+        <div class="timeline-step">
+            <div class="step-number" style="background:#ffffff; color:#0d0f12;">3</div>
+            <div class="step-title">Week 3</div>
+            <div style="font-size: 9pt; color: #94a3b8; line-height: 1.4;">
+                <strong style="color:#c5a880;">Feedback Loop</strong><br>
+                Analyze showing feedback, adjust positioning, retarget ads.
+            </div>
+        </div>
+        <div class="timeline-step">
+            <div class="step-number" style="background:#ffffff; color:#0d0f12;">4</div>
+            <div class="step-title">Week 4</div>
+            <div style="font-size: 9pt; color: #94a3b8; line-height: 1.4;">
+                <strong style="color:#c5a880;">Review</strong><br>
+                Full performance analysis. Price adjustment if needed.
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 10mm; padding: 6mm; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; text-align: center;">
+        <div style="font-family: 'Cinzel', serif; font-size: 14pt; color: #ffffff; letter-spacing: 2px; margin-bottom: 2mm;">Day 1 Momentum</div>
+        <div style="font-size: 10pt; color: #94a3b8; line-height: 1.4;">The first week determines 70% of buyer interest. We make it count.</div>
+    </div>
+    <div class="slide-footer">
+        <div class="footer-left">First 30 Days Milestones</div>
+        <div class="footer-right">35 Pages Editable</div>
+    </div>
+</div>
+
+</body>
+</html>

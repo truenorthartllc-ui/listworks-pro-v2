@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Estate Listing Guide - ListWorks PRO</title>
+<style>
+  @page { margin: 18mm 14mm 18mm 14mm; size: A4; }
+  @page :first { margin-top: 0; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; font-size: 11pt; max-width: 800px; margin: 0 auto; padding: 20px; }
+  h1, h2, h3, h4 { font-family: 'Helvetica Neue', 'Arial', sans-serif; font-weight: 700; color: #0a0a0a; page-break-after: avoid; }
+  h1 { font-size: 28pt; letter-spacing: -0.5px; }
+  h2 { font-size: 18pt; margin-top: 36px; border-bottom: 3px solid #1a1a1a; padding-bottom: 6px; }
+  h3 { font-size: 14pt; margin-top: 28px; }
+  h4 { font-size: 12pt; margin-top: 20px; color: #333; }
+  p { margin: 0 0 12px 0; }
+  .page-break { page-break-before: always; }
+  blockquote { border-left: 4px solid #c0392b; margin: 16px 0; padding: 12px 20px; background: #fdf2f2; font-style: italic; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 14px 18px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #333; margin: 14px 0; line-height: 1.45; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+  .callout { background: #eef6ff; border-left: 4px solid #2980b9; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-warning { background: #fff8e6; border-left: 4px solid #f39c12; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-danger { background: #fdf2f2; border-left: 4px solid #c0392b; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .callout-success { background: #f0faf0; border-left: 4px solid #27ae60; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .two-col { display: flex; gap: 20px; margin: 16px 0; }
+  .two-col > div { flex: 1; }
+  .col-bad { background: #fdf2f2; padding: 12px 16px; border-radius: 4px; border: 1px solid #e8c8c8; }
+  .col-good { background: #f0faf0; padding: 12px 16px; border-radius: 4px; border: 1px solid #b8d8b8; }
+  .col-bad h4 { color: #c0392b; margin-top: 0; }
+  .col-good h4 { color: #27ae60; margin-top: 0; }
+  .prompt-box { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 6px; margin: 14px 0; font-size: 9.5pt; line-height: 1.5; font-family: 'Courier New', monospace; }
+  .cover { text-align: center; padding-top: 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; margin-bottom: 10px; line-height: 1.15; }
+  .cover .subtitle { font-size: 16pt; color: #555; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; }
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom: none; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 6px 0; font-size: 11pt; border-bottom: 1px dotted #ccc; }
+  .toc .toc-h2 { font-weight: 700; padding-top: 12px; }
+  .framework-box { border: 2px solid #2980b9; border-radius: 8px; padding: 18px 20px; margin: 18px 0; background: #f8fbff; }
+  .framework-box h4 { margin-top: 0; color: #2980b9; }
+  .subhead { font-size: 13pt; font-family: 'Helvetica Neue', sans-serif; color: #555; margin-top: -8px; font-weight: 300; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9pt; color: #888; text-align: center; }
+  @media print { body { padding: 0; } .page-break { page-break-before: always; } }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+  th { background: #1a1a2e; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  .data-badge { display: inline-block; background: #1a1a2e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; }
+  .pullquote { font-size: 14pt; line-height: 1.5; color: #c0392b; font-style: italic; text-align: center; padding: 20px 40px; border-top: 2px solid #c0392b; border-bottom: 2px solid #c0392b; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h2>Chapter 1: Buyers Don't Buy Houses. They Buy Feelings.</h2>
+<p class="subhead">The FBF Framework &mdash; and why most listings get it exactly backwards.</p>
+
+<p>Nobody has ever bought a house.</p>
+
+<p>They bought the backyard where their kids finally run wild. They bought the kitchen where Sunday mornings smell like bacon and coffee, where the island becomes the buffet, where friends linger until the wine runs out. They bought the primary suite that feels like a hotel every single night, where they close the door and the rest of the world disappears.</p>
+
+<p>The house is just the container. <strong>The feeling is the product.</strong></p>
+
+<p>Every year, the National Association of Realtors surveys recent homebuyers and asks them the same question: what was the single most important factor in choosing your home? The answer, year after year, is not square footage, not price, not even location. It's <strong>"the way it made me feel."</strong></p>
+
+<p>And yet, 97% of MLS listings read like an inventory spreadsheet:</p>
+
+<blockquote>"Welcome to 123 Main Street. This 3-bedroom, 2-bath home features hardwood floors, stainless steel appliances, and a fenced backyard. Close to schools and shopping. Don't miss this one!"</blockquote>
+
+<p>That's not a listing. That's a receipt. It tells you what's there. It doesn't tell you why you should care. And when every listing looks the same, the only thing that matters is price.</p>
+
+<div class="pullquote">"Positive-only listing language had a significantly higher impact on likelihood to visit than high-quality photography did." — Luchtenberg, Seiler & Sun, Journal of Real Estate Finance, 2019</div>
+
+<h3>The FBF Framework</h3>
+
+<p>Every single feature in a home has three layers. Most agents stop at layer one. The best agents go all the way to layer three.</p>
+
+<div class="framework-box">
+  <h4>The FBF Pyramid</h4>
+  <p><strong>Layer 3 &mdash; FEELING:</strong> Why you'll love it. The emotional payoff. The reason they'll pay over asking.</p>
+  <p><strong>Layer 2 &mdash; BENEFIT:</strong> What it means for you. The practical advantage. The "so what."</p>
+  <p><strong>Layer 1 &mdash; FEATURE:</strong> What it is. The spec. The fact. The noun.</p>
+</div>
+
+<p><strong>Layer 1 &mdash; Feature:</strong> "Quartz countertops." "Fenced backyard." "Hardwood floors." These are facts. They're necessary but not sufficient. Every listing has them.</p>
+
+<p><strong>Layer 2 &mdash; Benefit:</strong> "Quartz that never stains." "A backyard where the dog can roam." "Floors that actually last." Now you're answering the question the buyer is silently asking: <em>so what?</em></p>
+
+<p><strong>Layer 3 &mdash; Feeling:</strong> "Sunday mornings around the island, coffee in hand, sauce simmering." "Watching the kids learn to ride a bike without worrying about the street." "Barefoot winters on warm wood." This is where the sale happens. This is the layer that makes a buyer pay more than they planned.</p>
+
+<h3>Why Most Listings Stop at Layer 1</h3>
+
+<p>Because Layer 1 is easy. It's objective. "Three beds, two baths, updated kitchen." You can write that in your sleep. But so can every other agent. When every listing in a buyer's search results reads the same, the only differentiator is price. And price is a race to the bottom you cannot win.</p>
+
+<p>The Zillow data proves this: listings that use specific, sensory language consistently outperform feature dumps. "Barn doors" (+13.4% price, 57 days faster) works because it signals a specific lifestyle. "Quartz" (+6%) works because it signals quality without saying "high-end." These aren't features — they're emotional shorthand.</p>
+
+<h3>The Five Tones</h3>
+
+<table>
+  <tr><th>Tone</th><th>When to Use</th><th>Language</th></tr>
+  <tr><td><strong>Luxury</strong></td><td>High-end properties</td><td>Cinematic, aspirational, status-aware. "European white oak. Hand-troweled plaster."</td></tr>
+  <tr><td><strong>Warmth</strong></td><td>Family homes, first-time buyers</td><td>Sensory, inviting, grounded. "The kitchen where Sunday dinners happen."</td></tr>
+  <tr><td><strong>Modern</strong></td><td>New construction, condos</td><td>Clean, architectural, design-forward. "Form follows function. Every square inch earned."</td></tr>
+  <tr><td><strong>Urgent</strong></td><td>Hot markets, multiple offers</td><td>Scarcity-driven, confident. "Three offers already. Seller reviewing Tuesday."</td></tr>
+  <tr><td><strong>Investor</strong></td><td>Rentals, flips, commercial</td><td>Data-forward, ROI-focused. "Cap rate 6.2%. Zero vacancy. Three-year track record."</td></tr>
+</table>
+
+<h3>The First 15 Words Are All You Get</h3>
+
+<p>Eye-tracking research (Seiler, Madhavan &amp; Liechty, 2012) shows that buyers scan listings in an F-pattern. They read the first sentence, glance at the photos, check the price, and decide whether to continue or click next. You have approximately 15 words to earn the rest of their attention.</p>
+
+<p><strong>Weak opening:</strong> "Welcome to 47 Oak Lane, a stunning 4-bedroom..." — They've seen this 400 times today. You've already lost.</p>
+
+<p><strong>Strong opening:</strong> "The best room in this house isn't on the floor plan. It's the screened porch at golden hour." — Now they have to know more.</p>
+
+<h3>Seven Psychological Triggers</h3>
+
+<p>Activate at least two per listing:</p>
+
+<table>
+  <tr><th>Trigger</th><th>Example</th><th>Why It Works</th></tr>
+  <tr><td><strong>Belonging</strong></td><td>"This is where Sunday dinners happen."</td><td>Endowment effect — they start picturing their life there</td></tr>
+  <tr><td><strong>Status</strong></td><td>"The address that says something before you do."</td><td>Social signaling — homes are identity markers</td></tr>
+  <tr><td><strong>Safety</strong></td><td>"Dead-end street. Kids still ride bikes here."</td><td>#1 buyer concern — reduces uncertainty</td></tr>
+  <tr><td><strong>Urgency</strong></td><td>"Three offers already. Seller reviewing Tuesday."</td><td>Scarcity principle — loss aversion is stronger than gain</td></tr>
+  <tr><td><strong>Novelty</strong></td><td>"First time on the market in 18 years."</td><td>FOMO — rare events feel more valuable</td></tr>
+  <tr><td><strong>Validation</strong></td><td>"The neighborhood everyone drives through."</td><td>Social proof — others already chose this</td></tr>
+  <tr><td><strong>Contrast</strong></td><td>"City energy when you want it. Tree-lined quiet when you don't."</td><td>Best of both worlds — resolves tradeoffs</td></tr>
+</table>
+
+<div class="callout-success">
+  <strong>Action for today:</strong> Pick one active listing. Run every feature through the FBF framework. Don't stop until each feature reaches Layer 3. Your first one takes 15 minutes. By listing #10, you'll do it in 90 seconds.
+</div>
+
+<div class="callout" style="border-left-color: #1a1a2e;">
+  <strong>⚡ ListWorks PRO shortcut:</strong> This entire framework — FBF analysis, tone selection, trigger mapping — is built into ListWorks. Paste your property notes, pick a tone, and get a fully structured listing in 10 seconds. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try it free →</a>
+</div>
+
+<div class="callout" style="border-left-color: #1a1a2e;">
+  <strong>⚡ ListWorks PRO shortcut:</strong> The 5-part structure above is the default output format in ListWorks. Every rewrite comes out structured as Hook → Lifestyle → Features → Neighborhood → CTA. No formatting needed. <a href="https://listworks.pro" style="color:#1a1a2e;font-weight:700;">Try it free →</a>
+</div>
+</body>
+</html>
