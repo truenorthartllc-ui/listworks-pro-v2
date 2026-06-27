@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Shield, Download, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function COCompliancePage() {
   const [listingText, setListingText] = useState('');
@@ -10,25 +9,20 @@ export default function COCompliancePage() {
 
   const checkCompliance = async () => {
     if (!listingText || listingText.trim().length < 20) {
-      alert("Please enter a listing description (at least 20 characters)");
+      alert("C'mon — paste a listing first. At least 20 characters.");
       return;
     }
-
     setChecking(true);
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://listworks-pro-v2-production.up.railway.app'}/api/compliance/co-act`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: listingText,
-          agent_name: agentName || "Agent",
-          human_reviewed: true,
-        }),
+        body: JSON.stringify({ text: listingText, agent_name: agentName || "Agent", human_reviewed: true }),
       });
       const data = await res.json();
       setResult(data);
     } catch (err) {
-      alert("Check failed: " + err.message);
+      alert("Something broke. Try again.");
     } finally {
       setChecking(false);
     }
@@ -36,214 +30,160 @@ export default function COCompliancePage() {
 
   const downloadPDF = () => {
     if (!result?.scan_id) return;
-    window.open(
-      `${process.env.REACT_APP_BACKEND_URL || 'https://listworks-pro-v2-production.up.railway.app'}/api/compliance/co-act/pdf/${result.scan_id}`,
-      '_blank'
-    );
+    window.open(`${process.env.REACT_APP_BACKEND_URL || 'https://listworks-pro-v2-production.up.railway.app'}/api/compliance/co-act/pdf/${result.scan_id}`, '_blank');
   };
 
   const copyDisclosure = () => {
     if (!result?.suggested_disclosure) return;
     navigator.clipboard.writeText(result.suggested_disclosure);
-    alert("✓ Disclosure copied to clipboard");
+    alert("✓ Copied. Stick it in your listing.");
   };
 
   return (
-    <div className="min-h-screen bg-oat">
-      {/* Header */}
-      <header className="bg-white border-b border-ink/15">
-        <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-ink hover:text-vermillion transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="font-heading text-sm uppercase tracking-[0.15em]">Back to ListWorks</span>
+    <div className="min-h-screen" style={{ background: '#0d0d0d', color: '#f5f3ee', fontFamily: 'Inter, sans-serif' }}>
+      {/* HEADER */}
+      <header style={{ borderBottom: '1px solid rgba(198,169,97,0.1)', background: 'rgba(13,13,13,0.9)', backdropFilter: 'blur(16px)' }}>
+        <div className="max-w-[1100px] mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#a8a49e', textDecoration: 'none', fontSize: '13px', fontWeight: 500 }}>
+            ← Back
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink/40">Free Tool</span>
-            <Link to="/dashboard" className="btn-vermillion px-5 py-2 font-heading text-xs uppercase tracking-[0.15em]">
-              Sign Up Free
-            </Link>
-          </div>
+          <Link to="/" style={{ fontSize: '20px', fontWeight: 700, textDecoration: 'none', color: '#f5f3ee', letterSpacing: '-0.3px', fontFamily: 'Playfair Display, serif' }}>
+            ListWorks<span style={{ color: '#C6A961' }}>.</span>
+          </Link>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="max-w-[1200px] mx-auto px-6 py-12 md:py-16">
-        <div className="max-w-[700px]">
-          <div className="flex items-center gap-3 mb-4">
-            <Shield className="w-8 h-8 text-vermillion" />
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Colorado AI Act — SB 24-205</span>
+      {/* HERO */}
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 24px 40px' }}>
+        <div style={{ maxWidth: '650px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '3px', textTransform: 'uppercase', color: '#C6A961' }}>
+              ⚡ Colorado AI Act — SB 24-205
+            </span>
           </div>
-          <h1 className="font-display text-4xl md:text-5xl leading-tight text-ink mb-4">
-            Check Your Listing for Colorado AI Compliance
+          <h1 style={{ fontSize: '42px', fontWeight: 700, lineHeight: '1.1', marginBottom: '16px', letterSpacing: '-0.5px', fontFamily: 'Playfair Display, serif' }}>
+            One wrong sentence<br />could cost <span style={{ color: '#C6A961' }}>$26,262</span>.
           </h1>
-          <p className="font-body text-lg text-ink/70 leading-relaxed mb-6">
-            Colorado law (SB 24-205, effective Feb 1, 2026) requires AI disclosure on all real estate listings. Paste your listing below — we'll check if you're compliant and give you the exact disclosure text to add.
+          <p style={{ fontSize: '17px', lineHeight: '1.6', color: '#a8a49e', marginBottom: '20px' }}>
+            Colorado's new AI disclosure law went into effect <strong style={{ color: '#f5f3ee' }}>February 1, 2026</strong>. If an AI tool helped write your listing — even just a little — you're required by law to say so. No disclosure = fines, complaints, and a bad day.
           </p>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-ink/50">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              100% Free
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              No Login Required
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              Instant Results + PDF
-            </span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '14px', color: '#6b6b6b' }}>
+            <span style={{ color: '#C6A961' }}>✓ Free. No login.</span>
+            <span style={{ color: '#C6A961' }}>✓ Takes 10 seconds</span>
+            <span style={{ color: '#C6A961' }}>✓ PDF report included</span>
           </div>
         </div>
       </section>
 
-      {/* Form */}
-      <section className="max-w-[1200px] mx-auto px-6 pb-16">
-        <div className="bg-white border border-ink/15 rounded p-6 md:p-8">
-
+      {/* FORM */}
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>
+        <div style={{ background: '#1a1a1a', border: '1px solid rgba(198,169,97,0.15)', borderRadius: '12px', padding: '32px' }}>
+          
           {!result && (
             <>
-              <div className="mb-5">
-                <label className="block font-heading text-xs uppercase tracking-[0.15em] text-ink mb-2">
-                  Your Listing Description
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '2px', color: '#C6A961', marginBottom: '8px' }}>
+                  Paste your listing
                 </label>
                 <textarea
                   value={listingText}
                   onChange={(e) => setListingText(e.target.value)}
                   placeholder="Paste your listing description here..."
-                  className="w-full h-48 px-4 py-3 border border-ink/20 rounded font-body text-sm text-ink resize-none focus:outline-none focus:border-vermillion"
+                  style={{ width: '100%', height: '180px', padding: '14px', border: '1px solid rgba(198,169,97,0.1)', borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit', resize: 'vertical', outline: 'none', background: '#0d0d0d', color: '#f5f3ee' }}
                 />
               </div>
 
-              <div className="mb-6">
-                <label className="block font-heading text-xs uppercase tracking-[0.15em] text-ink mb-2">
-                  Agent Name (Optional)
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '2px', color: '#C6A961', marginBottom: '8px' }}>
+                  Your name <span style={{ color: '#555', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={agentName}
                   onChange={(e) => setAgentName(e.target.value)}
                   placeholder="John Smith"
-                  className="w-full px-4 py-3 border border-ink/20 rounded font-body text-sm text-ink focus:outline-none focus:border-vermillion"
+                  style={{ width: '100%', padding: '14px', border: '1px solid rgba(198,169,97,0.1)', borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit', outline: 'none', background: '#0d0d0d', color: '#f5f3ee' }}
                 />
               </div>
 
               <button
                 onClick={checkCompliance}
                 disabled={checking || !listingText}
-                className="btn-vermillion w-full py-4 px-6 font-heading text-sm uppercase tracking-[0.15em] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                style={{
+                  width: '100%', padding: '16px', border: 'none', borderRadius: '8px',
+                  fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                  background: checking ? '#333' : '#C6A961', color: checking ? '#666' : '#0d0d0d',
+                  opacity: (!listingText || checking) ? 0.5 : 1,
+                }}
               >
-                {checking ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Checking Compliance...
-                  </>
-                ) : (
-                  <>
-                    <Shield className="w-4 h-4" />
-                    Check CO Compliance (Free)
-                  </>
-                )}
+                {checking ? 'Checking...' : 'Check My Listing →'}
               </button>
+              
+              <p style={{ fontSize: '12px', color: '#555', textAlign: 'center', marginTop: '12px' }}>
+                We don't store your listing text. This runs and disappears.
+              </p>
             </>
           )}
 
           {result && (
-            <div className="space-y-6">
-
-              {/* Result Card */}
-              <div className={`p-6 rounded border-l-4 ${result.compliant ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {result.compliant ? (
-                      <CheckCircle className="w-6 h-6 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="w-6 h-6 text-red-600" />
-                    )}
-                    <div>
-                      <h3 className={`font-heading text-lg uppercase tracking-[0.1em] ${result.compliant ? 'text-green-700' : 'text-red-700'}`}>
-                        {result.grade}
-                      </h3>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/40 mt-1">
-                        Scanned {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </div>
+            <div>
+              <div style={{
+                padding: '24px', borderRadius: '8px', marginBottom: '16px',
+                borderLeft: '4px solid',
+                background: '#0d0d0d',
+                borderColor: result.compliant ? '#C6A961' : '#ef4444'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '24px' }}>{result.compliant ? '✅' : '⚠️'}</span>
+                  <span style={{ fontSize: '18px', fontWeight: 700, color: result.compliant ? '#C6A961' : '#ef4444' }}>
+                    {result.compliant ? 'Looking good.' : 'Needs work.'}
+                  </span>
                 </div>
-
-                {result.violations && result.violations.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="font-heading text-xs uppercase tracking-[0.15em] text-red-600 mb-2">Issues Found:</p>
-                    {result.violations.map((v, i) => (
-                      <div key={i} className="bg-white p-4 rounded border border-red-200">
-                        <p className="font-semibold text-sm text-red-700 mb-1">{v.rule}</p>
-                        <p className="text-xs text-ink/70 leading-relaxed">{v.explanation}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {result.compliant && (
-                  <p className="text-sm text-green-700 leading-relaxed">
-                    ✓ Your listing includes proper AI disclosure and human review attestation. You're compliant with Colorado SB 24-205.
-                  </p>
-                )}
+                <p style={{ fontSize: '14px', color: '#a8a49e', lineHeight: '1.6', margin: 0 }}>{result.message || result.summary}</p>
               </div>
 
-              {/* Suggested Disclosure */}
-              {!result.disclosure_present && result.suggested_disclosure && (
-                <div className="bg-white p-6 rounded border border-ink/15">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Shield className="w-4 h-4 text-vermillion" />
-                    <h3 className="font-heading text-sm uppercase tracking-[0.15em] text-vermillion">
-                      Add This Disclosure
-                    </h3>
+              {result.suggested_disclosure && (
+                <div style={{ padding: '20px', border: '1px solid rgba(198,169,97,0.1)', borderRadius: '8px', marginBottom: '16px', background: '#1a1a1a' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '2px', color: '#C6A961', marginBottom: '8px' }}>
+                    Required Disclosure — Add This to Your Listing
                   </div>
-                  <div className="bg-oat/50 p-4 rounded mb-4">
-                    <p className="font-body text-sm text-ink/80 italic leading-relaxed">
-                      "{result.suggested_disclosure}"
-                    </p>
+                  <div style={{ padding: '14px', background: '#0d0d0d', borderRadius: '6px', fontSize: '13px', color: '#a8a49e', lineHeight: '1.5', marginBottom: '12px', border: '1px solid rgba(198,169,97,0.06)' }}>
+                    {result.suggested_disclosure}
                   </div>
-                  <button
-                    onClick={copyDisclosure}
-                    className="btn-outline py-2.5 px-5 font-heading text-xs uppercase tracking-[0.15em]"
-                  >
-                    Copy Disclosure Text
+                  <button onClick={copyDisclosure} style={{ padding: '10px 20px', border: '1px solid rgba(198,169,97,0.3)', borderRadius: '6px', background: 'transparent', color: '#C6A961', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Copy Disclosure
                   </button>
                 </div>
               )}
 
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={downloadPDF}
-                  className="btn-ink py-3 px-6 font-heading text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Download PDF Certificate
-                </button>
-                <button
-                  onClick={() => setResult(null)}
-                  className="btn-outline py-3 px-6 font-heading text-xs uppercase tracking-[0.15em]"
-                >
-                  Check Another Listing
-                </button>
-              </div>
+              {result.risk_phrases && result.risk_phrases.length > 0 && (
+                <div style={{ padding: '20px', border: '1px solid rgba(198,169,97,0.1)', borderRadius: '8px', marginBottom: '16px', background: '#1a1a1a' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '2px', color: '#C6A961', marginBottom: '8px' }}>
+                    🚩 Flagged Phrases
+                  </div>
+                  {result.risk_phrases.map((p, i) => (
+                    <div key={i} style={{ padding: '10px', background: 'rgba(239,68,68,0.08)', borderRadius: '6px', marginBottom: '6px', fontSize: '13px', border: '1px solid rgba(239,68,68,0.15)' }}>
+                      <span style={{ color: '#ef4444', fontWeight: 600 }}>"{p.phrase}"</span>
+                      <span style={{ color: '#888' }}> — {p.reason}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-              {/* CTA */}
-              <div className="border-t border-ink/10 pt-6 text-center">
-                <p className="font-body text-sm text-ink/60 mb-4">
-                  Need Fair Housing compliance too? ListWorks PRO scans for both.
-                </p>
-                <Link to="/dashboard" className="btn-vermillion inline-block py-3 px-8 font-heading text-xs uppercase tracking-[0.15em]">
-                  Try ListWorks PRO Free →
-                </Link>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {result.scan_id && (
+                  <button onClick={downloadPDF} style={{ flex: 1, padding: '14px', border: 'none', borderRadius: '8px', background: '#C6A961', color: '#0d0d0d', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Download PDF Report
+                  </button>
+                )}
+                <button onClick={() => { setResult(null); setListingText(''); }} style={{ flex: 1, padding: '14px', border: '1px solid rgba(198,169,97,0.3)', borderRadius: '8px', background: 'transparent', color: '#f5f3ee', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  Check Another
+                </button>
               </div>
             </div>
           )}
-
         </div>
       </section>
-
     </div>
   );
 }

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Presentation Preview — ListWorks PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #2a2520; 
+    color: #f5f3ee; 
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(42,37,32,0.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(198,169,97,0.1);
+    padding: 0 24px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header .logo { font-family: 'Playfair Display', serif; font-size: 16px; color: #C6A961; }
+  .header .logo span { color: #f5f3ee; }
+  .header .back-link { color: #a8a49e; text-decoration: none; font-size: 12px; transition: color 0.3s; }
+  .header .back-link:hover { color: #f5f3ee; }
+  .header .buy-btn { 
+    background: #C6A961; color: #0d0d0d; text-decoration: none;
+    font-size: 12px; font-weight: 600; padding: 8px 20px; border-radius: 6px;
+    transition: all 0.3s;
+  }
+  .header .buy-btn:hover { background: #E8D5A3; }
+  .header a:hover { background: #E8D5A3; }
+  
+  .hero {
+    padding: 80px 24px 40px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero p { color: #a8a49e; font-size: 14px; }
+  
+  /* BOOK SPREAD */
+  .spread-container {
+    max-width: 1100px; margin: 0 auto; padding: 0 20px 60px;
+  }
+  
+  .spread {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; margin-bottom: 40px;
+    position: relative;
+  }
+  
+  .page-left, .page-right {
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .page-left {
+    border-radius: 4px 0 0 4px;
+    transform-origin: right center;
+  }
+  .page-right {
+    border-radius: 0 4px 4px 0;
+    transform-origin: left center;
+  }
+  
+  .page-left img, .page-right img {
+    width: 100%; height: 100%; display: block;
+  }
+  
+  .page-left { 
+    border-right: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 
+      -2px 0 12px rgba(0,0,0,0.3),
+      0 8px 32px rgba(0,0,0,0.4);
+  }
+  .page-right {
+    box-shadow: 
+      2px 0 12px rgba(0,0,0,0.3),
+      0 8px 32px rgba(0,0,0,0.4);
+  }
+  
+  /* Spine center line */
+  .spread::before {
+    content: '';
+    position: absolute; left: calc(50% - 1px); top: 0; bottom: 0;
+    width: 2px; height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.05), rgba(0,0,0,0.1));
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  /* Page curl shadow effect */
+  .page-left::after {
+    content: ''; position: absolute; right: -6px; top: 0; bottom: 0;
+    width: 12px; z-index: 1;
+    background: linear-gradient(to left, rgba(0,0,0,0.06), transparent);
+    pointer-events: none;
+  }
+  .page-right::before {
+    content: ''; position: absolute; left: -4px; top: 0; bottom: 0;
+    width: 8px; z-index: 1;
+    background: linear-gradient(to right, rgba(0,0,0,0.04), transparent);
+    pointer-events: none;
+  }
+  
+  /* Book edge shadow */
+  .spread-shadow {
+    position: absolute; left: 5%; right: 5%; bottom: -12px; height: 24px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.3), transparent);
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  /* Badge on spread */
+  .spread-label {
+    text-align: center; margin-bottom: 8px; 
+    font-size: 10px; color: rgba(198,169,97,0.4); letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  /* For single page odd-numbers (e.g. cover alone) */
+  .single-page {
+    max-width: 550px; margin: 0 auto 40px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border-radius: 4px;
+  }
+  .single-page img { width: 100%; display: block; border-radius: 4px; }
+  
+  /* Flip animation on hover */
+  .page-left:hover, .page-right:hover {
+    filter: brightness(1.05);
+    transition: filter 0.3s;
+  }
+  
+  .cta {
+    text-align: center; padding: 40px 24px 60px;
+    max-width: 600px; margin: 0 auto;
+  }
+  .cta h2 { font-size: 28px; margin-bottom: 8px; }
+  .cta p { color: #a8a49e; font-size: 13px; margin-bottom: 24px; }
+  .cta a {
+    display: inline-block; background: #C6A961; color: #0d0d0d;
+    padding: 14px 36px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 15px; transition: all 0.3s;
+  }
+  .cta a:hover { background: #E8D5A3; transform: translateY(-2px); }
+  
+  @media (max-width: 768px) {
+    .spread { grid-template-columns: 1fr; }
+    .spread::before { display: none; }
+    .page-left { border-radius: 4px 4px 0 0; }
+    .page-right { border-radius: 0 0 4px 4px; }
+    .page-left::after, .page-right::before { display: none; }
+    .hero h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="/" class="back-link">← ListWorks</a>
+    <a href="https://buy.stripe.com/4gw8zFeYi72cdBm8wx" class="buy-btn">Buy for $27 →</a>
+  </div>
+
+<div class="hero">
+  <h1>55-Page Listing Presentation</h1>
+  <p>Premium dark/gold editorial design · Fully editable in Canva</p>
+</div>
+
+<div class="spread-container">
+
+  <!-- COVER (single) -->
+  <div class="single-page">
+    <img src="/presentation-pages/page_01.jpg" alt="Cover">
+  </div>
+
+  <!-- SPREAD 1: Agent + Testimonials -->
+  <div class="spread-label">About You</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_02.jpg" alt="Agent Bio">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_03.jpg" alt="Testimonials">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 2: CMA + Market -->
+  <div class="spread-label">Market Analysis</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_04.jpg" alt="CMA">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_05.jpg" alt="Market Data">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 3: Neighborhood + Staging -->
+  <div class="spread-label">Neighborhood & Staging</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_06.jpg" alt="Neighborhood">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_07.jpg" alt="Staging">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 4: Kitchen + Living -->
+  <div class="spread-label">Property Tour</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_08.jpg" alt="Kitchen">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_09.jpg" alt="Living Room">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 5: Outdoor + Marketing -->
+  <div class="spread-label">Outdoor & Marketing</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_10.jpg" alt="Outdoor">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_11.jpg" alt="Marketing Plan">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 6: Approach + Process -->
+  <div class="spread-label">Our Approach</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_12.jpg" alt="Approach">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_13.jpg" alt="Buyer Sources">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 7: Process + NAR -->
+  <div class="spread-label">Process & Compliance</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_14.jpg" alt="Process">
+    </div>
+    <div class="page-right">
+      <img src="/presentation-pages/page_15.jpg" alt="Closing Timeline">
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+  <!-- SPREAD 8: NAR + Closing -->
+  <div class="spread-label">Compliance</div>
+  <div class="spread">
+    <div class="page-left">
+      <img src="/presentation-pages/page_16.jpg" alt="NAR Settlement">
+    </div>
+    <div class="page-right" style="background:#1a1610;display:flex;align-items:center;justify-content:center;border-radius:0 4px 4px 0;min-height:400px;">
+      <div style="text-align:center;padding:40px;">
+        <div style="font-family:'Playfair Display',serif;font-size:42px;color:#C6A961;margin-bottom:12px;">+39</div>
+        <div style="font-size:13px;color:#a8a49e;letter-spacing:1px;">More Pages</div>
+        <div style="margin-top:16px;font-size:11px;color:rgba(255,255,255,0.3);">Staging guide · ROI · 30/60/90 plan<br>Offer comparison · Closing timeline<br>Moving checklist · FAQ · +30 more</div>
+      </div>
+    </div>
+    <div class="spread-shadow"></div>
+  </div>
+
+</div>
+
+<div class="cta">
+  <h2>55 Pages Total</h2>
+  <p>Fully editable in Canva. NAR Settlement & CO AI Act included. Instant download.</p>
+  <a href="https://buy.stripe.com/4gw8zFeYi72cdBm8wx">Get the Full Template — $27</a>
+</div>
+
+<script>
+// Smooth scroll behavior
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>

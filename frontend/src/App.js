@@ -7,6 +7,7 @@ import LandingPage from "@/pages/LandingPage";
 import LandingPageV4 from "@/pages/LandingPageV4";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import COCompliancePage from "@/pages/COCompliancePage";
+import ListingPresentationPage from "@/pages/ListingPresentationPage";
 import SharedListing from "@/pages/SharedListing";
 import AffiliateDashboard from "@/pages/AffiliateDashboard";
 import AffiliateSignup from "@/pages/AffiliateSignup";
@@ -75,6 +76,7 @@ function App() {
           <Route path="/prompt-library" element={<PromptLibraryPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/app/*" element={<DashboardPage />} />
+          <Route path="/presentations" element={<ListingPresentationPage />} />
         </Routes>
       </BrowserRouter>
     </div>
