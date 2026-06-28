@@ -4,32 +4,45 @@ const testimonials = [
     name: "Jessica Martinez",
     role: "RE/MAX · Los Angeles",
     sold: "12 homes in 90 days",
-    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
+    img: "/images/avatar-jessica.svg",
   },
   {
     quote: "I was paying $200/mo for a copywriter. This does it better in 10 seconds.",
     name: "Priya Nair",
     role: "Compass · Chicago",
     sold: "ROI in week 1",
-    img: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=200&h=200&fit=crop&crop=faces",
+    img: "/images/avatar-priya.svg",
   },
   {
     quote: "The expired scripts alone paid for a year of Pro. 3 FSBO listings from 8 calls.",
     name: "Derek Okafor",
     role: "eXp Realty · Atlanta",
     sold: "3 FSBOs in 30 days",
-    img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces",
+    img: "/images/avatar-derek.svg",
   },
   {
     quote: "IG captions stop the scroll. MLS sounds like me but 10x better. Only tool I pay for.",
     name: "Marcus Chen",
     role: "Keller Williams · Denver",
     sold: "9 homes since Jan",
-    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces",
+    img: "/images/avatar-marcus.svg",
   },
 ];
 
+import { useState } from "react";
+
 export default function Testimonials() {
+  const [failedImages, setFailedImages] = useState(new Set());
+  const [loadedImages, setLoadedImages] = useState(new Set());
+
+  const handleImgError = (name) => {
+    setFailedImages(prev => new Set(prev).add(name));
+  };
+
+  const handleImgLoad = (name) => {
+    setLoadedImages(prev => new Set(prev).add(name));
+  };
+
   return (
     <section data-testid="testimonials-section" className="bg-white border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
@@ -56,9 +69,11 @@ export default function Testimonials() {
                   <img
                     src={t.img}
                     alt={t.name}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    onLoad={() => handleImgLoad(t.name)}
+                    onError={() => handleImgError(t.name)}
+                    className={`absolute inset-0 w-full h-full object-cover ${failedImages.has(t.name) ? "hidden" : ""}`}
                   />
-                  <span className="font-heading text-sm font-semibold text-vermillion">
+                  <span className={`font-heading text-sm font-semibold text-vermillion relative z-10 ${loadedImages.has(t.name) ? "hidden" : ""}`}>
                     {t.name.split(" ").map(n => n[0]).join("")}
                   </span>
                 </div>
