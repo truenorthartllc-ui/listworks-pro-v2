@@ -57,15 +57,15 @@ export default function COCompliancePage() {
       <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 24px 40px' }}>
         <div style={{ maxWidth: '650px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '3px', textTransform: 'uppercase', color: '#C6A961' }}>
-              ⚡ Colorado AI Act — SB 24-205
+              <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '3px', textTransform: 'uppercase', color: '#C6A961' }}>
+              ⚡ Fair Housing + AI Disclosure Check
             </span>
           </div>
           <h1 style={{ fontSize: '42px', fontWeight: 700, lineHeight: '1.1', marginBottom: '16px', letterSpacing: '-0.5px', fontFamily: 'Playfair Display, serif' }}>
-            One wrong sentence<br />could cost <span style={{ color: '#C6A961' }}>$26,262</span>.
+            Using AI in a Colorado listing?<br />Create your <span style={{ color: '#C6A961' }}>disclosure record</span>.
           </h1>
           <p style={{ fontSize: '17px', lineHeight: '1.6', color: '#a8a49e', marginBottom: '20px' }}>
-            Colorado's new AI disclosure law went into effect <strong style={{ color: '#f5f3ee' }}>February 1, 2026</strong>. If an AI tool helped write your listing — even just a little — you're required by law to say so. No disclosure = fines, complaints, and a bad day.
+            Colorado's AI disclosure rules are here. Many agents choose to disclose AI assistance as a best practice — it shows sellers you're using AI responsibly. Generate a clean disclosure record before you publish. No login required.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '14px', color: '#6b6b6b' }}>
             <span style={{ color: '#C6A961' }}>✓ Free. No login.</span>
@@ -145,7 +145,7 @@ export default function COCompliancePage() {
               {result.suggested_disclosure && (
                 <div style={{ padding: '20px', border: '1px solid rgba(198,169,97,0.1)', borderRadius: '8px', marginBottom: '16px', background: '#1a1a1a' }}>
                   <div style={{ fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '2px', color: '#C6A961', marginBottom: '8px' }}>
-                    Required Disclosure — Add This to Your Listing
+                    Suggested Disclosure — Add to Your Listing
                   </div>
                   <div style={{ padding: '14px', background: '#0d0d0d', borderRadius: '6px', fontSize: '13px', color: '#a8a49e', lineHeight: '1.5', marginBottom: '12px', border: '1px solid rgba(198,169,97,0.06)' }}>
                     {result.suggested_disclosure}

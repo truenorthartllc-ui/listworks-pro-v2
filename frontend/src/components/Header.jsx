@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import GoogleSignIn from "@/components/GoogleSignIn";
+import { Globe } from "lucide-react";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,13 +29,28 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-9 font-heading text-[13px] uppercase tracking-[0.12em]">
           <a href="#playground" data-testid="nav-playground" className="hover:text-vermillion transition">Tool</a>
           <a href="#examples" data-testid="nav-examples" className="hover:text-vermillion transition">Examples</a>
-          <a href="/co-compliance" className="text-vermillion hover:underline transition">CO Compliance</a>
-          <a href="#guide" data-testid="nav-guide" className="hover:text-vermillion transition">Guide</a>
+          <a href="/co-compliance" className="hover:text-vermillion transition">Fair Housing</a>
+          <a href="/listing-presentation.html" data-testid="nav-presentation" className="hover:text-vermillion transition">Presentation</a>
 
           <a href="/blog" className="hover:text-vermillion transition">Blog</a>
           <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">Pricing</a>
         </nav>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              const current = localStorage.getItem("lw_language") === "Spanish" ? "English" : "Spanish";
+              localStorage.setItem("lw_language", current);
+              window.location.reload();
+            }}
+            className={`font-heading text-[11px] uppercase tracking-[0.12em] px-2.5 py-1.5 rounded transition ${
+              localStorage.getItem("lw_language") === "Spanish"
+                ? "bg-vermillion text-oat"
+                : "border border-ink/20 text-ink/60 hover:border-vermillion"
+            }`}
+            title="Toggle Spanish output"
+          >
+            🇪🇸 ES
+          </button>
           <GoogleSignIn />
           <a
             data-testid="header-cta-btn"

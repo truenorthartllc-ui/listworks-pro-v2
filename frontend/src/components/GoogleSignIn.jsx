@@ -16,12 +16,10 @@ export default function GoogleSignIn({ onAuthChange }) {
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        // Exchange access token for ID token via Google userinfo
         const { data: profile } = await axios.get(
           "https://www.googleapis.com/oauth2/v3/userinfo",
           { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
         );
-        // Build a minimal user object from the userinfo response
         const userData = {
           signed_in: true,
           email: profile.email,
@@ -29,12 +27,11 @@ export default function GoogleSignIn({ onAuthChange }) {
           picture: profile.picture,
           google_id: profile.sub,
         };
-        // Link session on the backend
         const session_id = localStorage.getItem("lw_session_id");
         await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
           id_token: tokenResponse.access_token,
           session_id,
-        }).catch(() => {}); // Best-effort — user is still signed in locally
+        }).catch(() => {});
 
         localStorage.setItem("lw_user", JSON.stringify(userData));
         setUser(userData);
@@ -47,14 +44,10 @@ export default function GoogleSignIn({ onAuthChange }) {
     flow: "implicit",
   });
 
-  const handleSignOut = () => {
-    signOut();
-    setUser(null);
-    setMenuOpen(false);
-    toast.success("Signed out.");
-  };
-
-  if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) return null;
+  if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
+    // Google OAuth not configured — wrap in a div with same height to keep layout stable
+    return <div className="w-8" />;
+  }
 
   if (!user) {
     return (

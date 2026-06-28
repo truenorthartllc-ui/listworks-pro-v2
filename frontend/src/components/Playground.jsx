@@ -148,7 +148,7 @@ export default function Playground({ landing = false }) {
   const [gemsLoading, setGemsLoading] = useState(false);
   const [gemsCard, setGemsCard] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
-  const [language, setLanguage] = useState("English");
+  const [language, setLanguage] = useState(() => localStorage.getItem("lw_language") || "English");
   const [mlsPreset, setMlsPreset] = useState(MLS_PRESETS[0]);
   const [fhLoading, setFhLoading] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
@@ -301,7 +301,7 @@ export default function Playground({ landing = false }) {
               <button onClick={() => handleProMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => setMode("coact")} data-active={mode === "coact"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />CO AI Act</button>
+              <button onClick={() => setMode("coact")} data-active={mode === "coact"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />AI Disclosure</button>
               <button onClick={() => handleProMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
               <button onClick={() => setMode("referral")} data-active={mode === "referral"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Gift className="w-4 h-4" />Refer & Earn</button>
@@ -627,6 +627,22 @@ export default function Playground({ landing = false }) {
                     <div className="border-t border-ink/10 pt-4">
                       <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/30 block mb-1">Tagline</span>
                       <p className="font-body text-base italic text-ink/70">{result.print_flyer.tagline}</p>
+                    </div>
+                  </div>
+                ) : activeTab === "reel_script" && result.reel_script ? (
+                  <div data-testid="output-reel" className="space-y-4">
+                    <div className="bg-ink/5 border border-ink/10 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        <span className="ml-2 font-mono text-[9px] tracking-[0.2em] uppercase text-ink/30">REC · 0:15 / 0:30</span>
+                      </div>
+                      <div className="font-body text-sm leading-relaxed whitespace-pre-wrap text-ink">{result.reel_script}</div>
+                    </div>
+                    <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 bg-oat p-3 border border-ink/10 rounded">
+                      <Film className="w-3.5 h-3.5 text-vermillion" />
+                      Pro tip: Read this straight into your phone camera. No teleprompter needed.
                     </div>
                   </div>
                 ) : (

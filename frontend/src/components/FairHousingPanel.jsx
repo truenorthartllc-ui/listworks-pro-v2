@@ -138,10 +138,10 @@ function COActModal({ onClose }) {
       <div className="bg-oat border border-ink/20 w-full max-w-lg p-6 shadow-2xl">
         <div className="flex items-center gap-2 mb-4">
           <FileText className="w-5 h-5 text-vermillion" />
-          <h4 className="font-display text-xl">CO AI Act Disclosure</h4>
+          <h4 className="font-display text-xl">AI Disclosure Statement</h4>
         </div>
         <p className="font-body text-sm text-ink/65 mb-4">
-          Colorado SB 24-205 requires disclosure when AI generates listing copy. Fill in your details to generate a compliant statement.
+          Generate a voluntary AI disclosure statement for your listing. Some Colorado agents choose to disclose AI assistance as a trust-building practice.
         </p>
         {!disclosure ? (
           <div className="space-y-3">
