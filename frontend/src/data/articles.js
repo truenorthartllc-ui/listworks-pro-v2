@@ -1500,70 +1500,74 @@ The agents who will get caught aren't doing anything intentionally wrong. They'r
   },
   {
     slug: "colorado-ai-act-june-30-real-estate-checklist",
-    title: "Colorado AI Act June 30: The Real Estate Agent Checklist",
-    excerpt: "Colorado's AI Act takes effect June 30, 2026. If you use AI tools for listings or client communications in Colorado, you have days to get compliant. Here's the exact checklist.",
-    date: "2026-06-15",
-    tags: ["Colorado AI Act", "compliance", "AI", "real estate law"],
+    title: "Fair Housing Compliance for AI-Generated Listings: Agent Checklist",
+    excerpt: "Fair Housing compliance is critical when using AI for listing descriptions. Here's your checklist for staying compliant and protecting your license.",
+    date: "2026-06-27",
+    tags: ["Fair Housing", "compliance", "AI listings", "real estate"],
     readTime: "5 min",
-    content: `## Colorado Just Made AI Compliance a Legal Requirement
+    content: `## Fair Housing Compliance When Using AI for Listings
 
-On June 30, 2026, Colorado's SB 205 — the Colorado Artificial Intelligence Act — takes effect. It's the first state-level AI regulation in the U.S. with teeth for real estate professionals, and most agents don't know it exists.
+AI-generated listing descriptions can save you hours of work — but they also introduce Fair Housing risk if you're not checking the output.
 
-The law imposes obligations on "deployers" of AI systems that make or substantially influence "consequential decisions" affecting Colorado consumers. Real estate transactions qualify. If you're a Colorado agent using AI tools for listing copy, client communications, pricing recommendations, or property descriptions, you're a deployer under this law.
+Every AI model reproduces patterns from its training data. If that data contains biased or discriminatory language — and it does — your AI-generated listings may contain Fair Housing violations.
 
-## What the Law Requires
+Here's what every agent should do.
 
-**Disclosure**: If AI substantially influences a decision affecting a Colorado resident, you must disclose that AI was used. For listing descriptions, this means buyers interacting with your listings may be entitled to know AI generated the copy.
+## The Real Risk: Fair Housing Violations
 
-**Impact assessment**: You must be able to demonstrate the AI system doesn't produce discriminatory outcomes. If you can't show how the AI makes decisions, you can't demonstrate it's non-discriminatory. Generic AI tools like ChatGPT have no audit trail.
+The Fair Housing Act prohibits discrimination in housing based on race, color, religion, sex, disability, familial status, and national origin. This applies to listing descriptions, marketing materials, and client communications.
 
-**Opt-out mechanism**: Consumers must have a way to opt out of consequential AI decisions and request human review.
+HUD's maximum civil penalty for a first violation is **$26,262**. Repeat violations cost up to $131,308. The law is strict liability — intent isn't required. If your listing contains discriminatory language, you're exposed.
 
-**Record-keeping**: You need documentation of what AI systems you use, when you use them, and what they produce.
+## What You Should Do When Using AI
 
-## The Checklist
+**Always check for these phrases:**
+- "Perfect for families" — familial status discrimination
+- "Walking distance to church/synagogue/mosque" — religious discrimination
+- "Great for young professionals" — age/familial status discrimination
+- "Safe neighborhood" — can imply racial bias
+- "Starter home" — potential income/class discrimination
+- "Exclusive community" — coded racial language
+- "Master bedroom" — historical racial overtones
 
-Work through this before June 30:
+**Run every AI-generated listing through a compliance check** before it reaches the MLS. Five seconds per listing can save you $26,262.
 
-**Documentation**
-- [ ] List every AI tool you use in your real estate practice
-- [ ] Document what each tool is used for (listing copy, email drafting, pricing, etc.)
-- [ ] Note which tools touch Colorado clients or Colorado transactions
+**Keep an audit trail.** Document which listings used AI, what compliance checks were performed, and when. If a complaint comes months later, you have proof of diligence.
 
-**Disclosure**
-- [ ] Draft a disclosure statement for buyers and sellers about AI use
-- [ ] Add AI disclosure to your listing agreements and buyer rep agreements
-- [ ] Update your website's privacy policy to reference AI use
+## The Compliance Checklist
 
-**Compliance capability**
-- [ ] Can you demonstrate your AI listing tool screens for Fair Housing violations? If not, you can't satisfy the non-discrimination requirement
-- [ ] Do you have audit logs of AI-generated content? If not, you have no documentation trail
+**Before you publish any AI-generated listing:**
+- [ ] Run it through a Fair Housing keyword check
+- [ ] Verify no religious references (churches, mosques, synagogues)
+- [ ] Check for age-targeted language (families, retirees, young professionals)
+- [ ] Remove neighborhood code words (exclusive, safe, prestigious)
+- [ ] Confirm the tone matches the property — not AI boilerplate
+- [ ] Add an AI disclosure if your brokerage recommends it
 
-**Opt-out**
-- [ ] Create a process for clients to request human-only listing descriptions
-- [ ] Document that process
+**Brokerage-level best practices:**
+- [ ] Establish a policy on AI-generated listing copy
+- [ ] Require compliance checks before MLS submission
+- [ ] Keep records of AI use for each listing
+- [ ] Review existing active listings for compliance
 
-**Brokerage coordination**
-- [ ] Confirm with your broker that brokerage-level AI policy exists
-- [ ] Get written confirmation of what AI tools are approved for use
+## Why Most AI Tools Are Risky Without a Compliance Layer
 
-## Why Generic AI Tools Fail This Checklist
+ChatGPT, Claude, Gemini — none of them:
+- Scan output for Fair Housing violations
+- Flag potentially discriminatory language
+- Keep an audit trail for your records
+- Understand HUD penalty exposure
 
-ChatGPT, Claude, Gemini — none of them provide:
-- Audit logs tied to specific listings
-- Fair Housing violation scanning
-- Documentation you can produce to regulators
-- Any compliance reporting
+That's the gap ListWorks PRO fills.
 
-If you get a Colorado AI Act inquiry and your answer is "we used ChatGPT," you have no documentation, no audit trail, and no non-discrimination evidence. That's the worst possible position.
+## How ListWorks PRO Handles This
 
-## What ListWorks PRO Provides
+- **Every rewrite is Fair Housing scanned** — our engine catches discriminatory language before it reaches the MLS
+- **Audit trail built in** — every rewrite is logged with timestamps and compliance status
+- **AI disclosure ready** — one-click disclosure for listings (recommended best practice)
+- **Free to start** — 3 free rewrites, no credit card
 
-ListWorks PRO generates a compliance record for every listing rewrite — what was changed, what violations were flagged, what the final output was. That's your audit trail.
-
-For Colorado agents, that documentation isn't optional after June 30. It's the difference between being able to respond to a regulator and having nothing.
-
-Try it free at [listworks.pro](https://listworks.pro) before June 30. You have days, not weeks.`,
+Try it free at [listworks.pro](https://listworks.pro).`,
   },
   {
     slug: "25597-cost-chatgpt-real-estate-listings",
