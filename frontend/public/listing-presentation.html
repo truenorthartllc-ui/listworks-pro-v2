@@ -4,87 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>55-Page Listing Presentation Template — ListWorks PRO</title>
-<meta name="description" content="Premium 55-page real estate listing presentation template. Dark/gold editorial design. Editable in Canva. Includes NAR Settlement disclosure, CO AI Act compliance, CMA worksheets, seller guides. Instant download.">
-<meta name="keywords" content="listing presentation template, real estate listing presentation, seller presentation, Canva listing template, real estate agent presentation">
+<meta name="description" content="Premium 55-page real estate listing presentation template. Fillable worksheets, CMA, net proceeds calculator, marketing calendar. Editable HTML + Canva. Instant download.">
 <link rel="canonical" href="https://listworks.pro/listing-presentation.html">
 <meta property="og:type" content="product">
 <meta property="og:url" content="https://listworks.pro/listing-presentation.html">
 <meta property="og:title" content="55-Page Listing Presentation Template — ListWorks PRO">
-<meta property="og:description" content="Premium listing presentation template. Win more listings with this professional 55-page Canva template. Dark/gold design, NAR compliant, instant download.">
+<meta property="og:description" content="Win more listings with a premium 55-page fillable template. CMA, net proceeds, marketing calendar, compliance pages.">
 <meta property="og:image" content="https://listworks.pro/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@listworkspro">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #2a2520; color: #f5f3ee; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-  
-  .header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(42,37,32,0.95); backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(198,169,97,0.1);
-    padding: 0 24px; height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .header .logo { font-family: 'Playfair Display', serif; font-size: 16px; color: #C6A961; }
-  .header .logo span { color: #f5f3ee; }
-  .header .back-link { color: #a8a49e; text-decoration: none; font-size: 12px; }
-  .header .back-link:hover { color: #f5f3ee; }
-  .header .buy-btn { background: #C6A961; color: #0d0d0d; text-decoration: none; font-size: 12px; font-weight: 600; padding: 8px 20px; border-radius: 6px; }
-  .header .buy-btn:hover { background: #E8D5A3; }
-  
-  .hero { padding: 80px 24px 40px; text-align: center; }
-  .hero .badge { display: inline-block; border: 1px solid rgba(198,169,97,0.2); color: #C6A961; padding: 4px 12px; font-size: 10px; letter-spacing: 2px; margin-bottom: 16px; }
-  .hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 8px; font-family: 'Playfair Display', serif; }
-  .hero p { color: #a8a49e; font-size: 14px; max-width: 500px; margin: 0 auto; }
-  
-  .spread-container { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; }
-  .spread-label { text-align: center; font-size: 10px; color: rgba(198,169,97,0.4); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
-  .spread { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 40px; position: relative; }
-  .spread::before {
-    content: ''; position: absolute; left: calc(50% - 1px); top: 0; bottom: 0;
-    width: 2px; z-index: 2; pointer-events: none;
-    background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.05), rgba(0,0,0,0.1));
-  }
-  .page-left, .page-right { position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-  .page-left { border-radius: 4px 0 0 4px; }
-  .page-right { border-radius: 0 4px 4px 0; }
-  .page-left img, .page-right img { width: 100%; display: block; }
-  .page-left { border-right: 1px solid rgba(0,0,0,0.1); }
-  .page-left::after {
-    content: ''; position: absolute; right: -6px; top: 0; bottom: 0; width: 12px; z-index: 1;
-    background: linear-gradient(to left, rgba(0,0,0,0.06), transparent); pointer-events: none;
-  }
-  .page-right::before {
-    content: ''; position: absolute; left: -4px; top: 0; bottom: 0; width: 8px; z-index: 1;
-    background: linear-gradient(to right, rgba(0,0,0,0.04), transparent); pointer-events: none;
-  }
-  
-  .features { max-width: 1100px; margin: 0 auto; padding: 40px 20px 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-  .feature { text-align: center; }
-  .feature h3 { font-size: 11px; color: #C6A961; letter-spacing: 1px; margin-bottom: 8px; }
-  .feature p { font-size: 12px; color: #a8a49e; line-height: 1.5; }
-  
-  .cta { text-align: center; padding: 40px 24px 80px; max-width: 600px; margin: 0 auto; }
-  .cta .price { font-size: 42px; font-weight: 700; color: #fff; font-family: 'Playfair Display', serif; }
-  .cta .price span { font-size: 16px; color: #a8a49e; }
-  .cta p { color: #a8a49e; font-size: 13px; margin: 12px 0 24px; }
-  .cta a {
-    display: inline-block; background: #C6A961; color: #0d0d0d;
-    padding: 16px 48px; border-radius: 8px; text-decoration: none;
-    font-weight: 600; font-size: 15px; transition: all 0.3s;
-  }
-  .cta a:hover { background: #E8D5A3; transform: translateY(-2px); }
-  .cta .guarantee { font-size: 11px; color: #6b6660; margin-top: 12px; }
-  
-  @media (max-width: 768px) {
-    .spread { grid-template-columns: 1fr; }
-    .spread::before { display: none; }
-    .page-left { border-radius: 4px 4px 0 0; }
-    .page-right { border-radius: 0 0 4px 4px; }
-    .page-left::after, .page-right::before { display: none; }
-    .features { grid-template-columns: 1fr; }
-    .hero h1 { font-size: 26px; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#2a2520;color:#f5f3ee;font-family:'Inter',sans-serif;overflow-x:hidden}
+  .header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(42,37,32,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(198,169,97,0.1);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .header .back-link{color:#a8a49e;text-decoration:none;font-size:12px}
+  .header .buy-btn{background:#C6A961;color:#0d0d0d;text-decoration:none;font-size:12px;font-weight:600;padding:8px 20px;border-radius:6px}
+  .header .buy-btn:hover{background:#E8D5A3}
+  .hero{padding:80px 24px 30px;text-align:center;max-width:900px;margin:0 auto}
+  .hero .badge{display:inline-block;border:1px solid rgba(198,169,97,0.2);color:#C6A961;padding:4px 12px;font-size:10px;letter-spacing:2px;margin-bottom:16px}
+  .hero h1{font-size:36px;font-weight:700;margin-bottom:8px;font-family:'Playfair Display',serif}
+  .hero p{color:#a8a49e;font-size:14px;max-width:550px;margin:0 auto 24px;line-height:1.6}
+  .hero-img{max-width:800px;margin:0 auto;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+  .hero-img img{width:100%;display:block}
+
+  .section{max-width:1100px;margin:0 auto;padding:40px 20px}
+  .section-label{text-align:center;font-size:10px;color:rgba(198,169,97,0.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;border-bottom:1px solid rgba(198,169,97,0.08);padding-bottom:12px}
+
+  .flipbook{position:relative;max-width:800px;margin:0 auto;perspective:1600px;cursor:pointer}
+  .flipbook .pages{position:relative;width:100%;padding-bottom:68%}
+  .flipbook .page{position:absolute;width:100%;height:100%;border-radius:4px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);transition:transform 0.8s cubic-bezier(0.4,0,0.2,1),opacity 0.8s}
+  .flipbook .page img{width:100%;height:100%;object-fit:cover;display:block}
+  .flipbook .page.front{z-index:5}
+  .flipbook .page.back{z-index:4;transform-origin:left center;transform:rotateY(-180deg)}
+  .flipbook.flipped .page.front{transform-origin:left center;transform:rotateY(180deg);z-index:4}
+  .flipbook.flipped .page.back{transform:rotateY(0deg);z-index:5}
+  .flipbook .page-number{position:absolute;bottom:12px;right:16px;font-size:10px;color:rgba(245,243,238,0.3);letter-spacing:1px}
+  .flip-hint{text-align:center;font-size:11px;color:rgba(198,169,97,0.5);margin-top:16px;letter-spacing:1px}
+
+  .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .preview-card{background:rgba(0,0,0,0.25);border:1px solid rgba(198,169,97,0.1);border-radius:6px;overflow:hidden;transition:border-color 0.3s}
+  .preview-card:hover{border-color:rgba(198,169,97,0.3)}
+  .preview-card img{width:100%;display:block}
+  .preview-card .label{padding:8px 10px;font-size:9px;color:#C6A961;letter-spacing:1px;text-transform:uppercase}
+
+  .features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .feature{text-align:center;padding:20px}
+  .feature .icon{font-size:28px;margin-bottom:8px}
+  .feature h3{font-size:11px;color:#C6A961;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+  .feature p{font-size:12px;color:#a8a49e;line-height:1.5}
+
+  .cta{text-align:center;padding:40px 24px 80px;max-width:600px;margin:0 auto}
+  .cta .price{font-size:42px;font-weight:700;color:#fff;font-family:'Playfair Display',serif}
+  .cta .price span{font-size:16px;color:#a8a49e}
+  .cta p{color:#a8a49e;font-size:13px;margin:12px 0 24px;line-height:1.6}
+  .cta a{display:inline-block;background:#C6A961;color:#0d0d0d;padding:16px 48px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;transition:all 0.3s}
+  .cta a:hover{background:#E8D5A3;transform:translateY(-2px)}
+  .cta .guarantee{font-size:11px;color:#6b6660;margin-top:12px}
+
+  @media(max-width:768px){
+    .grid-4{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .features{grid-template-columns:1fr}
+    .hero h1{font-size:26px}
   }
 </style>
 </head>
@@ -98,36 +79,60 @@
 <div class="hero">
   <div class="badge">PREMIUM TEMPLATE</div>
   <h1>55-Page Listing Presentation</h1>
-  <p>Win more listings with a presentation that looks like it cost $2,000.</p>
+  <p>Fill-in-the-blank template — CMA worksheets, net proceeds calculator, marketing calendar, offer analysis, staging guide, moving checklist, compliance pages. Editable in your browser — no software needed.</p>
+  <div class="hero-img"><img src="/images/presentation-collage-01.jpg" alt="Listing presentation preview showing cover, net proceeds, offer comparison, and home value range pages"></div>
 </div>
 
-<div class="spread-container">
-  <div class="spread-label">Preview — 55 pages total</div>
-
-  <div class="spread"><div class="page-left"><img src="/presentation-pages/page_01.jpg" alt="Cover page"></div><div class="page-right"><img src="/presentation-pages/page_09.jpg" alt="Net proceeds calculator"></div></div>
-  <div class="spread"><div class="page-left"><img src="/presentation-pages/page_10.jpg" alt="Offer comparison sheet"></div><div class="page-right"><img src="/presentation-pages/page_11.jpg" alt="Home value range"></div></div>
-  <div class="spread"><div class="page-left"><img src="/presentation-pages/page_12.jpg" alt="30/60/90 day plan"></div><div class="page-right"><img src="/presentation-pages/page_15.jpg" alt="Moving checklist"></div></div>
-  <div class="spread"><div class="page-left"><img src="/presentation-pages/page_16.jpg" alt="Next steps"></div><div class="page-right"><img src="/presentation-pages/page_13.jpg" alt="Seasonal timing guide"></div></div>
+<!-- Flipbook preview -->
+<div class="section">
+  <div class="section-label">Flip through the template</div>
+  <div class="flipbook" id="flipbook" onclick="document.getElementById('flipbook').classList.toggle('flipped')">
+    <div class="pages">
+      <div class="page front"><img src="/presentation-pages/page_01.jpg"><div class="page-number">1 / 55</div></div>
+      <div class="page back"><img src="/presentation-pages/page_09.jpg"><div class="page-number">2 / 55</div></div>
+    </div>
+  </div>
+  <div class="flip-hint">Click to flip →</div>
 </div>
 
-<div class="features">
-  <div class="feature">
-    <h3>40+ Sections</h3>
-    <p>CMA, net proceeds, marketing calendar, staging, inspection guide, offer analysis, closing timeline, moving checklist, AI disclosure, and more.</p>
+<!-- Quick grid showing variety -->
+<div class="section">
+  <div class="section-label">What's inside — all fillable</div>
+  <div class="grid-4">
+    <div class="preview-card"><img src="/presentation-pages/page_10.jpg"><div class="label">Offer Comparison</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_11.jpg"><div class="label">Home Value Range</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_12.jpg"><div class="label">30/60/90 Day Plan</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_15.jpg"><div class="label">Moving Checklist</div></div>
   </div>
-  <div class="feature">
-    <h3>Editable in Canva</h3>
-    <p>Full Canva template included. Swap photos, change colors, modify text — no design skills needed.</p>
+  <div class="grid-2">
+    <div class="preview-card"><img src="/presentation-pages/page_05.jpg"><div class="label">Pricing Strategy — 3 scenarios</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_13.jpg"><div class="label">Seasonal Timing Guide</div></div>
   </div>
-  <div class="feature">
-    <h3>Compliant</h3>
-    <p>NAR Settlement and CO AI Act disclosure pages included. Fair Housing compliant language throughout.</p>
+</div>
+
+<div class="section">
+  <div class="features">
+    <div class="feature">
+      <div class="icon">📋</div>
+      <h3>Fillable Worksheets</h3>
+      <p>CMA, net proceeds, offer comparison, seller preferences — all editable inline. Type your numbers, get the results instantly.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🌐</div>
+      <h3>Editable in Browser</h3>
+      <p>Open in any browser — click to edit. No Canva account needed. Works offline. Export as PDF when you're done.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">⚖️</div>
+      <h3>NAR + CO Compliant</h3>
+      <p>NAR Settlement disclosure page. CO AI Act compliance record. Fair Housing compliant language throughout.</p>
+    </div>
   </div>
 </div>
 
 <div class="cta">
   <div class="price">$27 <span>one-time</span></div>
-  <p>Instant download · Fully editable in Canva · 55 pages · Free updates</p>
+  <p>Instant download · Browser-editable HTML · Canva template included · 55 pages · Free updates</p>
   <a href="https://buy.stripe.com/dRmbJ36E8f0u6nt0DZafS06">Get the Template →</a>
   <div class="guarantee">30-day satisfaction guarantee</div>
 </div>
