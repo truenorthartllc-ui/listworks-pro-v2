@@ -168,6 +168,7 @@ def check_co_ai_act(text: str, metadata: dict, use_ai_analysis: bool = True) -> 
     text_lower = text.lower()
     agent_name = metadata.get("agent_name", "")
     human_reviewed = metadata.get("human_reviewed", True)
+    violations = []
 
     # Layer 1: Deterministic disclosure detection
     disclosure_present = any(
