@@ -86,7 +86,7 @@ export default function ProofSection() {
   const isExample = !liveData;
 
   return (
-    <section className="border-b border-ink/15 bg-oat">
+    <section id="examples" className="border-b border-ink/15 bg-oat">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
 
         {/* Header */}
