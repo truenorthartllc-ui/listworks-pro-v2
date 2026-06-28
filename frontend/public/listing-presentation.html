@@ -168,113 +168,111 @@
   <p>Premium dark/gold editorial design · Fully editable in Canva</p>
 </div>
 
-<div class="spread-container">
-
-  <!-- COVER (single) -->
-  <div class="single-page">
-    <img src="/presentation-pages/page_01.jpg" alt="Cover">
+<div class="mockup-section">
+  <div class="mockup-label">See it in action</div>
+  <div class="mockup-frame">
+    <video autoplay muted loop playsinline poster="/mockup-frames/frame_0000.png">
+      <source src="/book-mockup.mp4" type="video/mp4">
+    </video>
+    <div class="mockup-glow"></div>
   </div>
+  <div class="mockup-caption">Full 55-page presentation · Auto-flip preview</div>
+</div>
 
-  <!-- SPREAD 1: Agent + Testimonials -->
-  <div class="spread-label">About You</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_02.jpg" alt="Agent Bio">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_03.jpg" alt="Testimonials">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
+<style>
+  .mockup-section {
+    max-width: 900px; margin: 0 auto; padding: 0 20px 60px;
+    text-align: center;
+  }
+  .mockup-label {
+    font-size: 10px; color: rgba(198,169,97,0.4); letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .mockup-frame {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 
+      0 0 40px rgba(198,169,97,0.08),
+      0 20px 60px rgba(0,0,0,0.5);
+  }
+  .mockup-frame video {
+    width: 100%; display: block;
+  }
+  .mockup-glow {
+    position: absolute; top: -20%; left: -10%; right: -10%; bottom: -20%;
+    background: radial-gradient(ellipse at 50% 50%, rgba(198,169,97,0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+    .mockup-caption {
+    font-size: 11px; color: #6b6660; margin-top: 12px;
+    letter-spacing: 1px;
+  }
 
-  <!-- SPREAD 2: CMA + Market -->
-  <div class="spread-label">Market Analysis</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_04.jpg" alt="CMA">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_05.jpg" alt="Market Data">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
+  /* BOOK MOCKUP EMBED */
+  .book-embed {
+    max-width: 1000px; margin: 0 auto; padding: 0 20px 40px;
+    position: relative;
+  }
+  .book-embed iframe {
+    width: 100%; height: 620px; border: none; border-radius: 12px;
+    box-shadow: 
+      0 0 60px rgba(198,169,97,0.1),
+      0 30px 80px rgba(0,0,0,0.5);
+    background: #1a1612;
+  }
+  .book-embed-label {
+    text-align: center; font-size: 10px;
+    color: rgba(198,169,97,0.4); letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .book-embed-hint {
+    text-align: center; font-size: 11px; color: #6b6660; margin-top: 8px;
+  }
+  .book-embed-hint span { color: rgba(198,169,97,0.6); }
 
-  <!-- SPREAD 3: Neighborhood + Staging -->
-  <div class="spread-label">Neighborhood & Staging</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_06.jpg" alt="Neighborhood">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_07.jpg" alt="Staging">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
+  /* THUMBNAIL STRIP */
+  .thumb-strip {
+    display: flex; gap: 8px; overflow-x: auto; padding: 20px 0 40px;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .thumb-strip img {
+    height: 120px; border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    flex-shrink: 0; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .thumb-strip img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+</style>
 
-  <!-- SPREAD 4: Kitchen + Living -->
-  <div class="spread-label">Property Tour</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_08.jpg" alt="Kitchen">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_09.jpg" alt="Living Room">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
+<!-- 3D BOOK EMBED — primary view -->
+<div class="book-embed-label">Flip through all 55 pages</div>
+<div class="book-embed">
+  <iframe src="/book-mockup.html" loading="lazy" title="3D Book Preview"></iframe>
+</div>
+<div class="book-embed-hint">Click <span>▶ Play</span> to auto-flip · Drag to scroll through pages below</div>
 
-  <!-- SPREAD 5: Outdoor + Marketing -->
-  <div class="spread-label">Outdoor & Marketing</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_10.jpg" alt="Outdoor">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_11.jpg" alt="Marketing Plan">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
-
-  <!-- SPREAD 6: Approach + Process -->
-  <div class="spread-label">Our Approach</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_12.jpg" alt="Approach">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_13.jpg" alt="Buyer Sources">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
-
-  <!-- SPREAD 7: Process + NAR -->
-  <div class="spread-label">Process & Compliance</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_14.jpg" alt="Process">
-    </div>
-    <div class="page-right">
-      <img src="/presentation-pages/page_15.jpg" alt="Closing Timeline">
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
-
-  <!-- SPREAD 8: NAR + Closing -->
-  <div class="spread-label">Compliance</div>
-  <div class="spread">
-    <div class="page-left">
-      <img src="/presentation-pages/page_16.jpg" alt="NAR Settlement">
-    </div>
-    <div class="page-right" style="background:#1a1610;display:flex;align-items:center;justify-content:center;border-radius:0 4px 4px 0;min-height:400px;">
-      <div style="text-align:center;padding:40px;">
-        <div style="font-family:'Playfair Display',serif;font-size:42px;color:#C6A961;margin-bottom:12px;">+39</div>
-        <div style="font-size:13px;color:#a8a49e;letter-spacing:1px;">More Pages</div>
-        <div style="margin-top:16px;font-size:11px;color:rgba(255,255,255,0.3);">Staging guide · ROI · 30/60/90 plan<br>Offer comparison · Closing timeline<br>Moving checklist · FAQ · +30 more</div>
-      </div>
-    </div>
-    <div class="spread-shadow"></div>
-  </div>
-
+<!-- THUMBNAIL STRIP -->
+<div class="thumb-strip">
+  <img src="/presentation-pages/page_01.jpg" alt="Cover" onclick="document.querySelector('.book-embed iframe').src='/book-mockup.html'">
+  <img src="/presentation-pages/page_02.jpg" alt="pg2">
+  <img src="/presentation-pages/page_03.jpg" alt="pg3">
+  <img src="/presentation-pages/page_04.jpg" alt="pg4">
+  <img src="/presentation-pages/page_05.jpg" alt="pg5">
+  <img src="/presentation-pages/page_06.jpg" alt="pg6">
+  <img src="/presentation-pages/page_07.jpg" alt="pg7">
+  <img src="/presentation-pages/page_08.jpg" alt="pg8">
+  <img src="/presentation-pages/page_09.jpg" alt="pg9">
+  <img src="/presentation-pages/page_10.jpg" alt="pg10">
+  <img src="/presentation-pages/page_11.jpg" alt="pg11">
+  <img src="/presentation-pages/page_12.jpg" alt="pg12">
+  <img src="/presentation-pages/page_13.jpg" alt="pg13">
+  <img src="/presentation-pages/page_14.jpg" alt="pg14">
+  <img src="/presentation-pages/page_15.jpg" alt="pg15">
+  <img src="/presentation-pages/page_16.jpg" alt="pg16">
 </div>
 
 <div class="cta">

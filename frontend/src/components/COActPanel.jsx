@@ -41,12 +41,12 @@ export default function COActPanel({ listingText, agentName = "" }) {
   return (
     <div className="bg-oat border border-ink/15 rounded p-5">
       <div className="flex items-baseline gap-4 mb-3">
-        <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Colorado AI Act</span>
-        <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink/40">SB 24-205 (Effective Feb 1, 2026)</span>
+        <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">AI Disclosure Record</span>
+        <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink/40">Best Practice — Colorado</span>
       </div>
 
       <p className="font-body text-sm text-ink/70 leading-relaxed mb-4">
-        Colorado requires AI disclosure on all listings. Check compliance before posting.
+        Generate a voluntary AI disclosure record for your listing. Shows sellers you use AI responsibly.
       </p>
 
       {!result && (
@@ -55,7 +55,7 @@ export default function COActPanel({ listingText, agentName = "" }) {
           disabled={checking || !listingText}
           className="btn-vermillion w-full py-3 px-5 font-heading text-xs uppercase tracking-[0.15em] disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {checking ? "Checking..." : "Check CO Compliance"}
+            {checking ? "Checking..." : "Generate Disclosure Record"}
         </button>
       )}
 
@@ -64,12 +64,25 @@ export default function COActPanel({ listingText, agentName = "" }) {
           <div className={`p-4 rounded border-l-4 ${result.compliant ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
             <div className="flex items-center justify-between mb-2">
               <span className={`font-heading text-sm uppercase tracking-[0.1em] ${result.compliant ? 'text-green-700' : 'text-red-700'}`}>
-                {result.grade}
+                {result.compliant ? 'DISCLOSURE OK' : 'NEEDS ATTENTION'}
               </span>
               <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/40">
                 {new Date().toLocaleDateString()}
               </span>
             </div>
+
+            {result.recommendations && result.recommendations.length > 0 && (
+              <div className="mt-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/40 mb-2">Suggestions (not required):</p>
+                <ul className="space-y-2">
+                  {result.recommendations.map((r, i) => (
+                    <li key={i} className="text-xs text-ink/60">
+                      <span className="text-vermillion">→</span> {r.explanation}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {result.violations && result.violations.length > 0 && (
               <ul className="space-y-2 mt-3">
@@ -81,9 +94,9 @@ export default function COActPanel({ listingText, agentName = "" }) {
               </ul>
             )}
 
-            {result.compliant && (
+            {result.compliant && !result.recommendations?.length && (
               <p className="text-xs text-green-700 mt-2">
-                ✓ Disclosure found. Human review attested. Compliant with SB 24-205.
+                ✓ Disclosure recorded. Human review attested.
               </p>
             )}
 

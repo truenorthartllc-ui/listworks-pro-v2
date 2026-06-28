@@ -153,10 +153,10 @@ CO_AI_DISCLOSURE_PATTERNS = [
 
 def check_co_ai_act(text: str, metadata: dict, use_ai_analysis: bool = True) -> dict:
     """
-    Check a listing description for Colorado SB 24-205 (AI Act) compliance.
+    Check a listing description for AI disclosure best practices (Colorado).
 
     Two-layer approach:
-    1. Deterministic regex check (fast, legally defensible)
+    1. Deterministic regex check (fast)
     2. Claude Opus 4.8 quality analysis (disclosure clarity, prominence, effectiveness)
 
     metadata keys:
@@ -175,24 +175,24 @@ def check_co_ai_act(text: str, metadata: dict, use_ai_analysis: bool = True) -> 
         for pat in CO_AI_DISCLOSURE_PATTERNS
     )
 
-    violations = []
+    recommendations = []
     if not disclosure_present:
-        violations.append({
-            "rule": "AI Disclosure Missing",
+        recommendations.append({
+            "rule": "AI Disclosure Recommended",
             "explanation": (
-                "Colorado SB 24-205 requires disclosure whenever AI is used to generate "
-                "real estate listing copy. No disclosure phrase was detected in this text."
+                "Consider adding an AI disclosure (e.g. 'Generated with AI assistance, reviewed by a licensed agent'). "
+                "Optional best practice — not legally required for listing descriptions."
             ),
-            "severity": "CRITICAL",
+            "severity": "LOW",
         })
     if not human_reviewed:
-        violations.append({
-            "rule": "Human Review Not Attested",
+        recommendations.append({
+            "rule": "Human Review Recommended",
             "explanation": (
-                "SB 24-205 requires that a licensed agent reviews and approves AI-generated "
-                "content before publication. human_reviewed was set to false."
+                "Best practice recommends a licensed agent reviews and approves AI-generated "
+                "content before publication. Human review was not attested."
             ),
-            "severity": "HIGH",
+            "severity": "LOW",
         })
 
     # Layer 2: AI-powered disclosure quality analysis (if disclosure present)
@@ -203,12 +203,12 @@ def check_co_ai_act(text: str, metadata: dict, use_ai_analysis: bool = True) -> 
             import os
             import httpx
 
-            system_prompt = """You are a Colorado real estate compliance expert analyzing AI disclosure quality under SB 24-205.
+            system_prompt = """You are a real estate compliance expert analyzing AI disclosure quality.
 
-The law requires:
+Best practices suggest:
 1. Clear disclosure that AI was used to generate content
 2. Human review by a licensed agent
-3. Disclosure must be PROMINENT and TRANSPARENT (not buried in fine print)
+3. Disclosure should be PROMINENT and TRANSPARENT (not buried in fine print)
 
 Analyze the disclosure and return JSON:
 {
@@ -220,7 +220,7 @@ Analyze the disclosure and return JSON:
   "recommendation": "brief improvement suggestion or 'Disclosure meets best practices'"
 }"""
 
-            user_prompt = f"""Analyze this listing's AI disclosure for Colorado SB 24-205 compliance:
+            user_prompt = f"""Analyze this listing's AI disclosure quality:
 
 LISTING TEXT:
 {text}
@@ -269,8 +269,8 @@ Focus on:
                 if disclosure_quality.get("prominence") == "BURIED":
                     violations.append({
                         "rule": "Disclosure Not Prominent",
-                        "explanation": "Disclosure is present but buried in fine print. SB 24-205 requires transparent, prominent disclosure.",
-                        "severity": "MEDIUM",
+                        "explanation": "Disclosure is present but buried in fine print. Best practice recommends prominent placement.",
+                        "severity": "LOW",
                     })
                 if disclosure_quality.get("clarity") == "VAGUE":
                     violations.append({
@@ -289,19 +289,16 @@ Focus on:
         f"and reviewed by {agent_label}, a licensed Colorado real estate agent."
     )
 
-    # Grade calculation
-    if not violations:
-        grade = "COMPLIANT"
-    elif any(v["severity"] == "CRITICAL" for v in violations):
-        grade = "NON_COMPLIANT"
-    else:
-        grade = "NEEDS_IMPROVEMENT"
-
+    # Recommendations are suggestions, NOT violations — don't count toward grade
+    # Only quality-based violations (e.g. buried disclosure) are actual violations
+    overall_grade = "COMPLIANT" if not violations else "NEEDS_IMPROVEMENT"
     result = {
-        "compliant": len(violations) == 0,
+        "compliant": not violations,
+        "grade": overall_grade,
         "disclosure_present": disclosure_present,
         "suggested_disclosure": suggested_disclosure,
         "violations": violations,
+        "recommendations": recommendations,
         "audit_record": {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "agent_name": agent_name,
@@ -310,7 +307,6 @@ Focus on:
             "human_reviewed": human_reviewed,
             "disclosure_present": disclosure_present,
         },
-        "grade": grade,
     }
 
     if disclosure_quality:
