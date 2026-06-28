@@ -150,6 +150,64 @@ export default function ProofSection() {
           3 free rewrites · No credit card · See the difference in 10 seconds
         </p>
 
+        {/* ── Full Listing Examples ── */}
+        <div className="border-t border-ink/15 pt-12 mb-6">
+          <div className="flex items-baseline gap-6 mb-10">
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Full Examples</span>
+            <div className="flex-1 h-px bg-ink/10" />
+            <span className="font-display italic text-lg text-ink shrink-0">Try these in the playground.</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
+            {/* Example 1: Urban Tech */}
+            <div className="bg-white p-8 flex flex-col">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">Urban Tech · Austin, TX</span>
+                <span className="flex-1" />
+                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">+64% stronger</span>
+              </div>
+              <p className="text-[11px] font-mono text-ink/40 uppercase tracking-wider mb-3">3 bed · 2 bath · 1,842 sqft · $724K</p>
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">Smart home wired</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">Walk Score 93</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">Tesla charger</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">ADU</span>
+              </div>
+              <blockquote className="font-display text-base leading-relaxed text-ink flex-1 italic border-l-2 border-vermillion pl-4">
+                "This is the house where your Peloton faces the sunrise and your coffee brews before you're fully awake. Smart blinds track the morning light across polished concrete floors. The detached studio — wired, insulated, permitted — waits for your podcast, your pottery wheel, or your 'I need 20 minutes of quiet.' Two blocks from South Congress coffee and the hike-and-bike trail. The ADU rents for $1,800/mo. The primary suite has a heated bathroom floor. You'll forget which room is the one you're supposed to sell."
+              </blockquote>
+            </div>
+
+            {/* Example 2: Family Suburban */}
+            <div className="bg-white p-8 flex flex-col">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">Family Home · Denver, CO</span>
+                <span className="flex-1" />
+                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">+71% stronger</span>
+              </div>
+              <p className="text-[11px] font-mono text-ink/40 uppercase tracking-wider mb-3">4 bed · 3 bath · 2,612 sqft · $639K</p>
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">Top school cluster</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">.43 acre lot</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">New roof 2025</span>
+                <span className="text-[10px] font-mono px-2 py-1 bg-vermillion/10 text-vermillion rounded-sm">Walk to light rail</span>
+              </div>
+              <blockquote className="font-display text-base leading-relaxed text-ink flex-1 italic border-l-2 border-vermillion pl-4">
+                "There's a spot in the backyard where the afternoon sun hits the patio exactly right — warm enough for March birthday parties, shaded enough for July afternoons. The kitchen opens to the family room, which means you can stir sauce and watch someone building a LEGO fortress at the same time. Three bedrooms upstairs, one on the main. The primary closet is bigger than some bedrooms you've seen. Cherry Creek schools feed this address. The light rail is a 6-minute walk. New roof, new furnace, new water heater — nothing to fix. Just move in and start using that patio."
+              </blockquote>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 mt-6 p-6 bg-ink/5 border border-ink/10">
+            <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 flex-1">
+              Each example generated with one input. Full MLS copy + IG captions + reel script + compliance scan.
+            </span>
+            <a href="#playground" className="font-heading text-xs uppercase tracking-[0.15em] text-vermillion hover:underline whitespace-nowrap">
+              Try your address →
+            </a>
+          </div>
+        </div>
+
         {/* ── Neighborhood Intelligence live demo ── */}
         <div className="border-t border-ink/15 pt-8">
           <div className="flex items-baseline gap-6 mb-6">
