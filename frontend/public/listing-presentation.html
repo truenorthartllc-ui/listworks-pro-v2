@@ -20,26 +20,24 @@
   .header .back-link:hover{color:#f5f3ee}
   .header .buy-btn{background:#C6A961;color:#0d0d0d;text-decoration:none;font-size:12px;font-weight:600;padding:8px 20px;border-radius:6px}
   .header .buy-btn:hover{background:#E8D5A3}
-  .hero{padding:80px 24px 40px;text-align:center;max-width:900px;margin:0 auto}
+  .hero{padding:80px 24px 20px;text-align:center;max-width:900px;margin:0 auto}
   .hero .badge{display:inline-block;border:1px solid rgba(198,169,97,0.2);color:#C6A961;padding:4px 12px;font-size:10px;letter-spacing:2px;margin-bottom:16px}
   .hero h1{font-size:40px;font-weight:700;margin-bottom:10px;font-family:'Playfair Display',serif}
   .hero p{color:#a8a49e;font-size:15px;max-width:550px;margin:0 auto 28px;line-height:1.6}
-  .cover-img{max-width:900px;margin:0 auto;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);margin-bottom:48px}
-  .cover-img img{width:100%;display:block}
-  
-  .section{padding:0 24px 60px;max-width:1100px;margin:0 auto}
+  .hero-img{max-width:820px;margin:0 auto;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+  .hero-img img{width:100%;display:block}
+  .section{max-width:1100px;margin:0 auto;padding:48px 24px}
   .section-label{text-align:center;font-size:10px;color:rgba(198,169,97,0.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;border-bottom:1px solid rgba(198,169,97,0.08);padding-bottom:12px}
-  
-  .big-image{margin-bottom:32px;border-radius:8px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.4)}
-  .big-image img{width:100%;display:block}
-  
-  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:32px;border-radius:8px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.4)}
-  .feature-grid img{width:100%;display:block}
-  
+  .spread{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:36px;border-radius:6px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+  .spread img{width:100%;display:block}
+  .spread .left{border-right:1px solid rgba(0,0,0,0.15)}
+  .previews{display:flex;flex-direction:column;gap:24px}
+  .preview-card{background:rgba(0,0,0,0.25);border:1px solid rgba(198,169,97,0.1);border-radius:6px;overflow:hidden}
+  .preview-card img{width:100%;display:block}
+  .preview-card .label{padding:12px 16px;font-size:12px;color:#C6A961;letter-spacing:1px;text-transform:uppercase}
   .section-list{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;max-width:900px;margin:0 auto}
   .section-list span{font-size:12px;color:#a8a49e;padding:6px 0;border-bottom:1px solid rgba(198,169,97,0.04)}
   .section-list span::before{content:"— ";color:rgba(198,169,97,0.3)}
-  
   .cta{border-top:1px solid rgba(198,169,97,0.1);text-align:center;padding:48px 24px 72px}
   .cta .price{font-size:48px;font-weight:700;color:#fff;font-family:'Playfair Display',serif}
   .cta .price span{font-size:16px;color:#a8a49e}
@@ -48,7 +46,7 @@
   .cta .btn:hover{background:#E8D5A3;transform:translateY(-2px)}
   .cta .guarantee{font-size:11px;color:#6b6660;margin-top:14px}
   @media(max-width:768px){
-    .feature-grid{grid-template-columns:1fr}
+    .previews{grid-template-columns:1fr}
     .section-list{grid-template-columns:1fr 1fr}
     .hero h1{font-size:28px}
   }
@@ -64,31 +62,27 @@
   <div class="badge">PREMIUM TEMPLATE</div>
   <h1>55-Page Listing Presentation</h1>
   <p>Fill-in-the-blank template with CMA worksheets, net proceeds calculator, marketing calendar, offer analysis, staging guide, moving checklist, compliance pages. Works in your browser — no software.</p>
-</div>
-
-<div class="cover-img"><img src="/presentation-pages/page_01.jpg" alt="Cover page"></div>
-
-<div class="section">
-  <div class="section-label">Sample pages</div>
-  
-  <div class="feature-grid">
-    <img src="/presentation-pages/page_10.jpg">
-    <img src="/presentation-pages/page_11.jpg">
-  </div>
-  
-  <div class="feature-grid">
-    <img src="/presentation-pages/page_12.jpg">
-    <img src="/presentation-pages/page_13.jpg">
-  </div>
-  
-  <div class="big-image"><img src="/presentation-pages/page_05.jpg"></div>
-  <div class="big-image"><img src="/presentation-pages/page_07.jpg"></div>
-  <div class="big-image"><img src="/presentation-pages/page_09.jpg"></div>
-  <div class="big-image"><img src="/presentation-pages/page_15.jpg"></div>
+  <div class="hero-img"><img src="/images/presentation-collage-01.jpg" alt="Preview showing cover, net proceeds, offer comparison, home value range pages"></div>
 </div>
 
 <div class="section">
-  <div class="section-label">Everything included — 40+ fillable sections</div>
+  <div class="section-label">Preview — sample spreads</div>
+  <div class="spread"><div class="left"><img src="/presentation-pages/page_01.jpg"></div><img src="/presentation-pages/page_09.jpg"></div>
+  <div class="spread"><div class="left"><img src="/presentation-pages/page_10.jpg"></div><img src="/presentation-pages/page_11.jpg"></div>
+  <div class="spread"><div class="left"><img src="/presentation-pages/page_12.jpg"></div><img src="/presentation-pages/page_15.jpg"></div>
+</div>
+
+<div class="section">
+  <div class="section-label">What's inside — 40+ fillable sections</div>
+  <div class="previews">
+    <div class="preview-card"><img src="/presentation-pages/page_05.jpg"><div class="label">Pricing Strategies — 3 scenarios</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_13.jpg"><div class="label">Seasonal Timing Guide</div></div>
+    <div class="preview-card"><img src="/presentation-pages/page_07.jpg"><div class="label">Staging + Photo Prep Guide</div></div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0">
+  <div class="section-label">Full section list</div>
   <div class="section-list">
     <span>Agent Bio</span><span>Meet the Team</span><span>Testimonials</span><span>Recently Sold</span>
     <span>Market Snapshot</span><span>CMA Worksheet</span><span>3 Pricing Strategies</span><span>Net Proceeds Calculator</span>
