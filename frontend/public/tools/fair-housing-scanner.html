@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fair Housing Risk Scanner — ListWorks PRO</title>
+<meta name="description" content="Paste your MLS listing description and instantly check for Fair Housing violations. Avoid $26,000+ fines. Free, no signup.">
+<meta property="og:title" content="Is Your Listing Risking a $26,000 Fine? Check Free">
+<meta property="og:description" content="One wrong word in your MLS description can trigger a Fair Housing complaint. Scan yours instantly.">
+<link rel="canonical" href="https://listworks.pro/tools/fair-housing-scanner">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white">
+
+<header class="border-b border-white/10">
+  <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/" class="text-xl font-bold tracking-tight">ListWorks PRO</a>
+    <a href="/" class="text-sm text-white/60 hover:text-white">← Back to app</a>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-6 py-12 md:py-20">
+  <div class="text-center mb-12">
+    <div class="inline-block bg-red-500/20 text-red-400 text-xs font-semibold px-3 py-1 rounded-full mb-4">FREE COMPLIANCE TOOL</div>
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Fair Housing Risk Scanner</h1>
+    <p class="text-lg text-white/70 max-w-xl mx-auto">One wrong word in your listing can cost $26,000+ in fines. Paste your description and get an instant compliance check.</p>
+  </div>
+
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+    <textarea id="listingText" class="w-full h-48 bg-slate-800 border border-white/20 rounded-xl p-4 text-white placeholder-white/30 resize-none focus:outline-none focus:border-red-500" placeholder="Paste your MLS listing description here..."></textarea>
+    
+    <button onclick="scanListing()" class="mt-4 w-full bg-red-500 hover:bg-red-400 text-white font-bold py-4 px-8 rounded-xl text-lg transition">
+      Scan for Fair Housing Risks →
+    </button>
+
+    <div id="results" class="hidden mt-8 pt-8 border-t border-white/10">
+      <!-- Risk Score -->
+      <div class="text-center mb-8">
+        <div class="text-7xl font-black mb-2" id="riskScore">—</div>
+        <div class="text-sm text-white/50 uppercase tracking-wider">Risk Level</div>
+        <div class="text-lg mt-2 font-semibold" id="riskLabel"></div>
+      </div>
+
+      <!-- Flags -->
+      <div id="flagsList" class="space-y-3"></div>
+
+      <!-- Safe message -->
+      <div id="safeMessage" class="hidden mt-6 bg-green-500/10 border border-green-500/30 rounded-xl p-5 text-center">
+        <div class="text-2xl mb-2">✅</div>
+        <p class="text-green-400 font-semibold">No obvious Fair Housing violations detected.</p>
+        <p class="text-sm text-white/50 mt-1">Always have a human review before publishing.</p>
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-8 text-center bg-gradient-to-r from-red-500/10 to-amber-500/10 border border-red-500/30 rounded-xl p-6">
+        <p class="text-lg font-semibold mb-2">Want AI that auto-checks compliance on every listing?</p>
+        <p class="text-white/60 text-sm mb-4">ListWorks PRO scans every generated description for Fair Housing risks before you publish.</p>
+        <a href="/" class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 px-8 rounded-xl transition">
+          Try ListWorks PRO Free →
+        </a>
+        <p class="text-xs text-white/40 mt-3">3 free rewrites. Lifetime deal: $199 one-time.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="mt-12 bg-white/5 rounded-xl p-6 text-sm text-white/70 leading-relaxed">
+    <h3 class="font-bold text-white mb-3">What this scanner checks:</h3>
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <li>✅ Familial status references ("family-friendly", "perfect for kids")</li>
+      <li>✅ Religious references ("near church", "Christian neighborhood")</li>
+      <li>✅ Racial/ethnic descriptions of neighborhoods</li>
+      <li>✅ Disability-related terms ("handicapped", "wheelchair bound")</li>
+      <li>✅ Age discrimination ("young professionals", "adults only")</li>
+      <li>✅ Steering language ("safe neighborhood", "crime-free")</li>
+      <li>✅ National origin references</li>
+      <li>✅ Sex/gender preference language</li>
+    </ul>
+    <p class="mt-4 text-white/50 text-xs">This tool provides automated screening only. It does not constitute legal advice. Always consult with a real estate attorney for compliance questions.</p>
+  </div>
+</main>
+
+<script>
+function scanListing() {
+  const text = textarea.value.trim().toLowerCase();
+  if (text.length < 20) { alert('Please paste your listing description first.'); return; }
+
+  const flags = [];
+  
+  const checks = [
+    { pattern: /family.friendly|perfect for (kids|children)|great for (kids|children)|children.friendly|kid.friendly/, flag: 'Familial status reference', risk: 'high', fix: 'Remove references to children/families. Describe the property features instead.' },
+    { pattern: /church|synagogue|mosque|temple|christian|jewish|muslim|religious|parish/, flag: 'Religious reference', risk: 'high', fix: 'Remove religious references. Use "near places of worship" if needed.' },
+    { pattern: /hispanic|latino|asian neighborhood|white neighborhood|black neighborhood|predominantly|ethnic/, flag: 'Racial/ethnic description', risk: 'critical', fix: 'Remove all racial/ethnic descriptions of neighborhoods immediately.' },
+    { pattern: /handicapped|wheelchair.bound|crippled|retarded|mental/, flag: 'Disability-related term', risk: 'critical', fix: 'Use person-first language: "accessible entrance" not "handicapped accessible."' },
+    { pattern: /young professional|adults.only|55\+|senior living|no (kids|children)|married.couple/, flag: 'Age/familial status discrimination', risk: 'high', fix: 'Remove age-restricted language unless property is legally designated senior housing.' },
+    { pattern: /safe.neighborhood|crime.free|low.crime|no.crime|dangerous.area|bad.area|sketchy/, flag: 'Potential steering language', risk: 'medium', fix: 'Remove subjective safety claims. Let buyers research crime data themselves.' },
+    { pattern: /mexican|chinese|italian.neighborhood|little (tokyo|italy|china|mexico)|ghetto|projects/, flag: 'National origin / racial reference', risk: 'critical', fix: 'Remove all ethnic/nationality references to neighborhoods.' },
+    { pattern: /man\'s (cave|dream)|woman\'s (touch|dream)|bachelor.pad|perfect for (him|her)|gentleman\'s/, flag: 'Sex/gender preference', risk: 'medium', fix: 'Remove gendered language. Describe features neutrally.' },
+    { pattern: /exclusive.private|gated|secluded|hidden/, flag: 'Potential steering (exclusivity)', risk: 'low', fix: 'Ensure these describe physical features, not demographic targeting.' },
+    { pattern: /walk.to.school|near.school|school.district|rated.schools/, flag: 'School-related steering', risk: 'medium', fix: 'Schools can be mentioned factually (distance, name) but avoid "great schools" as it may steer families.' },
+  ];
+
+  checks.forEach(check => {
+    if (check.pattern.test(text)) flags.push(check);
+  });
+
+  // Display results
+  const results = document.getElementById('results');
+  results.classList.remove('hidden');
+  
+  const critical = flags.filter(f => f.risk === 'critical').length;
+  const high = flags.filter(f => f.risk === 'high').length;
+  const medium = flags.filter(f => f.risk === 'medium').length;
+  
+  const scoreEl = document.getElementById('riskScore');
+  const labelEl = document.getElementById('riskLabel');
+  
+  if (critical > 0) {
+    scoreEl.textContent = 'HIGH';
+    scoreEl.className = 'text-7xl font-black mb-2 text-red-500';
+    labelEl.textContent = `${critical} critical violation${critical > 1 ? 's' : ''} found`;
+    labelEl.className = 'text-lg mt-2 font-semibold text-red-400';
+  } else if (high > 0) {
+    scoreEl.textContent = 'MED';
+    scoreEl.className = 'text-7xl font-black mb-2 text-orange-500';
+    labelEl.textContent = `${high} high-risk phrase${high > 1 ? 's' : ''} found`;
+    labelEl.className = 'text-lg mt-2 font-semibold text-orange-400';
+  } else if (medium > 0 || flags.length > 0) {
+    scoreEl.textContent = 'LOW';
+    scoreEl.className = 'text-7xl font-black mb-2 text-yellow-500';
+    labelEl.textContent = `${flags.length} potential concern${flags.length > 1 ? 's' : ''} found`;
+    labelEl.className = 'text-lg mt-2 font-semibold text-yellow-400';
+  } else {
+    scoreEl.textContent = 'CLEAR';
+    scoreEl.className = 'text-7xl font-black mb-2 text-green-500';
+    labelEl.textContent = 'No obvious violations detected';
+    labelEl.className = 'text-lg mt-2 font-semibold text-green-400';
+  }
+
+  const flagsList = document.getElementById('flagsList');
+  flagsList.innerHTML = '';
+  
+  if (flags.length === 0) {
+    document.getElementById('safeMessage').classList.remove('hidden');
+  } else {
+    document.getElementById('safeMessage').classList.add('hidden');
+    flags.forEach(f => {
+      const color = f.risk === 'critical' ? 'red' : f.risk === 'high' ? 'orange' : 'yellow';
+      flagsList.innerHTML += `
+        <div class="bg-${color}-500/10 border border-${color}-500/30 rounded-lg p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-${color}-400 font-bold text-xs uppercase">${f.risk} risk</span>
+            <span class="text-white font-semibold">${f.flag}</span>
+          </div>
+          <p class="text-sm text-white/60">Fix: ${f.fix}</p>
+        </div>`;
+    });
+  }
+
+  results.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

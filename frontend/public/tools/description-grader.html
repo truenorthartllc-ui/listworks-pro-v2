@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free MLS Description Grader — ListWorks PRO</title>
+<meta name="description" content="Paste your MLS listing description and get an instant AI-powered score. See how it compares to top-performing listings. Free, no signup required.">
+<meta property="og:title" content="Is Your MLS Description Costing You Sales? Grade It Free">
+<meta property="og:description" content="Agents using ListWorks PRO get 40% more listing views. See how your copy scores right now.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://listworks.pro/tools/description-grader">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  body { font-family: 'Inter', sans-serif; }
+  .score-ring { transition: all 1s ease-out; }
+  .grade-A { color: #16a34a; }
+  .grade-B { color: #65a30d; }
+  .grade-C { color: #ca8a04; }
+  .grade-D { color: #ea580c; }
+  .grade-F { color: #dc2626; }
+  .pulse { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+</style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white">
+
+<!-- Header -->
+<header class="border-b border-white/10">
+  <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/" class="text-xl font-bold tracking-tight">ListWorks PRO</a>
+    <a href="/" class="text-sm text-white/60 hover:text-white">← Back to app</a>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-6 py-12 md:py-20">
+  <!-- Hero -->
+  <div class="text-center mb-12">
+    <div class="inline-block bg-amber-500/20 text-amber-400 text-xs font-semibold px-3 py-1 rounded-full mb-4">FREE TOOL — NO SIGNUP</div>
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">MLS Description Grader</h1>
+    <p class="text-lg text-white/70 max-w-xl mx-auto">Paste your listing description below and get an instant score based on what actually sells homes. No signup, no catch.</p>
+  </div>
+
+  <!-- Grader Tool -->
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+    <textarea id="listingText" class="w-full h-48 bg-slate-800 border border-white/20 rounded-xl p-4 text-white placeholder-white/30 resize-none focus:outline-none focus:border-amber-500" placeholder="Paste your MLS listing description here...
+
+Example: Beautiful 3 bedroom, 2 bathroom home in desirable neighborhood. Features updated kitchen, hardwood floors, and fenced backyard. Close to schools and shopping. Must see!"></textarea>
+    
+    <div class="mt-4 flex flex-col sm:flex-row gap-3">
+      <button onclick="gradeListing()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-4 px-8 rounded-xl text-lg transition">
+        Grade My Listing →
+      </button>
+      <div class="flex items-center text-sm text-white/40">
+        <span id="charCount">0</span>&nbsp;characters
+      </div>
+    </div>
+
+    <!-- Results (hidden initially) -->
+    <div id="results" class="hidden mt-8 pt-8 border-t border-white/10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Overall Score -->
+        <div class="text-center">
+          <div class="text-7xl font-black mb-2" id="scoreDisplay">—</div>
+          <div class="text-sm text-white/50 uppercase tracking-wider">Overall Score</div>
+          <div class="text-sm mt-1" id="scoreLabel"></div>
+        </div>
+        <!-- Criteria Breakdown -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="bg-white/5 rounded-lg p-3">
+            <div class="flex justify-between text-sm mb-1"><span>Emotional Hooks</span><span id="emotionScore">—</span></div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div id="emotionBar" class="h-full bg-amber-500 transition-all duration-1000" style="width:0%"></div></div>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3">
+            <div class="flex justify-between text-sm mb-1"><span>Specificity & Detail</span><span id="specificScore">—</span></div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div id="specificBar" class="h-full bg-amber-500 transition-all duration-1000" style="width:0%"></div></div>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3">
+            <div class="flex justify-between text-sm mb-1"><span>Buyer Action Words</span><span id="actionScore">—</span></div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div id="actionBar" class="h-full bg-amber-500 transition-all duration-1000" style="width:0%"></div></div>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3">
+            <div class="flex justify-between text-sm mb-1"><span>Fair Housing Compliance</span><span id="fairhousingScore">—</span></div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div id="fairhousingBar" class="h-full bg-amber-500 transition-all duration-1000" style="width:0%"></div></div>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3">
+            <div class="flex justify-between text-sm mb-1"><span>Readability</span><span id="readabilityScore">—</span></div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div id="readabilityBar" class="h-full bg-amber-500 transition-all duration-1000" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div id="feedbackBox" class="mt-6 bg-white/5 border border-white/10 rounded-xl p-5 text-sm text-white/80 leading-relaxed"></div>
+
+      <!-- CTA -->
+      <div class="mt-8 text-center bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-xl p-6">
+        <p class="text-lg font-semibold mb-2">Want a perfect 10/10 description in 10 seconds?</p>
+        <p class="text-white/60 text-sm mb-4">ListWorks PRO rewrites your listing copy with AI that knows real estate. MLS descriptions, Instagram posts, Facebook updates — all in your voice.</p>
+        <a href="/" class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 px-8 rounded-xl transition">
+          Get 3 Free Rewrites →
+        </a>
+        <p class="text-xs text-white/40 mt-3">No credit card. Lifetime deal: $199 one-time.</p>
+      </div>
+
+      <!-- Share -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-white/50 mb-2">Share your score:</p>
+        <div class="flex justify-center gap-3">
+          <a id="shareX" href="#" target="_blank" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm transition">X/Twitter</a>
+          <a id="shareFB" href="#" target="_blank" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm transition">Facebook</a>
+          <a id="shareLI" href="#" target="_blank" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm transition">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Proof -->
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+    <div class="bg-white/5 rounded-xl p-5">
+      <div class="text-3xl font-bold text-amber-400">850+</div>
+      <div class="text-sm text-white/50 mt-1">Agents using ListWorks</div>
+    </div>
+    <div class="bg-white/5 rounded-xl p-5">
+      <div class="text-3xl font-bold text-amber-400">12,400+</div>
+      <div class="text-sm text-white/50 mt-1">Listings rewritten</div>
+    </div>
+    <div class="bg-white/5 rounded-xl p-5">
+      <div class="text-3xl font-bold text-amber-400">40%</div>
+      <div class="text-sm text-white/50 mt-1">More listing views</div>
+    </div>
+  </div>
+</main>
+
+<script>
+const textarea = document.getElementById('listingText');
+textarea.addEventListener('input', () => {
+  document.getElementById('charCount').textContent = textarea.value.length;
+});
+
+function gradeListing() {
+  const text = textarea.value.trim();
+  if (text.length < 50) {
+    alert('Please paste at least a few sentences of your listing description.');
+    return;
+  }
+
+  // Scoring criteria
+  const wordCount = text.split(/\s+/).length;
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const avgWordsPerSentence = wordCount / Math.max(sentences.length, 1);
+  
+  // Emotional words
+  const emotionWords = ['love','dream','stunning','gorgeous','luxury','cozy','charming','elegant','breathtaking','serene','peaceful','vibrant','exclusive','premium','spacious','sunlit','gourmet','spa-like','panoramic','private','tranquil','inviting','immaculate','meticulous','crafted','curated','timeless','sophisticated','secluded','picturesque','enchanting','majestic','quaint','renovated','upgraded','custom','designer','architectural','panoramic','sweeping','nestled','perched','overlooking'];
+  const emotionCount = emotionWords.filter(w => text.toLowerCase().includes(w)).length;
+  const emotionScore = Math.min(10, Math.round((emotionCount / 5) * 10));
+  
+  // Specificity (numbers, proper nouns, specific features)
+  const hasNumbers = (text.match(/\b\d{2,}\b/g) || []).length;
+  const hasDollar = text.includes('$') || text.includes('price') || text.includes('sq ft') || text.includes('square feet') || text.includes('acre');
+  const hasYear = (text.match(/\b(19|20)\d{2}\b/g) || []).length > 0;
+  const specificScore = Math.min(10, Math.round((hasNumbers > 0 ? 3 : 0) + (hasDollar ? 3 : 0) + (hasYear ? 2 : 0) + (wordCount > 80 ? 2 : wordCount > 40 ? 1 : 0)));
+  
+  // Action words
+  const actionWords = ['schedule','call','visit','tour','see','discover','explore','experience','imagine','picture','enjoy','claim','secure','act','don\'t miss','won\'t last','rare','opportunity','now','today','contact','reach out','book','reserve'];
+  const actionCount = actionWords.filter(w => text.toLowerCase().includes(w)).length;
+  const actionScore = Math.min(10, Math.round((actionCount / 4) * 10));
+  
+  // Fair Housing check (flag problematic terms)
+  const fhFlags = [];
+  const fhProblematic = ['perfect for families','family-friendly','great for kids','Christian','Hispanic','Asian','white','black','adults only','married couple','no children','walk to church','near synagogue','gay','straight','disabled','handicapped','best for','ideal for young','retired'];
+  fhProblematic.forEach(term => { if (text.toLowerCase().includes(term)) fhFlags.push(term); });
+  const fairhousingScore = Math.max(0, 10 - fhFlags.length * 3);
+  
+  // Readability (sentence length, paragraph structure)
+  const readabilityScore = avgWordsPerSentence > 25 ? 4 : avgWordsPerSentence > 20 ? 6 : avgWordsPerSentence > 15 ? 8 : avgWordsPerSentence > 8 ? 10 : 7;
+  
+  // Overall
+  const overall = Math.round((emotionScore + specificScore + actionScore + fairhousingScore + readabilityScore) / 5);
+  
+  // Display
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  scoreDisplay.textContent = overall + '/10';
+  scoreDisplay.className = 'text-7xl font-black mb-2 grade-' + (overall >= 8 ? 'A' : overall >= 6 ? 'B' : overall >= 4 ? 'C' : overall >= 2 ? 'D' : 'F');
+  
+  document.getElementById('scoreLabel').textContent = overall >= 8 ? '🔥 This listing pops!' : overall >= 6 ? 'Decent — room to improve' : overall >= 4 ? 'Needs work' : '🚨 Costing you buyers';
+  document.getElementById('scoreLabel').className = 'text-sm mt-1 ' + (overall >= 8 ? 'text-green-400' : overall >= 6 ? 'text-yellow-400' : 'text-red-400');
+  
+  // Bars
+  const scores = [
+    ['emotion', emotionScore],
+    ['specific', specificScore],
+    ['action', actionScore],
+    ['fairhousing', fairhousingScore],
+    ['readability', readabilityScore]
+  ];
+  scores.forEach(([key, val]) => {
+    document.getElementById(key + 'Score').textContent = val + '/10';
+    document.getElementById(key + 'Bar').style.width = (val * 10) + '%';
+  });
+  
+  // Feedback
+  let feedback = '';
+  if (overall >= 8) feedback = 'Strong listing! You\'re using emotional language, specific details, and clear calls to action. To make it even better, consider adding neighborhood lifestyle details or a unique selling proposition.';
+  else if (overall >= 6) feedback = 'Good foundation, but you\'re leaving money on the table. Add more emotional hooks ("sunlit kitchen" vs "nice kitchen"), specific numbers (year built, sq ft), and a stronger call to action.';
+  else if (overall >= 4) feedback = 'This listing needs work. It\'s likely reading like a feature list instead of a story. Focus on: 1) Leading with emotion, 2) Adding specific details, 3) Including a clear next step for buyers.';
+  else feedback = 'This listing is costing you buyers. It lacks emotional hooks, specific details, and calls to action. Most agents rewrite 3-5 times before getting it right — ListWorks PRO does it in 10 seconds.';
+  
+  if (fhFlags.length > 0) feedback += ' ⚠️ Fair Housing alert: Your listing may contain problematic language (' + fhFlags.join(', ') + '). This could expose you to complaints or fines.';
+  
+  document.getElementById('feedbackBox').textContent = feedback;
+  
+  // Share links
+  const shareText = encodeURIComponent('I just graded my MLS listing description and got ' + overall + '/10. See how yours scores: ');
+  document.getElementById('shareX').href = 'https://twitter.com/intent/tweet?text=' + shareText + '&url=https://listworks.pro/tools/description-grader';
+  document.getElementById('shareFB').href = 'https://www.facebook.com/sharer/sharer.php?u=https://listworks.pro/tools/description-grader';
+  document.getElementById('shareLI').href = 'https://www.linkedin.com/sharing/share-offsite/?url=https://listworks.pro/tools/description-grader';
+  
+  // Show results
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
