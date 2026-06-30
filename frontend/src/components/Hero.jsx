@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Sparkles, Loader2, Copy, Check, Zap, AlertTriangle, CheckCircle } from "lucide-react";
-import { startCheckout } from "@/lib/checkout";
 import { toast } from "sonner";
 import AITransformation from "./AITransformation";
 
@@ -120,18 +119,17 @@ export default function Hero() {
 
           <h1 className="font-display tracking-tighter leading-[0.95] text-[11vw] md:text-[7vw] lg:text-[6rem] xl:text-[7rem] text-ink animate-rise"
               style={{ animationDelay: "0.1s" }}>
-            <span className="font-light">Fair Housing violations</span><br />
-            <span className="italic font-medium">start at </span>
-            <span className="italic font-medium text-vermillion">$26,262</span>
-            <span className="text-ink">.</span>
+            <span className="font-light">Paste your listing.</span><br />
+            <span className="italic font-medium">Get everything you need</span><br />
+            <span className="italic font-medium">to sell it.</span>
           </h1>
 
           <div className="mt-5 max-w-xl border-l-2 border-vermillion pl-5 animate-rise" style={{ animationDelay: "0.2s" }}>
             <p className="font-body text-base md:text-lg text-ink/80 leading-relaxed">
-              ListWorks scans every listing you write before it goes live. ChatGPT doesn't. Your gut doesn't. ListWorks does.
+              MLS copy, Fair Housing scan, captions, reel scripts, neighborhood intel — <span className="text-vermillion font-semibold">from one paste. 10 seconds.</span>
             </p>
             <p className="font-body text-sm text-ink/60 leading-relaxed mt-3">
-              Paste your raw MLS notes — get publish-ready copy, a Fair Housing compliance scan, Instagram caption, 5 headlines, and a buyer email in 10 seconds.
+              ChatGPT writes. ListWorks sells. One input, five publish-ready assets, zero compliance risk.
             </p>
           </div>
 
@@ -238,35 +236,6 @@ export default function Hero() {
             <span className="text-green-600">● Fair Housing scanned</span>
           </div>
 
-          {/* $20 PDF Guide - BREAD AND BUTTER */}
-          <div className="mt-8 border-t border-ink/10 pt-8">
-            <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">The Guide</span>
-              <span className="font-display italic text-2xl text-ink">$20</span>
-            </div>
-            <p className="font-body text-sm text-ink/70 leading-relaxed mb-4 max-w-lg">
-              45 pages of the exact framework top-1% agents use to write listings that sell. 15 copy-paste AI prompts. 5-part MLS template. 6 real before/after rewrites with full breakdowns. Read it in one sitting — use it on your next listing the same day.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={async () => {
-                  await startCheckout("guide_pdf");
-                }}
-                className="btn-vermillion px-6 py-3 font-heading text-xs uppercase tracking-[0.15em]"
-              >
-                Buy the Guide — $20
-              </button>
-              <a
-                href="#guide"
-                className="btn-outline px-6 py-3 font-heading text-xs uppercase tracking-[0.15em]"
-              >
-                Preview Inside
-              </a>
-            </div>
-            <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">
-              30-day money-back · Instant download · Lifetime access
-            </p>
-          </div>
         </div>
 
         <aside className="col-span-12 lg:col-span-4 relative overflow-hidden animate-rise min-h-[420px] bg-coal" style={{ animationDelay: "0.55s" }}>

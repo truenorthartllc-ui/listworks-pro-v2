@@ -1,5 +1,4 @@
 import Header from "@/components/Header";
-import ComplianceHero from "@/components/ComplianceHero";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import AIVideoShowcase from "@/components/AIVideoShowcase";
@@ -28,7 +27,6 @@ export default function LandingPage() {
       <ViralNotifications />
       <Header />
       <main>
-        <ComplianceHero />
         <Hero />
         <TrustBar />
         <AIVideoShowcase />
