@@ -1499,7 +1499,7 @@ The agents who will get caught aren't doing anything intentionally wrong. They'r
 *ListWorks PRO is purpose-built for real estate Fair Housing compliance. Try it free at [listworks.pro](https://listworks.pro).*`,
   },
   {
-    slug: "colorado-ai-act-june-30-real-estate-checklist",
+    slug: "fair-housing-compliance-ai-listings-checklist",
     title: "Fair Housing Compliance for AI-Generated Listings: Agent Checklist",
     excerpt: "Fair Housing compliance is critical when using AI for listing descriptions. Here's your checklist for staying compliant and protecting your license.",
     date: "2026-06-27",

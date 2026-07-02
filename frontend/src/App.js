@@ -25,6 +25,7 @@ import CityPage from "@/pages/CityPage";
 import ListingAnalyzerPage from "@/pages/ListingAnalyzerPage";
 import PromptLibraryPage from "@/pages/PromptLibraryPage";
 import DashboardPage from "@/pages/DashboardPage";
+import PublicScan from "@/pages/PublicScan";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -60,6 +61,7 @@ function App() {
           <Route path="/a/:slug" element={<AgentProfilePage />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
+          <Route path="/scan" element={<PublicScan />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/vs/listingcopy" element={<VsPage competitor="listingcopy" />} />
           <Route path="/vs/listingai" element={<VsPage competitor="listingai" />} />

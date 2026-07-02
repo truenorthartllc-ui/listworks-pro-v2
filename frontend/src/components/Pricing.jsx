@@ -1,27 +1,5 @@
-import { useState, useEffect } from "react";
 import { Check, Crown, Zap, Flame } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
-
-const PROMO_ENDS = new Date("2026-06-25T23:59:59");
-
-function PromoCountdown() {
-  const [timeLeft, setTimeLeft] = useState("");
-  useEffect(() => {
-    const tick = () => {
-      const diff = PROMO_ENDS - Date.now();
-      if (diff <= 0) { setTimeLeft(""); return; }
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      setTimeLeft(`${h}h ${m}m ${s}s`);
-    };
-    tick();
-    const iv = setInterval(tick, 1000);
-    return () => clearInterval(iv);
-  }, []);
-  return timeLeft ? <span className="font-mono text-vermillion font-bold">{timeLeft}</span> : null;
-}
-
 
 const tiers = [
   {
@@ -52,7 +30,7 @@ const tiers = [
       "Listing history (forever)",
     ],
     cta: "Get List + Bio — $29/mo",
-    promoNote: "Use COMEBACK29 → first month $20.59",
+    promoNote: null,
     action: { kind: "checkout", package_id: "pro_month" },
     highlight: true,
   },
@@ -119,7 +97,7 @@ export default function Pricing() {
         <div className="mb-5 flex flex-wrap items-center gap-px">
           <div className="bg-vermillion text-oat px-4 py-2.5 flex items-center gap-2 flex-1">
             <Flame className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">COMEBACK29 — 29% off · Ends Jun 25 — <PromoCountdown /></span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">29% off</span>
           </div>
           <div className="bg-oat border border-ink/15 px-4 py-2.5 flex flex-wrap items-center gap-4">
             {["No credit limits","Flat rate","Unlimited rewrites"].map(label => (

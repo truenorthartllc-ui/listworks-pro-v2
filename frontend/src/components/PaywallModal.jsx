@@ -24,7 +24,7 @@ export default function PaywallModal({ open, onClose, freeUsed = 3, trialRemaini
     {
       pkg: "pro_month",
       title: "Pro — Unlimited",
-      price: "$49",
+      price: "$29",
       sub: "/ month · cancel anytime",
       icon: Check,
       cta: "Go Pro",
