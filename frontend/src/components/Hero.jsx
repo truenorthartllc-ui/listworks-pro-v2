@@ -246,7 +246,7 @@ export default function Hero() {
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/90 via-ink/50 to-transparent px-6 pb-6 pt-20">
             <div className="grid grid-cols-2 gap-4">
-              {[["850+","Agents"],["24k+","Listings"],["10s","Generation"],["★4.9","Rating"]].map(([n,l]) => (
+              {[["127","Agents"],["2,400+","Listings"],["10s","Generation"],["Free","Trial"]].map(([n,l]) => (
                 <div key={l}>
                   <div className="font-display text-2xl leading-none text-white">{n}</div>
                   <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.15em] text-white/60">{l}</div>

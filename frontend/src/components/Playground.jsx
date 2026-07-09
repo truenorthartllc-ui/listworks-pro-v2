@@ -482,7 +482,7 @@ export default function Playground({ landing = false }) {
               {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : landing ? (<><Sparkles className="w-4 h-4" />Start Free — Rewrite This Listing</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
             </button>
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
-              Pro — 9/mo · cancel anytime
+              3 free rewrites, then $29/mo · cancel anytime
             </p>
           </div>
 

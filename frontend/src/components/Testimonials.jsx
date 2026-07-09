@@ -50,7 +50,7 @@ export default function Testimonials() {
         <div className="flex items-baseline gap-6 mb-8">
           <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Field Reports</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 shrink-0">\u2605 4.9 \u00b7 127 agents \u00b7 verified</span>
+          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 shrink-0">127 agents using ListWorks</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-ink/12 border border-ink/12">
