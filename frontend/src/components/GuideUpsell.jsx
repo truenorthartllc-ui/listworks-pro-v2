@@ -34,7 +34,6 @@ export default function GuideUpsell() {
           <div className="flex items-baseline gap-6 mb-4">
             <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">Document No. 001</span>
             <div className="flex-1 h-px bg-oat/10" />
-            <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-oat/30 shrink-0">50+ yrs combined experience</span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl tracking-tighter leading-[0.95]">
             <span className="font-light">The Guide.</span>{" "}
@@ -80,10 +79,7 @@ export default function GuideUpsell() {
               <span>LWP-DOC-001</span>
               <span>REV. 02 / 2026</span>
             </div>
-            <p className="font-display italic text-xl leading-snug">
-              "Finally someone teaching the real <span className="text-vermillion">skill</span> — not just templates. Worth every penny."
-            </p>
-            <div className="mt-5 grid grid-cols-4 gap-4 pt-5 border-t border-oat/15">
+            <div className="grid grid-cols-4 gap-4">
               {[["45","Pages"],["15","AI Prompts"],["6","Rewrites"],["$20","One-time"]].map(([n,l]) => (
                 <div key={l}>
                   <div className={`font-display text-2xl ${n === "$20" ? "text-vermillion" : ""}`}>{n}</div>

@@ -120,7 +120,7 @@ export default function Pricing() {
                   Plan No. {String(i + 1).padStart(2, "0")}
                 </span>
                 {t.highlight && (
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">Most Picked</span>
+                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">Recommended</span>
                 )}
                 {t.badge && !t.highlight && (
                   <div className="flex flex-col items-end gap-1.5">
