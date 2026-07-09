@@ -119,17 +119,17 @@ export default function Hero() {
 
           <h1 className="font-display tracking-tighter leading-[0.95] text-[11vw] md:text-[7vw] lg:text-[6rem] xl:text-[7rem] text-ink animate-rise"
               style={{ animationDelay: "0.1s" }}>
-            <span className="font-light">Paste your listing.</span><br />
-            <span className="italic font-medium">Get everything you need</span><br />
-            <span className="italic font-medium">to sell it.</span>
+            <span className="font-light">ChatGPT writes</span><br />
+            <span className="italic font-medium text-vermillion">$26,262 Fair Housing violations.</span><br />
+            <span className="italic font-medium">We catch them.</span>
           </h1>
 
           <div className="mt-5 max-w-xl border-l-2 border-vermillion pl-5 animate-rise" style={{ animationDelay: "0.2s" }}>
             <p className="font-body text-base md:text-lg text-ink/80 leading-relaxed">
-              MLS copy, Fair Housing scan, captions, reel scripts, neighborhood intel — <span className="text-vermillion font-semibold">from one paste. 10 seconds.</span>
+              One paste → MLS copy, Fair Housing scan, Instagram caption, 5 headlines, buyer email. <span className="text-vermillion font-semibold">10 seconds. Zero compliance risk.</span>
             </p>
             <p className="font-body text-sm text-ink/60 leading-relaxed mt-3">
-              ChatGPT writes. ListWorks sells. One input, five publish-ready assets, zero compliance risk.
+              Try 3 listings free. No card required. See the difference yourself.
             </p>
           </div>
 
@@ -229,7 +229,14 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/55 animate-rise" style={{ animationDelay: "0.5s" }}>
+          <div className="mt-5 animate-rise" style={{ animationDelay: "0.5s" }}>
+            <a href="#playground" className="inline-flex items-center gap-2 bg-vermillion text-oat hover:bg-[#e02d0e] px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] transition-all hover:-translate-y-0.5">
+              <Sparkles className="w-4 h-4" />
+              Try Free — No Card Required
+            </a>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/55 animate-rise" style={{ animationDelay: "0.55s" }}>
             <span className="text-vermillion font-semibold">✦ 3 free rewrites</span>
             <span>● No credit card</span>
             <span>● 10s per listing</span>
