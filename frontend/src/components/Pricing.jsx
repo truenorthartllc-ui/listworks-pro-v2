@@ -93,11 +93,11 @@ export default function Pricing() {
           <span className="font-display italic text-lg text-ink shrink-0">Start free. Scale to unlimited.</span>
         </div>
 
-        {/* Flash sale + flat rate — single compact row */}
+        {/* Flat rate messaging row */}
         <div className="mb-5 flex flex-wrap items-center gap-px">
-          <div className="bg-vermillion text-oat px-4 py-2.5 flex items-center gap-2 flex-1">
-            <Flame className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">29% off</span>
+          <div className="bg-coal text-oat px-4 py-2.5 flex items-center gap-2 flex-1">
+            <Zap className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">One flat rate</span>
           </div>
           <div className="bg-oat border border-ink/15 px-4 py-2.5 flex flex-wrap items-center gap-4">
             {["No credit limits","Flat rate","Unlimited rewrites"].map(label => (

@@ -807,7 +807,7 @@ export default function Playground({ landing = false }) {
         {result && (
           <div data-testid="pro-upsell-banner" className="mt-px bg-coal text-oat p-7 md:p-9 border border-ink/15 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2">
-              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">ListGenius Pro</span>
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">ListWorks PRO</span>
               <p className="mt-2 font-display italic text-2xl md:text-3xl leading-tight">
                 Unlimited rewrites · cinematic videos without watermarks · the AI Advisor in your pocket.
               </p>
@@ -818,7 +818,7 @@ export default function Playground({ landing = false }) {
                 onClick={async () => { await import("@/lib/checkout").then(m => m.startCheckout("pro_month")); }}
                 className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition hover:-translate-y-1 inline-flex items-center gap-2"
               >
-                Get ListGenius Pro — $49/mo →
+                Get Pro — $29/mo
               </button>
             </div>
           </div>
