@@ -1,3 +1,12 @@
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+
+sentry_sdk.init(
+    dsn="https://e05c4749bb8ee192b15d32a1574bdbc7@o4511793115561984.ingest.us.sentry.io/4511793151803392",
+    send_default_pii=True,
+    traces_sample_rate=0.1,
+)
+
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Header
 from fastapi.responses import FileResponse, HTMLResponse
 from dotenv import load_dotenv
@@ -45,6 +54,7 @@ STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
 FIRECRAWL_API_KEY = os.environ.get('FIRECRAWL_API_KEY', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+NVIDIA_API_KEY = os.environ.get('NVIDIA_API_KEY', '')
 DEFAULT_PROVIDER = "openrouter"
 DEFAULT_MODEL = "openai/gpt-4o"
 
@@ -54,7 +64,13 @@ if STRIPE_API_KEY:
 # ── OpenRouter helper ─────────────────────────────────────
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 G0DM0D3_BASE = "http://localhost:7860"
-G0DM0D3_API_KEY = "g0dm0d3-local-key-change-me"
+G0DM0D3_API_KEY = os.environ.get('G0DM0D3_API_KEY')
+if not G0DM0D3_API_KEY:
+    raise EnvironmentError(
+        'G0DM0D3_API_KEY environment variable not set. '
+        'Set this key in .env or Railway environment to authenticate '
+        'with OpenRouter API for Uncaged AI services.'
+    )
 
 async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
     """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx."""
@@ -80,6 +96,34 @@ async def call_openrouter(system: str, user_text: str, model: str = None) -> str
         )
         if resp.status_code != 200:
             raise HTTPException(502, f"OpenRouter error {resp.status_code}: {resp.text[:200]}")
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
+
+NVIDIA_BASE = "https://integrate.api.nvidia.com"
+
+async def call_nvidia(system: str, user_text: str, model: str = None) -> str:
+    key = NVIDIA_API_KEY
+    if not key:
+        raise HTTPException(500, "NVIDIA API key not configured")
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        resp = await client.post(
+            f"{NVIDIA_BASE}/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model or "deepseek-ai/deepseek-v4-flash",
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_text},
+                ],
+                "max_tokens": 4096,
+                "temperature": 0.7,
+            },
+        )
+        if resp.status_code != 200:
+            raise HTTPException(502, f"NVIDIA error {resp.status_code}: {resp.text[:200]}")
         data = resp.json()
         return data["choices"][0]["message"]["content"]
 
@@ -2186,6 +2230,64 @@ async def generate_content_for_lead(req: ContentGenerateIn, authorization: str =
     if result.returncode != 0:
         raise HTTPException(500, f"Generator failed: {result.stderr}")
     return json.loads(result.stdout)
+
+
+class SocialContentRequest(BaseModel):
+    address: str = ""
+    city: str = ""
+    state: str = ""
+    price: str = ""
+    beds: str = ""
+    baths: str = ""
+    sqft: str = ""
+    description: str = ""
+    features: str = ""
+    listing_url: str = ""
+    agent_name: str = ""
+    brokerage: str = ""
+
+@api_router.post("/social/content-engine")
+async def social_content_engine(req: SocialContentRequest):
+    features_str = req.features or ""
+    system = "You are a real estate social media marketing expert. Generate a complete content package for a listing."
+    user = f"""Generate a social media & SEO content package for this listing:
+
+Address: {req.address}
+City: {req.city}, {req.state}
+Price: {req.price}
+Bedrooms: {req.beds} | Bathrooms: {req.baths} | Sq Ft: {req.sqft}
+Agent: {req.agent_name} at {req.brokerage}
+Description: {req.description}
+Features: {features_str}
+
+Return JSON with these exact keys:
+- instagram_caption (2-3 sentence caption + line break + 10 geo-targeted hashtags)
+- facebook_post (3-4 paragraph post with emoji, ends with agent CTA)
+- linkedin_post (professional tone, 2-3 paragraphs, position as market insight)
+- twitter_thread (array of 3-5 tweets as strings, each under 280 chars)
+- email_newsletter (subject line + 3 paragraph body with CTA button text)
+- seo_title (under 60 chars, includes city and "for sale")
+- seo_meta_description (under 160 chars)
+- blog_post_intro (2 paragraph intro for a blog about this listing)
+- posting_calendar (array of 7 objects with {{day, platform, content_preview}})
+
+Fair Housing rules: NEVER mention family, religious references, school quality, safety stats, or demographic terms."""
+    try:
+        raw = await call_nvidia(system, user)
+        cleaned = raw.strip()
+        if cleaned.startswith("```"):
+            cleaned = cleaned.split("\n", 1)[1] if "\n" in cleaned else cleaned[3:]
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3]
+            cleaned = cleaned.strip()
+        data = json.loads(cleaned)
+        if req.listing_url:
+            data["listing_url"] = req.listing_url
+        return data
+    except json.JSONDecodeError:
+        return {"raw": raw, "error": "AI returned invalid JSON"}
+    except Exception as e:
+        raise HTTPException(502, f"Content engine error: {str(e)[:200]}")
 
 
 # ══════════════ CONTRACTS & FORMS ENDPOINTS ══════════════
@@ -4425,6 +4527,32 @@ async def template_generate(req: TemplateGenerateRequest):
 
     return {"output": output.strip(), "template_id": req.template_id}
 
+
+# Sentry debug — verify error reporting works
+@app.get("/sentry-debug")
+async def trigger_error():
+    1 / 0  # intentional — tests Sentry error capture
+
+# Sentry webhook receiver — feeds auto-fix pipeline
+@app.post("/webhooks/sentry")
+async def sentry_webhook(request: Request):
+    payload = await request.json()
+    try:
+        # Forward to sentry-autofix
+        async with httpx.AsyncClient() as client:
+            await client.post("http://127.0.0.1:1889/sentry", json={
+                "id": payload.get("id", "unknown"),
+                "message": payload.get("message", ""),
+                "culprit": payload.get("culprit", ""),
+                "level": payload.get("level", "error"),
+                "project": payload.get("project", ""),
+                "url": payload.get("url", ""),
+                "stacktrace": str(payload.get("exception", {}).get("values", [{}])[0].get("stacktrace", {})),
+                "timestamp": payload.get("event", {}).get("timestamp", ""),
+            }, timeout=10)
+    except Exception as e:
+        logging.error(f"sentry webhook forward failed: {e}")
+    return {"status": "received"}
 
 # Register all api_router routes with the app — placed AFTER all @api_router decorators
 # so FastAPI's include_router snapshot captures every route defined above.
