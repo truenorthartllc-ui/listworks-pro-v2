@@ -74,7 +74,7 @@ if not G0DM0D3_API_KEY:
 
 async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
     """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx."""
-    key = OPENROUTER_API_KEY or os.environ.get("OPENROUTER_API_KEY", "")
+    key = G0DM0D3_API_KEY
     if not key:
         raise HTTPException(500, "OpenRouter API key not configured")
     async with httpx.AsyncClient(timeout=60.0) as client:
