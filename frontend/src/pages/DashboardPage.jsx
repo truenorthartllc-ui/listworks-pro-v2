@@ -186,6 +186,7 @@ export default function DashboardPage() {
         {navItem('forms', 'Contracts')}
         {navItem('generate', 'Generate')}
         {navItem('branding', 'Branding')}
+        <a href="/social" style={{ padding: '10px 20px', background: '#1e1e3a', color: '#fff', border: '1px solid #4a4a6a', borderRadius: 6, cursor: 'pointer', fontSize: 13, textDecoration: 'none' }}>Social</a>
         <div style={{ flex: 1 }} />
         {account?.tier !== 'pro' && (
           <a href="#" onClick={e => { e.preventDefault(); upgrade(); }}

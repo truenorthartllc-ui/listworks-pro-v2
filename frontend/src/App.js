@@ -27,6 +27,7 @@ import ListingAnalyzerPage from "@/pages/ListingAnalyzerPage";
 import PromptLibraryPage from "@/pages/PromptLibraryPage";
 import DashboardPage from "@/pages/DashboardPage";
 import PublicScan from "@/pages/PublicScan";
+import SocialContentPage from "@/pages/SocialContentPage";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -81,6 +82,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/app/*" element={<DashboardPage />} />
           <Route path="/presentations" element={<ListingPresentationPage />} />
+          <Route path="/social" element={<SocialContentPage />} />
+          <Route path="/app/social" element={<SocialContentPage />} />
         </Routes>
       </BrowserRouter>
     </div>
