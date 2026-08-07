@@ -7,7 +7,7 @@ const tiers = [
     price: "$0",
     period: "forever",
     blurb: "For agents trying it on their next listing.",
-    features: ["Full playground access", "All 5 output formats", "6 tone modes", "Agent Bio (3 rewrites free)"],
+    features: ["Unlimited playground access", "All 5 output formats", "6 tone modes", "Fair Housing scanning", "See results before saving"],
     cta: "Start Free",
     action: { kind: "scroll", href: "#playground" },
     highlight: false,

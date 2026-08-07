@@ -129,7 +129,7 @@ export default function Hero() {
               One paste → MLS copy, Fair Housing scan, Instagram caption, 5 headlines, buyer email. <span className="text-vermillion font-semibold">10 seconds. Zero compliance risk.</span>
             </p>
             <p className="font-body text-sm text-ink/60 leading-relaxed mt-3">
-              Try 3 listings free. No card required. See the difference yourself.
+              <span className="text-vermillion font-semibold">Write your listing in 60 seconds instead of an hour.</span> Try unlimited playground access free. No card required. See the difference yourself.
             </p>
           </div>
 
@@ -237,7 +237,7 @@ export default function Hero() {
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/55 animate-rise" style={{ animationDelay: "0.55s" }}>
-            <span className="text-vermillion font-semibold">✦ 3 free rewrites</span>
+            <span className="text-vermillion font-semibold">✦ Unlimited playground access</span>
             <span>● No credit card</span>
             <span>● 10s per listing</span>
             <span className="text-green-600">● Fair Housing scanned</span>

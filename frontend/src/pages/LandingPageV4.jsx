@@ -47,14 +47,14 @@ export default function LandingPageV4() {
         {/* 2. Instant credibility */}
         <TrustBar />
 
-        {/* 3. Visual wow — show what it makes before asking them to try */}
+        {/* 3. PROOF FIRST — show the difference before asking them to try */}
+        <ProofSection />
+
+        {/* 4. Visual wow — show what it makes */}
         <AIVideoShowcase />
 
-        {/* 4. Full listing generator — the other core tool */}
+        {/* 5. Full listing generator — now they want to try it */}
         <Playground landing />
-
-        {/* 5. Combined proof: before/after + neighborhood intelligence demo */}
-        <ProofSection />
 
         {/* 6. Social proof before the ask */}
         <Testimonials />
