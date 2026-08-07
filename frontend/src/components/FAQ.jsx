@@ -5,7 +5,7 @@ const faqs = [
   { q: "Is this just templates?", a: "No. ListWorks is a framework wrapped in a tool. You learn WHY each piece works — then the AI applies it to every listing in your voice. Templates copy. Frameworks compound." },
   { q: "Do I have to use AI?", a: "No. The $20 guide teaches the framework end-to-end so you can write better copy by hand. The AI tool just makes it 27 minutes faster per listing." },
   { q: "Will this sound like ChatGPT?", a: "Not at all. Generic ChatGPT outputs are average because they're trained on every listing on the internet — including the bad ones. ListWorks is tuned on the Feature → Benefit → Feeling framework that top-1% agents actually use." },
-  { q: "What if I don't like it?", a: "30-day money-back guarantee on the guide. The tool's free tier lets you try 3 rewrites before you ever pay anything." },
+  { q: "What if I don't like it?", a: "30-day money-back guarantee on the guide. The tool's playground is completely free with unlimited access — try it as many times as you want before deciding to upgrade." },
   { q: "Is it MLS-compliant?", a: "Yes. Outputs avoid fair-housing landmines, hyperbole, and unverifiable claims by default. Always review before publishing — same as any draft." },
   { q: "Can my whole brokerage use it?", a: "Yes — the Team plan includes 5 seats, shared listing libraries, and brokerage-specific voice presets. Email hello@listworks.pro for a walkthrough." },
   { q: "How is this different from ChatGPT?", a: "ChatGPT gives you generic real estate text because it's trained on the whole internet. ListWorks is trained on the Feature → Benefit → Feeling framework — the same system that top-1% agents use to close. One prompt, zero filler." },
