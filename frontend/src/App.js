@@ -28,6 +28,7 @@ import PromptLibraryPage from "@/pages/PromptLibraryPage";
 import DashboardPage from "@/pages/DashboardPage";
 import PublicScan from "@/pages/PublicScan";
 import SocialContentPage from "@/pages/SocialContentPage";
+import ProgrammaticCompliancePage from "@/pages/ProgrammaticCompliancePage";
 import { captureRefFromURL } from "@/lib/checkout";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
@@ -84,6 +85,8 @@ function App() {
           <Route path="/presentations" element={<ListingPresentationPage />} />
           <Route path="/social" element={<SocialContentPage />} />
           <Route path="/app/social" element={<SocialContentPage />} />
+          <Route path="/compliance" element={<ProgrammaticCompliancePage />} />
+          <Route path="/compliance/:state" element={<ProgrammaticCompliancePage />} />
         </Routes>
       </BrowserRouter>
     </div>
