@@ -204,6 +204,12 @@ export default function DashboardPage() {
             <a href="#" onClick={e => { e.preventDefault(); upgrade(); }} style={{ background: '#d63b1e', color: '#fff', padding: '8px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>⬆ Upgrade to Pro $29/mo</a>
           </div>
         )}
+        {account?.tier !== 'pro' && (
+          <div style={{ background: '#1a2a1a', border: '1px solid #4a8a4a', borderRadius: 8, padding: '12px 16px', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: '#8aff8a' }}>💰 Earn $29 per referral — share your affiliate link</span>
+            <a href="/a" style={{ background: '#2a6a2a', color: '#fff', padding: '8px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>Get Affiliate Link →</a>
+          </div>
+        )}
         {page === 'packs' && <ContentPacks packs={packs} previewFile={previewFile} previewLead={previewLead} onPreview={preview} />}
         {page === 'forms' && !selectedForm && <FormsList forms={forms} onSelect={loadFormDetail} />}
         {page === 'forms' && selectedForm && <FormDetail form={selectedForm} values={formValues} setValues={setFormValues} onDownload={downloadPdf} onBack={() => setSelectedForm(null)} isPro={account?.tier === 'pro'} />}

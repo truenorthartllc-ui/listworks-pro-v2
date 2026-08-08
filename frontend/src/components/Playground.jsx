@@ -493,6 +493,15 @@ export default function Playground({ landing = false }) {
             >
               {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : landing ? (<><Sparkles className="w-4 h-4" />Start Free — Rewrite This Listing</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
             </button>
+            {result && !landing && (
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="w-full mt-2 px-7 py-3 font-heading text-xs uppercase tracking-[0.15em] border border-ink/20 hover:border-ink/50 flex items-center justify-center gap-2 transition"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                View Full Marketing Package ({['MLS', 'IG', 'FB', 'Email', 'Reel', 'Stories', 'Flyer'].length} outputs)
+              </button>
+            )}
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
               3 free rewrites, then $29/mo · cancel anytime
             </p>
