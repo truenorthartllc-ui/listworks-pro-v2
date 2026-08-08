@@ -39,6 +39,7 @@ import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
 import ViralPostCard from "@/components/ViralPostCard";
 import MissingDetailsPanel from "@/components/MissingDetailsPanel";
+import AskListingChat from "@/components/AskListingChat";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Minimalist", "Family", "Investor"];
@@ -337,6 +338,12 @@ export default function Playground({ landing = false }) {
             <div className="mb-5">
               <MissingDetailsPanel rawListing={raw} onFillDetails={(fullText) => setRaw(fullText)} />
             </div>
+
+            {raw?.trim().length > 20 && (
+              <div className="mb-5">
+                <AskListingChat rawListing={raw} />
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               <div className="col-span-2">

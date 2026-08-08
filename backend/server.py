@@ -2619,6 +2619,54 @@ async def detect_missing_details(req: MissingDetailsRequest):
     )
 
 
+# ── Ask My Listing — AI Chat Copilot ─────────────────────
+
+ASK_SYSTEM_PROMPT = """You are a real estate listing expert AI. You've been given a property listing.
+
+Answer the agent's questions about this specific listing. Be conversational, specific, and helpful.
+Use details from the listing to ground your answers. If the listing doesn't contain enough info to answer well, say so and suggest what additional details would help.
+
+Examples of good answers:
+- "Give me 5 reasons a buyer should see this house." → list specific features from the listing
+- "Write a text to someone who viewed this property." → personalized follow-up using listing details
+- "What are the strongest features we haven't marketed?" → analyze the listing, find gaps
+- "Turn this into an open house announcement." → repurpose listing content
+- "Create a 15-second TikTok script." → short, punchy, hook-driven
+- "Why hasn't this sold?" → analyze objectively, suggest improvements
+
+Keep answers concise (under 150 words unless asked for more). Be helpful, not promotional."""
+
+
+class AskListingRequest(BaseModel):
+    raw_listing: str
+    question: str
+    history: Optional[List[Dict[str, str]]] = None
+
+
+class AskListingResponse(BaseModel):
+    answer: str
+
+
+@api_router.post("/listings/ask", response_model=AskListingResponse)
+async def ask_about_listing(req: AskListingRequest):
+    """Answer any question an agent has about their listing."""
+    messages = [{"role": "system", "content": ASK_SYSTEM_PROMPT}]
+    messages.append({"role": "user", "content": f"Here is the listing:\n\n{req.raw_listing}"})
+    messages.append({"role": "assistant", "content": "Got it. I've analyzed the listing. What would you like to know?"})
+
+    if req.history:
+        for msg in req.history[-6:]:  # last 6 for context
+            messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
+
+    messages.append({"role": "user", "content": req.question})
+
+    system = "You are a real estate listing expert AI assistant."
+    user_text = "\n\n".join(f"{m['role']}: {m['content']}" for m in messages)
+
+    answer = await call_omniroute(system, user_text)
+    return AskListingResponse(answer=answer.strip() or "I couldn't generate a response. Please try rephrasing your question.")
+
+
 # Keep legacy endpoint alive so existing RedfinImport.jsx calls still work
 @api_router.post("/import/redfin", response_model=RedfinPropertyData)
 async def import_redfin(req: RedfinImportRequest):
