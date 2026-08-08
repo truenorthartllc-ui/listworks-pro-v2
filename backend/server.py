@@ -55,25 +55,47 @@ MAKE_WEBHOOK_URL = os.environ.get('MAKE_WEBHOOK_URL', '')
 FIRECRAWL_API_KEY = os.environ.get('FIRECRAWL_API_KEY', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 NVIDIA_API_KEY = os.environ.get('NVIDIA_API_KEY', '')
-DEFAULT_PROVIDER = "openrouter"
-DEFAULT_MODEL = "openai/gpt-4o"
+OMNIROUTE_KEY = os.environ.get('OMNIROUTE_API_KEY', '')
+DEFAULT_PROVIDER = "omniroute"
+DEFAULT_MODEL = "oc/deepseek-v4-flash-free"
 
 if STRIPE_API_KEY:
     stripe_sdk.api_key = STRIPE_API_KEY
 
-# ── OpenRouter helper ─────────────────────────────────────
+# ── LLM helpers ───────────────────────────────────────────
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 G0DM0D3_BASE = "http://localhost:7860"
-G0DM0D3_API_KEY = os.environ.get('G0DM0D3_API_KEY')
-if not G0DM0D3_API_KEY:
-    raise EnvironmentError(
-        'G0DM0D3_API_KEY environment variable not set. '
-        'Set this key in .env or Railway environment to authenticate '
-        'with OpenRouter API for Uncaged AI services.'
-    )
+G0DM0D3_API_KEY = os.environ.get('G0DM0D3_API_KEY') or os.environ.get('OPENROUTER_API_KEY', '')
+OMNIROUTE_KEY = os.environ.get('OMNIROUTE_API_KEY') or ''
+
+async def call_omniroute(system: str, user_text: str, model: str = None) -> str:
+    """Call local G0DM0D3 OmniRoute (free, no API key cost). Falls back to OpenRouter."""
+    if not OMNIROUTE_KEY:
+        return await call_openrouter(system, user_text, model)
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        resp = await client.post(
+            f"{G0DM0D3_BASE}/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OMNIROUTE_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model or "oc/deepseek-v4-flash-free",
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_text},
+                ],
+                "max_tokens": 2048,
+                "temperature": 0.7,
+            },
+        )
+        if resp.status_code != 200:
+            return await call_openrouter(system, user_text, model)
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
 
 async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
-    """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx."""
+    """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx (paid fallback)."""
     key = G0DM0D3_API_KEY
     if not key:
         raise HTTPException(500, "OpenRouter API key not configured")
@@ -654,7 +676,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         system += f"\n\n⚠️ MLS CHARACTER LIMIT: The MLS field MUST NOT exceed {req.mls_char_limit} characters (including spaces). Count carefully. If your draft exceeds {req.mls_char_limit} chars, shorten it. This is a hard requirement."
     if req.language and req.language.lower() not in ("english", "en"):
         system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, email, reel_script — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
-    raw = await call_openrouter(system, user_text, model="anthropic/claude-opus-4-8")
+    raw = await call_omniroute(system, user_text, model="anthropic/claude-opus-4-8")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -1703,7 +1725,7 @@ Return only the disclosure text, no extra commentary."""
 Brokerage: {req.brokerage_name}
 Property: {req.property_address}
 Generate the CO AI Act disclosure statement."""
-    disclosure = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    disclosure = await call_omniroute(system, user, model="openai/gpt-4o-mini")
     return {"disclosure_text": disclosure.strip()}
 
 # ============== COLORADO AI ACT SCANNER ==============
@@ -1874,7 +1896,7 @@ async def analyze_voice_description(req: VoiceDescriptionIn):
             return resp.content[0].text
         except Exception:
             # Fallback to OpenRouter
-            return await call_openrouter(system_prompt, user_text, model="openai/gpt-4o")
+            return await call_omniroute(system_prompt, user_text, model="openai/gpt-4o")
     raw_text = await _call_anthropic_voice(VOICE_POLISH_SYSTEM, req.transcript.strip())
     try:
         data = json.loads(raw_text)
@@ -2425,7 +2447,7 @@ async def get_expired_scripts(req: ExpiredListingRequest):
 
 Now produce the JSON object with all 4 scripts. JSON only."""
 
-    raw = await call_openrouter(EXPIRED_LISTING_SYSTEM, user_prompt)
+    raw = await call_omniroute(EXPIRED_LISTING_SYSTEM, user_prompt)
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -2512,7 +2534,7 @@ async def import_listing(req: ListingImportRequest):
     page_content = await _scrape_listing_url(url)
 
     user_prompt = f"Extract all property data from this listing page content:\n\n{page_content}\n\nJSON only."
-    raw = await call_openrouter(LISTING_EXTRACT_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    raw = await call_omniroute(LISTING_EXTRACT_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -2591,7 +2613,7 @@ async def lookup_address(req: AddressLookupRequest, request: Request):
     )
     user_prompt = f"Address: {address}\n\nSearch results:\n{snippets}\n\nExtract property data. JSON only."
 
-    raw = await call_openrouter(ADDRESS_LOOKUP_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    raw = await call_omniroute(ADDRESS_LOOKUP_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -2659,7 +2681,7 @@ async def analyze_photo(req: PhotoAnalyzeRequest, request: Request):
     if img_data.startswith("data:"):
         img_data = img_data.split(",", 1)[1]
 
-    raw = await call_openrouter(prompt, "Analyze this real estate photo. Return JSON only.", model="openai/gpt-4o")
+    raw = await call_omniroute(prompt, "Analyze this real estate photo. Return JSON only.", model="openai/gpt-4o")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -2784,7 +2806,7 @@ async def advisor(req: AdvisorRequest, request: Request):
 
     user_text = f"{history_text}\n\nUSER: {req.question}{context_msg}".strip()
 
-    raw = await call_openrouter(ADVISOR_SYSTEM, user_text)
+    raw = await call_omniroute(ADVISOR_SYSTEM, user_text)
     reply = raw.strip()
     return AdvisorResponse(reply=reply)
 
@@ -2869,7 +2891,7 @@ async def cma_report(req: CMARequest, request: Request):
 
     user_prompt = f"{subject_info}\n\nComparable properties data:\n{snippets}\n\nGenerate a professional CMA report as JSON."
 
-    raw = await call_openrouter(CMA_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
+    raw = await call_omniroute(CMA_SYSTEM, user_prompt, model="openai/gpt-4o-mini")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -3583,7 +3605,7 @@ async def local_gems(req: LocalGemsRequest):
         "Write the Local Gems paragraph."
     )
 
-    paragraph = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    paragraph = await call_omniroute(system, user, model="openai/gpt-4o-mini")
     return {"paragraph": paragraph.strip()}
 
 
@@ -3627,7 +3649,7 @@ async def agent_bio(req: AgentBioRequest):
         f"JSON only, no markdown."
     )
 
-    raw = await call_openrouter(system, user, model="openai/gpt-4o-mini")
+    raw = await call_omniroute(system, user, model="openai/gpt-4o-mini")
     cleaned = _strip_json(raw)
     try:
         bios = json.loads(cleaned)
@@ -4299,7 +4321,7 @@ async def market_update(req: MarketUpdateRequest):
     try:
         raw = await call_g0dm0d3(system, user_text, tier="smart")
     except Exception:
-        raw = await call_openrouter(system, user_text)
+        raw = await call_omniroute(system, user_text)
 
     cleaned = _strip_json(raw)
     try:
@@ -4367,7 +4389,7 @@ async def content_calendar(req: ContentCalendarRequest):
     try:
         raw = await call_g0dm0d3(system, "\n".join(user_parts), tier="smart")
     except Exception:
-        raw = await call_openrouter(system, "\n".join(user_parts))
+        raw = await call_omniroute(system, "\n".join(user_parts))
 
     cleaned = _strip_json(raw)
     try:
@@ -4523,7 +4545,7 @@ async def template_generate(req: TemplateGenerateRequest):
     try:
         output = await call_g0dm0d3(system, "\n".join(user_parts), tier="smart")
     except Exception:
-        output = await call_openrouter(system, "\n".join(user_parts))
+        output = await call_omniroute(system, "\n".join(user_parts))
 
     return {"output": output.strip(), "template_id": req.template_id}
 
