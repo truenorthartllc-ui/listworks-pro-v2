@@ -2542,17 +2542,80 @@ async def import_listing(req: ListingImportRequest):
         logging.exception("JSON parse failed for listing import")
         raise HTTPException(500, f"Failed to extract listing data: {str(e)[:120]}")
 
-    return RedfinPropertyData(
-        address=data.get("address", "").strip(),
-        price=data.get("price"),
-        beds=data.get("beds"),
-        baths=data.get("baths"),
-        sqft=data.get("sqft"),
-        year_built=data.get("year_built"),
-        property_type=data.get("property_type"),
-        lot_size=data.get("lot_size"),
-        parking=data.get("parking"),
-        description=data.get("description"),
+
+# ── What's Missing? — Listing Detail Detector ─────────────
+
+MISSING_FIELDS_CHECKLIST = [
+    "Year built", "Year of roof", "HVAC age/type", "Water heater age",
+    "Square footage", "Lot size", "Bedrooms", "Bathrooms",
+    "Garage/parking", "HOA fees", "Property taxes", "School district",
+    "Recent upgrades", "Flooring type", "Kitchen appliances",
+    "Heating/cooling type", "Windows age", "Foundation type",
+    "Sewer/water (public/septic/well)", "Basement/finished",
+    "Fencing/yard", "Pool/spa", "View", "Stories",
+    "Association fees (if applicable)", "Special assessments",
+    "Flood zone", "Fireplace", "Air conditioning",
+]
+
+class MissingDetailsRequest(BaseModel):
+    raw_listing: str
+
+class MissingDetail(BaseModel):
+    field: str
+    present: bool
+    value: Optional[str] = None
+    suggestion: Optional[str] = None
+
+class MissingDetailsResponse(BaseModel):
+    details: List[MissingDetail]
+    missing_count: int
+    present_count: int
+    score: int  # 0-100 completeness score
+    suggestions: List[str]  # suggested questions to ask the agent
+
+
+@api_router.post("/listings/missing", response_model=MissingDetailsResponse)
+async def detect_missing_details(req: MissingDetailsRequest):
+    """Analyze a listing and flag missing details that would strengthen marketing."""
+    listing = req.raw_listing.lower()
+
+    details = []
+    missing_count = 0
+    present_count = 0
+
+    for field in MISSING_FIELDS_CHECKLIST:
+        keywords = field.lower().split()
+        present = any(kw in listing for kw in keywords)
+        if present:
+            present_count += 1
+        else:
+            missing_count += 1
+        details.append(MissingDetail(field=field, present=present))
+
+    total = len(MISSING_FIELDS_CHECKLIST)
+    score = int((present_count / total) * 100)
+
+    # Generate smart suggestions based on what's missing
+    suggestions = []
+    if "Year of roof" in [d.field for d in details if not d.present]:
+        suggestions.append("What year was the roof last replaced or installed?")
+    if "HOA fees" in [d.field for d in details if not d.present]:
+        suggestions.append("What are the monthly HOA fees and what do they cover?")
+    if "HVAC age/type" in [d.field for d in details if not d.present]:
+        suggestions.append("How old is the HVAC system? Forced air or radiant?")
+    if "Recent upgrades" in [d.field for d in details if not d.present]:
+        suggestions.append("Any recent renovations or major upgrades in the last 5 years?")
+    if "School district" in [d.field for d in details if not d.present]:
+        suggestions.append("Which school district serves this property?")
+    if not suggestions:
+        suggestions.append("Your listing looks thorough! Share specific selling points to make it shine.")
+
+    return MissingDetailsResponse(
+        details=details,
+        missing_count=missing_count,
+        present_count=present_count,
+        score=score,
+        suggestions=suggestions,
     )
 
 

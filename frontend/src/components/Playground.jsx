@@ -38,6 +38,7 @@ import ProToolPreview from "@/components/ProToolPreview";
 import { startCheckout } from "@/lib/checkout";
 import ShareCard from "@/components/ShareCard";
 import ViralPostCard from "@/components/ViralPostCard";
+import MissingDetailsPanel from "@/components/MissingDetailsPanel";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Minimalist", "Family", "Investor"];
@@ -332,6 +333,10 @@ export default function Playground({ landing = false }) {
               rows={8}
               className="editorial-input mb-5"
             />
+
+            <div className="mb-5">
+              <MissingDetailsPanel rawListing={raw} onFillDetails={(fullText) => setRaw(fullText)} />
+            </div>
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               <div className="col-span-2">
