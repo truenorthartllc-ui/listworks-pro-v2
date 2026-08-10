@@ -56,6 +56,7 @@ FIRECRAWL_API_KEY = os.environ.get('FIRECRAWL_API_KEY', '')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 NVIDIA_API_KEY = os.environ.get('NVIDIA_API_KEY', '')
 OMNIROUTE_KEY = os.environ.get('OMNIROUTE_API_KEY', '')
+MUAPI_API_KEY = os.environ.get('MUAPI_API_KEY', '')
 DEFAULT_PROVIDER = "omniroute"
 DEFAULT_MODEL = "oc/deepseek-v4-flash-free"
 
@@ -3010,6 +3011,131 @@ async def cma_report(req: CMARequest, request: Request):
         raise HTTPException(500, "Could not generate CMA report. Try again.")
 
     return data
+
+class ReelGenerateRequest(BaseModel):
+    listing_id: Optional[str] = None
+    title: str
+    description: str = ""
+    slides: Optional[List[str]] = None
+    music_id: str = "cinematic"
+    voiceover_text: Optional[str] = None
+    use_ai_voice: bool = True
+    fmt: str = "9:16"  # reels = 9:16 by default
+    agent_name: Optional[str] = None
+    agent_brokerage: Optional[str] = None
+
+    model_config = {"extra": "forbid"}
+
+
+# ===== Reel Generation (MuAPI -> video_engine) =====
+@api_router.post("/reel/generate", response_model=VideoGenerateResponse)
+async def reel_generate(req: ReelGenerateRequest):
+    if not MUAPI_API_KEY:
+        raise HTTPException(400, "MUAPI_API_KEY not configured — add to .env")
+    if not req.title:
+        raise HTTPException(400, "title is required")
+
+    # 1) Generate slide text if not provided
+    slides = req.slides or []
+    if not slides:
+        raw = await call_omniroute(
+            "Write 4 short punchy real estate reel captions. One per line, max 6 words each, no numbers.",
+            f"Property: {req.title}. {req.description}"
+        )
+        slides = [s.strip().strip('"').strip("'") for s in raw.strip().split("\n") if s.strip()][:4]
+        if not slides:
+            slides = ["Your dream home", "Schedule a tour", "Modern living", "Move-in ready"]
+
+    # 2) Generate images via MuAPI
+    # Build prompts per image
+    image_prompts = [
+        f"Real estate photo of {req.title}. {req.description}. Professional real estate photography, wide angle, natural lighting, high-end exterior",
+        f"Interior shot of {req.title}. Modern kitchen and living room, bright natural light, professional staging",
+        f"Curb appeal of {req.title}. Well-maintained landscaping, professional real estate photo, beautiful home",
+        f"Detail shot of {req.title}. Warm inviting interior, comfortable living space, home feel",
+    ]
+
+    MUAPI_BASE = "https://api.muapi.ai/api/v1"
+
+    async def _muapi_img(prompt: str) -> Optional[bytes]:
+        try:
+            async with httpx.AsyncClient(timeout=120) as c:
+                r = await c.post(
+                    f"{MUAPI_BASE}/flux-dev",
+                    json={"prompt": prompt, "model": "flux-dev", "aspect_ratio": "16:9"},
+                    headers={"x-api-key": MUAPI_API_KEY},
+                )
+                r.raise_for_status()
+                data = r.json()
+                rid = data.get("request_id") or data.get("id")
+                if not rid:
+                    url = data.get("url") or (data.get("outputs") or [None])[0]
+                    if not url:
+                        return None
+                    ir = await c.get(url)
+                    ir.raise_for_status()
+                    return ir.content
+                for _ in range(120):
+                    await asyncio.sleep(2)
+                    pr = await c.get(
+                        f"{MUAPI_BASE}/predictions/{rid}/result",
+                        headers={"x-api-key": MUAPI_API_KEY},
+                    )
+                    if not pr.is_success:
+                        continue
+                    prd = pr.json()
+                    s = (prd.get("status") or "").lower()
+                    if s in ("completed", "succeeded", "success"):
+                        url = prd.get("url") or (prd.get("outputs") or [None])[0]
+                        if url:
+                            ir = await c.get(url)
+                            ir.raise_for_status()
+                            return ir.content
+                        return None
+                    if s in ("failed", "error"):
+                        return None
+                return None
+        except Exception as exc:
+            logger.warning("MuAPI image failed: %s", exc)
+            return None
+
+    image_tasks = [_muapi_img(p) for p in image_prompts]
+    image_results = await asyncio.gather(*image_tasks)
+    photos_b64 = [base64.b64encode(img).decode() for img in image_results if img]
+
+    if not photos_b64:
+        raise HTTPException(500, "Could not generate any images via MuAPI")
+
+    # 3) Voiceover text
+    vo_text = req.voiceover_text or f"{req.title}. {req.description}. Schedule your showing today."
+
+    # 4) Feed into existing video engine
+    try:
+        result = await generate_listing_video(
+            photos_b64=photos_b64,
+            slides=slides,
+            music_id=req.music_id,
+            voiceover_text=vo_text,
+            agent_name=req.agent_name or "ListWorks PRO",
+            agent_brokerage=req.agent_brokerage,
+            fmt=req.fmt,
+            api_key=EMERGENT_LLM_KEY,
+        )
+    except Exception as e:
+        raise HTTPException(500, f"Video generation failed: {str(e)[:200]}")
+
+    # persist
+    await db.videos.insert_one({
+        "id": result["id"],
+        "listing_id": req.listing_id,
+        "url": result["url"],
+        "duration": result["duration"],
+        "format": result["format"],
+        "title": req.title,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return VideoGenerateResponse(**result)
+
 
 # ===== Video Generation =====
 @api_router.post("/video/generate", response_model=VideoGenerateResponse)
