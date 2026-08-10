@@ -39,7 +39,7 @@ export default function Footer() {
         <div className="col-span-6 md:col-span-2">
           <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-oat/50 mb-5">Company</div>
           <ul className="space-y-2 font-body text-sm text-oat/85">
-            <li><a href="#" className="hover:text-vermillion transition">Privacy</a></li>
+            <li><Link to="/privacy" className="hover:text-vermillion transition">Privacy</Link></li>
             <li><a href="#" className="hover:text-vermillion transition">Terms</a></li>
           </ul>
         </div>
