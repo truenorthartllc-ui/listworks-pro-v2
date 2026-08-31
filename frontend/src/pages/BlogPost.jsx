@@ -33,6 +33,9 @@ export default function BlogPost() {
 
         <div className="flex items-center gap-4 mb-4">
           <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40">{article.date}</span>
+          {article.author && (
+            <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50">By {article.author}</span>
+          )}
           <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/30">{article.readTime} read</span>
           {article.tags.map((t) => (
             <span key={t} className="font-mono text-[10px] tracking-[0.1em] uppercase text-vermillion bg-vermillion/5 px-2 py-0.5">

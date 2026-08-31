@@ -1,5 +1,119 @@
 const ARTICLES = [
   {
+    slug: "ai-tools-for-real-estate-agents-2026-updated",
+    title: "Best AI Tools for Real Estate Agents in 2026: The Updated Stack That Actually Saves Time",
+    excerpt: "The AI landscape changed fast this year. Here's the 2026 fall lineup of real estate AI tools — listing copy, lead gen, virtual staging, CRM, and compliance — ranked by what agents actually report using.",
+    date: "2026-08-31",
+    tags: ["AI tools", "productivity", "comparison", "2026"],
+    author: "ListWorks Editorial",
+    readTime: "9 min",
+    content: `## The 2026 reality: generic AI copy is now a liability
+
+If your first reaction to "AI for real estate" is still "ChatGPT writes my listing descriptions," you're behind. Buyers have spent a year scrolling past machine-generated fluff, and the market has already moved.
+
+By late 2026 the AI tool landscape for agents has split into two camps: general-purpose chatbots that produce generic copy you have to rewrite, and purpose-built tools that handle the compliance, tone, and formatting legwork for you. The gap keeps widening.
+
+This roundup is the updated version of our [earlier guide](/blog/ai-tools-for-real-estate-agents-2026) — refreshed for the fall market, with what agents are actually using now.
+
+## What changed in 2026 for AI tools
+
+Three shifts define this year's AI market:
+
+1. **Fair Housing enforcement sharpened.** HUD confirmed AI-generated listing copy falls under the Fair Housing Act ([24 CFR 180.671](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671)), and state laws are layering on top — Colorado's [SB 26-189](https://leg.colorado.gov/bills/sb26-189) takes effect January 1, 2027, adding new algorithmic decision-making rules. First-offense HUD penalties run [up to $26,262](/blog/hud-2024-ai-listing-liability-agents). Compliance is no longer optional in any tool you pick.
+
+2. **Purpose-built listing tools got cheaper and better.** The difference between a tool that turns your notes into a [listing description that sells](/blog/real-estate-listing-description-examples-that-work) and a chatbot that just "sounds nice" is now obvious in output quality.
+
+3. **Voice and multimodal went mainstream.** Agents are dictating listing notes into tools that handle the full rewrite, and using AI for captions, follow-ups, and even video.
+
+## The listing copy stack
+
+For the core job — turning raw notes into a listing that gets showings — the 2026 standout pattern is tools with voice profiles and compliance scanning built in. A good listing tool should:
+
+- Turn bullet-point notes into [a description buyers actually read](/blog/how-to-write-mls-descriptions-that-sell), not a feature dump
+- Scan output against Fair Housing problem phrases before it hits the MLS
+- Match your tone — "witty," "luxury," or "neighborly" — consistently
+
+Our own tool, [ListWorks PRO](https://listworks.pro), was built exactly for this: paste notes, pick a voice, publish in under a minute. Three free rewrites, no card required.
+
+## Lead gen and outreach AI
+
+ChatGPT-era cold outreach has burned out most agents' databases. The tools that still work in 2026 are signal-based: they pull from listing activity, price reductions, and expired listings rather than blasting generic scripts.
+
+For follow-up, the winners use specific property references — not "just checking in." An email referencing a specific house and a specific buyer memory outperforms a template by a wide margin.
+
+## Virtual staging and visuals
+
+Buyers under 40 treat visuals as the primary search experience. AI virtual staging has become a table-stakes listing enhancement, and tools that generate Instagram-ready [captions for listings](/blog/instagram-captions-for-real-estate-listings) save agents a real hour per listing.
+
+## Compliance AI: the sleeper category
+
+The most underrated AI category for 2026 is compliance. Tools that scan your active listings for [Fair Housing problem phrases](/blog/fair-housing-violations-real-estate-listings-examples) — "perfect for families," "ideal for young professionals," "great for empty nesters" — before a complaint lands are worth their weight. One flagged phrase can cost [$26,262 on a first offense](/blog/25597-cost-chatgpt-real-estate-listings), and repeat offenses run up to $131,308.
+
+The [2026 best-practice stack](/blog/best-ai-tools-for-real-estate-agents-2025) is no longer "one chatbot to rule them all." It's a small set of purpose-built tools that each own one job — and do it without making you the unpaid quality inspector.
+
+## How to choose
+
+Before paying for anything, ask four questions:
+
+1. **Does it scan for Fair Housing problems before output?** If not, you're the compliance department.
+2. **Can it learn your voice?** If every output sounds like the same AI, skip it.
+3. **Is it fast enough to use mid-showing?** A tool you don't reach for saves zero hours.
+4. **Does it produce something specific?** "Charming neighborhood" is not an output. Specifics sell.
+
+The agents getting real time back in 2026 aren't the ones with the most AI tools. They're the ones who picked one purpose-built tool per job — and stopped hand-rewriting generic chatbot output.
+
+**Try ListWorks PRO free — 3 free rewrites, no card needed.**`,
+  },
+  {
+    slug: "colorado-sb26-189-real-estate-ai-2027",
+    title: "Colorado's SB 26-189: What the New AI Law Means for Real Estate Agents in 2027",
+    excerpt: "Colorado repealed its AI Act and replaced it with SB 26-189, effective January 1, 2027. Here's what real estate agents using AI for listing copy actually need to know.",
+    date: "2026-08-31",
+    tags: ["Fair Housing", "Colorado", "compliance", "regulation"],
+    author: "ListWorks Editorial",
+    readTime: "7 min",
+    content: `## Colorado rewrote its AI law — here's the short version
+
+If you're a real estate agent in Colorado using AI to write listing copy, you've probably heard the phrase "Colorado AI Act" — SB 24-205 — and maybe even adjusted your workflows around it. Here's the update that changes everything: that law was **repealed and replaced** by **SB 26-189**, which takes effect **January 1, 2027**.
+
+The replacement reframes how AI decision-making in housing is governed. And for agents using tools like ChatGPT or [AI listing generators](/blog/real-estate-listing-description-generator) to draft property descriptions, the practical effect is worth understanding before the clock runs out. (Text: [SB 26-189, Colorado General Assembly](https://leg.colorado.gov/bills/sb26-189); penalty schedule: [24 CFR 180.671, eCFR](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671); HUD guidance on AI in advertising: [HUD Fair Housing Act overview](https://www.hud.gov/program_offices/fair_housing_equal_opp).)
+
+## What SB 26-189 actually does
+
+SB 26-189 replaces the earlier "AI Act" with a reworked framework for algorithmic decision-making, including housing decisions. The headline changes for real estate:
+
+- **Clearer scope.** The new law tightens what counts as a "consequential decision," and housing-related decisions are squarely inside it.
+- **New requirements for deployers.** Agents and brokerages that use AI tools to make decisions affecting housing opportunities take on defined responsibilities — including disclosure and, in some cases, impact assessment.
+- **Repeal of the old regime.** The 2024 Act's obligations sunset, so anyone who built compliance around SB 24-205 needs to re-check their playbook against SB 26-189.
+
+The practical takeaway: "it was fine under SB 24-205" is no longer a valid answer once the new law is live.
+
+## Why listing copy is still the riskiest place
+
+Fair Housing liability never needed a state AI law to exist. Under the federal [Fair Housing Act](/blog/fair-housing-compliance-real-estate-listings), the agent is responsible for every word published under their name — whether a human or an algorithm wrote it. HUD confirmed this applies to AI-generated advertising, and first-offense penalties run up to [$26,262](/blog/hud-2024-ai-listing-liability-agents), with repeat violations at $131,308.
+
+SB 26-189 layers state-level obligations on top of that federal baseline. The convergence means two things:
+
+1. **The tool you use matters.** A general chatbot has no Fair Housing awareness; a [compliance-first AI tool](/blog/fair-housing-compliance-ai-listings) can flag problem language before it reaches the MLS.
+2. **Process matters more than intent.** You don't have to intend to discriminate to violate the law. A listing that says "perfect for families" or "ideal for young professionals" can trigger liability even when written by AI.
+
+## What agents should do before January 1, 2027
+
+Three concrete moves, in order of priority:
+
+1. **Audit your active listings.** Run current copy through a [Fair Housing phrase check](/blog/fair-housing-violations-real-estate-listings-examples) and fix anything flagged. This is your highest-leverage, lowest-cost step.
+2. **Change how you generate copy.** If you're pasting notes into a generic chatbot and publishing the output, you are the quality and compliance gate. Tools that [build compliance in](/blog/fair-housing-compliance-practical-guide) reduce that exposure automatically.
+3. **Document your process.** SB 26-189's framework rewards deployers who can show they assessed impact and took reasonable steps. A simple log of your AI tool, your review step, and your training is a cheap insurance policy.
+
+## The bottom line
+
+Colorado's AI law changed names, shape, and effective date. The federal Fair Housing floor did not move: [listings with discriminatory language are a liability](/blog/fair-housing-ai-listing-copy) regardless of what wrote them.
+
+Agents who treat January 1, 2027 as a deadline — audit, tool up, document — will skate through the transition. Agents who keep treating AI output as "good enough" are the ones the enforcement reports will be about.
+
+**Run your first listing through a compliance-first AI rewrite free — no card required.**`,
+  },
+  {
     slug: "how-to-write-better-mls-descriptions",
     title: "How to Write Better MLS Descriptions That Actually Sell Homes",
     excerpt: "Most listing descriptions read like inventory lists. Here's the psychology of what actually makes buyers call.",
