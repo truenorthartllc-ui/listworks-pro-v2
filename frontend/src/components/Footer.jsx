@@ -22,8 +22,20 @@ export default function Footer() {
             <li><a href="#playground" className="hover:text-vermillion transition">The Tool</a></li>
             <li><a href="#examples" className="hover:text-vermillion transition">Examples</a></li>
             <li><a href="/blog" className="hover:text-vermillion transition">Blog</a></li>
+            <li><a href="/free-tools" className="hover:text-vermillion transition">Free Tools</a></li>
+            <li><a href="/market-stats" className="hover:text-vermillion transition">Market Stats</a></li>
             <li><a href="/compare" className="hover:text-vermillion transition">Compare</a></li>
             <li><a href="#pricing" className="hover:text-vermillion transition">Pricing</a></li>
+          </ul>
+        </div>
+
+        <div className="col-span-6 md:col-span-2">
+          <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-oat/50 mb-5">Compliance</div>
+          <ul className="space-y-2 font-body text-sm text-oat/85">
+            <li><Link to="/fair-housing-compliance" className="hover:text-vermillion transition">Fair Housing Guide</Link></li>
+            <li><Link to="/compliance" className="hover:text-vermillion transition">50 State Guides</Link></li>
+            <li><Link to="/co-compliance" className="hover:text-vermillion transition">CO AI Disclosure</Link></li>
+            <li><Link to="/listing-analyzer" className="hover:text-vermillion transition">Listing Analyzer</Link></li>
           </ul>
         </div>
 
