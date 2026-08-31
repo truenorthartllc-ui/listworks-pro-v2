@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import ARTICLES from "@/data/articles";
 
+const SORTED = [...ARTICLES].sort((a, b) => (a.date < b.date ? 1 : -1));
+
 export default function BlogPage() {
   useEffect(() => {
     document.title = "ListWorks Blog — AI Marketing Tips for Real Estate Agents";
@@ -19,7 +21,7 @@ export default function BlogPage() {
         </div>
 
         <div className="space-y-8">
-          {ARTICLES.map((a) => (
+          {SORTED.map((a) => (
             <Link
               key={a.slug}
               to={`/blog/${a.slug}`}
