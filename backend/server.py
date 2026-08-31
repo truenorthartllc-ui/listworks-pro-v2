@@ -66,7 +66,6 @@ if STRIPE_API_KEY:
 # ── LLM helpers ───────────────────────────────────────────
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 G0DM0D3_BASE = "http://localhost:7860"
-G0DM0D3_API_KEY = os.environ.get('G0DM0D3_API_KEY') or os.environ.get('OPENROUTER_API_KEY', '')
 OMNIROUTE_KEY = os.environ.get('OMNIROUTE_API_KEY') or ''
 
 async def call_omniroute(system: str, user_text: str, model: str = None) -> str:
@@ -97,7 +96,7 @@ async def call_omniroute(system: str, user_text: str, model: str = None) -> str:
 
 async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
     """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx (paid fallback)."""
-    key = G0DM0D3_API_KEY
+    key = OPENROUTER_API_KEY
     if not key:
         raise HTTPException(500, "OpenRouter API key not configured")
     async with httpx.AsyncClient(timeout=60.0) as client:
@@ -633,7 +632,7 @@ async def call_g0dm0d3(system: str, user_text: str, tier: str = "smart") -> str:
         resp = await c.post(
             f"{G0DM0D3_BASE}/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {G0DM0D3_API_KEY}",
+                "Authorization": f"Bearer {OMNIROUTE_KEY}",
                 "Content-Type": "application/json",
             },
             json={

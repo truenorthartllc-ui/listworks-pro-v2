@@ -1443,7 +1443,7 @@ This matters because most agents using ChatGPT, Claude, or generic AI tools for 
 
 Fair Housing violations carry escalating penalties:
 
-- **First offense**: up to $25,597
+- **First offense**: up to $26,262
 - **Second offense** (within 5 years): up to $63,991
 - **Subsequent offenses**: up to $127,983
 - **Pattern of violations**: no cap — referral to DOJ for federal prosecution
@@ -1571,7 +1571,7 @@ Try it free at [listworks.pro](https://listworks.pro).`,
   },
   {
     slug: "25597-cost-chatgpt-real-estate-listings",
-    title: "The $25,597 Reason to Stop Using ChatGPT for Listing Descriptions",
+    title: "The $26,262 Reason to Stop Using ChatGPT for Listing Descriptions",
     excerpt: "ChatGPT doesn't know Fair Housing law. It doesn't know your MLS limits. And it doesn't care what happens when HUD comes knocking. Here's the math.",
     date: "2026-06-15",
     tags: ["ChatGPT", "Fair Housing", "compliance", "AI listings"],
@@ -1582,7 +1582,7 @@ Thousands of real estate agents use ChatGPT daily to write listing descriptions.
 
 Not intentionally. ChatGPT doesn't come with a warning label that says "this output may violate federal housing law." It just produces listing copy that sounds good, gets engagement, and — occasionally — uses language that HUD considers discriminatory.
 
-The first-offense fine for a Fair Housing violation is $25,597. That's the number that should be in the head of every agent who types "write me a listing description" into ChatGPT.
+The first-offense fine for a Fair Housing violation is $26,262. That's the number that should be in the head of every agent who types "write me a listing description" into ChatGPT.
 
 ## How ChatGPT Gets You Into Trouble
 
@@ -1623,7 +1623,7 @@ A Fair Housing-compliant listing tool does three things ChatGPT doesn't:
 ListWorks PRO does all three. The scan happens in 8 seconds. The audit trail is automatic. The output arrives pre-screened.
 
 The cost of ListWorks PRO: $29/month.
-The cost of a first-offense Fair Housing fine: $25,597.
+The cost of a first-offense Fair Housing fine: $26,262.
 
 The math isn't complicated.
 
@@ -3082,7 +3082,7 @@ Ask yourself these questions:
 The right tool is the one you'll actually use consistently. The best AI listing generator is the one that fits your workflow, your budget, and your market.`,
   },
   {
-    slug: "fair-housing-compliance-ai-listings",
+    slug: "fair-housing-compliance-how-ai-protects-agents",
     title: "Fair Housing Compliance: How AI Can Protect Agents From $26,000 Fines",
     excerpt: "One wrong word in your listing description can trigger a Fair Housing complaint. Here's exactly what AI tools catch — and what agents still need to watch for.",
     date: "2026-06-28",
@@ -3094,7 +3094,7 @@ You spend hours finding the right words to sell a house. But one wrong word can 
 
 Fair Housing violations aren't just about intentional discrimination. They're about language that could be interpreted as excluding protected classes — even if you didn't mean it that way.
 
-And the enforcement is getting stricter. In 2024-2025, state attorneys general have ramped up Fair Housing testing and enforcement, with Colorado's SB 24-205 (the "AI Act") adding new requirements for algorithmic decision-making in housing.
+And the enforcement is getting stricter. In 2024-2025, state attorneys general have ramped up Fair Housing testing and enforcement, with Colorado's SB 24-205 — later repealed and replaced by SB 26-189 (effective January 1, 2027) — adding new requirements for algorithmic decision-making in housing.
 
 ## The words that get agents in trouble
 
