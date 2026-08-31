@@ -1,5 +1,70 @@
 const ARTICLES = [
   {
+    slug: "winter-2026-real-estate-marketing",
+    title: "Winter 2026 Real Estate Marketing: What Actually Works Now",
+    excerpt: "Lower inventory, rate-driven buyers, and AI-savvy competition — winter 2026 rewards agents who market differently. Here's the playbook that's working.",
+    date: "2026-08-31",
+    tags: ["marketing", "winter", "strategy", "2026"],
+    author: "ListWorks Editorial",
+    readTime: "8 min",
+    content: `## Why winter 2026 is a different animal
+
+Every winter, agents say "the market slows down." That's only half true — what actually happens is that the buyers who remain are more serious, the inventory is lower, and the agents who treat December through February as a season (not a pause) walk away with outsize share.
+
+Winter 2026 has its own texture: mortgage rates still hovering where buyers feel them, sellers finally pricing to reality after two years of holdout, and a buyer pool that has absorbed a full year of AI-generated listing copy. That last point matters more than most agents realize. (Market context: [National Association of Realtors housing data](https://www.nar.realtor/research-and-statistics), [FHFA House Price Index](https://www.fhfa.gov/DataTools/Downloads/Documents/HPI/HPI_AT_brief.pdf).)
+
+## The winter buyer is different
+
+The buyer who shops between Thanksgiving and Valentine's Day is not browsing. They're usually:
+
+- Under a job relocation deadline
+- Chasing a school enrollment cutoff
+- Coming off a lease end
+- Or an investor who wants to close before spring competition
+
+That's a motivated pool. Your job in winter is to reach them before the spring flood of agents re-enters the market. The [2026 AI tools stack](/blog/ai-tools-for-real-estate-agents-2026-updated) makes that reach cheaper and faster than ever.
+
+## What's working this winter
+
+### 1. Video and virtual tours are table stakes
+
+In winter, curb appeal photographs poorly. Gray skies, dormant lawns, shorter light. The workaround is interior-first marketing: virtual tours, video walkthroughs, and staged close-ups of the kitchen and primary suite. Buyers decide in the first seconds — give them warm interiors, not gray exteriors.
+
+### 2. Listings that read like a home, not a spec sheet
+
+AI-savvy buyers can smell generic copy instantly. "Welcome to this charming home in a desirable neighborhood" gets scrolled past. The [listing copy that converts](/blog/how-to-write-mls-descriptions-that-sell) in winter leans into warmth: light, heat, and the feeling of being indoors while it's cold outside. Specific beats poetic. "The kitchen gets morning sun and the gas fireplace is one match from roaring" beats "cozy interior."
+
+### 3. Price realism wins before spring
+
+Sellers who resisted price guidance all summer are hitting the wall. The agents capturing winter listings are the ones having honest pricing conversations now. A [proper listing presentation](/blog/listing-presentation-template-for-real-estate-agents) with real comps closes those conversations.
+
+### 4. Email and SMS still move the needle
+
+Winter is a low-noise season for inboxes — most agents went quiet. That's your opening. A [drip sequence that references specific properties](/blog/how-ai-helps-real-estate-agents) outperforms in winter precisely because everyone else stopped sending.
+
+## Compliance doesn't take a winter break
+
+Fair Housing enforcement doesn't pause for the holidays. Winter marketing is full of landmines: "perfect for families" around the holidays, "ideal for empty nesters" (age), "great for entertaining during the holidays" (familial status). All of it is liability — HUD's penalty schedule is codified at [24 CFR 180.671](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671). The [compliance-first approach](/blog/fair-housing-compliance-how-ai-protects-agents) matters more in December than June because the emotional holiday language is everywhere.
+
+First-offense HUD penalties remain [up to $26,262](/blog/25597-cost-chatgpt-real-estate-listings). Scan everything before it publishes.
+
+## The social play
+
+Winter is when [Instagram captions for listings](/blog/instagram-captions-for-real-estate-listings) earn their keep. Buyers are indoors, on their phones, doom-scrolling. Short-form video of warm interiors, "coziest corner of the house" angles, and [before-after staging content](/blog/before-after-listworks-pro-vs-manual-listing) all outperform in winter.
+
+## The bottom line for winter 2026
+
+The agents who win winter 2026 share three habits:
+
+1. **They market in winter like it's spring** — video, warm copy, active social, weekly emails. The market is quieter, so their signal is louder.
+2. **They price honestly and early** — capturing listings now instead of fighting for spring leftovers.
+3. **They let AI do the grunt work** — [copy generation](/blog/real-estate-listing-description-generator), [caption drafts](/blog/chatgpt-prompts-listing-agents), and [compliance scans](/blog/chatgpt-listing-fair-housing) that make one agent produce like a team.
+
+Quiet season is a myth for the prepared. The agents treating winter as a runway — not a pause — are the ones listing in spring with a head start and a full pipeline.
+
+**Try ListWorks PRO free — write a warm winter listing in 10 seconds, no card required.**`,
+  },
+  {
     slug: "ai-tools-for-real-estate-agents-2026-updated",
     title: "Best AI Tools for Real Estate Agents in 2026: The Updated Stack That Actually Saves Time",
     excerpt: "The AI landscape changed fast this year. Here's the 2026 fall lineup of real estate AI tools — listing copy, lead gen, virtual staging, CRM, and compliance — ranked by what agents actually report using.",
