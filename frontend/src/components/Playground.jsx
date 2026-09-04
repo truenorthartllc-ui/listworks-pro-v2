@@ -204,6 +204,7 @@ export default function Playground({ landing = false }) {
   const [entitlementsLoaded, setEntitlementsLoaded] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
+  const [showAllTools, setShowAllTools] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
   const [openHouseResult, setOpenHouseResult] = useState(null);
   const [fhText, setFhText] = useState("");
@@ -382,6 +383,42 @@ export default function Playground({ landing = false }) {
               </div>
             </div>
           </div>
+
+            <button
+              onClick={() => setShowAllTools((o) => !o)}
+              className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-ink transition flex items-center gap-1.5"
+            >
+              {showAllTools ? "Close ▲" : `${TOOL_CATEGORIES.flatMap((c) => c.tools).length} tools · See All ▾`}
+            </button>
+
+            {showAllTools && (
+              <div className="mt-3 bg-oat border border-ink/15 p-5 rounded animate-rise">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                  {TOOL_CATEGORIES.map((cat) => (
+                    <div key={cat.name}>
+                      <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-2">{cat.name}</h4>
+                      <div className="space-y-0.5">
+                        {cat.tools.map((tool) => {
+                          const Icon = tool.icon;
+                          return (
+                            <button
+                              key={tool.id}
+                              onClick={() => { setMode(tool.id); setShowAllTools(false); }}
+                              data-active={mode === tool.id}
+                              className="w-full flex items-center gap-2 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat rounded"
+                            >
+                              <Icon className="w-3 h-3 shrink-0" />
+                              <span className="flex-1">{t("playground.tools." + tool.labelKey)}</span>
+                              {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
         </div>
 
         {mode === "rewrite" && (
@@ -882,8 +919,44 @@ export default function Playground({ landing = false }) {
                 <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.12em] uppercase text-ink/50">
                   <span>Tone · {result.tone}</span>
                   <span>ID · {result.id?.slice(0, 8)}</span>
+</div>
+
+            <button
+              onClick={() => setShowAllTools((o) => !o)}
+              className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-ink transition flex items-center gap-1.5"
+            >
+              {showAllTools ? "Close ▲" : `${TOOL_CATEGORIES.flatMap((c) => c.tools).length} tools · See All ▾`}
+            </button>
+
+            {showAllTools && (
+              <div className="mt-3 bg-oat border border-ink/15 p-5 rounded animate-rise">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                  {TOOL_CATEGORIES.map((cat) => (
+                    <div key={cat.name}>
+                      <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-2">{cat.name}</h4>
+                      <div className="space-y-0.5">
+                        {cat.tools.map((tool) => {
+                          const Icon = tool.icon;
+                          return (
+                            <button
+                              key={tool.id}
+                              onClick={() => { setMode(tool.id); setShowAllTools(false); }}
+                              data-active={mode === tool.id}
+                              className="w-full flex items-center gap-2 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat rounded"
+                            >
+                              <Icon className="w-3 h-3 shrink-0" />
+                              <span className="flex-1">{t("playground.tools." + tool.labelKey)}</span>
+                              {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            )}
+          </div>
             )}
           </div>
         </div>
