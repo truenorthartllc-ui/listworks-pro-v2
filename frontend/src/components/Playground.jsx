@@ -204,7 +204,6 @@ export default function Playground({ landing = false }) {
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
   const [tourOpen, setTourOpen] = useState(false);
-  const [showAllTools, setShowAllTools] = useState(false);
   const [openHouseResult, setOpenHouseResult] = useState(null);
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
@@ -356,9 +355,28 @@ export default function Playground({ landing = false }) {
                   </button>
                 );
               })}
-              <button onClick={() => setShowAllTools((o) => !o)} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2 text-vermillion border-vermillion/30 hover:border-vermillion">
-                <span className="mr-1">{showAllTools ? "−" : "+"}</span>All Tools
-              </button>
+            </div>
+
+            <div className="mt-3 overflow-x-auto pb-2 scrollbar-thin">
+              <div className="flex gap-1.5 min-w-max">
+                {TOOL_CATEGORIES.flatMap((cat) => cat.tools)
+                  .filter((t) => !HERO_TOOLS.find((h) => h.id === t.id))
+                  .map((t) => {
+                    const Icon = t.icon;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setMode(t.id)}
+                        data-active={mode === t.id}
+                        className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] border border-ink/10 hover:border-ink/30 transition data-[active=true]:bg-ink data-[active=true]:text-oat"
+                      >
+                        <Icon className="w-3 h-3" />
+                        {t.label}
+                        {!t.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
+                      </button>
+                    );
+                  })}
+              </div>
             </div>
           </div>
         </div>
@@ -888,41 +906,6 @@ export default function Playground({ landing = false }) {
               >
                 Get Pro — $29/mo
               </button>
-            </div>
-          </div>
-        )}
-
-        {showAllTools && (
-          <div className="mt-px bg-oat border border-ink/15 p-7 md:p-9 animate-rise">
-            <div className="flex items-center justify-between mb-6">
-              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Full Toolkit</span>
-              <button onClick={() => setShowAllTools(false)} className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-ink">
-                Close ▲
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-              {TOOL_CATEGORIES.map((cat) => (
-                <div key={cat.name}>
-                  <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-3">{cat.name}</h4>
-                  <div className="space-y-1">
-                    {cat.tools.map((t) => {
-                      const Icon = t.icon;
-                      return (
-                        <button
-                          key={t.id}
-                          onClick={() => { setMode(t.id); setShowAllTools(false); }}
-                          data-active={mode === t.id}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 font-heading text-xs uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat"
-                        >
-                          <Icon className="w-3.5 h-3.5 shrink-0" />
-                          <span className="flex-1">{t.label}</span>
-                          {!t.free && <Lock className="w-3 h-3 text-ink/30" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         )}
