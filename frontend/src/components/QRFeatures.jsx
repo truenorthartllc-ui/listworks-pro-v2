@@ -47,23 +47,23 @@ export default function QRFeatures() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/12 border border-ink/12">
-          {tools.map((t, idx) => (
+          {tools.map((tool, idx) => (
             <button
-              key={t.label}
+              key={tool.label}
               onClick={() => setExpanded(expanded === idx ? null : idx)}
               className="bg-white p-5 flex flex-col gap-4 text-left hover:bg-oat/30 transition-colors cursor-pointer group"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <span className="font-heading text-[11px] uppercase tracking-[0.15em] text-ink block mb-1 group-hover:text-vermillion transition-colors">{t.label}</span>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-vermillion border border-vermillion/30 px-2 py-0.5">{t.badge}</span>
+                  <span className="font-heading text-[11px] uppercase tracking-[0.15em] text-ink block mb-1 group-hover:text-vermillion transition-colors">{tool.label}</span>
+                  <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-vermillion border border-vermillion/30 px-2 py-0.5">{tool.badge}</span>
                 </div>
                 <div className="shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
                   <QRIcon size={52} />
                 </div>
               </div>
               <ol className="space-y-1.5">
-                {t.steps.map((s, i) => (
+                {tool.steps.map((s, i) => (
                   <li key={i} className="flex gap-2.5 text-xs text-ink/70 font-body leading-snug">
                     <span className="font-mono text-[10px] text-ink/30 shrink-0 mt-0.5">{i + 1}.</span>
                     <span>{s}</span>
