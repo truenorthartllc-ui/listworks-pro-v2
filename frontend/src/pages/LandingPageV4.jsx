@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import Playground from "@/components/Playground";
+import PresentationShowcase from "@/components/PresentationShowcase";
 import ProofSection from "@/components/ProofSection";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
@@ -56,7 +57,10 @@ export default function LandingPageV4() {
         {/* 5. Full listing generator — now they want to try it */}
         <Playground landing />
 
-        {/* 6. Social proof before the ask */}
+        {/* 6. Win more listings — presentation template */}
+        <PresentationShowcase />
+
+        {/* 7. Social proof before the ask */}
         <Testimonials />
 
         {/* 7. Low-friction offer while trust is hot */}
