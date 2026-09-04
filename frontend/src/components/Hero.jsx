@@ -3,6 +3,7 @@ import axios from "axios";
 import { Sparkles, Loader2, Copy, Check, Zap, AlertTriangle, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import AITransformation from "./AITransformation";
+import useTranslation from "@/hooks/useTranslation";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -34,6 +35,7 @@ const RISK_COLOR = { CRITICAL:"text-red-600", HIGH:"text-red-500", MEDIUM:"text-
 const GRADE_BG   = { A:"bg-green-100 text-green-700 border-green-200", B:"bg-yellow-50 text-yellow-700 border-yellow-200", C:"bg-orange-100 text-orange-700 border-orange-200", D:"bg-red-100 text-red-700 border-red-200", F:"bg-red-200 text-red-800 border-red-300" };
 
 export default function Hero() {
+  const { t } = useTranslation();
   // Listing rewriter demo
   const [demoLoading, setDemoLoading] = useState(false);
   const [demoDone, setDemoDone] = useState(false);
@@ -113,33 +115,33 @@ export default function Hero() {
           <div className="flex items-center gap-3 mb-4 animate-rise" style={{ animationDelay: "0.05s" }}>
             <span className="h-px w-10 bg-ink" />
             <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-ink/70">
-              EST. 2026 — REAL ESTATE COPY, REWRITTEN
+              {t("hero.est")}
             </span>
           </div>
 
           <h1 className="font-display tracking-tighter leading-[0.95] text-[11vw] md:text-[7vw] lg:text-[6rem] xl:text-[7rem] text-ink animate-rise"
               style={{ animationDelay: "0.1s" }}>
-            <span className="font-light">ChatGPT writes</span><br />
-            <span className="italic font-medium text-vermillion">$26,262 Fair Housing violations.</span><br />
-            <span className="italic font-medium">We catch them.</span>
+            <span className="font-light">{t("hero.headline1")}</span><br />
+            <span className="italic font-medium text-vermillion">{t("hero.headline2")}</span><br />
+            <span className="italic font-medium">{t("hero.headline3")}</span>
           </h1>
 
           <div className="mt-5 max-w-xl border-l-2 border-vermillion pl-5 animate-rise" style={{ animationDelay: "0.2s" }}>
             <p className="font-body text-base md:text-lg text-ink/80 leading-relaxed">
-              One paste → MLS copy, Fair Housing scan, Instagram caption, 5 headlines, buyer email. <span className="text-vermillion font-semibold">10 seconds. Zero compliance risk.</span>
+              {t("hero.subtitle")}
             </p>
             <p className="font-body text-sm text-ink/60 leading-relaxed mt-3">
-              <span className="text-vermillion font-semibold">Write your listing in 60 seconds instead of an hour.</span> Try unlimited playground access free. No card required. See the difference yourself.
+              {t("hero.subtitle2")}
             </p>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 animate-rise" style={{ animationDelay: "0.25s" }}>
-            {["MLS Description","Instagram Caption","Facebook Post","5 Headlines","Buyer Email"].map((label) => (
+            {t("hero.formats").map((label) => (
               <span key={label} className="border border-ink/20 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/70">
                 {label}
               </span>
             ))}
-            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-vermillion font-semibold">— one click.</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-vermillion font-semibold">{t("hero.formatsTag")}</span>
           </div>
 
           <div className="mt-5 max-w-2xl animate-rise" id="compliance" style={{ animationDelay: "0.35s" }}>
@@ -151,16 +153,16 @@ export default function Hero() {
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-heading text-xs uppercase tracking-[0.15em] text-green-600 mb-1">No violations found</p>
-                        <p className="font-display italic text-xl text-ink mb-4">Your listing passed the Fair Housing check.</p>
+                        <p className="font-heading text-xs uppercase tracking-[0.15em] text-green-600 mb-1">{t("hero.fhClean")}</p>
+                        <p className="font-display italic text-xl text-ink mb-4">{t("hero.fhCleanMsg")}</p>
                         <div className="flex gap-3 flex-wrap">
                           <a href="#playground"
                             className="bg-vermillion text-oat hover:bg-[#e02d0e] px-5 py-2.5 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition">
-                            <Sparkles className="w-3.5 h-3.5" /> Now rewrite it with AI
+                            <Sparkles className="w-3.5 h-3.5" /> {t("hero.fhRewrite")}
                           </a>
                           <button onClick={() => { setFhResult(null); setFhText(""); }}
                             className="border border-ink/20 px-5 py-2.5 font-heading text-xs uppercase tracking-[0.15em] text-ink/60 hover:text-ink transition">
-                            Check another
+                            {t("hero.fhCheckAnother")}
                           </button>
                         </div>
                       </div>
@@ -171,9 +173,9 @@ export default function Hero() {
                           <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
                           <div className="flex-1">
                             <div className={`font-heading text-xs uppercase tracking-[0.15em] mb-1 ${RISK_COLOR[fhResult.risk] || "text-red-600"}`}>
-                              {fhResult.total} violation{fhResult.total !== 1 ? "s" : ""} — {fhResult.risk} risk
+                              {t("hero.fhViolations", { count: fhResult.total, risk: fhResult.risk })}
                             </div>
-                            <p className="font-display italic text-xl text-ink">This listing has Fair Housing issues.</p>
+                            <p className="font-display italic text-xl text-ink">{t("hero.fhIssues")}</p>
                           </div>
                           <div className={`border px-3 py-1.5 font-mono text-xl font-bold ${GRADE_BG[fhResult.grade] || "bg-red-100 text-red-700 border-red-200"}`}>
                             {fhResult.grade}
@@ -191,11 +193,11 @@ export default function Hero() {
                         <div className="flex gap-3 flex-wrap pt-3 border-t border-red-100">
                           <a href="#playground"
                             className="bg-vermillion text-oat hover:bg-[#e02d0e] px-5 py-2.5 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition">
-                            <Sparkles className="w-3.5 h-3.5" /> Fix with AI — Free Trial
+                            <Sparkles className="w-3.5 h-3.5" /> {t("hero.fhFix")}
                           </a>
                           <button onClick={() => { setFhResult(null); setFhText(""); }}
                             className="border border-ink/20 px-5 py-2.5 font-heading text-xs uppercase tracking-[0.15em] text-ink/60 hover:text-ink transition">
-                            Check another
+                            {t("hero.fhCheckAnother")}
                           </button>
                         </div>
                       </div>
@@ -203,25 +205,25 @@ export default function Hero() {
                   </div>
                 ) : (
                   <div>
-                    <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink/40 mb-3">Paste your listing copy here</p>
+                    <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink/40 mb-3">{t("hero.fhPlaceholder")}</p>
                     <textarea
                       value={fhText}
                       onChange={e => setFhText(e.target.value)}
                       rows={4}
                       autoFocus
                       className="w-full border border-ink/12 bg-oat/50 p-3 font-body text-sm text-ink/80 resize-none outline-none focus:border-vermillion transition placeholder:text-ink/25 mb-3"
-                      placeholder={`Example: "Perfect for families with kids. Safe, quiet neighborhood near top-rated schools."`}
+                      placeholder={t("hero.fhExample")}
                     />
                     {fhError && <p className="text-red-500 text-xs mb-3">{fhError}</p>}
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-ink/35 uppercase tracking-wider">Min. 20 characters</span>
+                      <span className="font-mono text-[10px] text-ink/35 uppercase tracking-wider">{t("hero.fhMinChars")}</span>
                       <button onClick={runFhCheck} disabled={fhLoading || fhText.trim().length < 20}
                         className="bg-ink text-oat hover:bg-vermillion px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition disabled:opacity-30">
-                        {fhLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</> : <><Sparkles className="w-4 h-4" /> Check for violations</>}
+                        {fhLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("hero.fhChecking")}</> : <><Sparkles className="w-4 h-4" /> {t("hero.fhCheck")}</>}
                       </button>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.15em] text-ink/40">
-                      <span>✦ 100% free</span><span>● No account</span><span>● 5 seconds</span>
+                      <span>✦ {t("hero.fhFree")}</span><span>● {t("hero.fhNoAccount")}</span><span>● {t("hero.fh5Sec")}</span>
                     </div>
                   </div>
                 )
@@ -232,15 +234,16 @@ export default function Hero() {
           <div className="mt-5 animate-rise" style={{ animationDelay: "0.5s" }}>
             <a href="#playground" className="inline-flex items-center gap-2 bg-vermillion text-oat hover:bg-[#e02d0e] px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] transition-all hover:-translate-y-0.5">
               <Sparkles className="w-4 h-4" />
-              Try Free — No Card Required
+              {t("common.tryFree")}
             </a>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/55 animate-rise" style={{ animationDelay: "0.55s" }}>
-            <span className="text-vermillion font-semibold">✦ Unlimited playground access</span>
-            <span>● No credit card</span>
-            <span>● 10s per listing</span>
-            <span className="text-green-600">● Fair Housing scanned</span>
+            {t("hero.bullets").map((bullet, i) => (
+              <span key={i} className={i === 0 ? "text-vermillion font-semibold" : i === 3 ? "text-green-600" : ""}>
+                {i === 0 ? "✦ " : "● "}{bullet}
+              </span>
+            ))}
           </div>
 
         </div>

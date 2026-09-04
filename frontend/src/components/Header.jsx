@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import GoogleSignIn from "@/components/GoogleSignIn";
-import { Globe } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const { t, isSpanish, setLang } = useTranslation();
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -27,29 +29,24 @@ export default function Header() {
           </span>
         </a>
         <nav className="hidden md:flex items-center gap-9 font-heading text-[13px] uppercase tracking-[0.12em]">
-          <a href="#playground" data-testid="nav-playground" className="hover:text-vermillion transition">Tool</a>
-          <a href="#examples" data-testid="nav-examples" className="hover:text-vermillion transition">Examples</a>
-          <a href="/co-compliance" className="hover:text-vermillion transition">Fair Housing</a>
-          <a href="/listing-presentation.html" data-testid="nav-presentation" className="hover:text-vermillion transition">Presentation</a>
-
-          <a href="/blog" className="hover:text-vermillion transition">Blog</a>
-          <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">Pricing</a>
+          <a href="#playground" data-testid="nav-playground" className="hover:text-vermillion transition">{t("header.navTool")}</a>
+          <a href="#examples" data-testid="nav-examples" className="hover:text-vermillion transition">{t("header.navExamples")}</a>
+          <a href="/co-compliance" className="hover:text-vermillion transition">{t("header.navFairHousing")}</a>
+          <a href="/listing-presentation.html" data-testid="nav-presentation" className="hover:text-vermillion transition">{t("header.navPresentation")}</a>
+          <a href="/blog" className="hover:text-vermillion transition">{t("header.navBlog")}</a>
+          <a href="#pricing" data-testid="nav-pricing" className="hover:text-vermillion transition">{t("header.navPricing")}</a>
         </nav>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => {
-              const current = localStorage.getItem("lw_language") === "Spanish" ? "English" : "Spanish";
-              localStorage.setItem("lw_language", current);
-              window.location.reload();
-            }}
+            onClick={setLang}
             className={`font-heading text-[11px] uppercase tracking-[0.12em] px-2.5 py-1.5 rounded transition ${
-              localStorage.getItem("lw_language") === "Spanish"
+              isSpanish
                 ? "bg-vermillion text-oat"
                 : "border border-ink/20 text-ink/60 hover:border-vermillion"
             }`}
-            title="Toggle Spanish output"
+            title={t("header.toggleLang", "Toggle language")}
           >
-            🇪🇸 ES
+            {isSpanish ? t("header.enToggle") : t("header.esToggle")}
           </button>
           <GoogleSignIn />
           <a
@@ -57,7 +54,7 @@ export default function Header() {
             href="#playground"
             className="btn-vermillion px-5 py-2.5 font-heading text-[13px] uppercase tracking-[0.12em]"
           >
-            Try Free →
+            {t("header.tryFree")}
           </a>
         </div>
       </div>

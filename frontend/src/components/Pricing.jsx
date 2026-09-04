@@ -1,22 +1,23 @@
 import { Check, Crown, Zap, Flame } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+import useTranslation from "@/hooks/useTranslation";
 
 const tiers = [
   {
-    name: "Free",
+    name: "pricing.free.name",
     price: "$0",
     period: "forever",
-    blurb: "For agents trying it on their next listing.",
+    blurb: "pricing.free.desc",
     features: ["Unlimited playground access", "All 5 output formats", "6 tone modes", "Fair Housing scanning", "See results before saving"],
-    cta: "Start Free",
+    cta: "pricing.free.cta",
     action: { kind: "scroll", href: "#playground" },
     highlight: false,
   },
   {
-    name: "List + Bio",
+    name: "pricing.pro.name",
     price: "$29",
     period: "/ month",
-    blurb: "Unlimited rewrites, no credit anxiety. Listing copy + your agent brand — everything in one flat rate.",
+    blurb: "pricing.pro.desc",
     features: [
       "Unlimited listing rewrites",
       "31 social templates in your brand voice",
@@ -29,16 +30,16 @@ const tiers = [
       "Watermark-free videos",
       "Listing history (forever)",
     ],
-    cta: "Get List + Bio — $29/mo",
+    cta: "pricing.pro.cta",
     promoNote: null,
     action: { kind: "checkout", package_id: "pro_month" },
     highlight: true,
   },
   {
-    name: "Lifetime",
+    name: "pricing.lifetime.name",
     price: "$299",
     period: "once",
-    blurb: "Founding member — pay once, never pay again.",
+    blurb: "pricing.lifetime.desc",
     features: [
       "Everything in Pro",
       "Forever access (no monthly)",
@@ -48,31 +49,33 @@ const tiers = [
       "AI Video Walkthroughs",
       "Priority video generation",
     ],
-    cta: "Lock In Lifetime — $299",
+    cta: "pricing.lifetime.cta",
     action: { kind: "checkout", package_id: "lifetime" },
     highlight: false,
-    badge: "BEST VALUE",
+    badge: "pricing.lifetime.tag",
     icon: Crown,
   },
 ];
 
 const credits = [
   {
-    name: "10 Credits",
+    name: "pricing.credits.10.qty",
     price: "$5",
-    blurb: "10 AI rewrites — no expiry.",
+    blurb: "pricing.credits.10.desc",
     package_id: "credits_10",
   },
   {
-    name: "50 Credits",
+    name: "pricing.credits.50.qty",
     price: "$19",
-    blurb: "50 AI rewrites — best value pay-as-you-go.",
+    blurb: "pricing.credits.50.desc",
     package_id: "credits_50",
     save: "Save 24%",
   },
 ];
 
 export default function Pricing() {
+
+  const { t } = useTranslation();
 
   const onCta = async (action) => {
     if (action.kind === "scroll") {
@@ -88,19 +91,19 @@ export default function Pricing() {
     <section id="pricing" data-testid="pricing-section" className="border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
         <div className="flex items-baseline gap-6 mb-6">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Pricing</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("pricing.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">Start free. Scale to unlimited.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("pricing.headline")}</span>
         </div>
 
         {/* Flat rate messaging row */}
         <div className="mb-5 flex flex-wrap items-center gap-px">
           <div className="bg-coal text-oat px-4 py-2.5 flex items-center gap-2 flex-1">
             <Zap className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">One flat rate</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">{t("pricing.flatRate")}</span>
           </div>
           <div className="bg-oat border border-ink/15 px-4 py-2.5 flex flex-wrap items-center gap-4">
-            {["No credit limits","Flat rate","Unlimited rewrites"].map(label => (
+            {[t("pricing.noLimits"), t("pricing.flatRate"), t("pricing.unlimited")].map(label => (
               <span key={label} className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/70">
                 <Check className="w-3 h-3 text-vermillion" strokeWidth={2.5} />{label}
               </span>
@@ -109,56 +112,56 @@ export default function Pricing() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
-          {tiers.map((t, i) => (
+          {tiers.map((tier, i) => (
             <div
-              key={t.name}
-              data-testid={`pricing-tier-${t.name.toLowerCase()}`}
-              className={`p-6 ${t.highlight ? "bg-coal text-oat" : "bg-oat text-ink"} flex flex-col`}
+              key={tier.name}
+              data-testid={`pricing-tier-${t(tier.name).toLowerCase()}`}
+              className={`p-6 ${tier.highlight ? "bg-coal text-oat" : "bg-oat text-ink"} flex flex-col`}
             >
               <div className="flex items-center justify-between">
-                <span className={`font-mono text-[11px] tracking-[0.2em] uppercase ${t.highlight ? "text-vermillion" : "text-ink/50"}`}>
+                <span className={`font-mono text-[11px] tracking-[0.2em] uppercase ${tier.highlight ? "text-vermillion" : "text-ink/50"}`}>
                   Plan No. {String(i + 1).padStart(2, "0")}
                 </span>
-                {t.highlight && (
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">Recommended</span>
+                {tier.highlight && (
+                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-vermillion text-oat px-2 py-1">{t("pricing.pro.tag")}</span>
                 )}
-                {t.badge && !t.highlight && (
+                {tier.badge && !tier.highlight && (
                   <div className="flex flex-col items-end gap-1.5">
                     <span className="font-mono text-[10px] tracking-[0.2em] uppercase bg-ink text-oat px-2 py-1 flex items-center gap-1">
-                      {t.icon && <t.icon className="w-3 h-3" strokeWidth={2.5} />}
-                      {t.badge}
+                      {tier.icon && <tier.icon className="w-3 h-3" strokeWidth={2.5} />}
+                      {t(tier.badge)}
                     </span>
                   </div>
                 )}
               </div>
-              <h3 className="mt-4 font-display text-3xl tracking-tight">{t.name}</h3>
+              <h3 className="mt-4 font-display text-3xl tracking-tight">{t(tier.name)}</h3>
               <div className="mt-2 flex items-baseline gap-2">
-                <span className="font-display text-4xl md:text-5xl">{t.price}</span>
-                <span className={`font-mono text-xs uppercase tracking-[0.15em] ${t.highlight ? "text-oat/60" : "text-ink/50"}`}>{t.period}</span>
+                <span className="font-display text-4xl md:text-5xl">{tier.price}</span>
+                <span className={`font-mono text-xs uppercase tracking-[0.15em] ${tier.highlight ? "text-oat/60" : "text-ink/50"}`}>{tier.period}</span>
               </div>
-              <p className={`mt-3 font-body text-sm ${t.highlight ? "text-oat/80" : "text-ink/70"}`}>{t.blurb}</p>
+              <p className={`mt-3 font-body text-sm ${tier.highlight ? "text-oat/80" : "text-ink/70"}`}>{t(tier.blurb)}</p>
 
               <ul className="mt-5 space-y-2 flex-1">
-                {t.features.map((f) => (
+                {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${t.highlight ? "text-vermillion" : "text-ink"}`} strokeWidth={2} />
-                    <span className={`text-sm ${t.highlight ? "text-oat/85" : "text-ink/85"}`}>{f}</span>
+                    <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${tier.highlight ? "text-vermillion" : "text-ink"}`} strokeWidth={2} />
+                    <span className={`text-sm ${tier.highlight ? "text-oat/85" : "text-ink/85"}`}>{f}</span>
                   </li>
                 ))}
               </ul>
 
               <button
-                onClick={() => onCta(t.action)}
-                data-testid={`pricing-cta-${t.name.toLowerCase()}`}
+                onClick={() => onCta(tier.action)}
+                data-testid={`pricing-cta-${t(tier.name).toLowerCase()}`}
                 className={`mt-6 inline-flex items-center justify-center px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] transition-all hover:-translate-y-0.5 ${
-                  t.highlight ? "bg-vermillion text-oat hover:bg-[#ff2a0e]" : "btn-ghost-ink"
+                  tier.highlight ? "bg-vermillion text-oat hover:bg-[#ff2a0e]" : "btn-ghost-ink"
                 }`}
               >
-                {t.cta} →
+                {t(tier.cta)} →
               </button>
-              {t.promoNote && (
+              {tier.promoNote && (
                 <p className="mt-3 font-mono text-[11px] text-vermillion tracking-[0.12em] uppercase">
-                  ✦ {t.promoNote}
+                  ✦ {tier.promoNote}
                 </p>
               )}
             </div>
@@ -166,15 +169,15 @@ export default function Pricing() {
         </div>
 
         <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50 text-center">
-          Pro paid monthly · cancel any time · 30-day money-back · billed in USD
+          Pro paid monthly · {t("common.cancelAnytime")} · {t("common.moneyBack30")} · {t("common.billedUSD")}
         </p>
 
         {/* Pay-as-you-go credit packs */}
         <div className="mt-8 border-t border-ink/15 pt-8">
           <div className="flex items-center gap-3 mb-6">
             <Zap className="w-4 h-4 text-vermillion" strokeWidth={2} />
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Credits — pay as you go</span>
-            <span className="font-mono text-[10px] text-ink/40 uppercase tracking-wider">· Each credit = one full rewrite · never expire</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">{t("pricing.credits.label")}</span>
+            <span className="font-mono text-[10px] text-ink/40 uppercase tracking-wider">{t("pricing.credits.note")}</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15 max-w-3xl">
@@ -189,8 +192,8 @@ export default function Pricing() {
                   <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/50 group-hover:text-oat/60">
                     {c.save || "Pay-as-you-go"}
                   </div>
-                  <div className="mt-2 font-display text-4xl md:text-5xl">{c.name}</div>
-                  <div className="mt-2 text-ink/65 group-hover:text-oat/80">{c.blurb}</div>
+                  <div className="mt-2 font-display text-4xl md:text-5xl">{t(c.name)}</div>
+                  <div className="mt-2 text-ink/65 group-hover:text-oat/80">{t(c.blurb)}</div>
                 </div>
                 <div className="font-display text-5xl text-vermillion shrink-0">{c.price}</div>
               </button>
@@ -198,7 +201,7 @@ export default function Pricing() {
           </div>
 
           <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50">
-            Need 10+ seats? <a href="mailto:hello@listworks.pro?subject=Brokerage%20Plan" className="text-vermillion underline">Talk to brokerage sales →</a>
+            {t("pricing.brokerage")}
           </p>
         </div>
       </div>
