@@ -67,6 +67,66 @@ const TABS = [
   { key: "print_flyer", label: "Print Flyer", icon: "🖨️" },
 ];
 
+const HERO_TOOLS = [
+  { id: "rewrite", label: "Listing Rewrite", icon: Sparkles, free: true },
+  { id: "staging", label: "Virtual Staging", icon: Home, free: true },
+  { id: "bio", label: "Agent Bio", icon: Box, free: true },
+  { id: "photo", label: "Photo → Listing", icon: Import, free: true },
+];
+
+const TOOL_CATEGORIES = [
+  {
+    name: "Content & Copy",
+    tools: [
+      { id: "rewrite", label: "Listing Rewrite", icon: Sparkles, free: true },
+      { id: "bio", label: "Agent Bio", icon: Box, free: true },
+      { id: "agentpage", label: "Agent Page", icon: Globe, free: true },
+      { id: "brandvoice", label: "Brand Voice", icon: Fingerprint, free: true },
+      { id: "referral", label: "Refer & Earn", icon: Gift, free: true },
+    ],
+  },
+  {
+    name: "Marketing & Social",
+    tools: [
+      { id: "templates", label: "Social Templates", icon: LayoutGrid, free: false },
+      { id: "calendar", label: "Content Calendar", icon: Calendar, free: false },
+      { id: "marketupdate", label: "Market Update", icon: BarChart3, free: false },
+      { id: "scheduler", label: "Schedule Posts", icon: Clock, free: false },
+      { id: "nurture", label: "Lead Nurture", icon: MessageSquare, free: false },
+    ],
+  },
+  {
+    name: "Visual & Media",
+    tools: [
+      { id: "photo", label: "Photo → Listing", icon: Import, free: true },
+      { id: "staging", label: "Virtual Staging", icon: Home, free: true },
+      { id: "cma", label: "CMA Report", icon: MapPin, free: true },
+      { id: "voice", label: "Walk & Talk", icon: Mic, free: false },
+    ],
+  },
+  {
+    name: "Pro Tools",
+    tools: [
+      { id: "batch", label: "Bulk CSV", icon: Layers, free: false },
+      { id: "expired", label: "Expired Scripts", icon: Phone, free: false },
+      { id: "import", label: "URL Import", icon: Import, free: false },
+      { id: "seller", label: "Seller Reports", icon: BarChart3, free: false },
+      { id: "score", label: "Lead Score", icon: Target, free: false },
+      { id: "transaction", label: "Transactions", icon: Calendar, free: false },
+      { id: "openhouse", label: "Open House", icon: Home, free: false },
+      { id: "report", label: "Sale Report", icon: BarChart3, free: false },
+    ],
+  },
+  {
+    name: "Compliance & Legal",
+    tools: [
+      { id: "fairhousing", label: "Fair Housing", icon: ShieldAlert, free: false },
+      { id: "contract", label: "Contract Review", icon: ShieldCheck, free: false },
+      { id: "coact", label: "AI Disclosure", icon: MapPin, free: true },
+    ],
+  },
+];
+
 const DEMO_RESULT = {
   mls: `Welcome home to easy, single-level living where every morning starts with sunlight pouring across gleaming hardwood floors.
 
@@ -144,6 +204,7 @@ export default function Playground({ landing = false }) {
   const [trialRemaining, setTrialRemaining] = useState(null);
   const [mode, setMode] = useState("rewrite");
   const [tourOpen, setTourOpen] = useState(false);
+  const [showAllTools, setShowAllTools] = useState(false);
   const [openHouseResult, setOpenHouseResult] = useState(null);
   const [fhText, setFhText] = useState("");
   const [fhResult, setFhResult] = useState(null);
@@ -287,31 +348,17 @@ export default function Playground({ landing = false }) {
             </h2>
 
             <div className="flex flex-wrap gap-3 mt-6">
-              <button onClick={() => setMode("rewrite")} data-active={mode === "rewrite"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Sparkles className="w-4 h-4" />Listing Rewrite</button>
-              <button onClick={() => setMode("bio")} data-active={mode === "bio"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Box className="w-4 h-4" />Agent Bio</button>
-              <button onClick={() => setMode("agentpage")} data-active={mode === "agentpage"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Globe className="w-4 h-4" />Agent Page</button>
-              <button onClick={() => setMode("cma")} data-active={mode === "cma"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />CMA Report</button>
-              <button onClick={() => setMode("staging")} data-active={mode === "staging"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Virtual Staging</button>
-              <button onClick={() => setMode("photo")} data-active={mode === "photo"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />Photo → Listing</button>
-              <button onClick={() => handleProMode("batch")} data-active={mode === "batch"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Layers className="w-4 h-4" />Bulk CSV<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("expired")} data-active={mode === "expired"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Phone className="w-4 h-4" />Expired Scripts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("import")} data-active={mode === "import"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Import className="w-4 h-4" />URL Import<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("contract")} data-active={mode === "contract"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Contract Review<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("seller")} data-active={mode === "seller"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Seller Reports<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("nurture")} data-active={mode === "nurture"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MessageSquare className="w-4 h-4" />Lead Nurture<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("score")} data-active={mode === "score"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Target className="w-4 h-4" />Lead Score<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("transaction")} data-active={mode === "transaction"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Transactions<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("openhouse")} data-active={mode === "openhouse"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Home className="w-4 h-4" />Open House<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("fairhousing")} data-active={mode === "fairhousing"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Fair Housing<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => setMode("coact")} data-active={mode === "coact"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><MapPin className="w-4 h-4" />AI Disclosure</button>
-              <button onClick={() => handleProMode("voice")} data-active={mode === "voice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Mic className="w-4 h-4" />Walk & Talk<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("report")} data-active={mode === "report"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Sale Report<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => setMode("referral")} data-active={mode === "referral"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Gift className="w-4 h-4" />Refer & Earn</button>
-              <button onClick={() => setMode("brandvoice")} data-active={mode === "brandvoice"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Fingerprint className="w-4 h-4" />Brand Voice</button>
-              <button onClick={() => handleProMode("templates")} data-active={mode === "templates"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><LayoutGrid className="w-4 h-4" />Social Templates<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("calendar")} data-active={mode === "calendar"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Calendar className="w-4 h-4" />Content Calendar<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("marketupdate")} data-active={mode === "marketupdate"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><BarChart3 className="w-4 h-4" />Market Update<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
-              <button onClick={() => handleProMode("scheduler")} data-active={mode === "scheduler"} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2"><Clock className="w-4 h-4" />Schedule Posts<Lock className="w-3 h-3 opacity-50 ml-1" /></button>
+              {HERO_TOOLS.map((t) => {
+                const Icon = t.icon;
+                return (
+                  <button key={t.id} onClick={() => setMode(t.id)} data-active={mode === t.id} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2">
+                    <Icon className="w-4 h-4" />{t.label}
+                  </button>
+                );
+              })}
+              <button onClick={() => setShowAllTools((o) => !o)} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2 text-vermillion border-vermillion/30 hover:border-vermillion">
+                <span className="mr-1">{showAllTools ? "−" : "+"}</span>All Tools
+              </button>
             </div>
           </div>
         </div>
@@ -841,6 +888,41 @@ export default function Playground({ landing = false }) {
               >
                 Get Pro — $29/mo
               </button>
+            </div>
+          </div>
+        )}
+
+        {showAllTools && (
+          <div className="mt-px bg-oat border border-ink/15 p-7 md:p-9 animate-rise">
+            <div className="flex items-center justify-between mb-6">
+              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">Full Toolkit</span>
+              <button onClick={() => setShowAllTools(false)} className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-ink">
+                Close ▲
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+              {TOOL_CATEGORIES.map((cat) => (
+                <div key={cat.name}>
+                  <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-3">{cat.name}</h4>
+                  <div className="space-y-1">
+                    {cat.tools.map((t) => {
+                      const Icon = t.icon;
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={() => { setMode(t.id); setShowAllTools(false); }}
+                          data-active={mode === t.id}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 font-heading text-xs uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat"
+                        >
+                          <Icon className="w-3.5 h-3.5 shrink-0" />
+                          <span className="flex-1">{t.label}</span>
+                          {!t.free && <Lock className="w-3 h-3 text-ink/30" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
