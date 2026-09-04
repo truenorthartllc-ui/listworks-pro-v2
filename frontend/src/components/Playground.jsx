@@ -58,14 +58,14 @@ const MLS_PRESETS = [
   { chars: 4000 },
 ];
 const TABS = [
-  { key: "mls", icon: "🏡" },
-  { key: "instagram", icon: "📸" },
-  { key: "facebook", icon: "📘" },
-  { key: "headlines", icon: "✏️" },
-  { key: "email", icon: "✉️" },
-  { key: "reel_script", icon: "🎬" },
-  { key: "stories", icon: "⚡" },
-  { key: "print_flyer", icon: "🖨️" },
+  { key: "mls", label: "MLS Description", icon: "🏡" },
+  { key: "instagram", label: "Instagram", icon: "📸" },
+  { key: "facebook", label: "Facebook", icon: "📘" },
+  { key: "headlines", label: "Headlines", icon: "✏️" },
+  { key: "email", label: "Email", icon: "✉️" },
+  { key: "reel_script", label: "Reel Script", icon: "🎬" },
+  { key: "stories", label: "Stories", icon: "⚡" },
+  { key: "print_flyer", label: "Print Flyer", icon: "🖨️" },
 ];
 
 const HERO_TOOLS = [
