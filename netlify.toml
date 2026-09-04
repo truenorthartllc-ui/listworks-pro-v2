@@ -8,4 +8,13 @@
 
 [[build.hooks.post_build]]
 command = "cp frontend/public/index-seo.html frontend/build/index.html"
-# netlify build trigger Wed Jun 24 22:10:08 MDT 2026
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
