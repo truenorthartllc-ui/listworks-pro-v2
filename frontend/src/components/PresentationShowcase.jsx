@@ -45,26 +45,26 @@ export default function PresentationShowcase() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/15">
             <div className="bg-oat p-4 md:p-6">
               <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Cover</span>
-              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 flex items-center justify-center">
-                <span className="font-mono text-[10px] text-ink/30">Preview</span>
+              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
+                <img src="/presentation-pages/page_01.jpg" alt="Listing presentation cover page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
               <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">CMA Worksheet</span>
-              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 flex items-center justify-center">
-                <span className="font-mono text-[10px] text-ink/30">Preview</span>
+              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
+                <img src="/presentation-pages/page_05.jpg" alt="CMA worksheet page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
               <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Net Proceeds</span>
-              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 flex items-center justify-center">
-                <span className="font-mono text-[10px] text-ink/30">Preview</span>
+              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
+                <img src="/presentation-pages/page_13.jpg" alt="Net proceeds calculator page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
               <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Marketing Calendar</span>
-              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 flex items-center justify-center">
-                <span className="font-mono text-[10px] text-ink/30">Preview</span>
+              <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
+                <img src="/presentation-pages/page_15.jpg" alt="Marketing calendar page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
           </div>
