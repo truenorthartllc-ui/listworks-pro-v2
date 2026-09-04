@@ -1,4 +1,5 @@
 import React from 'react';
+import useTranslation from "@/hooks/useTranslation";
 
 const contracts = [
   "Listing Agreement — 14 fields, every one explained",
@@ -17,6 +18,7 @@ const fields = [
 
 export default function ContractsShowcase() {
   const [selectedContract, setSelectedContract] = React.useState(0);
+  const { t } = useTranslation();
 
   const contractExamples = [
     {
@@ -51,16 +53,16 @@ export default function ContractsShowcase() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
 
         <div className="flex items-baseline gap-6 mb-8">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Contracts</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("contracts.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">Contracts that explain themselves.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("contracts.headline")}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
           {/* Left: list */}
           <div className="bg-oat p-6 flex flex-col gap-4">
             <p className="font-body text-sm text-ink/60 leading-relaxed">
-              Every field in every contract has a plain-English explanation. No more guessing what "cooperating broker commission" means.
+              {t("contracts.desc")}
             </p>
             <ul className="space-y-0 divide-y divide-ink/8">
               {contractExamples.map((c, idx) => (
@@ -69,21 +71,21 @@ export default function ContractsShowcase() {
                   onClick={() => setSelectedContract(idx)}
                   className={`py-2.5 font-mono text-[11px] tracking-[0.08em] cursor-pointer transition-colors ${selectedContract === idx ? 'text-vermillion font-semibold' : 'text-ink/70 hover:text-ink'}`}
                 >
-                  {c.name} — {c.summary}
+                  {t("contracts.list")[idx]}
                 </li>
               ))}
             </ul>
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <a href="/dashboard" className="btn-vermillion inline-flex items-center px-5 py-3 font-heading text-xs uppercase tracking-[0.15em]">
-                Try It Free →
+                {t("contracts.tryFree")}
               </a>
-              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/40">No credit card · Free rewrites included</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/40">{t("contracts.noCard")}</span>
             </div>
           </div>
 
           {/* Right: field preview */}
           <div className="bg-white p-6">
-            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion mb-3">{contractExamples[selectedContract].name} Preview</p>
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion mb-3">{t("contracts.list")[selectedContract].split(" — ")[0]} Preview</p>
             <div className="bg-oat/50 p-4 rounded mb-4 border-l-2 border-vermillion/30">
               <p className="font-body text-sm text-ink/70 leading-relaxed italic">
                 {contractExamples[selectedContract].description}

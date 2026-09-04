@@ -1,4 +1,5 @@
 import React from 'react';
+import useTranslation from "@/hooks/useTranslation";
 
 function QRIcon({ size = 72 }) {
   return (
@@ -25,35 +26,24 @@ function QRIcon({ size = 72 }) {
   );
 }
 
-const tools = [
-  {
-    label: "Sign QR",
-    steps: ["Rewrite any listing", "Download the QR code", "Print on your \"Just Listed\" sign", "Buyer scans → sees listing on phone → you get the lead"],
-    badge: "Every sign = a lead magnet",
-  },
-  {
-    label: "Open House Check-in",
-    steps: ["Create a check-in event in your dashboard", "Print the QR code", "Tape it to the front door", "Visitors scan → drop name + email → no more paper sign-in sheets"],
-    badge: "Auto-captured contacts",
-  },
-  {
-    label: "Showing Feedback",
-    steps: ["Print the QR tent card", "Leave it on the counter after a showing", "Buyer scans → rates 1–5 + leaves comment + email", "You get actionable feedback AND a warm lead"],
-    badge: "Feedback + lead in one scan",
-  },
-];
-
 export default function QRFeatures() {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = React.useState(null);
+
+  const tools = [
+    { label: t("qr.signQr"), steps: [t("qr.signStep1"), t("qr.signStep2"), t("qr.signStep3"), t("qr.signStep4")], badge: t("qr.signSub"), detailKey: "qr.signDetail" },
+    { label: t("qr.openHouse"), steps: [t("qr.openStep1"), t("qr.openStep2"), t("qr.openStep3"), t("qr.openStep4")], badge: t("qr.openSub"), detailKey: "qr.openDetail" },
+    { label: t("qr.feedback"), steps: [t("qr.feedbackStep1"), t("qr.feedbackStep2"), t("qr.feedbackStep3"), t("qr.feedbackStep4")], badge: t("qr.feedbackSub"), detailKey: "qr.feedbackDetail" },
+  ];
 
   return (
     <section className="bg-white border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
 
         <div className="flex items-baseline gap-6 mb-8">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ QR Tools</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("qr.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">Every listing becomes a lead capture point.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("qr.headline")}</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/12 border border-ink/12">
@@ -82,24 +72,22 @@ export default function QRFeatures() {
               </ol>
               {expanded === idx && (
                 <div className="pt-3 border-t border-ink/10 space-y-2">
-                  <p className="font-body text-xs text-vermillion font-semibold">What buyers see:</p>
+                  <p className="font-body text-xs text-vermillion font-semibold">{t("qr.buyerSee")}</p>
                   <p className="font-body text-xs text-ink/60 leading-relaxed">
-                    {idx === 0 && "Full listing page with photos, description, Fair Housing compliant copy, and a contact form. Your lead gets captured the moment they scan."}
-                    {idx === 1 && "A mobile-friendly check-in form. Name + email + optional phone. Takes 10 seconds. All leads go straight to your dashboard with timestamp."}
-                    {idx === 2 && "A 5-star rating form + comment box + contact capture. Buyers leave feedback anonymously OR drop their info if interested. You get both."}
+                    {t(tool.detailKey)}
                   </p>
-                  <span className="inline-block font-mono text-[9px] uppercase tracking-[0.1em] text-ink/40 pt-1">Click to collapse ↑</span>
+                  <span className="inline-block font-mono text-[9px] uppercase tracking-[0.1em] text-ink/40 pt-1">{t("qr.collapse")}</span>
                 </div>
               )}
               {expanded !== idx && (
-                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink/30 pt-1">Click to see what buyers see →</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink/30 pt-1">{t("qr.seeWhat")}</span>
               )}
             </button>
           ))}
         </div>
 
         <p className="mt-5 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/35">
-          No app install required · Works on any phone · Every scan captured to your dashboard
+          {t("qr.footer")}
         </p>
 
       </div>

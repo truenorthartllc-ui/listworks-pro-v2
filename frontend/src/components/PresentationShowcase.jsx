@@ -1,4 +1,7 @@
+import useTranslation from "@/hooks/useTranslation";
+
 export default function PresentationShowcase() {
+  const { t } = useTranslation();
   const sections = [
     "Agent Bio", "Meet the Team", "Testimonials", "Recently Sold",
     "Market Snapshot", "CMA Worksheet", "3 Pricing Strategies", "Net Proceeds Calculator",
@@ -16,27 +19,27 @@ export default function PresentationShowcase() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-16 md:py-20">
         <div className="grid grid-cols-12 gap-6 mb-10">
           <div className="col-span-12 md:col-span-3">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Win More Listings</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">{t("presentation.sectionLabel")}</span>
           </div>
           <div className="col-span-12 md:col-span-9">
             <h2 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] text-ink mb-3">
-              <span className="font-light">55-Page</span>{' '}
-              <span className="italic">Listing Presentation</span>
+              <span className="font-light">{t("presentation.heading")}</span>{' '}
+              <span className="italic">{t("presentation.heading2")}</span>
             </h2>
             <p className="font-body text-ink/60 max-w-xl text-base md:text-lg leading-relaxed mb-6">
-              Fill-in-the-blank template. CMA worksheets, net proceeds calculator, marketing calendar, compliance pages. Works in your browser — no software needed.
+              {t("presentation.subtitle")}
             </p>
             <a
               href="https://buy.stripe.com/dRmbJ36E8f0u6nt0DZafS06"
               className="inline-flex items-center gap-2 bg-ink text-oat hover:bg-vermillion px-6 py-3.5 font-heading text-sm uppercase tracking-[0.15em] transition"
             >
-              Buy Template — $27
+              {t("presentation.buy")}
             </a>
             <a
               href="/listing-presentation.html"
               className="inline-flex items-center gap-2 ml-3 border border-ink/20 hover:border-ink/50 px-6 py-3.5 font-heading text-sm uppercase tracking-[0.15em] transition"
             >
-              Preview All Pages →
+              {t("presentation.previewAll")}
             </a>
           </div>
         </div>
@@ -44,25 +47,25 @@ export default function PresentationShowcase() {
         <div className="border border-ink/15 bg-oat">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/15">
             <div className="bg-oat p-4 md:p-6">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Cover</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">{t("presentation.cover")}</span>
               <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
                 <img src="/presentation-pages/page_01.jpg" alt="Listing presentation cover page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">CMA Worksheet</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">{t("presentation.cma")}</span>
               <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
                 <img src="/presentation-pages/page_05.jpg" alt="CMA worksheet page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Net Proceeds</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">{t("presentation.netProceeds")}</span>
               <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
                 <img src="/presentation-pages/page_13.jpg" alt="Net proceeds calculator page" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             <div className="bg-oat p-4 md:p-6">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">Marketing Calendar</span>
+              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-vermillion block mb-3">{t("presentation.mktgCalendar")}</span>
               <div className="aspect-[3/4] bg-ink/5 border border-ink/10 overflow-hidden">
                 <img src="/presentation-pages/page_15.jpg" alt="Marketing calendar page" className="w-full h-full object-cover" loading="lazy" />
               </div>
@@ -71,7 +74,7 @@ export default function PresentationShowcase() {
         </div>
 
         <div className="mt-8">
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 block mb-4">36 Fillable Sections</span>
+          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 block mb-4">{t("presentation.sections")}</span>
           <div className="flex flex-wrap gap-x-4 gap-y-1.5">
             {sections.map((s) => (
               <span key={s} className="font-body text-sm text-ink/70 before:content-['—'] before:text-ink/20 before:mr-2">{s}</span>
@@ -81,13 +84,13 @@ export default function PresentationShowcase() {
 
         <div className="mt-6 border-t border-ink/10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="font-mono text-[10px] tracking-[0.1em] uppercase text-ink/40">
-            Instant download · Editable HTML + PDF · Free updates · 30-day guarantee
+            {t("presentation.guarantee")}
           </p>
           <a
             href="/listing-presentation.html"
             className="font-mono text-[11px] tracking-[0.15em] uppercase text-vermillion hover:underline shrink-0"
           >
-            View Full Preview & Details →
+            {t("presentation.viewFull")}
           </a>
         </div>
       </div>

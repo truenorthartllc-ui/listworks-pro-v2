@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { FileText, Package, Palette, Zap } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
 const tabs = [
   {
     icon: Zap,
-    label: "Generator",
     preview: [
       { col: "Listing", val: "2841 W 6th St" },
       { col: "Mode", val: "MLS Description" },
@@ -15,7 +15,6 @@ const tabs = [
   },
   {
     icon: Package,
-    label: "Content Packs",
     preview: [
       { col: "Output", val: "Reel script" },
       { col: "Output", val: "7-day calendar" },
@@ -26,7 +25,6 @@ const tabs = [
   },
   {
     icon: FileText,
-    label: "Contracts",
     preview: [
       { col: "Document", val: "Listing Agreement" },
       { col: "Document", val: "Purchase Agreement" },
@@ -37,7 +35,6 @@ const tabs = [
   },
   {
     icon: Palette,
-    label: "Branding",
     preview: [
       { col: "Element", val: "Brand voice" },
       { col: "Element", val: "Agent bio" },
@@ -50,6 +47,7 @@ const tabs = [
 
 export default function DashboardPreview() {
   const [active, setActive] = useState(0);
+  const { t } = useTranslation();
   const tab = tabs[active];
 
   return (
@@ -57,26 +55,26 @@ export default function DashboardPreview() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
 
         <div className="flex items-baseline gap-6 mb-8">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Dashboard</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("dashboard.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">Everything behind one login.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("dashboard.headline")}</span>
         </div>
 
         <div className="border border-ink/15">
           {/* Tab bar */}
           <div className="flex border-b border-ink/15 bg-oat">
-            {tabs.map((t, i) => {
-              const Icon = t.icon;
+            {tabs.map((tab, i) => {
+              const Icon = tab.icon;
               return (
                 <button
-                  key={t.label}
+                  key={i}
                   onClick={() => setActive(i)}
                   className={`flex items-center gap-2 px-4 py-3 font-heading text-[10px] uppercase tracking-[0.15em] border-r border-ink/10 transition-colors ${
                     i === active ? "bg-white text-ink border-b-2 border-b-vermillion -mb-px" : "text-ink/50 hover:text-ink"
                   }`}
                 >
                   <Icon className="w-3 h-3" strokeWidth={2} />
-                  {t.label}
+                  {t("dashboard.tabs")[i]}
                 </button>
               );
             })}
@@ -100,14 +98,14 @@ export default function DashboardPreview() {
                 href="/dashboard"
                 className="btn-vermillion inline-flex items-center self-start px-5 py-3 font-heading text-xs uppercase tracking-[0.15em]"
               >
-                Open Dashboard →
+                {t("dashboard.open")}
               </a>
             </div>
           </div>
         </div>
 
         <p className="mt-4 font-mono text-[10px] tracking-[0.1em] uppercase text-ink/35">
-          Free account · First 3 rewrites included · No credit card
+          {t("dashboard.freeNote")}
         </p>
 
       </div>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import useTranslation from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import {
   Copy, Check, Sparkles, Loader2, Star, Flame, RefreshCcw, Bot, Film, Share2, Phone, Import, Clock, Bookmark, Layers, ShieldCheck, BarChart3, MessageSquare, Target, Calendar, ShieldAlert, Home, Mic, Link2, Box, Lock, Gift, Fingerprint, Globe, MapPin, LayoutGrid,
@@ -44,85 +45,85 @@ import AskListingChat from "@/components/AskListingChat";
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TONES = ["Luxury", "Cozy", "Modern", "Minimalist", "Family", "Investor"];
 const MLS_PRESETS = [
-  { label: "No limit / Default", chars: 0 },
-  { label: "Bright MLS — 350 words", chars: 2800 },
-  { label: "CRMLS — 400 words", chars: 3200 },
-  { label: "GAMLS — 350 words", chars: 2800 },
-  { label: "Stellar MLS — 300 words", chars: 2400 },
-  { label: "MRED — 350 words", chars: 2800 },
-  { label: "REcolorado — 350 words", chars: 2800 },
-  { label: "Metrolist — 400 words", chars: 3200 },
-  { label: "ACTRIS — 300 words", chars: 2400 },
-  { label: "Custom — 250 words", chars: 2000 },
-  { label: "Custom — 500 words", chars: 4000 },
+  { chars: 0 },
+  { chars: 2800 },
+  { chars: 3200 },
+  { chars: 2800 },
+  { chars: 2400 },
+  { chars: 2800 },
+  { chars: 2800 },
+  { chars: 3200 },
+  { chars: 2400 },
+  { chars: 2000 },
+  { chars: 4000 },
 ];
 const TABS = [
-  { key: "mls", label: "MLS Description", icon: "🏡" },
-  { key: "instagram", label: "Instagram", icon: "📸" },
-  { key: "facebook", label: "Facebook", icon: "📘" },
-  { key: "headlines", label: "Headlines", icon: "✏️" },
-  { key: "email", label: "Email", icon: "✉️" },
-  { key: "reel_script", label: "Reel Script", icon: "🎬" },
-  { key: "stories", label: "Stories", icon: "⚡" },
-  { key: "print_flyer", label: "Print Flyer", icon: "🖨️" },
+  { key: "mls", icon: "🏡" },
+  { key: "instagram", icon: "📸" },
+  { key: "facebook", icon: "📘" },
+  { key: "headlines", icon: "✏️" },
+  { key: "email", icon: "✉️" },
+  { key: "reel_script", icon: "🎬" },
+  { key: "stories", icon: "⚡" },
+  { key: "print_flyer", icon: "🖨️" },
 ];
 
 const HERO_TOOLS = [
-  { id: "rewrite", label: "Listing Rewrite", icon: Sparkles, free: true },
-  { id: "staging", label: "Virtual Staging", icon: Home, free: true },
-  { id: "bio", label: "Agent Bio", icon: Box, free: true },
-  { id: "photo", label: "Photo → Listing", icon: Import, free: true },
+  { id: "rewrite", labelKey: "rewrite", icon: Sparkles, free: true },
+  { id: "staging", labelKey: "staging", icon: Home, free: true },
+  { id: "bio", labelKey: "bio", icon: Box, free: true },
+  { id: "photo", labelKey: "photo", icon: Import, free: true },
 ];
 
 const TOOL_CATEGORIES = [
   {
     name: "Content & Copy",
     tools: [
-      { id: "rewrite", label: "Listing Rewrite", icon: Sparkles, free: true },
-      { id: "bio", label: "Agent Bio", icon: Box, free: true },
-      { id: "agentpage", label: "Agent Page", icon: Globe, free: true },
-      { id: "brandvoice", label: "Brand Voice", icon: Fingerprint, free: true },
-      { id: "referral", label: "Refer & Earn", icon: Gift, free: true },
+      { id: "rewrite", labelKey: "rewrite", icon: Sparkles, free: true },
+      { id: "bio", labelKey: "bio", icon: Box, free: true },
+      { id: "agentpage", labelKey: "agentpage", icon: Globe, free: true },
+      { id: "brandvoice", labelKey: "brandvoice", icon: Fingerprint, free: true },
+      { id: "referral", labelKey: "referral", icon: Gift, free: true },
     ],
   },
   {
     name: "Marketing & Social",
     tools: [
-      { id: "templates", label: "Social Templates", icon: LayoutGrid, free: false },
-      { id: "calendar", label: "Content Calendar", icon: Calendar, free: false },
-      { id: "marketupdate", label: "Market Update", icon: BarChart3, free: false },
-      { id: "scheduler", label: "Schedule Posts", icon: Clock, free: false },
-      { id: "nurture", label: "Lead Nurture", icon: MessageSquare, free: false },
+      { id: "templates", labelKey: "templates", icon: LayoutGrid, free: false },
+      { id: "calendar", labelKey: "calendar", icon: Calendar, free: false },
+      { id: "marketupdate", labelKey: "marketupdate", icon: BarChart3, free: false },
+      { id: "scheduler", labelKey: "scheduler", icon: Clock, free: false },
+      { id: "nurture", labelKey: "nurture", icon: MessageSquare, free: false },
     ],
   },
   {
     name: "Visual & Media",
     tools: [
-      { id: "photo", label: "Photo → Listing", icon: Import, free: true },
-      { id: "staging", label: "Virtual Staging", icon: Home, free: true },
-      { id: "cma", label: "CMA Report", icon: MapPin, free: true },
-      { id: "voice", label: "Walk & Talk", icon: Mic, free: false },
+      { id: "photo", labelKey: "photo", icon: Import, free: true },
+      { id: "staging", labelKey: "staging", icon: Home, free: true },
+      { id: "cma", labelKey: "cma", icon: MapPin, free: true },
+      { id: "voice", labelKey: "voice", icon: Mic, free: false },
     ],
   },
   {
     name: "Pro Tools",
     tools: [
-      { id: "batch", label: "Bulk CSV", icon: Layers, free: false },
-      { id: "expired", label: "Expired Scripts", icon: Phone, free: false },
-      { id: "import", label: "URL Import", icon: Import, free: false },
-      { id: "seller", label: "Seller Reports", icon: BarChart3, free: false },
-      { id: "score", label: "Lead Score", icon: Target, free: false },
-      { id: "transaction", label: "Transactions", icon: Calendar, free: false },
-      { id: "openhouse", label: "Open House", icon: Home, free: false },
-      { id: "report", label: "Sale Report", icon: BarChart3, free: false },
+      { id: "batch", labelKey: "batch", icon: Layers, free: false },
+      { id: "expired", labelKey: "expired", icon: Phone, free: false },
+      { id: "import", labelKey: "import", icon: Import, free: false },
+      { id: "seller", labelKey: "seller", icon: BarChart3, free: false },
+      { id: "score", labelKey: "score", icon: Target, free: false },
+      { id: "transaction", labelKey: "transaction", icon: Calendar, free: false },
+      { id: "openhouse", labelKey: "openhouse", icon: Home, free: false },
+      { id: "report", labelKey: "report", icon: BarChart3, free: false },
     ],
   },
   {
     name: "Compliance & Legal",
     tools: [
-      { id: "fairhousing", label: "Fair Housing", icon: ShieldAlert, free: false },
-      { id: "contract", label: "Contract Review", icon: ShieldCheck, free: false },
-      { id: "coact", label: "AI Disclosure", icon: MapPin, free: true },
+      { id: "fairhousing", labelKey: "fairhousing", icon: ShieldAlert, free: false },
+      { id: "contract", labelKey: "contract", icon: ShieldCheck, free: false },
+      { id: "coact", labelKey: "coact", icon: MapPin, free: true },
     ],
   },
 ];
@@ -211,10 +212,11 @@ export default function Playground({ landing = false }) {
   const [gemsCard, setGemsCard] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [language, setLanguage] = useState(() => localStorage.getItem("lw_language") || "English");
-  const [mlsPreset, setMlsPreset] = useState(MLS_PRESETS[0]);
+  const [mlsPresetIdx, setMlsPresetIdx] = useState(0);
   const [fhLoading, setFhLoading] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const outputRef = useRef(null);
+  const { t } = useTranslation();
 
   const handleRedfinImport = (data) => {
     setMeta({ address: data.address || "", price: data.price || "", beds: data.beds || "", baths: data.baths || "", sqft: data.sqft || "" });
@@ -265,7 +267,7 @@ export default function Playground({ landing = false }) {
         raw_listing: listingText,
         tone: forcedTone || tone,
         language: language !== "English" ? language : undefined,
-        mls_char_limit: mlsPreset.chars || undefined,
+        mls_char_limit: MLS_PRESETS[mlsPresetIdx].chars || undefined,
         ...meta,
         virtual_tour_url: virtualTourUrl || undefined,
         session_id,
@@ -298,8 +300,9 @@ export default function Playground({ landing = false }) {
   };
 
   const tryDifferentTone = () => {
-    const idx = TONES.indexOf(tone);
-    const next = TONES[(idx + 1) % TONES.length];
+    const tones = t("playground.tones");
+    const idx = tones.indexOf(tone);
+    const next = tones[(idx + 1) % tones.length];
     setTone(next);
     generate(next);
   };
@@ -338,20 +341,20 @@ export default function Playground({ landing = false }) {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-3">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ The Tool</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">{t("playground.sectionLabel")}</span>
           </div>
           <div className="col-span-12 md:col-span-9">
             <h2 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] text-ink">
-              <span className="font-light">Your boring listing in.</span><br />
-              <span className="italic">Five publish-ready assets out.</span>
+              <span className="font-light">{t("playground.heading")}</span><br />
+              <span className="italic">{t("playground.heading2")}</span>
             </h2>
 
             <div className="flex flex-wrap gap-3 mt-6">
-              {HERO_TOOLS.map((t) => {
-                const Icon = t.icon;
+              {HERO_TOOLS.map((tool) => {
+                const Icon = tool.icon;
                 return (
-                  <button key={t.id} onClick={() => setMode(t.id)} data-active={mode === t.id} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2">
-                    <Icon className="w-4 h-4" />{t.label}
+                  <button key={tool.id} onClick={() => setMode(tool.id)} data-active={mode === tool.id} className="mode-btn px-4 py-2 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2">
+                    <Icon className="w-4 h-4" />{t("playground.tools." + tool.labelKey)}
                   </button>
                 );
               })}
@@ -360,19 +363,19 @@ export default function Playground({ landing = false }) {
             <div className="mt-3 overflow-x-auto pb-2 scrollbar-thin">
               <div className="flex gap-1.5 min-w-max">
                 {TOOL_CATEGORIES.flatMap((cat) => cat.tools)
-                  .filter((t) => !HERO_TOOLS.find((h) => h.id === t.id))
-                  .map((t) => {
-                    const Icon = t.icon;
+                  .filter((tool) => !HERO_TOOLS.find((h) => h.id === tool.id))
+                  .map((tool) => {
+                    const Icon = tool.icon;
                     return (
                       <button
-                        key={t.id}
-                        onClick={() => setMode(t.id)}
-                        data-active={mode === t.id}
+                        key={tool.id}
+                        onClick={() => setMode(tool.id)}
+                        data-active={mode === tool.id}
                         className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] border border-ink/10 hover:border-ink/30 transition data-[active=true]:bg-ink data-[active=true]:text-oat"
                       >
                         <Icon className="w-3 h-3" />
-                        {t.label}
-                        {!t.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
+                        {t("playground.tools." + tool.labelKey)}
+                        {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
                       </button>
                     );
                   })}
@@ -386,16 +389,16 @@ export default function Playground({ landing = false }) {
           {/* Input column */}
           <div className="col-span-12 lg:col-span-5 bg-oat p-6 md:p-8">
             <div className="flex items-center justify-between mb-4">
-              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60">Input · Raw Listing</span>
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60">{t("playground.inputLabel")}</span>
               <button data-testid="sample-btn" onClick={handleSample} className="font-mono text-[11px] tracking-[0.15em] uppercase text-vermillion hover:underline">
-                Use sample →
+                {t("playground.useSample")}
               </button>
             </div>
             <textarea
               data-testid="raw-listing-textarea"
               value={raw}
               onChange={(e) => setRaw(e.target.value)}
-              placeholder="Paste your boring MLS draft here. The more detail, the sharper the output."
+              placeholder={t("playground.placeholder")}
               rows={8}
               className="editorial-input mb-5"
             />
@@ -412,7 +415,7 @@ export default function Playground({ landing = false }) {
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               <div className="col-span-2">
-                <input data-testid="meta-address" placeholder="Address (optional)" value={meta.address} onChange={(e) => { setMeta({ ...meta, address: e.target.value }); setGemsCard(null); }} className="editorial-input text-sm w-full" />
+                <input data-testid="meta-address" placeholder={t("playground.meta.address")} value={meta.address} onChange={(e) => { setMeta({ ...meta, address: e.target.value }); setGemsCard(null); }} className="editorial-input text-sm w-full" />
                 {meta.address?.trim().length > 5 && !gemsCard && (
                   <button
                     type="button"
@@ -434,25 +437,25 @@ export default function Playground({ landing = false }) {
                     className="mt-2 w-full flex items-center justify-center gap-2 border border-vermillion text-vermillion hover:bg-vermillion hover:text-oat px-4 py-2 font-heading text-[11px] uppercase tracking-[0.12em] transition disabled:opacity-50"
                   >
                     {gemsLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                    {gemsLoading ? "Fetching neighborhood data…" : "Show Schools · Restaurants · Neighborhood →"}
+                    {gemsLoading ? t("playground.gems.loading") : t("playground.gems.button")}
                   </button>
                 )}
                 {gemsCard && (
                   <div className="mt-2 border border-ink/15 bg-white p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">Neighborhood Insights</span>
+                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion">{t("playground.gems.heading")}</span>
                       <button onClick={() => setGemsCard(null)} className="font-mono text-[10px] text-ink/40 hover:text-ink">✕</button>
                     </div>
                     <p className="font-body text-sm text-ink/80 leading-relaxed">{gemsCard}</p>
                     <button
                       onClick={() => {
                         setRaw(prev => prev ? `${prev}\n\n${gemsCard}` : gemsCard);
-                        toast.success("Neighborhood context added to your listing.");
+                        toast.success(t("playground.gems.added"));
                         setGemsCard(null);
                       }}
                       className="mt-3 flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-vermillion hover:underline"
                     >
-                      <Sparkles className="w-3 h-3" /> Add to my listing →
+                      <Sparkles className="w-3 h-3" /> {t("playground.gems.add")}
                     </button>
                   </div>
                 )}
@@ -476,9 +479,9 @@ export default function Playground({ landing = false }) {
                           baths: data.baths || prev.baths,
                           sqft: data.sqft || prev.sqft,
                         }));
-                        toast.success("Property details auto-filled from public records.");
+                        toast.success(t("playground.lookup.success"));
                       } catch (e) {
-                        const msg = e?.response?.data?.detail || "No public data found — fill in manually.";
+                        const msg = e?.response?.data?.detail || t("playground.lookup.notFound");
                         toast.info(msg);
                       } finally {
                         setLookupLoading(false);
@@ -487,23 +490,23 @@ export default function Playground({ landing = false }) {
                     className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-vermillion hover:underline disabled:opacity-50"
                   >
                     {lookupLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                    {lookupLoading ? "Looking up…" : "Auto-fill beds · baths · sqft →"}
+                    {lookupLoading ? t("playground.lookup.loading") : t("playground.lookup.button")}
                   </button>
                 </div>
               )}
-              <input data-testid="meta-price" placeholder="Price" value={meta.price} onChange={(e) => setMeta({ ...meta, price: e.target.value })} className="editorial-input text-sm" />
-              <input data-testid="meta-beds" placeholder="Beds" value={meta.beds} onChange={(e) => setMeta({ ...meta, beds: e.target.value })} className="editorial-input text-sm" />
-              <input data-testid="meta-baths" placeholder="Baths" value={meta.baths} onChange={(e) => setMeta({ ...meta, baths: e.target.value })} className="editorial-input text-sm" />
-              <input data-testid="meta-sqft" placeholder="Sqft" value={meta.sqft} onChange={(e) => setMeta({ ...meta, sqft: e.target.value })} className="editorial-input text-sm col-span-2" />
+              <input data-testid="meta-price" placeholder={t("playground.meta.price")} value={meta.price} onChange={(e) => setMeta({ ...meta, price: e.target.value })} className="editorial-input text-sm" />
+              <input data-testid="meta-beds" placeholder={t("playground.meta.beds")} value={meta.beds} onChange={(e) => setMeta({ ...meta, beds: e.target.value })} className="editorial-input text-sm" />
+              <input data-testid="meta-baths" placeholder={t("playground.meta.baths")} value={meta.baths} onChange={(e) => setMeta({ ...meta, baths: e.target.value })} className="editorial-input text-sm" />
+              <input data-testid="meta-sqft" placeholder={t("playground.meta.sqft")} value={meta.sqft} onChange={(e) => setMeta({ ...meta, sqft: e.target.value })} className="editorial-input text-sm col-span-2" />
               <div className="col-span-2">
                 <div className="flex items-center gap-2 mb-2">
                   <Link2 className="w-3.5 h-3.5 text-vermillion" strokeWidth={2} />
-                  <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/60">360° Virtual Tour</span>
+                  <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/60">{t("playground.meta.virtualTour")}</span>
                 </div>
                 <input
                   data-testid="virtual-tour-url"
                   type="url"
-                  placeholder="https://my.matterport.com/show/?m=..."
+                  placeholder={t("playground.meta.virtualTourPlaceholder")}
                   value={virtualTourUrl}
                   onChange={(e) => setVirtualTourUrl(e.target.value)}
                   className="editorial-input text-sm w-full"
@@ -513,18 +516,18 @@ export default function Playground({ landing = false }) {
             </div>
 
             <div className="mb-5">
-              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">Tone</span>
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">{t("playground.tone")}</span>
               <div className="flex flex-wrap gap-2">
-                {TONES.map((t) => (
-                  <button key={t} data-testid={`tone-${t.toLowerCase()}-btn`} onClick={() => setTone(t)} data-active={tone === t} className="tone-pill">
-                    {t}
+                {t("playground.tones").map((toneLabel) => (
+                  <button key={toneLabel} data-testid={`tone-${toneLabel.toLowerCase()}-btn`} onClick={() => setTone(toneLabel)} data-active={tone === toneLabel} className="tone-pill">
+                    {toneLabel}
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="mb-5">
-              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">Output Language</span>
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">{t("playground.outputLang")}</span>
               <div className="flex flex-wrap gap-2">
                 {[{ code: "English", flag: "🇺🇸" }, { code: "Spanish", flag: "🇪🇸" }].map(({ code, flag }) => (
                   <button key={code} onClick={() => { setLanguage(code); if (result && code !== language) toast.info(`Language set to ${code} — hit Rewrite to apply.`); }} data-active={language === code} className="tone-pill flex items-center gap-1.5">
@@ -535,17 +538,14 @@ export default function Playground({ landing = false }) {
             </div>
 
             <div className="mb-5">
-              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">MLS Character Limit</span>
+              <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink/60 block mb-3">{t("playground.mlsLimit")}</span>
               <select
-                value={mlsPreset.label}
-                onChange={(e) => {
-                  const p = MLS_PRESETS.find(p => p.label === e.target.value);
-                  if (p) setMlsPreset(p);
-                }}
+                value={mlsPresetIdx}
+                onChange={(e) => setMlsPresetIdx(Number(e.target.value))}
                 className="w-full border border-ink/20 px-3 py-2.5 font-body text-sm outline-none focus:border-vermillion transition bg-white"
               >
-                {MLS_PRESETS.map((p) => (
-                  <option key={p.label} value={p.label}>{p.label}</option>
+                {t("playground.mlsPresets").map((label, i) => (
+                  <option key={i} value={i}>{label}</option>
                 ))}
               </select>
             </div>
@@ -556,7 +556,7 @@ export default function Playground({ landing = false }) {
               disabled={loading}
               className="btn-vermillion w-full px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</>) : landing ? (<><Sparkles className="w-4 h-4" />Start Free — Rewrite This Listing</>) : (<><Sparkles className="w-4 h-4" />Rewrite My Listing</>)}
+              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />{t("playground.rewriting")}</>) : landing ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : (<><Sparkles className="w-4 h-4" />{t("playground.rewrite")}</>)}
             </button>
             {result && !landing && (
               <button

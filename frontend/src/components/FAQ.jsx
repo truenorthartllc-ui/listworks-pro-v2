@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation"
 
 const faqs = [
   { q: "Is this just templates?", a: "No. ListWorks is a framework wrapped in a tool. You learn WHY each piece works — then the AI applies it to every listing in your voice. Templates copy. Frameworks compound." },
@@ -14,18 +15,19 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState(0);
+  const { t } = useTranslation()
   return (
     <section data-testid="faq-section" className="border-b border-ink/15 bg-oat">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
         <div className="flex items-baseline gap-6 mb-8">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ FAQ</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("faq.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">The questions we keep getting.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("faq.headline")}</span>
         </div>
         <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 md:col-span-3">
           <p className="font-body text-sm text-ink/60">
-            Don't see yours? Email <a href="mailto:hello@listworks.pro" className="underline decoration-vermillion underline-offset-4">hello@listworks.pro</a>
+            {t("faq.email")} <a href="mailto:hello@listworks.pro" className="underline decoration-vermillion underline-offset-4">hello@listworks.pro</a>
           </p>
         </div>
         <div className="col-span-12 md:col-span-9">
@@ -36,13 +38,13 @@ export default function FAQ() {
                   onClick={() => setOpen(open === i ? -1 : i)}
                   className="w-full flex items-center justify-between gap-6 py-4 text-left group"
                 >
-                  <span className="font-display text-base md:text-lg tracking-tight">{f.q}</span>
+                  <span className="font-display text-base md:text-lg tracking-tight">{t("faq.items")[i].q}</span>
                   <span className="shrink-0 w-8 h-8 border border-ink/30 flex items-center justify-center group-hover:bg-ink group-hover:text-oat group-hover:border-ink transition">
                     {open === i ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   </span>
                 </button>
                 {open === i && (
-                  <p className="pb-4 font-body text-sm text-ink/70 leading-relaxed">{f.a}</p>
+                  <p className="pb-4 font-body text-sm text-ink/70 leading-relaxed">{t("faq.items")[i].a}</p>
                 )}
               </div>
             ))}

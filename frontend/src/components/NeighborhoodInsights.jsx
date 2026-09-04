@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { Loader2, MapPin, GraduationCap, Utensils, TreePine } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -22,6 +23,7 @@ export default function NeighborhoodInsights() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timerRef = useRef(null);
   const wrapperRef = useRef(null);
+  const { t } = useTranslation();
 
   const fetchNeighborhood = useCallback(async (addr) => {
     if (!addr || addr.trim().length < 8) return;
@@ -36,11 +38,11 @@ export default function NeighborhoodInsights() {
       });
       setResult(data.paragraph);
     } catch {
-      setError("Couldn't fetch neighborhood data — check the address and try again.");
+      setError(t("proof.fetchError"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const handleInput = (value) => {
     setAddress(value);
@@ -78,12 +80,12 @@ export default function NeighborhoodInsights() {
             <div className="flex items-center gap-3 mb-6">
               <span className="h-px w-10 bg-ink" />
               <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-ink/50">
-                Neighborhood Intelligence
+                {t("proof.neighborhood")}
               </span>
             </div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-[1.05] text-ink mb-6">
-              Your listing.<br />
-              <span className="italic">Their neighborhood,</span> written in.
+              {t("proof.headline").split(".")[0]}.<br />
+              <span className="italic">{t("proof.headline").split(".")[1]?.trim() || "Their neighborhood, written in."}</span>
             </h2>
             <p className="font-body text-base md:text-lg text-ink/70 leading-relaxed max-w-lg">
               Paste any address. ListWorks pulls live school ratings, walkable dining, and transit data —
@@ -116,7 +118,7 @@ export default function NeighborhoodInsights() {
           <div className="col-span-12 lg:col-span-5">
             <div className="bg-oat border border-ink/12 p-6">
               <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-3">
-                Try it — any US address
+                {t("proof.neighborhoodSub")}
               </p>
               <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -129,7 +131,7 @@ export default function NeighborhoodInsights() {
                     onKeyDown={(e) => e.key === "Enter" && (suggestions.length > 0 ? pickSuggestion(suggestions[0]) : fetchNeighborhood(address))}
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                    placeholder="Start typing any address..."
+                    placeholder={t("proof.neighborhoodPlaceholder")}
                     className="w-full pl-9 pr-3 py-3 border border-ink/20 bg-white font-body text-sm text-ink placeholder:text-ink/30 focus:border-ink/60 outline-none"
                   />
                   {showSuggestions && suggestions.length > 0 && (
@@ -148,11 +150,11 @@ export default function NeighborhoodInsights() {
                   )}
                 </div>
                 <button
-                  onClick={fetch}
+                  onClick={() => fetchNeighborhood(address)}
                   disabled={loading || address.trim().length < 8}
                   className="btn-vermillion px-5 py-3 font-heading text-xs uppercase tracking-[0.12em] flex items-center gap-2 disabled:opacity-40"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Fetch"}
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t("proof.neighborhoodFetch")}
                 </button>
               </div>
 
@@ -163,16 +165,16 @@ export default function NeighborhoodInsights() {
               {/* Data point chips */}
               <div className="mt-5 space-y-2">
                 {[
-                  { icon: GraduationCap, value: isExample ? EXAMPLE.schools : null, label: "Schools" },
-                  { icon: Utensils, value: isExample ? EXAMPLE.dining : null, label: "Dining" },
-                  { icon: TreePine, value: isExample ? EXAMPLE.transit : null, label: "Transit" },
+                  { icon: GraduationCap, value: isExample ? EXAMPLE.schools : null, label: t("proof.neighborhoodSchools") },
+                  { icon: Utensils, value: isExample ? EXAMPLE.dining : null, label: t("proof.neighborhoodDining") },
+                  { icon: TreePine, value: isExample ? EXAMPLE.transit : null, label: t("proof.neighborhoodTransit") },
                 ].map(({ icon: Icon, value, label }) => (
                   <div key={label} className="flex items-start gap-3 bg-white border border-ink/10 px-4 py-2.5">
                     <Icon className="w-3.5 h-3.5 text-ink/40 mt-0.5 flex-shrink-0" />
                     <div>
                       <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-ink/40 block">{label}</span>
                       <span className="font-body text-sm text-ink leading-snug">
-                        {value || <span className="text-ink/25 italic">will appear here</span>}
+                        {value || <span className="text-ink/25 italic">{t("proof.neighborhoodEmpty")}</span>}
                       </span>
                     </div>
                   </div>
@@ -192,16 +194,16 @@ export default function NeighborhoodInsights() {
             <div className="h-full border border-ink/12 p-8 flex flex-col">
               <div className="flex items-center justify-between mb-5">
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50">
-                  Neighborhood paragraph — ready to paste
+                  {t("proof.neighborhoodParagraph")}
                 </span>
                 {isExample && (
                   <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink/30 border border-ink/15 px-2 py-1">
-                    Example output
+                    {t("proof.exampleOutput")}
                   </span>
                 )}
                 {result && (
                   <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-green-600 border border-green-200 px-2 py-1">
-                    Live result
+                    {t("proof.liveResult")}
                   </span>
                 )}
               </div>
@@ -209,7 +211,7 @@ export default function NeighborhoodInsights() {
               <blockquote className="flex-1 font-display italic text-xl md:text-2xl text-ink leading-relaxed border-l-2 border-vermillion pl-6">
                 {loading ? (
                   <span className="text-ink/30 not-italic font-body text-base">
-                    Pulling schools, restaurants, and transit data…
+                    {t("proof.geoloading")}
                   </span>
                 ) : (
                   displayParagraph
@@ -221,10 +223,10 @@ export default function NeighborhoodInsights() {
                   href="#playground"
                   className="btn-vermillion px-6 py-3 font-heading text-xs uppercase tracking-[0.15em]"
                 >
-                  Add this to my listing
+                  {t("proof.addToListing")}
                 </a>
                 <p className="font-body text-xs text-ink/50">
-                  Enter any address in the tool above — the neighborhood paragraph is added to your draft automatically.
+                  {t("proof.addDesc")}
                 </p>
               </div>
             </div>

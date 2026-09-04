@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { Loader2, MapPin, GraduationCap, Utensils, TreePine, TrendingUp, ArrowRight } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation"
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -16,14 +17,14 @@ const EXAMPLE = {
   paragraph: AFTER_NEIGHBORHOOD,
 };
 
-function ScoreBar({ score, color }) {
+function ScoreBar({ score, color, t }) {
   const pct = Math.round((score / 10) * 100);
   const bar = score >= 8 ? "bg-green-500" : score >= 6 ? "bg-amber-500" : "bg-red-400";
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-1">
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink/50">Listing Strength</span>
-        <span className="font-mono text-sm font-bold" style={{ color }}>{score}/10</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink/50">{t("proof.strength")}</span>
+        <span className="font-mono text-sm font-bold" style={{ color }}>{t("proof.strengthScore", { score })}</span>
       </div>
       <div className="h-2 bg-ink/10 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
@@ -33,6 +34,7 @@ function ScoreBar({ score, color }) {
 }
 
 export default function ProofSection() {
+  const { t } = useTranslation()
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [liveData, setLiveData] = useState(null);
@@ -91,9 +93,9 @@ export default function ProofSection() {
 
         {/* Header */}
         <div className="flex items-baseline gap-6 mb-8">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Receipts</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("proof.sectionLabel")}</span>
           <div className="flex-1 h-px bg-ink/10" />
-          <span className="font-display italic text-lg text-ink shrink-0">The same listing. Their neighborhood, written in.</span>
+          <span className="font-display italic text-lg text-ink shrink-0">{t("proof.headline")}</span>
         </div>
 
         {/* Before / After */}
@@ -101,28 +103,28 @@ export default function ProofSection() {
           {/* Before */}
           <div className="bg-ink/5 p-8 md:p-10 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 font-semibold">Before</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 font-semibold">{t("proof.before")}</span>
               <span className="flex-1" />
-              <span className="font-mono text-[9px] text-ink/25 uppercase tracking-widest">Generic draft</span>
+              <span className="font-mono text-[9px] text-ink/25 uppercase tracking-widest">{t("proof.beforeSub")}</span>
             </div>
             <p className="font-mono text-sm text-ink/50 leading-relaxed italic flex-1">
               "{BEFORE}"
             </p>
-            <ScoreBar score={3.5} color="#a0a0a0" />
+            <ScoreBar score={3.5} color="#a0a0a0" t={t} />
           </div>
 
           {/* After */}
           <div className="bg-white p-8 md:p-10 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">After / ListWorks</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">{t("proof.after")}</span>
             </div>
             <p className="font-display text-base leading-relaxed text-ink mb-5 whitespace-pre-line">{AFTER_COPY}</p>
 
             {/* Neighborhood paragraph callout */}
             <div className="border-l-2 border-vermillion bg-vermillion/5 pl-4 pr-3 py-3 mb-4">
               <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-vermillion block mb-2">
-                + Neighborhood Intelligence — auto-added
+                {t("proof.afterSub")}
               </span>
               <p className="font-body text-sm text-ink/80 leading-relaxed italic">{AFTER_NEIGHBORHOOD}</p>
             </div>
@@ -133,29 +135,29 @@ export default function ProofSection() {
               ))}
             </div>
 
-            <ScoreBar score={9.2} color="#e84118" />
+            <ScoreBar score={9.2} color="#e84118" t={t} />
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <a href="#playground"
                 className="inline-flex items-center gap-2 bg-vermillion text-oat hover:bg-[#ff2a0e] px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] transition">
-                Rewrite Yours <ArrowRight className="w-3.5 h-3.5" />
+                {t("proof.rewrite")} <ArrowRight className="w-3.5 h-3.5" />
               </a>
               <span className="flex items-center gap-1.5 font-mono text-[10px] text-green-600 uppercase tracking-wider">
-                <TrendingUp className="w-3.5 h-3.5" /> +56% stronger
+                <TrendingUp className="w-3.5 h-3.5" /> {t("proof.stronger", { percent: 56 })}
               </span>
             </div>
           </div>
         </div>
 
         <p className="mt-4 text-center font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50 mb-8">
-          3 free rewrites · No credit card · See the difference in 10 seconds
+          {t("proof.freeCTA")}
         </p>
 
         {/* ── Full Listing Examples ── */}
         <div className="border-t border-ink/15 pt-12 mb-6">
           <div className="flex items-baseline gap-6 mb-10">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Full Examples</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("proof.examplesLabel")}</span>
             <div className="flex-1 h-px bg-ink/10" />
-            <span className="font-display italic text-lg text-ink shrink-0">Try these in the playground.</span>
+            <span className="font-display italic text-lg text-ink shrink-0">{t("proof.examplesTitle")}</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
@@ -164,7 +166,7 @@ export default function ProofSection() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">Urban Tech · Austin, TX</span>
                 <span className="flex-1" />
-                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">+64% stronger</span>
+                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">{t("proof.stronger", { percent: 64 })}</span>
               </div>
               <p className="text-[11px] font-mono text-ink/40 uppercase tracking-wider mb-3">3 bed · 2 bath · 1,842 sqft · $724K</p>
               <div className="flex flex-wrap gap-1.5 mb-4">
@@ -183,7 +185,7 @@ export default function ProofSection() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">Family Home · Denver, CO</span>
                 <span className="flex-1" />
-                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">+71% stronger</span>
+                <span className="font-mono text-[9px] text-green-600 uppercase tracking-widest border border-green-200 px-1.5 py-0.5">{t("proof.stronger", { percent: 71 })}</span>
               </div>
               <p className="text-[11px] font-mono text-ink/40 uppercase tracking-wider mb-3">4 bed · 3 bath · 2,612 sqft · $639K</p>
               <div className="flex flex-wrap gap-1.5 mb-4">
@@ -203,7 +205,7 @@ export default function ProofSection() {
               Each example generated with one input. Full MLS copy + IG captions + reel script + compliance scan.
             </span>
             <a href="#playground" className="font-heading text-xs uppercase tracking-[0.15em] text-vermillion hover:underline whitespace-nowrap">
-              Try your address →
+              {t("proof.examplesCTA")}
             </a>
           </div>
         </div>

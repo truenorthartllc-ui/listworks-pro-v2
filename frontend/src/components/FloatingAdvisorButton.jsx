@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Bot, X } from "lucide-react";
 import AdvisorPanel from "@/components/AdvisorPanel";
+import useTranslation from "@/hooks/useTranslation";
 
 export default function FloatingAdvisorButton() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -18,7 +20,7 @@ export default function FloatingAdvisorButton() {
             <Bot className="w-5 h-5 text-vermillion" />
             <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-oat rounded-full animate-pulse" />
           </span>
-          <span className="hidden sm:inline text-sm">AI Advisor</span>
+          <span className="hidden sm:inline text-sm">{t("common.aiAdvisor", "AI Advisor")}</span>
           
         </button>
       )}

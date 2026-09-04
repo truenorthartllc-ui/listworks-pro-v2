@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { X, Sparkles } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
 const NOTIFICATIONS = [
-  { name: "Jessica M.", city: "Los Angeles", action: "generated a listing", ago: "2m ago" },
-  { name: "Marcus C.", city: "Denver", action: "generated a listing", ago: "5m ago" },
-  { name: "Priya N.", city: "Chicago", action: "generated a listing", ago: "8m ago" },
-  { name: "Derek O.", city: "Atlanta", action: "generated a listing", ago: "11m ago" },
-  { name: "Sarah K.", city: "Seattle", action: "generated a listing", ago: "14m ago" },
-  { name: "James T.", city: "Austin", action: "generated a listing", ago: "18m ago" },
-  { name: "Alicia R.", city: "Miami", action: "generated a listing", ago: "22m ago" },
-  { name: "Chris W.", city: "Boston", action: "generated a listing", ago: "27m ago" },
-  { name: "Nina P.", city: "Phoenix", action: "generated a listing", ago: "31m ago" },
-  { name: "Tom B.", city: "Portland", action: "generated a listing", ago: "35m ago" },
-  { name: "Rachel S.", city: "Nashville", action: "generated a listing", ago: "41m ago" },
-  { name: "Luis M.", city: "San Diego", action: "generated a listing", ago: "47m ago" },
-];
+    { name: "Jessica M.", city: "Los Angeles", actionKey: "viralNotifications.action", ago: "2m ago" },
+    { name: "Marcus C.", city: "Denver", actionKey: "viralNotifications.action", ago: "5m ago" },
+    { name: "Priya N.", city: "Chicago", actionKey: "viralNotifications.action", ago: "8m ago" },
+    { name: "Derek O.", city: "Atlanta", actionKey: "viralNotifications.action", ago: "11m ago" },
+    { name: "Sarah K.", city: "Seattle", actionKey: "viralNotifications.action", ago: "14m ago" },
+    { name: "James T.", city: "Austin", actionKey: "viralNotifications.action", ago: "18m ago" },
+    { name: "Alicia R.", city: "Miami", actionKey: "viralNotifications.action", ago: "22m ago" },
+    { name: "Chris W.", city: "Boston", actionKey: "viralNotifications.action", ago: "27m ago" },
+    { name: "Nina P.", city: "Phoenix", actionKey: "viralNotifications.action", ago: "31m ago" },
+    { name: "Tom B.", city: "Portland", actionKey: "viralNotifications.action", ago: "35m ago" },
+    { name: "Rachel S.", city: "Nashville", actionKey: "viralNotifications.action", ago: "41m ago" },
+    { name: "Luis M.", city: "San Diego", actionKey: "viralNotifications.action", ago: "47m ago" },
+  ];
 
 const CITIES_LAST_SEEN_KEY = "lw_notif_idx";
 const NOTIF_INTERVAL = 8000;
@@ -28,6 +29,7 @@ function getNextIndex() {
 }
 
 export default function ViralNotifications() {
+  const { t } = useTranslation();
   const [notif, setNotif] = useState(null);
   const [dismissed, setDismissed] = useState(false);
 
@@ -60,7 +62,7 @@ export default function ViralNotifications() {
       <button
         onClick={() => setDismissed(true)}
         className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-ink/40 hover:text-ink transition"
-        aria-label="Dismiss"
+        aria-label={t("viralNotifications.dismiss")}
       >
         <X className="w-3 h-3" />
       </button>
@@ -70,9 +72,10 @@ export default function ViralNotifications() {
         </div>
         <div>
           <p className="font-body text-[12px] leading-snug text-ink pr-4">
-            <span className="font-medium">{notif.name}</span> from{" "}
+            <span className="font-medium">{notif.name}</span>{" "}
+            {t("viralNotifications.from", "from")}{" "}
             <span className="font-medium">{notif.city}</span>{" "}
-            {notif.action}
+            {t(notif.actionKey)}
           </p>
           <p className="font-mono text-[10px] text-ink/40 mt-1 tracking-wider uppercase">{notif.ago}</p>
         </div>

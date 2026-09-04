@@ -1,32 +1,22 @@
 import { Wand2, ScanLine, Mic, Zap, Layers, ShieldCheck, Box, LayoutGrid, CalendarDays, BarChart3, Clock, Link } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
-const features = [
-  { icon: Wand2, title: "Five-format rewrite", body: "MLS, Instagram, Facebook, headlines, email — all in one pass. Your boring draft becomes five publish-ready assets." },
-  { icon: ScanLine, title: "Photo recognition", body: "Upload listing photos. We surface marble, hardwood, vaulted ceilings — and translate them into feelings." },
-  { icon: Mic, title: "Five tone modes", body: "Luxury. Cozy. Modern. Family. Investor. The same property, dialed for the buyer who's actually shopping." },
-  { icon: LayoutGrid, title: "31 social templates", body: "Just Listed, Just Sold, Open House, Market Update, Testimonial, Tips — all generated in your brand voice, ready to post." },
-  { icon: Link, title: "Paste any listing URL", body: "Drop a Zillow, Redfin, or Realtor.com link. We scrape it, extract the details, and pre-fill your rewrite in seconds." },
-  { icon: CalendarDays, title: "30-day content calendar", body: "One click. A full month of social posts — platform, hook, caption — built around your active listings and brand voice." },
-  { icon: BarChart3, title: "Live market updates", body: "Enter any ZIP or city. Get three ready-to-post market update captions — Instagram, Facebook, and email — backed by live data." },
-  { icon: Clock, title: "Post scheduler", body: "Schedule any caption for later. We email you a reminder with the content ready to copy at exactly the right time." },
-  { icon: ShieldCheck, title: "Fair Housing + CO Act compliance", body: "Scans every listing for HUD-cited violations, auto-generates your Colorado AI Act disclosure, and exports a compliance PDF for your E&O file." },
-  { icon: Zap, title: "10-second turnaround", body: "Average generation: ten seconds. Beats your average MLS upload form by a country mile." },
-  { icon: Layers, title: "Saved listing history", body: "Every rewrite saved to your session. Revisit, refine, regenerate without re-typing a single word." },
-  { icon: Box, title: "360° Virtual Tour embeds", body: "Plug in any Matterport, Kuula, or CloudPano link. Buyers explore the home in immersive 3D right from your listing." },
-];
+const icons = [Wand2, ScanLine, Mic, LayoutGrid, Link, CalendarDays, BarChart3, Clock, ShieldCheck, Zap, Layers, Box];
 
 export default function Features() {
+  const { t } = useTranslation();
+  const features = t("features.items").map((item, i) => ({ icon: icons[i], title: item.title, body: item.body }));
   return (
     <section data-testid="features-section" className="border-b border-ink/15">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-3">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Specifications</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">{t("features.sectionLabel")}</span>
           </div>
           <div className="col-span-12 md:col-span-9">
             <h2 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05]">
-              <span className="font-light">Built like a tool.</span><br />
-              <span className="italic">Reads like a human.</span>
+              <span className="font-light">{t("features.headline")}</span><br />
+              <span className="italic">{t("features.headline2")}</span>
             </h2>
           </div>
         </div>

@@ -19,7 +19,10 @@ import Footer from "@/components/Footer";
 import FloatingAdvisorButton from "@/components/FloatingAdvisorButton";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 
+import useTranslation from "@/hooks/useTranslation";
+
 export default function LandingPageV4() {
+  const { t } = useTranslation();
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, []);
   return (
     <div className="min-h-screen bg-oat text-ink font-body lp-compact">
@@ -30,13 +33,13 @@ export default function LandingPageV4() {
       <div className="bg-vermillion text-white">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
           <span className="font-heading text-sm uppercase tracking-[0.15em]">
-            Colorado Agents — AI Disclosure Check
+            {t("fairHousing.banner")}
           </span>
           <a
             href="/co-compliance"
             className="font-mono text-xs uppercase tracking-[0.1em] underline hover:no-underline"
           >
-            Create Your Free Record →
+            {t("fairHousing.bannerCTA")}
           </a>
         </div>
       </div>

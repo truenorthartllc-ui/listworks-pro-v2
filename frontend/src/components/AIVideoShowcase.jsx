@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, Play, Pause, Sparkles } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
-/**
- * AIVideoShowcase — the hypnotic homepage demo.
- *
- * 10 aerial photos + female voiceover → one cinematic listing reel
- * generated in seconds. Pure voice + visuals, no music fight.
- */
 export default function AIVideoShowcase() {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(true);
@@ -87,9 +83,9 @@ export default function AIVideoShowcase() {
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-16">
         {/* Section eyebrow */}
         <div className="flex items-baseline gap-6 mb-6">
-          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">/ Video Engine</span>
+          <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion shrink-0">{t("video.sectionLabel")}</span>
           <div className="flex-1 h-px bg-oat/10" />
-          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-oat/30 shrink-0">Live demo</span>
+          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-oat/30 shrink-0">{t("video.demo")}</span>
         </div>
 
         <div className="grid grid-cols-12 gap-8 md:gap-12 items-end">
@@ -99,22 +95,19 @@ export default function AIVideoShowcase() {
               data-testid="showcase-headline"
               className="font-display tracking-tighter leading-[0.95] text-4xl md:text-5xl"
             >
-              <span className="font-light">Ten photos in.</span>
+              <span className="font-light">{t("video.headline1")}</span>
               <br />
-              <span className="italic font-medium">One cinematic reel</span>
-              <span className="text-vermillion"> out.</span>
+              <span className="italic font-medium">{t("video.headline2")}</span>
+              <span className="text-vermillion"> {t("video.headline3")}</span>
             </h2>
             <p className="mt-4 font-body text-sm text-oat/75 leading-relaxed max-w-md">
-              No editing software. No after-hours. Just upload your listing
-              photos — the AI writes the script, scores the music, and renders
-              a 30-second tour ready for Instagram, Facebook, and your email
-              blast.
+              {t("video.desc")}
             </p>
 
             {/* Source photo strip — visual proof */}
             <div className="mt-6">
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-oat/50 mb-3">
-                INPUT — 10 RAW PHOTOS
+                {t("video.inputLabel")}
               </div>
               <div className="grid grid-cols-5 gap-1.5">
                 {sourcePhotos.map((src, i) => (
@@ -133,7 +126,7 @@ export default function AIVideoShowcase() {
               </div>
               <div className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-vermillion">
                 <Sparkles className="w-3 h-3" strokeWidth={2} />
-                <span>RENDERED IN 8 SECONDS</span>
+                <span>{t("video.renderedIn")}</span>
               </div>
             </div>
           </div>
@@ -162,7 +155,7 @@ export default function AIVideoShowcase() {
               <div className="absolute top-4 left-4 flex items-center gap-2 bg-ink/70 backdrop-blur-md px-3 py-1.5 border border-oat/15">
                 <span className="w-1.5 h-1.5 rounded-full bg-vermillion animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-oat">
-                  AI-Generated · 30-Sec Demo
+                  {t("video.overlay")}
                 </span>
               </div>
 
@@ -187,7 +180,7 @@ export default function AIVideoShowcase() {
                     </span>
                     <Volume2 className="w-4 h-4" strokeWidth={2} />
                     <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-                      Tap · turn music on
+                      {t("video.tapMusic")}
                     </span>
                   </span>
                 </button>
@@ -222,7 +215,7 @@ export default function AIVideoShowcase() {
                   )}
                 </button>
                 <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-oat/70">
-                  {muted ? "Tap for music" : "Sound on"}
+                  {muted ? t("video.tapForMusic") : t("video.soundOn")}
                 </span>
               </div>
             </div>
@@ -234,14 +227,14 @@ export default function AIVideoShowcase() {
                 data-testid="showcase-cta-primary"
                 className="btn-vermillion px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] hover:-translate-y-0.5 transition-transform"
               >
-                Make My Listing Reel
+                {t("video.makeReel")}
               </a>
               <a
                 href="#pricing"
                 data-testid="showcase-cta-secondary"
                 className="font-heading text-sm uppercase tracking-[0.18em] text-oat/70 hover:text-vermillion transition-colors underline-offset-4 hover:underline"
               >
-                See plans →
+                {t("video.seePlans")}
               </a>
             </div>
           </div>
@@ -249,18 +242,13 @@ export default function AIVideoShowcase() {
 
         {/* Bottom proof bar */}
         <div className="mt-8 pt-6 border-t border-oat/15 grid grid-cols-2 md:grid-cols-4 gap-px bg-oat/15">
-          {[
-            { v: "10", l: "Photos In" },
-            { v: "30s", l: "Final Length" },
-            { v: "1080p", l: "MP4 Quality" },
-            { v: "9:16", l: "Reels Format (Pro)" },
-          ].map((stat, i) => (
+          {t("video.stats").map((stat, i) => (
             <div key={i} className="bg-ink p-4">
               <div className="font-display text-3xl leading-none text-oat">
-                {stat.v}
+                {stat.value}
               </div>
               <div className="mt-1 font-heading text-[10px] uppercase tracking-[0.18em] text-oat/55">
-                {stat.l}
+                {stat.label}
               </div>
             </div>
           ))}

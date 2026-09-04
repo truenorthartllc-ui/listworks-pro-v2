@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { ArrowRight, Sparkles, TrendingUp, BarChart3 } from "lucide-react";
+import useTranslation from "@/hooks/useTranslation";
 
-function ScoreGauge({ score, label, color }) {
+function ScoreGauge({ score, color, t }) {
   const pct = Math.round((score / 10) * 100);
   const barColor = score >= 8 ? "bg-green-500" : score >= 6 ? "bg-amber-500" : "bg-red-400";
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-1">
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink/50">{label}</span>
-        <span className="font-mono text-sm font-bold" style={{ color }}>{score}/10</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink/50">{t("proof.strength")}</span>
+        <span className="font-mono text-sm font-bold" style={{ color }}>{t("proof.strengthScore").replace("{score}", score)}</span>
       </div>
       <div className="h-2 bg-ink/10 rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${pct}%` }} />
@@ -46,14 +47,16 @@ const EXAMPLES = [
 
 export default function BeforeAfter() {
   const [active, setActive] = useState(0);
+  const { t } = useTranslation();
   const ex = EXAMPLES[active];
+  const delta = Math.round((ex.after_score - ex.before_score) * 10);
 
   return (
     <section id="examples" data-testid="examples-section" className="border-b border-ink/15 bg-oat">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-28">
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-3">
-            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">/ Receipts</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">{t("proof.sectionLabel")}</span>
           </div>
           <div className="col-span-12 md:col-span-9">
             <h2 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05]">
@@ -82,43 +85,43 @@ export default function BeforeAfter() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
           <div className="bg-ink/5 p-8 md:p-10 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 font-semibold">Before</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40 font-semibold">{t("proof.before")}</span>
               <span className="flex-1" />
               <span className="font-mono text-[9px] text-ink/30 uppercase tracking-widest">{ex.tag}</span>
             </div>
             <p className="font-mono text-sm text-ink/50 leading-relaxed italic flex-1">
               "{ex.before}"
             </p>
-            <ScoreGauge score={ex.before_score} label="Listing Strength" color="#a0a0a0" />
+            <ScoreGauge score={ex.before_score} color="#a0a0a0" t={t} />
           </div>
 
           <div className="bg-oat p-8 md:p-10 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">After / ListWorks</span>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-vermillion font-semibold">{t("proof.after")}</span>
               <span className="flex-1" />
               <Sparkles className="w-3.5 h-3.5 text-vermillion" strokeWidth={2} />
             </div>
             <p className="font-display text-base md:text-lg leading-relaxed text-ink whitespace-pre-line flex-1">
               {ex.after}
             </p>
-            <ScoreGauge score={ex.after_score} label="Listing Strength" color="#e84118" />
+            <ScoreGauge score={ex.after_score} color="#e84118" t={t} />
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <a href="#playground"
                 className="inline-flex items-center gap-2 bg-vermillion text-oat hover:bg-[#ff2a0e] px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] transition-all"
               >
-                Rewrite Yours <ArrowRight className="w-3.5 h-3.5" />
+                {t("proof.rewrite")} <ArrowRight className="w-3.5 h-3.5" />
               </a>
               <span className="flex items-center gap-1.5 font-mono text-[10px] text-green-600 uppercase tracking-wider">
                 <TrendingUp className="w-3.5 h-3.5" />
-                +{Math.round((ex.after_score - ex.before_score) * 10)}% stronger
+                {t("proof.stronger").replace("{percent}", delta)}
               </span>
             </div>
           </div>
         </div>
 
         <p className="mt-6 text-center font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50">
-          3 free rewrites · No credit card · See the difference in 10 seconds
+          {t("proof.freeCTA")}
         </p>
       </div>
     </section>
