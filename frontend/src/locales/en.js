@@ -59,6 +59,7 @@ export default {
   },
   playground: {
     sectionLabel: "/ The Tool",
+    toolsLabel: "Browse All Tools",
     heading: "Your boring listing in.",
     heading2: "Five publish-ready assets out.",
     inputLabel: "Input · Raw Listing",

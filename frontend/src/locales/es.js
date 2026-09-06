@@ -65,6 +65,7 @@ export default {
   },
   "playground": {
     "sectionLabel": "/ La Herramienta",
+    "toolsLabel": "Explorar Todas Las Herramientas",
     "heading": "Tu listado aburrido en.",
     "heading2": "Cinco activos listos para publicar.",
     "inputLabel": "Entrada · Listado Crudo",

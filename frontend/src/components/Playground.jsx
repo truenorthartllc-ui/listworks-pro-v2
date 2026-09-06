@@ -361,64 +361,48 @@ export default function Playground({ landing = false }) {
               })}
             </div>
 
-            <div className="mt-3 overflow-x-auto pb-2 scrollbar-thin">
-              <div className="flex gap-1.5 min-w-max">
-                {TOOL_CATEGORIES.flatMap((cat) => cat.tools)
-                  .filter((tool) => !HERO_TOOLS.find((h) => h.id === tool.id))
-                  .map((tool) => {
-                    const Icon = tool.icon;
-                    return (
-                      <button
-                        key={tool.id}
-                        onClick={() => setMode(tool.id)}
-                        data-active={mode === tool.id}
-                        className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] border border-ink/10 hover:border-ink/30 transition data-[active=true]:bg-ink data-[active=true]:text-oat"
-                      >
-                        <Icon className="w-3 h-3" />
-                        {t("playground.tools." + tool.labelKey)}
-                        {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
-                      </button>
-                    );
-                  })}
-              </div>
+            <div className="relative mt-4">
+              <button
+                onClick={() => setShowAllTools((o) => !o)}
+                className="w-full md:w-auto px-4 py-2.5 font-heading text-xs uppercase tracking-[0.12em] border border-ink/20 hover:border-ink/50 inline-flex items-center gap-2.5 transition"
+              >
+                <span>{t("playground.toolsLabel") || "Browse All Tools"}</span>
+                <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink/40 bg-ink/5 px-1.5 py-0.5">
+                  {TOOL_CATEGORIES.flatMap((c) => c.tools).length} tools
+                </span>
+                {showAllTools ? <span>▲</span> : <span>▾</span>}
+              </button>
+
+              {showAllTools && (
+                <div className="mt-2 z-20 w-full md:w-[620px] max-h-[70vh] overflow-auto bg-white border border-ink/20 shadow-2xl shadow-ink/10 p-5 animate-rise">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+                    {TOOL_CATEGORIES.map((cat) => (
+                      <div key={cat.name}>
+                        <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-2">{cat.name}</h4>
+                        <div className="space-y-0.5">
+                          {cat.tools.map((tool) => {
+                            const Icon = tool.icon;
+                            return (
+                              <button
+                                key={tool.id}
+                                onClick={() => { setMode(tool.id); setShowAllTools(false); }}
+                                data-active={mode === tool.id}
+                                className="w-full flex items-center gap-2 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat rounded"
+                              >
+                                <Icon className="w-3 h-3 shrink-0" />
+                                <span className="flex-1">{t("playground.tools." + tool.labelKey)}</span>
+                                {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-            <button
-              onClick={() => setShowAllTools((o) => !o)}
-              className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/40 hover:text-ink transition flex items-center gap-1.5"
-            >
-              {showAllTools ? "Close ▲" : `${TOOL_CATEGORIES.flatMap((c) => c.tools).length} tools · See All ▾`}
-            </button>
-
-            {showAllTools && (
-              <div className="mt-3 bg-oat border border-ink/15 p-5 rounded animate-rise">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-                  {TOOL_CATEGORIES.map((cat) => (
-                    <div key={cat.name}>
-                      <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50 mb-2">{cat.name}</h4>
-                      <div className="space-y-0.5">
-                        {cat.tools.map((tool) => {
-                          const Icon = tool.icon;
-                          return (
-                            <button
-                              key={tool.id}
-                              onClick={() => { setMode(tool.id); setShowAllTools(false); }}
-                              data-active={mode === tool.id}
-                              className="w-full flex items-center gap-2 px-2.5 py-1.5 font-heading text-[10px] uppercase tracking-[0.1em] text-left hover:bg-ink/5 transition data-[active=true]:bg-ink data-[active=true]:text-oat rounded"
-                            >
-                              <Icon className="w-3 h-3 shrink-0" />
-                              <span className="flex-1">{t("playground.tools." + tool.labelKey)}</span>
-                              {!tool.free && <Lock className="w-2.5 h-2.5 text-ink/30" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
         </div>
 
         {mode === "rewrite" && (
@@ -962,27 +946,7 @@ export default function Playground({ landing = false }) {
         </div>
         )}
 
-        {/* Pro upsell banner under playground */}
-        {result && (
-          <div data-testid="pro-upsell-banner" className="mt-px bg-coal text-oat p-7 md:p-9 border border-ink/15 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-2">
-              <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">ListWorks PRO</span>
-              <p className="mt-2 font-display italic text-2xl md:text-3xl leading-tight">
-                Unlimited rewrites · cinematic videos without watermarks · the AI Advisor in your pocket.
-              </p>
-            </div>
-            <div className="flex md:justify-end">
-              <button
-                data-testid="pro-upgrade-btn"
-                onClick={async () => { await import("@/lib/checkout").then(m => m.startCheckout("pro_month")); }}
-                className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition hover:-translate-y-1 inline-flex items-center gap-2"
-              >
-                Get Pro — $29/mo
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
 
       {mode === "expired" && (isPro ? (
         <div className="bg-white border border-ink/15 p-8 mt-px">
@@ -1137,6 +1101,25 @@ export default function Playground({ landing = false }) {
           listing={result}
           onClose={() => setShowVideo(false)}
         />
+      )}
+      {showVideo && result && (
+        <div data-testid="pro-upsell-banner" className="mt-px bg-coal text-oat p-7 md:p-9 border border-ink/15 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          <div className="md:col-span-2">
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-vermillion">ListWorks PRO</span>
+            <p className="mt-2 font-display italic text-2xl md:text-3xl leading-tight">
+              Unlimited rewrites · cinematic videos without watermarks · the AI Advisor in your pocket.
+            </p>
+          </div>
+          <div className="flex md:justify-end">
+            <button
+              data-testid="pro-upgrade-btn"
+              onClick={async () => { await import("@/lib/checkout").then(m => m.startCheckout("pro_month")); }}
+              className="bg-vermillion text-oat hover:bg-[#ff2a0e] px-6 py-4 font-heading text-sm uppercase tracking-[0.15em] transition hover:-translate-y-1 inline-flex items-center gap-2"
+            >
+              Get Pro — $29/mo
+            </button>
+          </div>
+        </div>
       )}
       {showAdvisor && (
         <AdvisorPanel
