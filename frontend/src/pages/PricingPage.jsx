@@ -21,7 +21,7 @@ export default function PricingPage() {
               <span className="italic font-medium">Scale when ready.</span>
             </h1>
             <p className="mt-4 font-body text-lg text-ink/70 leading-relaxed">
-              Try 3 listings free. No credit card. No gotchas. Upgrade to unlimited when you're ready — $29/mo flat rate.
+              Try 3 listings free. No credit card. No gotchas. Upgrade to unlimited when you're ready — from $19/mo.
             </p>
           </div>
 

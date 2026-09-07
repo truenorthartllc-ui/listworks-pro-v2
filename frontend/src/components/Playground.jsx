@@ -589,7 +589,7 @@ export default function Playground({ landing = false }) {
               </button>
             )}
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
-              3 free rewrites, then $29/mo · cancel anytime
+              3 free rewrites, then from $19/mo · cancel anytime
             </p>
           </div>
 

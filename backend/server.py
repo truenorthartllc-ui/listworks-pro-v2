@@ -152,8 +152,10 @@ async def call_nvidia(system: str, user_text: str, model: str = None) -> str:
 # Server-side fixed pricing — NEVER accept amounts from frontend
 PACKAGES = {
     "guide_pdf":   {"amount":  20.00, "currency": "usd", "name": "ListWorks Guide PDF",          "kind": "guide"},
-    "pro_month":   {"amount":  29.00, "currency": "usd", "name": "ListGenius Pro — 1 Month",     "kind": "pro"},
-    "pro_annual":  {"amount": 290.00, "currency": "usd", "name": "ListGenius Pro — Annual",      "kind": "pro"},
+    "agent_month": {"amount":  19.00, "currency": "usd", "name": "ListWorks Agent — Monthly",    "kind": "pro"},
+    "agent_annual":{"amount": 190.00, "currency": "usd", "name": "ListWorks Agent — Annual",     "kind": "pro"},
+    "pro_month":   {"amount":  39.00, "currency": "usd", "name": "ListWorks Pro — Monthly",      "kind": "pro"},
+    "pro_annual":  {"amount": 390.00, "currency": "usd", "name": "ListWorks Pro — Annual",       "kind": "pro"},
     "lifetime":    {"amount": 299.00, "currency": "usd", "name": "ListWorks Lifetime — All-In",  "kind": "lifetime"},
     "credits_10":  {"amount":   5.00, "currency": "usd", "name": "10 AI Rewrite Credits",        "kind": "credits", "credits": 10},
     "credits_50":  {"amount":  19.00, "currency": "usd", "name": "50 AI Rewrite Credits",        "kind": "credits", "credits": 50},
@@ -1599,6 +1601,29 @@ async def acknowledge_compliance(scan_id: str):
     if result.matched_count == 0:
         raise HTTPException(404, "Scan not found")
     return {"acknowledged": True, "scan_id": scan_id}
+
+
+@api_router.get("/compliance/logs")
+async def list_compliance_logs(session_id: str = "", team_id: str = "", limit: int = 50):
+    query = {}
+    if session_id:
+        query["session_id"] = session_id
+    if team_id:
+        query["team_id"] = team_id
+    cursor = db.compliance_logs.find(query, {"_id": 0}).sort("scanned_at", -1).limit(min(limit, 200))
+    logs = await cursor.to_list(length=limit)
+    return {"logs": logs, "total": len(logs)}
+
+
+@api_router.get("/compliance/logs/team")
+async def list_team_compliance_logs(team_id: str, limit: int = 200):
+    if not team_id:
+        raise HTTPException(400, "team_id required")
+    cursor = db.compliance_logs.find(
+        {"team_id": team_id}, {"_id": 0}
+    ).sort("scanned_at", -1).limit(min(limit, 500))
+    logs = await cursor.to_list(length=limit)
+    return {"logs": logs, "total": len(logs)}
 
 
 
@@ -3275,7 +3300,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
     }
 
     # Subscription mode for monthly/annual Pro; one-time for everything else
-    is_subscription = req.package_id in ("pro_month", "pro_annual")
+    is_subscription = req.package_id in ("agent_month", "agent_annual", "pro_month", "pro_annual")
 
     line_item = {
         "price_data": {
@@ -3288,7 +3313,7 @@ async def create_checkout_session(req: CheckoutCreateRequest, request: Request):
 
     if is_subscription:
         line_item["price_data"]["recurring"] = {
-            "interval": "month" if req.package_id == "pro_month" else "year",
+            "interval": "month" if req.package_id in ("agent_month", "pro_month") else "year",
         }
 
     cs_params = {

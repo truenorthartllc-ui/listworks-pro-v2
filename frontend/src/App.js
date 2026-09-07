@@ -31,6 +31,7 @@ import SocialContentPage from "@/pages/SocialContentPage";
 import ProgrammaticCompliancePage from "@/pages/ProgrammaticCompliancePage";
 import FreeToolsPage from "@/pages/FreeToolsPage";
 import FairHousingCompliancePage from "@/pages/FairHousingCompliancePage";
+import ComplianceLogPage from "@/pages/ComplianceLogPage";
 import MarketStatsPage from "@/pages/MarketStatsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import { captureRefFromURL } from "@/lib/checkout";
@@ -94,6 +95,7 @@ function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/free-tools" element={<FreeToolsPage />} />
           <Route path="/fair-housing-compliance" element={<FairHousingCompliancePage />} />
+          <Route path="/compliance-log" element={<ComplianceLogPage />} />
           <Route path="/market-stats" element={<MarketStatsPage />} />
         </Routes>
       </BrowserRouter>

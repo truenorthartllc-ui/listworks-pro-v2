@@ -3,7 +3,7 @@ import { startCheckout } from "@/lib/checkout";
 
 /**
  * PaywallModal — fired when the /api/rewrite endpoint returns a 402 paywall response.
- * Shows the user clean upgrade options: $5 for 10 credits, $49/mo Pro, or $299 lifetime.
+ * Shows the user clean upgrade options: $5 for 10 credits, $19/mo Agent, or $39/mo Pro.
  */
 export default function PaywallModal({ open, onClose, freeUsed = 3, trialRemaining = null }) {
   if (!open) return null;
@@ -22,24 +22,24 @@ export default function PaywallModal({ open, onClose, freeUsed = 3, trialRemaini
       featured: false,
     },
     {
-      pkg: "pro_month",
-      title: "Pro — Unlimited",
-      price: "$29",
+      pkg: "agent_month",
+      title: "Agent — Unlimited",
+      price: "$19",
       sub: "/ month · cancel anytime",
       icon: Check,
-      cta: "Go Pro",
+      cta: "Get Agent",
       featured: true,
-      highlights: ["Unlimited rewrites", "Watermark-free reels", "AI Advisor priority"],
+      highlights: ["Unlimited rewrites", "Fair Housing scans", "Brand voice memory"],
     },
     {
-      pkg: "lifetime",
-      title: "Lifetime",
-      price: "$299",
-      sub: "once · never pay again",
+      pkg: "pro_month",
+      title: "Pro",
+      price: "$39",
+      sub: "/ month · cancel anytime",
       icon: Crown,
-      cta: "Lock In Lifetime",
+      cta: "Get Pro",
       featured: false,
-      highlights: ["Founding member"],
+      highlights: ["Photo-to-feature", "AI staging", "Video walkthroughs"],
     },
   ];
 

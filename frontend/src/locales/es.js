@@ -98,7 +98,7 @@ export default {
     "startFree": "Empieza Gratis — Reescribe Este Listado",
     "rewrite": "Reescribir Mi Listado",
     "rewriting": "Reescribiendo…",
-    "freeNote": "3 reescrituras gratis, luego $29/mes · cancela cuando quieras",
+    "freeNote": "3 reescrituras gratis, luego desde $19/mes · cancela cuando quieras",
     "awaiting": "Esperando entrada",
     "awaitingMsg": "Tu listado reescrito aparecerá aquí.",
     "awaitingHint": "Pega un borrador, elige un tono, presiona reescribir. Cinco activos listos en unos 10 segundos.",
@@ -229,12 +229,12 @@ export default {
       ],
       "cta": "Empezar Gratis"
     },
-    "pro": {
-      "tag": "Recomendado",
-      "name": "Lista + Bio",
-      "price": "$29",
+    "agent": {
+      "tag": "Para Agentes Individuales",
+      "name": "Agente",
+      "price": "$19",
       "period": "/ mes",
-      "desc": "Reescrituras ilimitadas sin ansiedad de créditos. Copia para listados + tu marca de agente — todo en una tarifa plana.",
+      "desc": "Reescrituras ilimitadas, revisión de Vivienda Justa y tu voz de marca — todo lo que un agente individual necesita.",
       "features": [
         "Reescrituras de listados ilimitadas",
         "31 plantillas sociales con tu voz de marca",
@@ -247,24 +247,26 @@ export default {
         "Videos sin marca de agua",
         "Historial de listados (para siempre)"
       ],
-      "cta": "Obtén Lista + Bio — $29/mes"
+      "cta": "Obtén Agente — $19/mes"
     },
-    "lifetime": {
-      "tag": "MEJOR VALOR",
-      "name": "Duración de Vida",
-      "price": "$299",
-      "period": "una vez",
-      "desc": "Miembro fundador — paga una vez, nunca vuelvas a pagar.",
+    "pro": {
+      "tag": "Recomendado",
+      "name": "Pro",
+      "price": "$39",
+      "period": "/ mes",
+      "desc": "Todo lo de Agente más extracción de fotos, créditos de staging IA, recorridos en video y páginas de aterrizaje.",
       "features": [
-        "Todo lo de Pro",
-        "Acceso para siempre (sin mensualidad)",
-        "Todas las funciones futuras incluidas",
-        "Soporte prioritario",
-        "Insignia de miembro fundador",
-        "Recorridos en video con IA",
-        "Generación prioritaria de videos"
+        "Todo lo de Agente",
+        "Extracción de características de fotos",
+        "Recorridos en video con IA (sin marca de agua)",
+        "20 créditos de staging IA / mes",
+        "Página de aterrizaje + captura de leads QR",
+        "Múltiples perfiles de voz de marca",
+        "Generador de guiones para reels",
+        "Generación prioritaria de videos",
+        "Soporte prioritario"
       ],
-      "cta": "Asegura Vitalicio — $299"
+      "cta": "Obtén Pro — $39/mes"
     },
     "credits": {
       "label": "/ Créditos — paga sobre la marcha",

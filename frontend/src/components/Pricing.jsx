@@ -1,4 +1,4 @@
-import { Check, Crown, Zap, Flame } from "lucide-react";
+import { Check, Zap } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 import useTranslation from "@/hooks/useTranslation";
 
@@ -14,10 +14,10 @@ const tiers = [
     highlight: false,
   },
   {
-    name: "pricing.pro.name",
-    price: "$29",
+    name: "pricing.agent.name",
+    price: "$19",
     period: "/ month",
-    blurb: "pricing.pro.desc",
+    blurb: "pricing.agent.desc",
     features: [
       "Unlimited listing rewrites",
       "31 social templates in your brand voice",
@@ -30,30 +30,30 @@ const tiers = [
       "Watermark-free videos",
       "Listing history (forever)",
     ],
-    cta: "pricing.pro.cta",
+    cta: "pricing.agent.cta",
     promoNote: null,
-    action: { kind: "checkout", package_id: "pro_month" },
-    highlight: true,
+    action: { kind: "checkout", package_id: "agent_month" },
+    highlight: false,
   },
   {
-    name: "pricing.lifetime.name",
-    price: "$299",
-    period: "once",
-    blurb: "pricing.lifetime.desc",
+    name: "pricing.pro.name",
+    price: "$39",
+    period: "/ month",
+    blurb: "pricing.pro.desc",
     features: [
-      "Everything in Pro",
-      "Forever access (no monthly)",
-      "All future features included",
-      "Priority support",
-      "Founding member badge",
-      "AI Video Walkthroughs",
+      "Everything in Agent",
+      "Photo-to-feature extraction",
+      "AI Video Walkthroughs (watermark-free)",
+      "20 AI staging credits / month",
+      "Listing landing page + QR lead capture",
+      "Multiple brand voice profiles",
+      "Reel script generator",
       "Priority video generation",
+      "Priority support",
     ],
-    cta: "pricing.lifetime.cta",
-    action: { kind: "checkout", package_id: "lifetime" },
-    highlight: false,
-    badge: "pricing.lifetime.tag",
-    icon: Crown,
+    cta: "pricing.pro.cta",
+    action: { kind: "checkout", package_id: "pro_month" },
+    highlight: true,
   },
 ];
 
@@ -169,7 +169,7 @@ export default function Pricing() {
         </div>
 
         <p className="mt-6 font-mono text-[11px] tracking-[0.18em] uppercase text-ink/50 text-center">
-          Pro paid monthly · {t("common.cancelAnytime")} · {t("common.moneyBack30")} · {t("common.billedUSD")}
+          Agent & Pro paid monthly · {t("common.cancelAnytime")} · {t("common.moneyBack30")} · {t("common.billedUSD")}
         </p>
 
         {/* Pay-as-you-go credit packs */}

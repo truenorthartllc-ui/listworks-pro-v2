@@ -170,13 +170,13 @@ def tpl_day5_video() -> tuple[str, str, str]:
 
 def tpl_day14_winback() -> tuple[str, str, str]:
     site = _site_url()
-    preheader = "Last nudge — first month of Pro for $29 (40% off). Code: COMEBACK29."
+    preheader = "Last nudge — first month of Pro for $23 (40% off). Code: COMEBACK29."
     inner = f"""
       <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
         One last <em style="color:#ff3a1c;font-style:italic;">nudge.</em>
       </h2>
       <p style="margin:0 0 16px;">
-        I won't keep emailing — promise. But here's a one-time offer: try ListWorks Pro for <strong>$29 your first month</strong> (40% off). Use code <strong style="background:#fff3ee;padding:2px 8px;font-family:monospace;border:1px solid #ff3a1c;">COMEBACK29</strong> at checkout.
+        I won't keep emailing — promise. But here's a one-time offer: try ListWorks Pro for <strong>$23 your first month</strong> (40% off). Use code <strong style="background:#fff3ee;padding:2px 8px;font-family:monospace;border:1px solid #ff3a1c;">COMEBACK29</strong> at checkout.
       </p>
       <p style="margin:0 0 16px;">
         What you get:
@@ -244,7 +244,7 @@ def tpl_free_trial_drip() -> tuple[str, str, str]:
         <a href="{site}/#playground" style="{_BTN_VERMILLION}">Use Your Bonus Rewrites Now →</a>
       </p>
       <p style="margin:0 0 16px;color:#444;font-size:14px;">
-        When you're ready to go unlimited, Pro is $29/month — flat rate, no credit limits, cancel anytime.
+        When you're ready to go unlimited, Pro is $39/month — flat rate, no credit limits, cancel anytime.
       </p>
       <p style="margin:0;color:#444;font-size:14px;">
         <a href="{site}/#pricing" style="color:#ff3a1c;text-decoration:underline;">See pricing →</a>
@@ -356,7 +356,7 @@ def tpl_trial_day14_features() -> tuple[str, str, str]:
         ])}
       </table>
       <p style="margin:0 0 28px;">
-        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Unlock Everything — $29/mo →</a>
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Unlock Everything — $39/mo →</a>
       </p>
       <p style="margin:0;color:#666;font-size:13px;">Flat rate. No credit limits. Cancel anytime. Your first listing pays for the whole month.</p>
     """
@@ -384,7 +384,7 @@ def tpl_trial_day21_comparison() -> tuple[str, str, str]:
             ("MLS character limits", "✗ Manual counting", "✓ Auto-enforced"),
             ("Banned AI clichés", "✗ Generates them freely", "✓ 25+ blocked at system level"),
             ("Local Gems neighborhood data", "✗ Hallucinated or missing", "✓ Real data pulled live"),
-            ("Cost per listing", "$20/mo general use", "$29/mo unlimited RE"),
+            ("Cost per listing", "$20/mo general use", "$39/mo unlimited RE"),
         ])}
       </table>
       <p style="margin:0 0 16px;color:#444;">ChatGPT is a great general tool. ListWorks is built for exactly one job — real estate copy that's fast, compliant, and in your voice. For agents, purpose-built wins.</p>
@@ -405,10 +405,10 @@ def tpl_trial_day30_lastoffer() -> tuple[str, str, str]:
       <p style="margin:0 0 16px;">You've been on our list for 30 days. You tried the free rewrites. You know what this does.</p>
       <p style="margin:0 0 16px;">If you haven't upgraded yet, here's the honest version of why agents do:</p>
       <ul style="margin:0 0 24px;padding-left:22px;line-height:2.2;color:#444;">
-        <li>One listing pays for 4 months of Pro at $29</li>
+        <li>One listing pays for 4 months of Pro at $39</li>
         <li>The Fair Housing screen alone has saved agents from $26,262 fines</li>
         <li>Flat rate means no anxiety about how many listings you run</li>
-        <li>Your first commission covers a full year of the annual plan ($290)</li>
+        <li>Your first commission covers a full year of the annual plan ($390)</li>
       </ul>
       <p style="margin:0 0 8px;font-weight:600;">One-time offer for people who've been with us since the beginning:</p>
       <div style="margin:0 0 24px;padding:20px;background:#fff3f0;border:2px solid #ff3a1c;text-align:center;">

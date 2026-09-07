@@ -177,8 +177,8 @@ export default function ComparePage() {
             <a href="/" className="btn-vermillion px-8 py-4 font-heading text-sm uppercase tracking-[0.15em]">
               Try ListWorks PRO Free →
             </a>
-            <button onClick={() => startCheckout("pro_month")} className="border border-oat/30 text-oat px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] hover:bg-oat hover:text-ink transition">
-              Get List + Bio — $29/mo
+            <button onClick={() => startCheckout("agent_month")} className="border border-oat/30 text-oat px-8 py-4 font-heading text-sm uppercase tracking-[0.15em] hover:bg-oat hover:text-ink transition">
+              Get Agent — $19/mo
             </button>
           </div>
         </div>
