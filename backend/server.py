@@ -94,7 +94,7 @@ async def call_omniroute(system: str, user_text: str, model: str = None) -> str:
         data = resp.json()
         return data["choices"][0]["message"]["content"]
 
-async def call_openrouter(system: str, user_text: str, model: str = None) -> str:
+async def call_openrouter(system: str, user_text: str, model: str = None, max_tokens: int = 2048) -> str:
     """Call OpenRouter's OpenAI-compatible chat completions endpoint via httpx (paid fallback)."""
     key = OPENROUTER_API_KEY
     if not key:
@@ -112,7 +112,7 @@ async def call_openrouter(system: str, user_text: str, model: str = None) -> str
                     {"role": "system", "content": system},
                     {"role": "user", "content": user_text},
                 ],
-                "max_tokens": 2048,
+                "max_tokens": max_tokens,
                 "temperature": 0.7,
             },
         )
@@ -703,12 +703,15 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     cached = await _cached_rewrite(cache_key)
     if cached is not None:
         return cached
-    raw = await call_openrouter(system, user_text, model="google/gemini-3.8-flash")
+    raw = await call_openrouter(system, user_text, model="google/gemini-3.8-flash", max_tokens=6000)
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
     except Exception as e:
-        logging.exception("JSON parse failed")
+        logging.exception("JSON parse failed (primary model), retrying with fallback")
+        raw2 = await call_openrouter(system, user_text, model="deepseek/deepseek-v4-pro", max_tokens=6000)
+        cleaned = _strip_json(raw2)
+        data = json.loads(cleaned)
         raise HTTPException(500, f"AI returned invalid JSON: {str(e)[:120]}")
 
     headlines = data.get("headlines", [])
