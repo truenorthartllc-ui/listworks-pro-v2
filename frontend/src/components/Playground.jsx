@@ -250,7 +250,7 @@ export default function Playground({ landing = false }) {
 
   const handleSample = () => {
   setRaw(SAMPLE);
-  setResult(DEMO_RESULT);
+  setResult(null); // empty output → user must click Rewrite to see their own result
   setActiveTab("mls");
 };
 
