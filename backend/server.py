@@ -35,7 +35,7 @@ except ImportError:
     AsyncAnthropic = None
 
 from video_engine import generate_listing_video, MUSIC_TRACKS
-from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip
+from email_engine import send_guide_drip, send_pro_welcome, send_email, send_free_trial_drip, send_fasttrack_profit
 from compliance_engine import check_fair_housing_v3, overall_risk, compliance_grade, check_co_ai_act
 import base64
 import stripe as stripe_sdk
@@ -187,6 +187,7 @@ class RewriteRequest(BaseModel):
     virtual_tour_url: Optional[str] = None
     session_id: Optional[str] = None
     brand_voice: Optional[dict] = None  # injected server-side from DB
+    unlock_email: Optional[str] = None  # provided when user captured email during trial
 
 
 class BrandVoiceModel(BaseModel):
@@ -736,6 +737,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
 
 # ============== RATE LIMITING + BOT PROTECTION ==============
 _free_rewrites_per_session: Dict[str, int] = {}
+_fasttrack_fired: Dict[str, list] = {}
 _rate_limit_log: Dict[str, list] = {}
 _rate_limit_lock = asyncio.Lock()
 
@@ -2096,6 +2098,18 @@ async def rewrite_listing(req: RewriteRequest, request: Request):
     await _record_free_trial(req.session_id or "", client_ip)
     _, updated_remaining = await _check_free_trial(req.session_id or "", client_ip)
     usage_meta = {"trials_used": FREE_TRIALS_PER_SESSION - updated_remaining, "remaining": updated_remaining}
+
+    # Fast-track profit: the moment free rewrites run OUT is the peak-intent moment.
+    # If we have their email, fire the 3-email fast-track (once per email).
+    if updated_remaining == 0 and (req.unlock_email or (req.session_id and req.session_id != "demo-")):
+        if req.unlock_email:
+            _unlock_email = req.unlock_email.strip().lower()
+            if "fasttrack" not in (_fasttrack_fired.get(_unlock_email) or []):
+                _fasttrack_fired.setdefault(_unlock_email, []).append("fasttrack")
+                try:
+                    asyncio.create_task(send_fasttrack_profit(_unlock_email))
+                except Exception:
+                    pass
 
     doc = {
         "id": listing_id,

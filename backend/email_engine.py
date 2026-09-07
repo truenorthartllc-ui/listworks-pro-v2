@@ -459,6 +459,105 @@ async def send_free_trial_drip(email: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Fast-track profit sequence (3 emails, Days 0/1/3 after trial exhaustion)
+# Fires at the exact moment free rewrites run out — peak intent.
+# ---------------------------------------------------------------------------
+
+def tpl_fasttrack_hour0() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "You just hit your last free rewrite. Here's the 60-second case for one flat rate."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        Your free rewrites just ran out. <em style="color:#ff3a1c;font-style:italic;">One listing pays for it.</em>
+      </h2>
+      <p style="margin:0 0 16px;">You used your 3 free rewrites — which means you actually used ListWorks. That's the hard part, and you did it.</p>
+      <p style="margin:0 0 16px;">Here's the math agents run:</p>
+      <div style="margin:0 0 20px;padding:18px;background:#f0ede4;border-left:3px solid #ff3a1c;">
+        <p style="margin:0;font-size:14px;color:#333;line-height:1.8;">
+          One closed listing = ~<strong>$8,000</strong> commission.<br>
+          One month of Agent = <strong>$19</strong>.<br>
+          You need <strong>0.2%</strong> of one deal to pay for the whole year.
+        </p>
+      </div>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Get Agent — $19/mo, cancel anytime →</a>
+      </p>
+      <p style="margin:0;color:#666;font-size:13px;">Fair Housing scanning, brand voice memory, all 5 formats — every listing. Not per-listing credits.</p>
+    """
+    return ("Your free rewrites just ran out — here's the math", _wrap(inner, preheader), preheader)
+
+
+def tpl_fasttrack_day1() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "You left a rewritten listing on the table. Let us hold it for 48 hours."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        That rewrite is still <em style="color:#ff3a1c;font-style:italic;">sitting there.</em>
+      </h2>
+      <p style="margin:0 0 16px;">Yesterday you generated copy that would've taken 30–60 minutes by hand. MLS, Instagram, Facebook, headlines, email — in 8 seconds.</p>
+      <p style="margin:0 0 16px;">Without the plan, that output flushes into history. With Agent, it's saved forever:</p>
+      <ul style="margin:0 0 24px;padding-left:22px;line-height:2.2;color:#444;">
+        <li><strong>Saved listing history</strong> — every rewrite kept, searchable</li>
+        <li><strong>Brand voice memory</strong> — learn your tone once, keep it forever</li>
+        <li><strong>Fair Housing scan</strong> on every output, not just the free ones</li>
+        <li><strong>31 social templates</strong> — Just Listed, Open House, Market Update</li>
+      </ul>
+      <p style="margin:0 0 8px;font-weight:600;">Your move:</p>
+      <div style="margin:0 0 24px;padding:14px;background:#fff3f0;border:1px solid #ff3a1c;text-align:center;">
+        <p style="margin:0 0 4px;"><a href="{site}/#pricing" style="font-family:monospace;font-size:18px;font-weight:700;letter-spacing:0.08em;color:#ff3a1c;text-decoration:none;">LISTWORKS19</a></p>
+        <p style="margin:0;font-size:12px;color:#666;">If you're an agent, this is 30 minutes of your hourly rate.</p>
+      </div>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">Claim Agent — $19/mo →</a>
+      </p>
+    """
+    return ("That rewrite is still sitting there — 48 hours to keep it", _wrap(inner, preheader), preheader)
+
+
+def tpl_fasttrack_day3_final() -> tuple[str, str, str]:
+    site = _site_url()
+    preheader = "Last call: your rewrite expires soon. One more reason worth the $19."
+    inner = f"""
+      <h2 style="margin:0 0 16px;font-size:26px;font-weight:300;line-height:1.3;">
+        The listing you rewrote <em style="color:#ff3a1c;font-style:italic;">forgot you.</em> Don't return the favor.
+      </h2>
+      <p style="margin:0 0 16px;">Three days ago you saw what good listing copy looks like. That's the ceiling you'd be abandoning by going back to "3 bed 2 bath, nice kitchen, great schools."</p>
+      <p style="margin:0 0 16px;">The honest truth about agents who upgrade:</p>
+      <ul style="margin:0 0 24px;padding-left:22px;line-height:2.2;color:#444;">
+        <li>They list something every 2–3 weeks — $19 is one morning of their time</li>
+        <li>They've felt the "$26,262 Fair Housing anxiety" — the scan kills it</li>
+        <li>They stopped copy-pasting the same paragraph into 4 platforms</li>
+      </ul>
+      <p style="margin:0 0 28px;">
+        <a href="{site}/#pricing" style="{_BTN_VERMILLION}">One flat rate. Every listing. $19/mo →</a>
+      </p>
+      <p style="margin:0 0 12px;color:#666;font-size:13px;">This is the last fast-track email. If you need the free tier later, it'll always be here at {site}.</p>
+    """
+    return ("Last call: the rewrite expires without you", _wrap(inner, preheader), preheader)
+
+
+async def send_fasttrack_profit(email: str) -> dict:
+    """
+    3-email fast-track fired when a free user exhausts their rewrites.
+    Day 0 (now): the math / one listing pays for it
+    Day 1: leave the rewrite hanging + LISTWORKS19 code
+    Day 3: final nudge
+    """
+    if not email:
+        return {}
+
+    s0, h0, _ = tpl_fasttrack_hour0()
+    s1, h1, _ = tpl_fasttrack_day1()
+    s3, h3, _ = tpl_fasttrack_day3_final()
+
+    results = {}
+    results["hour0"] = await _send(to=email, subject=s0, html=h0, tag="fasttrack_0")
+    results["day1"] = await _send(to=email, subject=s1, html=h1, scheduled_at=_iso_in(1), tag="fasttrack_1")
+    results["day3"] = await _send(to=email, subject=s3, html=h3, scheduled_at=_iso_in(3), tag="fasttrack_3")
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Sending helpers
 # ---------------------------------------------------------------------------
 
