@@ -604,8 +604,8 @@ export default function Playground({ landing = false }) {
             >
               {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />{t("playground.rewriting")}</>) : landing && result ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : landing ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : (<><Sparkles className="w-4 h-4" />{t("playground.rewrite")}</>)}
             </button>
-            {landing && !emailCaptured && (
-              <div className="mt-3 border border-ink/15 bg-oat/50 p-3 flex items-center gap-2">
+            {landing && (
+              <div className="mt-3 border-2 border-vermillion bg-white p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input
                   type="email"
                   data-testid="inline-email"
@@ -615,10 +615,10 @@ export default function Playground({ landing = false }) {
                   className="editorial-input text-sm flex-1 min-w-0"
                 />
                 <button
-                  onClick={() => { if (inlineEmail.includes("@")) { localStorage.setItem("lw_user_email", inlineEmail); localStorage.setItem("lw_email_captured", "1"); setEmailCaptured(true); toast.success("Bonus rewrites unlocked!"); } else { toast.error("Enter a valid email"); } }}
-                  className="shrink-0 px-3 py-2 bg-ink text-oat font-heading text-[10px] uppercase tracking-[0.12em] hover:bg-vermillion transition"
+                  onClick={() => { if (inlineEmail.includes("@")) { localStorage.setItem("lw_user_email", inlineEmail); localStorage.setItem("lw_email_captured", "1"); setEmailCaptured(true); toast.success("Bonus rewrites unlocked — your rewrite is generating!"); pendingRewriteRef.current = { forcedTone: null, rawOverride: null }; generate(); } else { toast.error("Enter a valid email"); } }}
+                  className="shrink-0 bg-vermillion text-oat hover:bg-[#e02d0e] px-4 py-2.5 font-heading text-[11px] uppercase tracking-[0.15em] transition whitespace-nowrap"
                 >
-                  Save
+                  Rewrite My Listing →
                 </button>
               </div>
             )}
