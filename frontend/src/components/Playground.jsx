@@ -279,8 +279,12 @@ export default function Playground({ landing = false }) {
       setActiveTab("mls");
       setShowShareCard(true);
       setTrialRemaining(data.trial_remaining ?? null);
-      if (data.trial_remaining === 1 && !emailCaptured) {
-        setEmailCaptureOpen(true);
+      // Email gate: ask on first real generation on the landing page, or at trial exhaustion elsewhere
+      if (!emailCaptured) {
+        const isDemo = !rawOverride && landing && !raw.trim();
+        if (landing || data.trial_remaining === 1) {
+          if (!isDemo) setEmailCaptureOpen(true);
+        }
       }
       if (data.trial_remaining === 0) {
         setPaywallOpen(true);

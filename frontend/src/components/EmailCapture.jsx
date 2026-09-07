@@ -38,13 +38,13 @@ export default function EmailCapture({ onClose, onBonusGranted }) {
               <Gift className="w-5 h-5 text-oat" />
             </div>
             <div>
-              <h3 className="font-heading text-base uppercase tracking-[0.12em]">You've got 1 rewrite left</h3>
-              <p className="text-ink/55 text-sm font-body">Enter your email — unlock 3 more, free.</p>
+              <h3 className="font-heading text-base uppercase tracking-[0.12em]">Your rewrite is ready</h3>
+              <p className="text-ink/55 text-sm font-body">Enter your email — get 3 more rewrites, free.</p>
             </div>
           </div>
 
           <p className="font-body text-sm text-ink/70 mb-5 leading-relaxed">
-            No spam. No card. Just your email in exchange for 3 bonus rewrites — and occasional tips on what's working for agents right now.
+            No spam. No card. Your email gets you 3 bonus rewrites on the house — and occasional tips on what's working for agents right now.
           </p>
 
           <input
@@ -62,7 +62,7 @@ export default function EmailCapture({ onClose, onBonusGranted }) {
             disabled={loading}
             className="btn-vermillion w-full py-3 font-heading text-sm uppercase tracking-[0.15em]"
           >
-            {loading ? "Unlocking..." : "Unlock 3 More Free Rewrites →"}
+            {loading ? "Unlocking..." : "Get 3 More Free Rewrites →"}
           </button>
 
           <button onClick={onClose} className="w-full text-center text-ink/40 text-xs mt-3 hover:text-ink/60 font-body transition">
