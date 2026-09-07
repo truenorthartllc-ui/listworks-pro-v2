@@ -14,6 +14,7 @@ export default function ComplianceLogPage() {
   useEffect(() => {
     document.title = "Compliance Log | ListWorks";
     fetchLogs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sessionId = localStorage.getItem("lw_session_id") || "";
