@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Portal | ListWorks PRO</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#0A0A0A; color:#F4F3EF; min-height:100vh; }
+.top { background:#121212; border-bottom:3px solid #FF3B22; padding:20px 24px; display:flex; justify-content:space-between; align-items:center; }
+.brand { font-weight:800; font-size:18px; letter-spacing:.03em; }
+.brand span { color:#FF3B22; }
+.wrap { max-width:1000px; margin:0 auto; padding:32px 24px 60px; }
+.card { background:#171717; border:1px solid #333; border-radius:10px; padding:28px; margin-bottom:20px; }
+h1 { font-size:26px; margin-bottom:4px; letter-spacing:.02em; }
+h2 { font-size:16px; color:#F4F3EF; margin-bottom:18px; letter-spacing:.03em; }
+.sub { color:#D1CFC7; font-size:14px; margin-bottom:20px; }
+.nl { color:#22c55e; font-weight:700; }
+.stat-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
+.stat { background:#121212; border:1px solid #2a2a2a; border-radius:8px; padding:14px 18px; flex:1; min-width:130px; }
+.stat .num { font-size:28px; font-weight:900; color:#FF3B22; }
+.stat .lbl { font-size:12px; color:#D1CFC7; text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { text-align:left; padding:10px 12px; color:#D1CFC7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; border-bottom:2px solid #FF3B22; }
+td { padding:12px; border-bottom:1px solid #2a2a2a; vertical-align:top; }
+tr:hover td { background:#1c1c1c; }
+.empty { color:#8a8a8a; text-align:center; padding:40px; font-size:15px; }
+.btn { display:inline-block; background:#FF3B22; color:#fff; padding:10px 20px; text-decoration:none; font-weight:700; font-size:13px; border-radius:6px; border:none; cursor:pointer; }
+.btn.ghost { background:transparent; border:1px solid #555; color:#F4F3EF; }
+.foot { text-align:center; color:#666; font-size:12px; padding:20px; }
+.err { background:#2a1210; border:1px solid #FF3B22; color:#ff8a7a; padding:20px; border-radius:8px; }
+.time { font-size:12px; color:#8a8a8a; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">ListWorks <span>PRO</span> · Lead Portal</div>
+  <a href="#" class="btn ghost" onclick="window.print();return false;">Print</a>
+</div>
+<div class="wrap">
+  <div class="card" id="header">
+    <h1 id="bizname">Your Business</h1>
+    <p class="sub">Your funnel's live leads. New ones appear here the moment someone submits your form.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="cnew">0</div><div class="lbl">New Leads</div></div>
+      <div class="stat"><div class="num" id="cday">0</div><div class="lbl">Today</div></div>
+      <div class="stat"><div class="num" id="ctotal">0</div><div class="lbl">All Time</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Lead List <span id="refresh" class="time" style="float:right;font-weight:400;cursor:pointer;"></span></h2>
+    <div id="leads"><div class="empty">Loading your leads…</div></div>
+  </div>
+  <div style="text-align:center;margin-top:8px;">
+    <a href="#" class="btn" id="export" onclick="exportCSV();return false;">⬇ Export All Leads (CSV)</a>
+  </div>
+</div>
+<div class="foot">ListWorks PRO · Funnel Service · Your leads are yours. No subscriptions, no lock-in.</div>
+
+<script>
+const API = "https://listworks-pro-v2-production.up.railway.app/api";
+const key = new URLSearchParams(location.search).get("key") || "";
+let data = null;
+
+async function load() {
+  const head = document.getElementById("header");
+  if (!key) {
+    head.innerHTML = '<div class="err">Missing portal link. Check your email for the full link.</div>';
+    return;
+  }
+  try {
+    const r = await fetch(`${API}/portal/leads?key=${encodeURIComponent(key)}`);
+    if (!r.ok) throw new Error((await r.json()).detail || "Invalid link");
+    data = await r.json();
+    render();
+  } catch (e) {
+    head.innerHTML = `<div class="err">${e.message} — if this link came from an email, it's still valid.</div>`;
+  }
+}
+
+function render() {
+  const d = new Date();
+  const today = d.toISOString().slice(0,10);
+  const leads = data.leads || [];
+  const newCount = leads.filter(l => (l.captured_at||"").slice(0,10) === today).length;
+  document.getElementById("cnew").textContent = newCount;
+  document.getElementById("cday").textContent = newCount;
+  document.getElementById("ctotal").textContent = leads.length;
+  document.getElementById("bizname").textContent = data.business || "Your Business";
+
+  const el = document.getElementById("leads");
+  if (!leads.length) {
+    el.innerHTML = '<div class="empty">No leads yet. Share your funnel link — the first one will show up here instantly.</div>';
+    return;
+  }
+  const rows = leads.map(l => `<tr>
+    <td><strong>${escapeHtml(l.lead_name || "—")}</strong></td>
+    <td>${escapeHtml(l.email)}</td>
+    <td>${escapeHtml(l.lead_phone || "—")}</td>
+    <td class="time">${new Date(l.captured_at).toLocaleString()}</td>
+  </tr>`).join("");
+  el.innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Captured</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById("refresh").textContent = "refreshed " + d.toLocaleTimeString();
+  document.getElementById("refresh").onclick = load;
+}
+
+function exportCSV() {
+  if (!data) return;
+  const rows = [["Name","Email","Phone","Captured At"]];
+  (data.leads||[]).forEach(l => rows.push([l.lead_name||"", l.email, l.lead_phone||"", l.captured_at||""]));
+  const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g,'""') + '"').join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
+  a.download = "leads.csv";
+  a.click();
+}
+
+function escapeHtml(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+load();
+setInterval(load, 15000);
+</script>
+</body>
+</html>

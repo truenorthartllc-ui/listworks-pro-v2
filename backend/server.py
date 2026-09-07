@@ -2484,20 +2484,24 @@ class EmailCaptureIn(BaseModel):
     owner_email: Optional[str] = None      # funnel client's inbox for lead notifications
     lead_name: Optional[str] = None        # funnel visitor's name
     lead_phone: Optional[str] = None       # funnel visitor's phone (optional)
+    business_name: Optional[str] = None    # funnel business label for the owner portal
 
 
 @api_router.post("/capture-email")
 async def capture_email(req: EmailCaptureIn):
     email = req.email.strip().lower()
     session_id = req.session_id or ""
+    source = (req.source or "trial_gate").strip()
 
     existing = await db.leads.find_one({"email": email})
     if not existing:
         doc = {
             "email": email,
             "session_id": session_id,
-            "source": req.source or "trial_gate",
-            "business": req.source if (req.source or "").startswith("funnel_") else None,
+            "source": source,
+            "business": req.owner_email or source if source.startswith("funnel_") else None,
+            "lead_name": (req.lead_name or "").strip(),
+            "lead_phone": (req.lead_phone or "").strip(),
             "captured_at": datetime.now(timezone.utc).isoformat(),
         }
         await db.leads.insert_one(doc)
@@ -2514,12 +2518,19 @@ async def capture_email(req: EmailCaptureIn):
     # Funnel client notification — a business owner just got a lead.
     if req.owner_email and (req.source or "").startswith("funnel_"):
         try:
+            # Ensure the portal record exists for this funnel
+            key = await _ensure_funnel_portal(
+                source=source,
+                owner_email=req.owner_email.strip().lower(),
+                business_name=(req.business_name or "").strip(),
+            )
             asyncio.create_task(_notify_funnel_owner(
                 owner_email=req.owner_email.strip().lower(),
                 lead_email=email,
                 lead_name=req.lead_name or "",
                 lead_phone=req.lead_phone or "",
-                source=req.source,
+                source=source,
+                portal_key=key,
             ))
         except Exception:
             pass
@@ -2527,13 +2538,74 @@ async def capture_email(req: EmailCaptureIn):
     return {"captured": True, "bonus_rewrites": 3}
 
 
-async def _notify_funnel_owner(owner_email: str, lead_email: str, lead_name: str, lead_phone: str, source: str) -> None:
+async def _ensure_funnel_portal(source: str, owner_email: str, business_name: str) -> str:
+    """Create or fetch a portal record for a funnel. Returns the access key."""
+    existing = await db.funnel_portals.find_one({"source": source})
+    if existing:
+        return existing["key"]
+    import secrets as _secrets
+    key = _secrets.token_urlsafe(24)
+    await db.funnel_portals.insert_one({
+        "source": source,
+        "owner_email": owner_email,
+        "business_name": business_name or source.replace("funnel_", "").replace("_", " ").title(),
+        "key": key,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return key
+
+
+@api_router.get("/portal/leads")
+async def portal_leads(key: str = ""):
+    """Return leads for a funnel given its portal key."""
+    if not key:
+        raise HTTPException(403, "Missing portal key")
+    portal = await db.funnel_portals.find_one({"key": key})
+    if not portal:
+        raise HTTPException(403, "Invalid portal key")
+    leads = []
+    async for lead in db.leads.find({"source": portal["source"]}).sort("captured_at", -1).limit(500):
+        leads.append({
+            "email": lead.get("email"),
+            "lead_name": lead.get("lead_name", ""),
+            "lead_phone": lead.get("lead_phone", ""),
+            "captured_at": lead.get("captured_at", ""),
+        })
+    return {"business": portal.get("business_name"), "owner_email": portal.get("owner_email"), "count": len(leads), "leads": leads}
+
+
+@api_router.get("/portal/export")
+async def portal_export(key: str = ""):
+    """CSV export of funnel leads."""
+    if not key:
+        raise HTTPException(403, "Missing portal key")
+    portal = await db.funnel_portals.find_one({"key": key})
+    if not portal:
+        raise HTTPException(403, "Invalid portal key")
+    import csv, io as _io
+    buf = _io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["Email", "Name", "Phone", "Captured At"])
+    async for lead in db.leads.find({"source": portal["source"]}).sort("captured_at", -1).limit(500):
+        w.writerow([lead.get("email", ""), lead.get("lead_name", ""), lead.get("lead_phone", ""), lead.get("captured_at", "")])
+    from fastapi.responses import Response
+    fname = (portal["source"].replace("funnel_", "") or "leads") + "_leads.csv"
+    return Response(content=buf.getvalue(), media_type="text/csv",
+                    headers={"Content-Disposition": f"attachment; filename={fname}"})
+
+
+async def _notify_funnel_owner(owner_email: str, lead_email: str, lead_name: str, lead_phone: str, source: str, portal_key: str = "") -> None:
     """Email the business owner the instant their funnel captures a lead."""
     if not owner_email or not RESEND_API_KEY:
         return
     from email_engine import _send
-    pretty = owner_email.split("@")[0]
     site = "https://listworks.pro"
+    portal_html = ""
+    if portal_key:
+        portal_html = f"""<div style="margin:18px 0 0;background:#fff5f2;border:1px solid #FF3B22;border-radius:8px;padding:14px 16px;text-align:center;">
+          <p style="margin:0 0 6px;color:#555;font-size:13px;">📊 See all your leads & export them:</p>
+          <a href="{site}/portal.html?key={portal_key}" style="display:inline-block;background:#FF3B22;color:#fff;padding:10px 20px;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;">Open Your Lead Portal →</a>
+        </div>"""
     inner = f"""
       <h2 style="margin:0 0 14px;font-size:22px;font-weight:700;">🚨 New lead just came in!</h2>
       <div style="background:#f0ede4;border-left:3px solid #FF3B22;padding:18px 20px;font-size:15px;line-height:1.7;">
@@ -2543,7 +2615,7 @@ async def _notify_funnel_owner(owner_email: str, lead_email: str, lead_name: str
         <p style="margin:0;color:#888;font-size:13px;">Source: {source}</p>
       </div>
       <p style="margin:20px 0 0;color:#555;font-size:14px;">This lead came through your funnel. Follow up fast — they're ready to talk.</p>
-      <p style="margin:0 0 4px;font-family:monospace;font-size:12px;color:#FF3B22;">FUNNEL-LIVE</p>
+      {portal_html}
     """
     await _send(to=owner_email, subject=f"New lead: {lead_name or lead_email}", html=_email_wrap(inner), tag="funnel_owner_lead")
 
