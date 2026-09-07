@@ -253,6 +253,8 @@ export default function Playground({ landing = false }) {
   setActiveTab("mls");
 };
 
+  const pendingRewriteRef = useRef(null); // stores {forcedTone, rawOverride} to run after email capture
+
   const generate = async (forcedTone = null, rawOverride = null) => {
     if (!isPro && !landing) { setPaywallOpen(true); return; }
     const listingText = rawOverride || raw;
@@ -260,6 +262,21 @@ export default function Playground({ landing = false }) {
       toast.error("Add at least a sentence — give the AI something to work with.");
       return;
     }
+    // Gate: on landing, capture email FIRST (instant), then run the rewrite after submit.
+    // The rewrite takes ~25s — using that wait to get the email is the funnel.
+    if (landing && !emailCaptured) {
+      const isDemo = !rawOverride && !raw.trim();
+      if (!isDemo) {
+        pendingRewriteRef.current = { forcedTone, rawOverride };
+        setEmailCaptureOpen(true);
+        return;
+      }
+    }
+    await runRewrite(forcedTone, rawOverride);
+  };
+
+  const runRewrite = async (forcedTone = null, rawOverride = null) => {
+    const listingText = rawOverride || raw;
     setLoading(true);
     if (!forcedTone) setResult(null);
     try {
@@ -279,12 +296,9 @@ export default function Playground({ landing = false }) {
       setActiveTab("mls");
       setShowShareCard(true);
       setTrialRemaining(data.trial_remaining ?? null);
-      // Email gate: ask on first real generation on the landing page, or at trial exhaustion elsewhere
-      if (!emailCaptured) {
-        const isDemo = !rawOverride && landing && !raw.trim();
-        if (landing || data.trial_remaining === 1) {
-          if (!isDemo) setEmailCaptureOpen(true);
-        }
+      // Non-landing flow: also gate on trial exhaustion
+      if (!landing && !emailCaptured && data.trial_remaining === 1) {
+        setEmailCaptureOpen(true);
       }
       if (data.trial_remaining === 0) {
         setPaywallOpen(true);
@@ -1160,6 +1174,12 @@ export default function Playground({ landing = false }) {
             setEmailCaptured(true);
             setEmailCaptureOpen(false);
             setTrialRemaining(3);
+            // If they clicked Generate before being gated, run the rewrite now (after email submit)
+            if (pendingRewriteRef.current) {
+              const { forcedTone, rawOverride } = pendingRewriteRef.current;
+              pendingRewriteRef.current = null;
+              setTimeout(() => runRewrite(forcedTone, rawOverride), 50);
+            }
           }}
         />
       )}
