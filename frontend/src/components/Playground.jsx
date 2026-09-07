@@ -200,6 +200,7 @@ export default function Playground({ landing = false }) {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [emailCaptureOpen, setEmailCaptureOpen] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(() => !!localStorage.getItem("lw_email_captured"));
+  const [inlineEmail, setInlineEmail] = useState(() => localStorage.getItem("lw_user_email") || "");
   const [isPro, setIsPro] = useState(false);
   const [entitlementsLoaded, setEntitlementsLoaded] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState(null);
@@ -282,6 +283,10 @@ export default function Playground({ landing = false }) {
     try {
       const session_id = localStorage.getItem("lw_session_id");
       const unlock_email = localStorage.getItem("lw_email_captured") ? localStorage.getItem("lw_user_email") || undefined : undefined;
+      // If they typed an inline email but never hit Save, capture it now server-side
+      if (!unlock_email && inlineEmail.includes("@")) {
+        try { axios.post(`${API}/capture-email`, { email: inlineEmail, session_id }); } catch {}
+      }
       const { data } = await axios.post(`${API}/rewrite`, {
         raw_listing: listingText,
         tone: forcedTone || tone,
@@ -599,6 +604,24 @@ export default function Playground({ landing = false }) {
             >
               {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />{t("playground.rewriting")}</>) : landing && result ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : landing ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : (<><Sparkles className="w-4 h-4" />{t("playground.rewrite")}</>)}
             </button>
+            {landing && !emailCaptured && (
+              <div className="mt-3 border border-ink/15 bg-oat/50 p-3 flex items-center gap-2">
+                <input
+                  type="email"
+                  data-testid="inline-email"
+                  value={inlineEmail}
+                  onChange={(e) => setInlineEmail(e.target.value)}
+                  placeholder="your@email.com — for your rewrite + 3 bonus ones"
+                  className="editorial-input text-sm flex-1 min-w-0"
+                />
+                <button
+                  onClick={() => { if (inlineEmail.includes("@")) { localStorage.setItem("lw_user_email", inlineEmail); localStorage.setItem("lw_email_captured", "1"); setEmailCaptured(true); toast.success("Bonus rewrites unlocked!"); } else { toast.error("Enter a valid email"); } }}
+                  className="shrink-0 px-3 py-2 bg-ink text-oat font-heading text-[10px] uppercase tracking-[0.12em] hover:bg-vermillion transition"
+                >
+                  Save
+                </button>
+              </div>
+            )}
             {result && !landing && (
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
