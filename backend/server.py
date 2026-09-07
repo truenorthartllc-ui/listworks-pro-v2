@@ -2480,6 +2480,10 @@ async def delete_template(session_id: str, template_id: str):
 class EmailCaptureIn(BaseModel):
     email: str
     session_id: Optional[str] = None
+    source: Optional[str] = "trial_gate"  # trial_gate | funnel | landing | client_funnel
+    owner_email: Optional[str] = None      # funnel client's inbox for lead notifications
+    lead_name: Optional[str] = None        # funnel visitor's name
+    lead_phone: Optional[str] = None       # funnel visitor's phone (optional)
 
 
 @api_router.post("/capture-email")
@@ -2492,7 +2496,8 @@ async def capture_email(req: EmailCaptureIn):
         doc = {
             "email": email,
             "session_id": session_id,
-            "source": "trial_gate",
+            "source": req.source or "trial_gate",
+            "business": req.source if (req.source or "").startswith("funnel_") else None,
             "captured_at": datetime.now(timezone.utc).isoformat(),
         }
         await db.leads.insert_one(doc)
@@ -2506,7 +2511,51 @@ async def capture_email(req: EmailCaptureIn):
         current = _free_rewrites_per_session[session_id]
         _free_rewrites_per_session[session_id] = max(0, current - 3)
 
+    # Funnel client notification — a business owner just got a lead.
+    if req.owner_email and (req.source or "").startswith("funnel_"):
+        try:
+            asyncio.create_task(_notify_funnel_owner(
+                owner_email=req.owner_email.strip().lower(),
+                lead_email=email,
+                lead_name=req.lead_name or "",
+                lead_phone=req.lead_phone or "",
+                source=req.source,
+            ))
+        except Exception:
+            pass
+
     return {"captured": True, "bonus_rewrites": 3}
+
+
+async def _notify_funnel_owner(owner_email: str, lead_email: str, lead_name: str, lead_phone: str, source: str) -> None:
+    """Email the business owner the instant their funnel captures a lead."""
+    if not owner_email or not RESEND_API_KEY:
+        return
+    from email_engine import _send
+    pretty = owner_email.split("@")[0]
+    site = "https://listworks.pro"
+    inner = f"""
+      <h2 style="margin:0 0 14px;font-size:22px;font-weight:700;">🚨 New lead just came in!</h2>
+      <div style="background:#f0ede4;border-left:3px solid #FF3B22;padding:18px 20px;font-size:15px;line-height:1.7;">
+        <p style="margin:0 0 6px;"><strong>Name:</strong> {lead_name or '—'}</p>
+        <p style="margin:0 0 6px;"><strong>Email:</strong> {lead_email}</p>
+        <p style="margin:0 0 6px;"><strong>Phone:</strong> {lead_phone or '—'}</p>
+        <p style="margin:0;color:#888;font-size:13px;">Source: {source}</p>
+      </div>
+      <p style="margin:20px 0 0;color:#555;font-size:14px;">This lead came through your funnel. Follow up fast — they're ready to talk.</p>
+      <p style="margin:0 0 4px;font-family:monospace;font-size:12px;color:#FF3B22;">FUNNEL-LIVE</p>
+    """
+    await _send(to=owner_email, subject=f"New lead: {lead_name or lead_email}", html=_email_wrap(inner), tag="funnel_owner_lead")
+
+
+def _email_wrap(inner_html: str) -> str:
+    """Minimal wrapper so owner notifications don't depend on email_engine internals."""
+    return f"""<!DOCTYPE html><html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f6f1e7;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px;background:#f6f1e7;"><tr><td align="center">
+<table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;background:#fff;">
+<tr><td style="padding:22px 28px;border-bottom:1px solid #ffe0d6;"><span style="font-size:15px;font-weight:700;">ListWorks <span style="color:#FF3B22;">PRO</span> · Funnel Alerts</span></td></tr>
+<tr><td style="padding:26px 28px;">{inner_html}</td></tr>
+</table></td></tr></table></body></html>"""
 
 
 @api_router.post("/expired-scripts", response_model=ExpiredListingScripts)
