@@ -652,6 +652,26 @@ async def call_g0dm0d3(system: str, user_text: str, tier: str = "smart") -> str:
         return resp.json()["choices"][0]["message"]["content"]
 
 
+_rewrite_cache: Dict[str, tuple[float, dict]] = {}
+_REWRITE_CACHE_TTL = 3600.0
+
+
+async def _cached_rewrite(key: str) -> Optional[dict]:
+    hit = _rewrite_cache.get(key)
+    if hit and (time.time() - hit[0]) < _REWRITE_CACHE_TTL:
+        return hit[1]
+    return None
+
+
+def _cache_rewrite(key: str, data: dict) -> None:
+    try:
+        if len(_rewrite_cache) > 200:
+            _rewrite_cache.clear()
+        _rewrite_cache[key] = (time.time(), data)
+    except Exception:
+        pass
+
+
 async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
     if not OPENROUTER_API_KEY and not os.environ.get("OPENROUTER_API_KEY"):
         raise HTTPException(500, "OpenRouter key missing")
@@ -679,7 +699,11 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         system += f"\n\n⚠️ MLS CHARACTER LIMIT: The MLS field MUST NOT exceed {req.mls_char_limit} characters (including spaces). Count carefully. If your draft exceeds {req.mls_char_limit} chars, shorten it. This is a hard requirement."
     if req.language and req.language.lower() not in ("english", "en"):
         system += f"\n\n⚠️ CRITICAL LANGUAGE OVERRIDE: The agent selected {req.language} as their output language. You MUST write EVERY field — mls, instagram, facebook, all headlines, email, reel_script — entirely in {req.language}. NOT English. {req.language}. Only keep raw numbers, addresses, and measurements as-is. This is a hard requirement — do not produce any English output."
-    raw = await call_omniroute(system, user_text, model="anthropic/claude-opus-4-8")
+    cache_key = (req.raw_listing, req.tone, req.language, req.mls_char_limit, json.dumps(req.brand_voice or {}, sort_keys=True))
+    cached = await _cached_rewrite(cache_key)
+    if cached is not None:
+        return cached
+    raw = await call_openrouter(system, user_text, model="google/gemini-3.8-flash")
     cleaned = _strip_json(raw)
     try:
         data = json.loads(cleaned)
@@ -721,7 +745,7 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         raw_stories = [s.strip() for s in raw_stories.split("|||") if s.strip()]
     stories = [str(s).strip() for s in raw_stories if s][:3]
 
-    return {
+    result = {
         "mls": data.get("mls", "").strip(),
         "instagram": data.get("instagram", "").strip(),
         "facebook": data.get("facebook", "").strip(),
@@ -733,6 +757,8 @@ async def call_rewrite_llm(req: RewriteRequest) -> Dict[str, Any]:
         "listing_strength": strength,
         "strength_reasons": [r for r in reasons if isinstance(r, str)][:5],
     }
+    _cache_rewrite(cache_key, result)
+    return result
 
 
 # ============== RATE LIMITING + BOT PROTECTION ==============
