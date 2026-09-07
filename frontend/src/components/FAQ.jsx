@@ -3,14 +3,14 @@ import { Plus, Minus } from "lucide-react";
 import useTranslation from "@/hooks/useTranslation"
 
 const faqs = [
-  { q: "Is this just templates?", a: "No. ListWorks is a framework wrapped in a tool. You learn WHY each piece works — then the AI applies it to every listing in your voice. Templates copy. Frameworks compound." },
-  { q: "Do I have to use AI?", a: "No. The $20 guide teaches the framework end-to-end so you can write better copy by hand. The AI tool just makes it 27 minutes faster per listing." },
-  { q: "Will this sound like ChatGPT?", a: "Not at all. Generic ChatGPT outputs are average because they're trained on every listing on the internet — including the bad ones. ListWorks is tuned on the Feature → Benefit → Feeling framework that top-1% agents actually use." },
-  { q: "What if I don't like it?", a: "30-day money-back guarantee on the guide. The tool's playground is completely free with unlimited access — try it as many times as you want before deciding to upgrade." },
-  { q: "Is it MLS-compliant?", a: "Yes. Outputs avoid fair-housing landmines, hyperbole, and unverifiable claims by default. Always review before publishing — same as any draft." },
-  { q: "Can my whole brokerage use it?", a: "Yes — the Team plan includes 5 seats, shared listing libraries, and brokerage-specific voice presets. Email hello@listworks.pro for a walkthrough." },
-  { q: "How is this different from ChatGPT?", a: "ChatGPT gives you generic real estate text because it's trained on the whole internet. ListWorks is trained on the Feature → Benefit → Feeling framework — the same system that top-1% agents use to close. One prompt, zero filler." },
-  { q: "Do the Instagram and Facebook posts actually work?", a: "Yes. Over 200 agents use them weekly. Jessica Martinez (LA) closed 2 listings in under a week from posts generated here. Priya Nair (Chicago) said her IG DMs tripled. The captions are built for scroll-stop, not vanity." },
+  { q: "How fast does this actually work?", a: "One paste. Ten seconds. Five publish-ready assets — MLS, Instagram, Facebook, headlines, email. You can try it right now on the page above. No account, no card." },
+  { q: "What makes the copy different from ChatGPT?", a: "ChatGPT is trained on everything — including the worst listings on the internet. ListWorks is trained on the Feature → Benefit → Feeling framework that top-1% agents use to close. It writes like an agent who's sold 200 homes, not like a chatbot." },
+  { q: "Do I have to use AI to use ListWorks?", a: "Nope. The $20 guide teaches the framework by hand — you can write better copy with a pen and paper if you want. The AI just makes it 27 minutes faster per listing." },
+  { q: "Is it MLS-compliant?", a: "Built for compliance. Fair Housing landmines, hyperbole, unverifiable claims — the AI avoids them by default. Plus every rewrite gets scanned before you export. Always review before publishing, same as any draft." },
+  { q: "Can my brokerage use it?", a: "Yes. Team plan is 5 seats with shared templates, brand voice presets, and admin controls. Email hello@listworks.pro for a walkthrough." },
+  { q: "What if I don't like it?", a: "Playground is free forever. Use it as many times as you want. Upgrade only when you're sure — 30-day money-back if you change your mind." },
+  { q: "Do the social posts actually work?", a: "Over 200 agents use them weekly. Jessica Martinez (LA) closed 2 listings in under a week from posts she generated here. Priya Nair (Chicago) said her IG DMs tripled. The captions are built to stop the scroll, not fill space." },
+  { q: "What's the catch?", a: "No catch. 3 free rewrites, unlimited playground, no card. If you want unlimited rewrites, brand voice, and Fair Housing scanning on every listing, that's $19/mo. If you want photo extraction and video walkthroughs, that's $39. Or stay free forever. Your call." },
 ];
 
 export default function FAQ() {

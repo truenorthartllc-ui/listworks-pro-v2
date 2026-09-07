@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import PainToOutcome from "@/components/PainToOutcome";
 import TrustBar from "@/components/TrustBar";
 import Playground from "@/components/Playground";
 import ProofSection from "@/components/ProofSection";
@@ -46,7 +47,10 @@ export default function LandingPageV4() {
         {/* 1. Hook — Fair Housing compliance + listing copy */}
         <Hero />
 
-        {/* 2. Instant credibility */}
+        {/* 2. Pain → Outcome — time saved, places published */}
+        <PainToOutcome />
+
+        {/* 3. Instant credibility */}
         <TrustBar />
 
         {/* 3. PROOF FIRST — show the difference before asking them to try */}

@@ -18,6 +18,7 @@ export default function EmailCapture({ onClose, onBonusGranted }) {
     try {
       const session_id = localStorage.getItem("lw_session_id") || "";
       await axios.post(`${API}/capture-email`, { email, session_id });
+      localStorage.setItem("lw_user_email", email);
       toast.success("3 bonus rewrites unlocked!");
       if (onBonusGranted) onBonusGranted();
       else onClose();

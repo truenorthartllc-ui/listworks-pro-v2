@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Sparkles, ArrowRight, Loader2, Box, User, Phone, Mail } from "lucide-react";
+import { Sparkles, ArrowRight, Loader2, Box, User, Phone, Mail, QrCode, Download } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -15,6 +16,19 @@ export default function SharedListing() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("mls");
   const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const qrRef = useRef(null);
+
+  const downloadQR = () => {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `listworks-${id}-qr.png`;
+    a.click();
+  };
+
+  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/p/${id}` : "";
 
   useEffect(() => {
     let mounted = true;
@@ -210,6 +224,33 @@ export default function SharedListing() {
             </div>
           </div>
         )}
+
+        {/* QR Code — print for signs, flyers, open house */}
+        <div className="border border-ink/15 bg-white p-6 md:p-8 mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-coal flex items-center justify-center">
+              <QrCode className="w-5 h-5 text-oat" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h3 className="font-heading text-sm uppercase tracking-[0.15em]">Put this on your sign</h3>
+              <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50">Buyers scan → see listing → you get the lead</p>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div ref={qrRef} className="bg-white p-4 border border-ink/10">
+              <QRCodeCanvas value={shareUrl || "https://listworks.pro"} size={180} level="M" fgColor="#1c1c1c" bgColor="#ffffff" />
+            </div>
+            <div className="flex-1">
+              <p className="font-body text-sm text-ink/70 leading-relaxed mb-4">
+                Print this QR code onto your "Just Listed" signs, open house flyers, and show feedback cards. Every scan sends buyers to this listing page — with your contact info and lead capture form built in.
+              </p>
+              <button onClick={downloadQR}
+                className="inline-flex items-center gap-2 bg-ink text-oat hover:bg-vermillion px-5 py-3 font-heading text-xs uppercase tracking-[0.15em] transition">
+                <Download className="w-3.5 h-3.5" /> Download QR Code (PNG)
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Lead Capture — Book a Showing */}
         <div className="bg-oat border border-ink/15 p-8 md:p-12 mb-12">

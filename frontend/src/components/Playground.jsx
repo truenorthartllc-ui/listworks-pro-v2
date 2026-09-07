@@ -254,7 +254,7 @@ export default function Playground({ landing = false }) {
 };
 
   const generate = async (forcedTone = null, rawOverride = null) => {
-    if (!isPro) { setPaywallOpen(true); return; }
+    if (!isPro && !landing) { setPaywallOpen(true); return; }
     const listingText = rawOverride || raw;
     if (listingText.trim().length < 10) {
       toast.error("Add at least a sentence — give the AI something to work with.");
@@ -264,6 +264,7 @@ export default function Playground({ landing = false }) {
     if (!forcedTone) setResult(null);
     try {
       const session_id = localStorage.getItem("lw_session_id");
+      const unlock_email = localStorage.getItem("lw_email_captured") ? localStorage.getItem("lw_user_email") || undefined : undefined;
       const { data } = await axios.post(`${API}/rewrite`, {
         raw_listing: listingText,
         tone: forcedTone || tone,
@@ -271,6 +272,7 @@ export default function Playground({ landing = false }) {
         mls_char_limit: MLS_PRESETS[mlsPresetIdx].chars || undefined,
         ...meta,
         virtual_tour_url: virtualTourUrl || undefined,
+        unlock_email,
         session_id,
       });
       setResult(data);
@@ -573,11 +575,11 @@ export default function Playground({ landing = false }) {
 
             <button
               data-testid="generate-btn"
-              onClick={() => landing ? setPaywallOpen(true) : generate()}
+              onClick={() => generate()}
               disabled={loading}
               className="btn-vermillion w-full px-7 py-4 font-heading text-sm uppercase tracking-[0.15em] flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />{t("playground.rewriting")}</>) : landing ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : (<><Sparkles className="w-4 h-4" />{t("playground.rewrite")}</>)}
+              {loading ? (<><Loader2 className="w-4 h-4 animate-spin" />{t("playground.rewriting")}</>) : landing && result ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : landing ? (<><Sparkles className="w-4 h-4" />{t("playground.startFree")}</>) : (<><Sparkles className="w-4 h-4" />{t("playground.rewrite")}</>)}
             </button>
             {result && !landing && (
               <button
@@ -589,7 +591,9 @@ export default function Playground({ landing = false }) {
               </button>
             )}
             <p className="mt-3 font-mono text-[10px] tracking-[0.15em] uppercase text-ink/50 text-center">
-              3 free rewrites, then from $19/mo · cancel anytime
+              {trialRemaining !== null && !isPro
+                ? `${trialRemaining} free rewrite${trialRemaining === 1 ? "" : "s"} left · from $19/mo after`
+                : "3 free rewrites, then from $19/mo · cancel anytime"}
             </p>
           </div>
 
@@ -791,7 +795,23 @@ export default function Playground({ landing = false }) {
               )}
             </div>
 
-            {result && !loading && (
+            {result && landing && (
+              <div className="mt-4 pt-4 border-t border-ink/10">
+                <div className="bg-coal text-oat p-4 md:p-5 flex flex-col md:flex-row items-center gap-4">
+                  <div className="flex-1 text-center md:text-left">
+                    <p className="font-heading text-xs uppercase tracking-[0.15em] text-vermillion mb-1">Want this for every listing?</p>
+                    <p className="font-body text-sm text-oat/80">Unlimited rewrites, Fair Housing scans, brand voice memory — all for one flat rate.</p>
+                  </div>
+                  <a href="#pricing"
+                    className="shrink-0 bg-vermillion text-oat hover:bg-[#e02d0e] px-6 py-3 font-heading text-xs uppercase tracking-[0.15em] transition whitespace-nowrap">
+                    See Plans — $19/mo →
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {result && !loading && !landing && (
+              <>
               <div className="mt-6 pt-5 border-t border-ink/10">
                 <div className="flex items-center gap-2 mb-4">
                   <Share2 className="w-4 h-4 text-vermillion" />
@@ -941,6 +961,7 @@ export default function Playground({ landing = false }) {
               </div>
             )}
           </div>
+            </>
             )}
           </div>
         </div>
