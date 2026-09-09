@@ -3683,6 +3683,126 @@ Fair Housing compliance is not optional. AI makes it easier to publish at scale,
 
 [ListWorks PRO](https://listworks.pro) — 3 free rewrites, no credit card.`,
   },
+  {
+    slug: "real-estate-listing-headline-examples",
+    title: "10 Real Estate Listing Headline Examples That Get More Showing Requests",
+    excerpt: "The first 8 words determine whether a buyer clicks or scrolls past. Here are 10 real estate listing headline templates proven to drive showings — with before-and-after examples.",
+    date: "2026-09-09",
+    tags: ["MLS", "copywriting", "headlines", "listing tips"],
+    author: "ListWorks Editorial",
+    readTime: "6 min",
+    content: `## Why the headline is the most important 8 words of your listing
+
+Buyers scan. They don't read — not at first. In a search results page with 20+ listings, the single factor that determines whether a buyer clicks your listing or the one above it is the headline. That first 60-80 characters of your MLS description.
+
+A weak headline gets scrolled past. A strong headline stops the scroll. And in a market where the average home gets 8-12 showings before an offer, every extra showing matters.
+
+Here are 10 headline templates that work, with real examples you can adapt.
+
+## Headline 1: The specific feature opener
+
+**Before:** "Beautiful updated home in desirable neighborhood"
+**After:** "Kitchen renovation (2024) — quartz counters, induction range, custom cabinetry"
+
+Why it works: it replaces three meaningless adjectives ("beautiful," "updated," "desirable") with specific facts. Buyers who care about kitchens click. Buyers who don't — also click, because specific details signal quality throughout.
+
+## Headline 2: The lifestyle invitation
+
+**Before:** "Spacious 3-bedroom home with great layout"
+**After:** "Saturday mornings on a 500-sq-ft deck overlooking the treeline"
+
+Why it works: it sells the feeling, not the square footage. The buyer isn't buying 3 bedrooms. They're buying what Saturday morning feels like in this house. [ListWorks PRO](https://listworks.pro) generates this style automatically — leading with the experience, not the floor plan.
+
+## Headline 3: The data-driven opener
+
+**Before:** "Priced to sell — won't last long!"
+**After:** "Priced at $485K — similar homes in 78704 closed at $498K last quarter"
+
+Why it works: "Won't last long" is a cliché buyers have read 100 times this month. "Closed at $498K last quarter" is an actual fact that creates urgency through data, not hype.
+
+## Headline 4: The location anchor
+
+**Before:** "Great location in a wonderful neighborhood"
+**After:** "Walk score 94 — 2 blocks from coffee, 5 minutes to the trailhead"
+
+Why it works: "Great location" tells the buyer nothing. "Walk score 94" gives them a number they can verify and compare. Specifics beat superlatives every time.
+
+## Headline 5: The architectural differentiator
+
+**Before:** "Charming home with character"
+**After:** "Mid-century modern — original hardwood, exposed beam ceiling, floor-to-ceiling stone fireplace"
+
+Why it works: "Charming" and "character" are filler. "Mid-century modern" identifies a specific style that has an audience. Details like "exposed beam ceiling" let that audience self-select.
+
+## Headline 6: The problem-solver
+
+**Before:** "Great home for first-time buyers"
+**After:** "1,200 sq ft, one-level living, no HOA — maintenance is mostly yard work"
+
+Why it works: The first version implies an age/family status preference (Fair Housing risk). The second describes what the home actually offers and lets the buyer decide if it fits. It's more compliant and more effective.
+
+## Headline 7: The investment angle
+
+**Before:** "Investor special — don't miss this one"
+**After:** "Rented at $2,400/mo for 18 months. Cap rate: 5.8%. Tenant wants to stay."
+
+Why it works: Investors need numbers. "Investor special" means nothing. "Cap rate: 5.8%" means they can underwrite the deal on the spot. The tenant-wants-to-stay detail is a conversion multiplier.
+
+## Headline 8: The seasonal hook
+
+**Before:** "Must-see home — schedule today"
+**After:** "This fireplace has already earned its keep this winter"
+
+Why it works: Seasonal relevance increases urgency. A fireplace headline in December connects with the buyer's current experience. It also answers the question "what makes this home feel good right now?"
+
+[ListWorks PRO](https://listworks.pro) adjusts tone by buyer persona automatically — these headline styles are built into every generation.
+
+## Headline 9: The renovation chronicle
+
+**Before:** "Updated kitchen and bathrooms"
+**After:** "Everything the 2023 renovation touched — new roof, HVAC, windows, kitchen, baths"
+
+Why it works: "Updated" is broad and forgettable. A list of what was actually replaced tells the buyer exactly how much work they don't have to do. The more specific, the more valuable.
+
+## Headline 10: The short punch
+
+**Before:** "Beautiful home, must-see, incredible value"
+**After:** "The light in this living room"
+
+Why it works: Sometimes one specific detail outperforms a full headline. The curiosity gap makes buyers click to see what you mean. This only works when the photos deliver on the promise.
+
+## Headline mistakes that cost you showings
+
+**Mistake 1: Using every buzzword.**
+"Stunning," "gorgeous," "beautiful," "charming," "spacious" — these words appear in 90% of headlines and get ignored in 90% of them. Strip them out and replace with specifics.
+
+**Mistake 2: Fair Housing trigger phrases.**
+"Perfect for families" and "great for first-time buyers" can trigger HUD complaints. Describe the home, not who should live in it.
+
+**Mistake 3: Wasting characters on filler.**
+"Don't miss this one," "won't last long," "schedule today" — these add nothing. Use every character to sell a specific feature or benefit.
+
+## Quick reference: 10 headlines for 10 property types
+
+| Property Type | Headline Formula | Example |
+|---------------|-----------------|---------|
+| Luxury | [defining feature] + [exclusivity signal] | "Panoramic city views from a 20th-floor penthouse — private elevator, 24-hr concierge" |
+| Family home | [lifestyle benefit] + [school/location fact] | "Backyard opens to green space — district zoned for Oak Elementary (9/10)" |
+| Condo | [location metric] + [amenity] | "Walk score 96 — gym, pool, concierge, 1 parking bay included" |
+| Fixer-upper | [potential signal] + [biggest improvement already done] | "New roof 2024, original hardwood under carpet — bring your contractor" |
+| Investment | [current income] + [key metric] | "Tenant in place through 2027. Cash-flowing at 5.2% cap" |
+| Waterfront | [view specificity] + [access detail] | "Private dock, deep-water access, sunrise over the sound" |
+| New construction | [builder] + [completion status] | "Meritage Homes — completion April 2027. 5 of 12 lots already sold" |
+| Historic | [era/style] + [preservation detail] | "1876 Victorian — original crown molding, restored hardwood, updated systems" |
+| Vacation rental | [income data] + [location differentiator] | "$68K gross rental income in 2025. 1 block to Main Street" |
+| Relocation | [commute stat] + [lifestyle anchor] | "14 min to downtown during rush hour — coffee shop and park 2 blocks away" |
+
+## The bottom line
+
+Your listing headline is competing for attention against 20+ others on every search results page. The difference between a scroll-past and a showing request is often 8 specific words.
+
+Paste your next listing into [ListWorks PRO](https://listworks.pro) and see what a compliant, specific, buyer-focused headline looks like. Free to try — 3 rewrites, no card required.`,
+  },
 ];
 
 export default ARTICLES;
