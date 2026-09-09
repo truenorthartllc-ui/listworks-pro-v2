@@ -66,7 +66,15 @@
   "scripts": {
     "start": "craco start",
     "build": "CI=false craco build",
+    "postbuild": "react-snap",
     "test": "craco test"
+  },
+  "reactSnap": {
+    "snapshotWait": 3000,
+    "include": ["/", "/blog", "/pricing", "/compare", "/tools/description-grader", "/tools/fair-housing-scanner", "/blog/winter-2026-real-estate-marketing", "/blog/ai-tools-for-real-estate-agents-2026-updated", "/blog/colorado-sb26-189-real-estate-ai-2027", "/blog/how-to-write-better-mls-descriptions", "/blog/ai-listing-description-generator-comparison-2026", "/blog/fair-housing-compliance-ai-listings", "/blog/chatgpt-listing-fair-housing", "/blog/chatgpt-prompts-listing-agents", "/blog/mls-listing-description-examples", "/blog/real-estate-listing-description-generator", "/blog/fair-housing-violations-real-estate-listings-examples", "/blog/why-listings-arent-showing-up-in-google", "/blog/mls-description-limits-by-state-2026", "/blog/fair-housing-ai-listing-copy", "/blog/hud-2024-ai-listing-liability-agents", "/blog/fair-housing-compliance-ai-listings-checklist", "/blog/25597-cost-chatgpt-real-estate-listings", "/blog/before-after-listworks-pro-vs-manual-listing", "/blog/real-estate-ai-directory-submissions-2026", "/blog/fair-housing-compliance-practical-guide", "/blog/ai-tools-for-real-estate-agents-2026", "/blog/real-estate-listing-copywriting-tips", "/blog/how-to-write-real-estate-listing-description", "/blog/real-estate-listing-description-examples-that-work", "/blog/writing-real-estate-listings-step-by-step", "/blog/real-estate-copywriting-tips-that-convert", "/blog/what-are-fair-housing-violations-real-estate", "/blog/how-ai-helps-real-estate-agents", "/blog/fair-housing-compliance-real-estate-listings", "/blog/instagram-captions-for-real-estate-listings", "/blog/how-to-write-mls-descriptions-that-sell", "/blog/best-ai-tools-for-real-estate-agents-2025", "/blog/how-to-avoid-fair-housing-violations", "/blog/how-to-write-a-real-estate-listing-description-that-sells", "/blog/listing-presentation-template-for-real-estate-agents", "/blog/best-ai-listing-description-generator-2026", "/blog/fair-housing-compliance-how-ai-protects-agents", "/blog/ai-real-estate-marketing-roi", "/blog/ai-listing-description-mistakes-to-avoid", "/blog/ai-real-estate-copywriter-vs-chatgpt", "/blog/fair-housing-compliant-mls-descriptions-guide", "/blog/real-estate-listing-headline-examples"],
+    "sourceMaps": false,
+    "skipThirdPartyRequests": true,
+    "puppeteerExecutablePath": "./node_modules/puppeteer/.local-chromium/linux-686378/chrome-linux/chrome"
   },
   "browserslist": {
     "production": [
@@ -94,10 +102,15 @@
     "globals": "15.15.0",
     "playwright": "^1.61.1",
     "postcss": "^8.4.49",
+    "react-snap": "^1.23.0",
     "tailwindcss": "^3.4.17"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "allowScripts": {
-    "qrcode.react@4.2.0": true
+    "qrcode.react@4.2.0": true,
+    "puppeteer@1.20.0": true,
+    "canvas@3.2.1": true,
+    "core-js@3.49.0": true,
+    "core-js-pure@3.49.0": true
   }
 }
