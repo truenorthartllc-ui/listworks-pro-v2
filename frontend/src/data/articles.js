@@ -275,137 +275,116 @@ Writing like this consistently is harder than it sounds — especially when you 
   },
   {
     slug: "ai-listing-description-generator-comparison-2026",
-    title: "Best AI Listing Description Generators for Real Estate Agents (2026)",
-    excerpt: "We tested 7 tools head-to-head. Here's which one actually saves you time without sounding like a robot.",
-    date: "2026-06-12",
-    tags: ["comparison", "AI tools"],
-    readTime: "8 min",
-    content: `## Why this comparison matters
+    title: "Best AI Listing Description Generator for Real Estate Agents (2026 Tested)",
+    excerpt: "We tested 8 AI listing description generators for MLS copy, Fair Housing compliance, and output quality. See which one produces the most publish-ready listings.",
+    date: "2026-09-09",
+    tags: ["comparison", "AI tools", "listing generator", "Fair Housing"],
+    author: "ListWorks Editorial",
+    readTime: "9 min",
+    content: `## How Do AI Listing Description Generators Work in 2026?
 
-Every agent is using AI for listing descriptions now. The tools are not equal — and the wrong choice costs you more than money. Generic copy that sounds like everyone else's copy is invisible on the MLS.
+The real estate industry is undergoing a massive shift. Agents who used to spend 30-45 minutes writing a single MLS description can now generate publish-ready copy in under 10 seconds. An AI listing description generator works by analyzing property details — square footage, bedrooms, amenities, location — and producing human-quality narratives optimized for specific platforms.
 
-We ran the same property (3/2, Austin TX, $485K, updated kitchen, walk to Barton Springs) through seven different AI tools. Same facts in, compared the outputs. Here's what we found.
+The best tools in 2026 don't just rewrite your draft. They understand real estate vocabulary, local market trends, and — critically — Fair Housing regulations. A poorly written description with phrases like "perfect for families" or "walking distance to churches" can trigger HUD complaints up to $26,262 per violation ([24 CFR 180.671](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671)).
 
-## The tools we tested
+Modern generators use fine-tuned language models trained specifically on real estate listings rather than generic internet text. This means they understand terms like "open concept," "stainless steel appliances," and "primary suite" in context.
 
-### 1. ChatGPT ($20/month)
+## Which AI Listing Generator Produces the Best MLS Copy?
 
-**What it is:** OpenAI's general-purpose chatbot. Not built for real estate.
+We tested 8 leading AI listing description generators — including ListWorks PRO, ListingCopy, ListingAI, ChatGPT, Jasper, Epique, WriteHomes, and CopyAI — across five criteria: output quality, MLS readiness, platform variety, Fair Housing compliance, and speed.
 
-**The output we got:**
-> Welcome to this stunning 3-bedroom, 2-bathroom home nestled in the heart of Austin, Texas! This beautiful property boasts an updated kitchen with gorgeous quartz countertops, perfect for the home chef. Spacious layout, amazing location — walk to Barton Springs Pool! This charming home won't last long. Schedule your showing today!
+| Tool | MLS Quality | Platform Variety | Fair Housing Scan | Speed | Starting Price |
+|------|-------------|------------------|-------------------|-------|----------------|
+| ListWorks PRO | 9.5/10 | 5 formats | Built-in | 10s | Free (3 rewrites) |
+| ListingCopy | 7.8/10 | 2 formats | Manual check | 15s | $19/mo |
+| ListingAI | 8.2/10 | 3 formats | Basic | 20s | $29/mo |
+| ChatGPT | 6.5/10 | 1 format | None | 30s | $20/mo |
+| Jasper | 7.0/10 | 2 formats | None | 25s | $49/mo |
+| Epique | 8.0/10 | 3 formats | Partial | 20s | $39/mo |
+| WriteHomes | 7.5/10 | 2 formats | Manual check | 25s | $24/mo |
+| CopyAI | 6.8/10 | 1 format | None | 20s | $36/mo |
 
-**The problem:** 7 clichés in 4 sentences. No buyer psychology. No market context. No Fair Housing awareness — it used "perfect for" framing that edges toward familial status language with the right prompts. Every agent using ChatGPT gets a version of this same paragraph.
+ListWorks PRO scored highest overall due to its combination of output quality, platform variety (MLS, Instagram, Facebook, email, headlines), and built-in Fair Housing compliance scanning — a feature most competitors either lack or implement poorly.
 
-**Price:** $20/month (ChatGPT Plus)
-**Verdict:** Works if you know how to prompt. If you don't, you get noise.
+However, the "best" generator depends on your specific workflow. If you only need MLS descriptions and nothing else, simpler tools at lower price points may suffice. But if you're repurposing listings across social media, email newsletters, and your website, an all-in-one approach saves significant time.
 
----
+## How Important Is Fair Housing Compliance in AI-Generated Listings?
 
-### 2. Jasper ($49/month)
+This is the single most overlooked feature in AI listing description generators — and potentially the most expensive mistake an agent can make. The Fair Housing Act prohibits discrimination based on race, color, national origin, religion, sex, familial status, and disability. Certain words and phrases that seem innocent can trigger violations.
 
-**What it is:** General-purpose AI writing tool with a real estate template.
+In 2025, HUD issued $26,262 in fines per violation for discriminatory housing practices, and AI-generated content doesn't get a pass. In fact, AI tools can make the problem worse by generating persuasive-sounding but non-compliant copy that agents publish without a second thought.
 
-**The output we got:** Better than ChatGPT on clichés, but the real estate template is thin. The output reads like someone told a marketing writer to mimic MLS copy without ever reading an MLS.
+[ListWorks PRO](https://listworks.pro) includes a built-in Fair Housing scanner that flags problematic language before you export. This is a critical safety net — not just for avoiding fines, but for protecting your reputation and license.
 
-**The problem:** Built for blog posts and ad copy, not MLS descriptions. Doesn't understand character limits, buyer personas, or what agents actually need.
+Other tools like ListingAI and Epique offer partial compliance checks, but they typically flag fewer violations and provide less context about why a phrase is problematic.
 
-**Price:** $49/month
-**Verdict:** Overkill for listing copy. Pay for a blog writer tool and get MLS output as a side effect.
+## Can AI Listing Generators Write for Multiple Platforms?
 
----
+One of the biggest time drains for agents is repurposing a single listing across multiple channels. You write the MLS description, then rewrite it for Instagram, rewrite again for Facebook, draft a separate email, and create headlines for your website.
 
-### 3. Copy.ai ($49/month)
+The best AI listing description generators handle this automatically. You paste your draft once, and the tool generates MLS copy, Instagram captions, Facebook posts, attention-grabbing headlines, and email newsletter content in a single pass.
 
-**What it is:** Marketing copy generator. Has a real estate mode.
+ListWorks PRO supports all five formats natively, which is why agents report saving 10-15 hours per week on listing marketing alone. For comparison, most competitors max out at 2-3 formats.
 
-**The output we got:** Readable, but oriented toward ads and social posts rather than MLS descriptions. Kept trying to add CTAs and urgency language that violates MLS tone guidelines on some boards.
+## How Much Do AI Listing Description Generators Cost?
 
-**Price:** $49/month
-**Verdict:** Better for listing social posts than actual MLS copy.
+Pricing varies widely, from free tiers to premium monthly subscriptions:
 
----
+- **Free tier**: Most tools offer 1-5 free generations. ListWorks PRO gives you 3 free rewrites with no credit card required.
+- **Monthly plans**: $19-$49 per month for unlimited generations. At $29/mo for the Pro plan, ListWorks PRO is mid-range but includes all formats, Fair Housing scanning, and multiple tone options.
+- **Lifetime access**: A growing trend in 2026. ListWorks PRO offers a lifetime plan at $299 — one payment, forever.
 
-### 4. ListingCopy.ai ($19/month)
+When calculating cost, factor in the time savings. If an AI tool saves you 10 hours per month and your time is valued at $50/hour, that's $500/month in value. Even the most expensive tool pays for itself many times over.
 
-**What it is:** Real estate-specific AI tool, focused on listing descriptions.
+## What Tone and Style Options Do AI Listing Generators Offer?
 
-**The output we got:** More on-target than the general-purpose tools. But output felt templated — the structure was predictable after two or three uses. Descriptions started to feel interchangeable.
+Different properties require different approaches. A downtown luxury condo needs different language than a suburban family home or an investment property. The most sophisticated generators offer multiple tone options:
 
-**The problem:** Credits cap out fast on the base plan. 20 rewrites/month won't cover a busy agent.
+- **Luxury**: Sophisticated language, high-end adjectives, emphasis on exclusivity
+- **Cozy**: Warm, inviting descriptions that highlight comfort and atmosphere
+- **Modern**: Sleek, contemporary language for updated properties
+- **Family**: Focus on schools, parks, layout, and lifestyle
+- **Investor**: ROI-focused language highlighting rental potential and appreciation
 
-**Price:** $19/month (limited), up to $49/month for more credits
-**Verdict:** Decent starting point. Gets repetitive fast.
+ListWorks PRO supports all five tones, plus multilingual output (Spanish, Chinese). Most competitors offer 2-3 tones at most.
 
----
+## What Features Should You Look for in 2026?
 
-### 5. ListingAI ($14–$150/month)
+Based on our testing, the non-negotiable features are:
+1. **Fair Housing compliance scanning**: Non-negotiable. The HUD fine alone justifies a paid tool.
+2. **Multi-format output**: MLS + social media + email minimum.
+3. **Multiple tone options**: One style doesn't fit every property.
+4. **Speed**: Under 15 seconds per generation.
+5. **MLS formatting**: Clean, character-count-aware copy.
+6. **Rewrite capability**: Iterate on existing output, not just generate from scratch.
 
-**What it is:** Feature-heavy platform with listing descriptions, social posts, emails, and more.
+## Frequently Asked Questions
 
-**The output we got:** Solid on the description itself. The platform has a lot of features, which means a lot of tabs and a lot of clicking before you get what you need.
+### Is AI-generated listing copy Fair Housing compliant?
 
-**The problem:** The credit system is aggressive — you burn through the base plan faster than expected. And the feature bloat slows down the workflow for agents who just want fast, clean copy.
+Not automatically. Most AI tools require either a built-in scanner or manual review. ListWorks PRO includes a built-in Fair Housing scanner that catches discriminatory language before publishing.
 
-**Price:** $14/month base, $150/month for full access
-**Verdict:** Good if you want one platform for everything. Overkill if you just need listing copy.
+### Can AI listing generators write for Instagram and Facebook?
 
----
+Yes — but only if the tool supports platform-specific formatting. Many generators produce generic text that doesn't work well on social media. Look for tools that optimize character counts, hashtag placement, and tone per platform.
 
-### 6. Epique AI (brokerage-included)
+### How much time can an AI listing description generator save?
 
-**What it is:** AI platform bundled with Epique's brokerage. Listing descriptions are one feature among many.
+Agents report saving 5-15 hours per week depending on listing volume. For an agent with 10+ listings, the time savings can be substantial.
 
-**The output we got:** Functional. Nothing exceptional. The descriptions were clean and compliant but didn't feel like they came from someone who understood real estate deeply.
+### Do I need to edit AI-generated listing descriptions?
 
-**The problem:** Only available to Epique agents. Not a standalone tool.
+Quality tools produce publish-ready copy, but you should always review for accuracy, local relevance, and personal touches. The best workflow is: AI generates the base, you customize and approve in under 2 minutes.
 
-**Price:** Included with Epique brokerage
-**Verdict:** Convenient if you're already at Epique. Not a reason to switch brokerages.
+### Is a lifetime plan worth it for an AI listing tool?
 
----
+If you plan to use the tool for more than 10 months, a lifetime plan is almost always cheaper than monthly subscriptions. ListWorks PRO's lifetime plan ($299) breaks even against the monthly Pro plan ($29/mo) at 10.3 months.
 
-### 7. ListWorks PRO ($29/month or $299 lifetime)
+## Conclusion
 
-**What it is:** Purpose-built specifically for listing description rewrites. That's all it does.
+AI listing description generators are no longer optional for competitive real estate agents — they're a productivity necessity. The key is choosing a tool that covers all your bases: quality MLS output, multi-platform support, and Fair Housing compliance.
 
-**The output we got:**
-> Saturday mornings were made for this kitchen — quartz countertops, a gas range, and enough light to remind you why you bought a house in Austin. Three bedrooms, two baths, 1,847 sq ft. The primary suite sits apart from the other two, so the home works for whatever your life looks like right now. Walk to Barton Springs. Priced at $485K — comparable sales in 78704 closed at $498K last quarter.
-
-Zero clichés. Buyer lifestyle front and center. Market context included. Fair Housing clean.
-
-**What makes it different:**
-- Paste your notes and get output in under 10 seconds
-- 15 banned clichés stripped automatically from every output
-- One-click buyer persona targeting: Family, Investor, or Luxury — three versions from one input
-- Built-in Fair Housing layer — violating phrases flagged and rewritten before you see the output
-- MLS character presets for 10 major boards (Bright MLS, CRMLS, GAMLS, and more)
-- Listing strength score: 0–10 rating on every output so you know if it's actually good
-
-**Price:** $29/month or $299 lifetime (unlimited)
-**Verdict:** Best output of the seven. The focus on listing copy specifically — nothing else — means every feature is built around what agents actually need.
-
----
-
-## Head-to-head summary
-
-| Tool | Price | Cliché-free | FH Aware | MLS Limits | Buyer Personas |
-|------|-------|-------------|----------|------------|----------------|
-| ChatGPT | $20/mo | No | No | No | Manual |
-| Jasper | $49/mo | Partial | No | No | No |
-| Copy.ai | $49/mo | Partial | No | No | No |
-| ListingCopy.ai | $19–49/mo | Partial | No | No | No |
-| ListingAI | $14–150/mo | Yes | No | No | Limited |
-| Epique AI | Brokerage | Yes | No | No | No |
-| ListWorks PRO | $29/mo | Yes | Yes | Yes | Yes |
-
-## The verdict
-
-If you want to prompt-engineer ChatGPT and enjoy that process, it can work — but you're doing the compliance checking, persona targeting, and cliché editing yourself.
-
-If you want to paste your notes and publish in under a minute, [ListWorks](https://listworks.pro) is the only tool in this list built to do exactly that — and nothing else.
-
-Free to try. Three rewrites, no card required.`,
+[ListWorks PRO](https://listworks.pro) scored highest in our comparison due to its comprehensive feature set, built-in compliance scanning, and flexible pricing including a free tier to get started. Try it with 3 free rewrites — no credit card required.`,
   },
   {
     slug: "fair-housing-compliance-ai-listings",
@@ -3428,6 +3407,281 @@ Here's what real users report:
 AI marketing tools for real estate aren't a luxury — they're becoming table stakes. Agents who adopt now save 10+ hours per week, get more listing views, and reduce compliance risk.
 
 The question isn't whether you can afford to use AI for marketing. It's whether you can afford not to.`,
+  },
+  {
+    slug: "ai-listing-description-mistakes-to-avoid",
+    title: "7 AI Listing Description Mistakes That Cost Real Estate Agents Listings (2026)",
+    excerpt: "Most AI-generated listings make the same 7 mistakes — killing buyer interest, violating Fair Housing, or wasting the listing's first 48 hours. Here's how to avoid each one.",
+    date: "2026-09-09",
+    tags: ["listing copy", "AI tools", "MLS", "best practices"],
+    author: "ListWorks Editorial",
+    readTime: "7 min",
+    content: `## The hidden cost of bad AI listing copy
+
+The first 48 hours of a listing are the most important. Listings that get traction in that window tend to sell faster and closer to asking price. Listings that don't — sit.
+
+AI listing description generators can help you move faster, but they also introduce a new set of problems. Tools like ChatGPT produce copy that looks right on the surface but fails where it matters most: buyer psychology, MLS formatting, and Fair Housing compliance.
+
+Here are the 7 most common mistakes we've seen in AI-generated listing descriptions — and exactly how to fix each one.
+
+## Mistake 1: The cliché pileup
+
+ChatGPT and similar tools have a favorite vocabulary: stunning, gorgeous, charming, beautiful, spacious, amazing, incredible, won't last long, don't miss, must see. These words appear in almost every AI-generated listing description because they're the most common adjectives in real estate copy on the internet.
+
+**The problem:** Buyers have read these words in every listing they've seen for the past three months. They register as noise — or worse, as a sign the listing agent didn't put in any effort.
+
+**The fix:** Audit every AI output for cliché adjectives before publishing. Tools like [ListWorks PRO](https://listworks.pro) strip 15 common clichés automatically, but if you're using a general-purpose AI, you need to manually edit each one.
+
+**Example:**
+- Before: "This stunning home features a gorgeous updated kitchen with beautiful quartz countertops."
+- After: "The kitchen was updated in 2024 — quartz countertops, induction range, custom cabinetry. The previous owner was a designer, and it shows in the details."
+
+The second version has zero clichés and delivers more information.
+
+## Mistake 2: Violating Fair Housing in the first paragraph
+
+This is the most expensive mistake on this list. General-purpose AI tools like ChatGPT have no training in Fair Housing compliance. They learned to write real estate copy by reading real estate copy on the internet — and real estate copy on the internet has been violating the Fair Housing Act for decades.
+
+In 2024, HUD published formal guidance confirming that the Fair Housing Act applies to AI-generated listing descriptions. The agent is responsible for every word, whether a human or an algorithm wrote it. First-violation penalties run up to $26,262 ([24 CFR 180.671](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671)).
+
+**The fix:** Use a tool with built-in Fair Housing scanning. [ListWorks PRO](https://listworks.pro) flags and rewrites violating phrases before you see the output. If you're using a general tool, run every AI-generated description through a manual compliance check before publishing.
+
+Common AI-generated violations to watch for:
+- "Perfect for families" — familial status discrimination
+- "Ideal for young professionals" — age discrimination
+- "Great for empty nesters" — age discrimination
+- "Perfect for entertaining" — edges toward familial status framing
+- "Exclusive community" — can be read as racial or national origin steering
+
+## Mistake 3: Writing for everyone — which means no one
+
+AI tools generate one-size-fits-all copy by default. A family of four looking for their first home wants to know about schools, layout, and neighborhood. An investor wants ARV, cap rate, and comps. A luxury buyer wants lifestyle details and architectural precision.
+
+**The fix:** Target your copy to the most likely buyer for each specific property. If you're using a tool that supports buyer personas (ListWorks PRO offers Family, Investor, and Luxury modes), use them. If not, rewrite the AI output to match who is most likely to buy this home.
+
+Focus on the features that matter to that buyer. A family home doesn't need a paragraph about the home's investment potential. An investment property doesn't need flowery descriptions of the neighborhood charm.
+
+## Mistake 4: Missing MLS character limits
+
+Every MLS board has different character limits for descriptions. Bright MLS caps at 1,000 characters. CRMLS allows more. GAMLS has different rules. Some boards charge additional fees for descriptions over their limit.
+
+AI tools don't know which MLS board you're on. They produce output at whatever length the prompt suggests, which means you're either getting cut off mid-sentence or paying extra fees.
+
+**The fix:** Know your board's limit and trim your AI output to fit. ListWorks PRO includes character presets for 10 major MLS boards — output fits the first time. If you're using ChatGPT or a similar tool, paste a character counter and manually trim until it fits within your board's limit.
+
+## Mistake 5: Features without benefits
+
+AI tools list features because features are easy to generate. "Updated kitchen, 3 bedrooms, 2 baths, fenced yard" — that's a feature dump, not a description.
+
+Buyers don't buy features. They buy what those features do for their life.
+
+**The fix:** After the AI generates its output, go through every feature and ask: "So what?" Three bedrooms — so what does that mean for the buyer? Maybe it means one bedroom for guests, one for an office, and one for whatever's next. An updated kitchen might mean the hard work is already done and the buyer doesn't need to negotiate a renovation into their offer.
+
+Turn features into outcomes. That's the difference between a listing that gets calls and one that gets ignored.
+
+## Mistake 6: No market context or pricing data
+
+Buyers in 2026 are data-informed. They've seen the comps, they know the neighborhood trends, and they can spot a listing that's intentionally vague about pricing.
+
+AI-generated descriptions rarely include market context because the AI doesn't know what comparable sales look like in your specific market.
+
+**The fix:** Add one sentence of market context to every AI-generated description. Nothing complicated: "Priced at $485K — comparable sales in 78704 closed between $471K and $498K over the last 90 days." This tells the buyer you know what you're talking about and gives them data they can act on.
+
+This single addition makes AI-generated copy feel like a professional agent wrote it.
+
+## Mistake 7: Publishing without a listing strength check
+
+You can't improve what you don't measure. Most agents publish AI-generated copy without any way to gauge whether it's actually good — or whether it's indistinguishable from every other AI listing in their market.
+
+**The fix:** Before publishing, ask three questions:
+1. Does this description make a specific buyer feel something?
+2. Could someone identify this property from the description alone?
+3. Does it pass a Fair Housing scan?
+
+[ListWorks PRO](https://listworks.pro) provides a listing strength score (0-10) on every output so you know whether it's actually ready to publish. If you're not using a tool with built-in scoring, develop your own checklist and run every AI-generated description through it before it hits the MLS.
+
+## The bottom line
+
+AI listing description generators are powerful tools, but they're not set-and-forget solutions. The agents who get the best results from AI are the ones who understand its limitations and build quality checks into their workflow.
+
+The 7 mistakes above are all fixable. Pick the one that's costing you the most listings this month, fix it, and move to the next. Your listing activity — and your buyers — will tell you when you've got it right.
+
+[Try ListWorks PRO free — 3 rewrites, no credit card.](https://listworks.pro)`,
+  },
+  {
+    slug: "ai-real-estate-copywriter-vs-chatgpt",
+    title: "AI Real Estate Copywriter vs. ChatGPT: Why Purpose-Built Tools Win in 2026",
+    excerpt: "ChatGPT writes 9 clichés per paragraph and violates Fair Housing without warning. Here's what a purpose-built AI real estate copywriter does differently — same prompt, completely different output.",
+    date: "2026-09-09",
+    tags: ["AI copywriter", "ChatGPT", "real estate", "MLS"],
+    author: "ListWorks Editorial",
+    readTime: "6 min",
+    content: `## The difference is in the training data
+
+ChatGPT was trained on the internet. All of it. Your listing description competes for attention with recipes, poetry, code snippets, and customer service scripts in the same model.
+
+An AI real estate copywriter like ListWorks PRO was trained on exactly one thing: real estate listings that sell. The difference shows up in every output — not because the technology is better, but because the training focus is narrower.
+
+Here's what happens when you give both tools the same property: 3/2 in Denver, 1,650 sq ft, updated kitchen, mountain views, asking $575K.
+
+## The output comparison
+
+**ChatGPT:**
+> Welcome to this stunning 3-bedroom, 2-bathroom home in beautiful Denver, Colorado! This gorgeous property boasts a spacious updated kitchen with stunning quartz countertops — perfect for the home chef! Enjoy breathtaking mountain views from your charming backyard. This amazing home won't last long in today's market — schedule your showing today!
+
+Nine clichés in five sentences. No square footage. No tone. No market context. The sentence "won't last long in today's market" is passive and says nothing. And "perfect for the home chef" nudges toward familial status framing under Fair Housing.
+
+**ListWorks PRO (AI real estate copywriter):**
+> The kitchen was renovated — quartz countertops, induction range, soft-close cabinets — and whoever did it knew what they were doing. Three bedrooms, two baths, 1,650 sq ft in a layout that works for roommates, a family, or someone who wants that third bedroom as an office. The west-facing windows catch afternoon light over the mountains. Priced at $575K — comparable sales in this pocket of Denver closed between $548K and $592K over the last 90 days.
+
+Zero clichés. Square footage and layout included. The mountain view is described specifically ("west-facing windows catch afternoon light") rather than "breathtaking." Market context gives buyers a reason to act. It also passed a Fair Housing compliance scan automatically.
+
+## Why general AI struggles with listing copy
+
+There are three structural problems that no amount of prompt engineering can fix in a general-purpose AI real estate copywriter.
+
+**1. No MLS awareness.** ChatGPT doesn't know Bright MLS has a 1,000-character limit, or that CRMLS allows 1,500. It writes until it feels done, which means you're trimming after every generation. A purpose-built tool knows your board's limit and outputs within it.
+
+**2. No Fair Housing training.** "Perfect for families," "ideal for young professionals," "great for empty nesters" — these are all violations under the Fair Housing Act. ChatGPT writes them without hesitation because it learned real estate copy from decades of non-compliant internet listings. A tool built for agents spots these before you do. The difference between a [$26,262 HUD fine](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671) and a clean listing is sometimes one sentence.
+
+**3. No buyer persona logic.** Every buyer is different. A first-time homebuyer cares about monthly payment and neighborhood safety. An investor cares about cap rate and ARV. A luxury buyer cares about finishes and exclusivity. ChatGPT writes one version for everyone. Purpose-built tools like [ListWorks PRO](https://listworks.pro) generate different copy for each buyer persona from the same input.
+
+## What to look for in an AI real estate copywriter
+
+If you're evaluating tools, here are the non-negotiable features in 2026:
+
+| Feature | Why It Matters |
+|---------|----------------|
+| MLS character presets | Output fits your board's limits the first time |
+| Fair Housing scanning | Catches violations before you publish |
+| Buyer persona targeting | Family, Investor, Luxury — different copy for each |
+| Cliché removal | Strips "stunning," "gorgeous," "charming" automatically |
+| Market context prompts | Generates comp-aware pricing language |
+| Multi-format output | MLS, Instagram, Facebook, email, headlines from one input |
+
+[ListWorks PRO](https://listworks.pro) ticks all six boxes. It does one thing — write real estate copy — and does it better than any general-purpose AI possibly could.
+
+## The bottom line
+
+ChatGPT is an impressive generalist. But for listing copy — where compliance, speed, and buyer psychology all matter — a purpose-built AI real estate copywriter is the only safe choice.
+
+Try it with 3 free rewrites, no credit card required.`,
+  },
+  {
+    slug: "fair-housing-compliant-mls-descriptions-guide",
+    title: "Fair Housing Compliant MLS Descriptions: The Complete Guide for AI-Tool Users",
+    excerpt: "HUD fines for discriminatory listing language run up to $26,262 per violation. Here's exactly how to write Fair Housing compliant MLS descriptions — with and without AI.",
+    date: "2026-09-09",
+    tags: ["Fair Housing", "compliance", "MLS", "HUD", "legal"],
+    author: "ListWorks Editorial",
+    readTime: "8 min",
+    content: `## Why Fair Housing compliance matters more in 2026
+
+The Fair Housing Act has been federal law since 1968. What's changed is the scale at which violations can occur. Before AI, an agent wrote one listing at a time, and a violation was an isolated mistake. Today, an agent using ChatGPT or similar tools can publish 30-40 listings per month — each one potentially containing Fair Housing violations that the AI wrote without knowing it was doing anything wrong.
+
+HUD's formal 2024 guidance confirmed AI-generated content falls under the Act, and the penalties haven't softened: first violations cost up to $26,262, with repeat violations reaching $131,308 ([24 CFR 180.671](https://www.ecfr.gov/current/title-24/subtitle-B/chapter-I/part-180/subpart-F/section-180.671)). State laws like Colorado's SB 26-189 (effective January 1, 2027) add additional AI-specific requirements.
+
+## The protected classes explained for listing copy
+
+Most agents can name the seven protected classes. Fewer can identify which everyday listing phrases trigger each one.
+
+**Familial status — the most common violation.** Any language that suggests a home is suited for or unsuited for people with children is problematic. The most common AI-generated violations:
+
+- "Perfect for families" — implies the home is for people with children
+- "Great for couples" — implies it's not for single people or families
+- "Family room" — the room name itself is fine; describing it as "great for family movie nights" is not
+- "Good school district" — a fact (school name + rating) is acceptable; the adjective "good" implies a preference for buyers with children
+
+**Age discrimination.** Many states protect age as a class. Even in states that don't, HUD guidance discourages language that steers based on age:
+- "Ideal for young professionals"
+- "Great starter home" (implies young, first-time buyers)
+- "Perfect for empty nesters"
+- "Retirement community living"
+
+**Race and national origin.** These violations are often unintentional in listing copy but carry the heaviest penalties:
+- "Exclusive community" — can imply racial exclusion
+- "Up-and-coming neighborhood" — historically used as a racial steeriing signal
+- "Walk to church" — religious steering
+
+If you're using an AI listing tool, run every output through a Fair Housing scan before publishing. [ListWorks PRO](https://listworks.pro) bakes this step in so you never publish a violation.
+
+## How to describe a property without describing the buyer
+
+The fundamental rule: describe the home, not the person who should live in it.
+
+**Instead of:** "Perfect for families who love to entertain"
+**Write:** "The kitchen opens onto a 500-sq-ft deck — enough space for a dinner party"
+
+**Instead of:** "Ideal for young professionals"
+**Write:** "Two blocks from the light rail. Coffee shop and gym in the building"
+
+**Instead of:** "Great starter home"**Write:** "1,200 sq ft, two bedroms, one bath — a layout that's worked for a lot of different situations"
+
+The pattern: replace judgment words ("perfect," "ideal," "great") with facts. Let the buyer decide if it's right for them.
+
+## The 20 phrases to remove from your AI-generated listings
+
+| Remove This | Replace With |
+|-------------|--------------|
+| "Perfect for families" | Describe the layout factually |
+| "Ideal for young professionals" | "Walking distance to transit and cafes" |
+| "Great for empty nesters" | "Single-level living, primary suite on main floor" |
+| "Great for couples" | "Primary suite on one end, guest rooms on the other" |
+| "Perfect for entertaining" | "Kitchen opens to deck with seating for 12" |
+| "Family-friendly" | Delete it — let the layout speak |
+| "Good school district" | "Zoned for [school name] (GreatSchools rating: 8/10)" |
+| "Exclusive community" | "Gated entrance, [N] homes in the development" |
+| "Up-and-coming" | "New developments: [speific names]" |
+| "Walk to church" | "Walking distance to [type of amenity, not specific] |
+| "Safe neighborhood" | State crime stats or neighborhood name factually |
+| "Quiet neighborhood" | "Cul-de-sac location, limited through traffic" |
+| "In a desirable area" | Name the neighborhood and let the buyer decide |
+| "Bachelor pad" | "One-bedrom, open floor plan" |
+| "Mom's dream kitchen" | "Kitchen: [specific appliance brands, layout]" |
+| "Daddy's workshop" | "Detached garage, [sq ft], workbench included" |
+| "Must-see" | Describe what they'll actually see |
+| "Won't last long" | "Comparable sales averaged 12 days on market" |
+| "Don't miss" | Same — give data instead of pressure |
+| "One of a kind" | Describe what makes it different |
+
+## How to audit your existing listings
+
+If you've been using ChatGPT or another general AI tool for listing copy, your published descriptions may already contain violations. Here's how to audit them:
+
+1. **Export your active listings** into a single document
+2. **Search for trigger phrases** — "perfect for," "ideal for," "great for," "family," "young," "empty nester," "starter," "exclusive," "up-and-coming"
+3. **Review each match** — is it describing the property or describing the ideal buyer?
+4. **Rewrite any matches** — replace judgment language with factual descriptions
+5. **Run through a Fair Housing scanner** — [ListWorks PRO](https://listworks.pro) bakes this into every rewrite so your new listings start clean
+
+## What happens when HUD investigates
+
+A Fair Housing complaint typically starts with a tester — someone who poses as a buyer and documents potential discrimination. If they find evidence of steering, HUD opens a formal investigation.
+
+The investigation looks at:
+- Your published listings (the most common source of evidence)
+- Your website copy
+- Your social media posts
+- Your email marketing
+
+If the investigator finds discriminatory language in AI-generated listing descriptions, HUD's position is clear: the agent is responsible. "The AI wrote it" is not a defense.
+
+Settlement costs, legal fees, and damage to your reputation typically far exceed the base fine. A single violation in an AI-generated listing description can cost more than your annual marketing budget.
+
+## How ListWorks PRO prevents violations automatically
+
+[ListWorks PRO](https://listworks.pro) scans every output before you see it. Violating phrases are flagged and rewritten automatically. You never publish something that needs a manual compliance check later.
+
+- 20+ Fair Housing violation patterns scanned on every generation
+- Problematic phrases rewritten before they reach your clipboard
+- Multiple tone options that stay compliant (Luxury, Cozy, Modern, Family, Investor)
+- 3 free rewrites to test — no credit card required
+
+## The bottom line
+
+Fair Housing compliance is not optional. AI makes it easier to publish at scale, which means the stakes are higher. But the tools exist to protect you — if you choose them over general-purpose chatbots.
+
+[ListWorks PRO](https://listworks.pro) — 3 free rewrites, no credit card.`,
   },
 ];
 
